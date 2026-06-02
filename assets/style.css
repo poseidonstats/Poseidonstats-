@@ -22,13 +22,86 @@ body {
 
 /* Header */
 header {
-  background: #1e3a8a;
+  background: linear-gradient(135deg, #0c1e4f 0%, #1e3a8a 45%, #2e4dbf 100%);
   color: #fff;
-  padding: 20px 0 0;
+  padding: 24px 0 0;
+  position: relative;
+  overflow: hidden;
 }
-header h1 { font-size: 1.6rem; letter-spacing: 1px; }
-header h1 a { color: #fff; text-decoration: none; }
-.tagline { color: #c7d2fe; font-size: 0.9rem; margin-top: 4px; }
+header::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  right: -10%;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(251, 191, 36, 0.15) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* Brand identity — POSEIDON ca logo vendabil */
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: #fff;
+  position: relative;
+  padding: 2px 0;
+}
+.brand-icon {
+  font-size: 2.4rem;
+  filter: drop-shadow(0 2px 8px rgba(251, 191, 36, 0.4));
+  animation: trident-glow 3s ease-in-out infinite;
+}
+@keyframes trident-glow {
+  0%, 100% { transform: scale(1) rotate(0deg); filter: drop-shadow(0 2px 8px rgba(251, 191, 36, 0.4)); }
+  50% { transform: scale(1.05) rotate(-2deg); filter: drop-shadow(0 4px 12px rgba(251, 191, 36, 0.65)); }
+}
+.brand-name {
+  font-family: "Georgia", "Times New Roman", serif;
+  font-size: 2.2rem;
+  font-weight: 700;
+  letter-spacing: 3px;
+  background: linear-gradient(135deg, #fff 0%, #fbbf24 50%, #fff 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shine 6s linear infinite;
+  text-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+@keyframes shine {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+.brand-pulse {
+  width: 8px;
+  height: 8px;
+  background: #10b981;
+  border-radius: 50%;
+  box-shadow: 0 0 10px #10b981;
+  animation: pulse 1.8s ease-in-out infinite;
+  margin-left: 4px;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 0.4; transform: scale(0.9); }
+  50% { opacity: 1; transform: scale(1.2); }
+}
+
+.tagline {
+  color: #dbeafe;
+  font-size: 0.9rem;
+  margin-top: 8px;
+  letter-spacing: 0.2px;
+}
+.tagline strong { color: #fbbf24; font-weight: 700; }
+
+@media (max-width: 600px) {
+  .brand-name { font-size: 1.75rem; letter-spacing: 2px; }
+  .brand-icon { font-size: 1.9rem; }
+  .tagline { font-size: 0.8rem; }
+}
 nav {
   margin-top: 14px;
   display: flex;
