@@ -39,68 +39,68 @@ header::before {
   pointer-events: none;
 }
 
-/* Brand identity — POSEIDON ca logo vendabil */
+/* Brand identity — POSEIDON MARE, vizibil clar pe fond albastru */
 .brand {
   display: inline-flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
   text-decoration: none;
   color: #fff;
   position: relative;
-  padding: 2px 0;
+  padding: 8px 0 4px;
 }
 .brand-icon {
-  font-size: 2.4rem;
-  filter: drop-shadow(0 2px 8px rgba(251, 191, 36, 0.4));
+  font-size: 3rem;
+  line-height: 1;
+  filter: drop-shadow(0 2px 10px rgba(251, 191, 36, 0.5));
   animation: trident-glow 3s ease-in-out infinite;
 }
 @keyframes trident-glow {
-  0%, 100% { transform: scale(1) rotate(0deg); filter: drop-shadow(0 2px 8px rgba(251, 191, 36, 0.4)); }
-  50% { transform: scale(1.05) rotate(-2deg); filter: drop-shadow(0 4px 12px rgba(251, 191, 36, 0.65)); }
+  0%, 100% { transform: scale(1) rotate(0deg); filter: drop-shadow(0 2px 10px rgba(251, 191, 36, 0.5)); }
+  50% { transform: scale(1.06) rotate(-3deg); filter: drop-shadow(0 4px 16px rgba(251, 191, 36, 0.8)); }
 }
+
+/* POSEIDON — text MARE, alb solid cu glow auriu (NU gradient shine care arată ca roșu stins) */
 .brand-name {
   font-family: "Georgia", "Times New Roman", serif;
-  font-size: 2.2rem;
-  font-weight: 700;
-  letter-spacing: 3px;
-  background: linear-gradient(135deg, #fff 0%, #fbbf24 50%, #fff 100%);
-  background-size: 200% auto;
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: shine 6s linear infinite;
-  text-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  font-size: 3rem;
+  font-weight: 800;
+  letter-spacing: 4px;
+  color: #ffffff;
+  text-shadow:
+    0 0 18px rgba(251, 191, 36, 0.55),
+    0 0 36px rgba(251, 191, 36, 0.25),
+    0 2px 4px rgba(0, 0, 0, 0.35);
+  line-height: 1;
 }
-@keyframes shine {
-  0% { background-position: 0% 50%; }
-  100% { background-position: 200% 50%; }
-}
+
 .brand-pulse {
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
   background: #10b981;
   border-radius: 50%;
-  box-shadow: 0 0 10px #10b981;
+  box-shadow: 0 0 14px #10b981, 0 0 26px rgba(16, 185, 129, 0.55);
   animation: pulse 1.8s ease-in-out infinite;
-  margin-left: 4px;
+  margin-left: 6px;
 }
 @keyframes pulse {
-  0%, 100% { opacity: 0.4; transform: scale(0.9); }
-  50% { opacity: 1; transform: scale(1.2); }
+  0%, 100% { opacity: 0.45; transform: scale(0.9); }
+  50% { opacity: 1; transform: scale(1.25); }
 }
 
 .tagline {
   color: #dbeafe;
-  font-size: 0.9rem;
-  margin-top: 8px;
-  letter-spacing: 0.2px;
+  font-size: 0.95rem;
+  margin-top: 12px;
+  letter-spacing: 0.3px;
 }
 .tagline strong { color: #fbbf24; font-weight: 700; }
 
 @media (max-width: 600px) {
-  .brand-name { font-size: 1.75rem; letter-spacing: 2px; }
-  .brand-icon { font-size: 1.9rem; }
-  .tagline { font-size: 0.8rem; }
+  .brand-name { font-size: 2.3rem; letter-spacing: 3px; }
+  .brand-icon { font-size: 2.4rem; }
+  .tagline { font-size: 0.82rem; margin-top: 10px; }
+  .brand { gap: 10px; }
 }
 nav {
   margin-top: 14px;
