@@ -101,10 +101,12 @@ function renderMatch(m) {
   const calibTag = m.calibrated
     ? `<span class="ok-tag">✓ calibrată</span>`
     : `<span class="warn-tag">⚠️ ligă necalibrată</span>`;
+  // match_date e UTC (cu Z). Convertesc explicit la fusul orar Europe/Bucharest (ora RO).
   const d = new Date(m.match_date);
   const dateStr = d.toLocaleString("ro-RO", {
     weekday: "short", day: "2-digit", month: "short",
-    hour: "2-digit", minute: "2-digit"
+    hour: "2-digit", minute: "2-digit",
+    timeZone: "Europe/Bucharest"
   });
 
   // Pick principal: cel mai mare prob ≥65% (combined OU + BTTS + 1X2)
