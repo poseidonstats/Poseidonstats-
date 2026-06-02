@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>POSEIDON — Predicții fotbal pe model statistic</title>
+<meta name="description" content="Predicții fotbal generate de un model statistic Poisson + Dixon-Coles. Date informative, transparente, verificabile.">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#1e3a8a">
+<link rel="apple-touch-icon" href="assets/icon-192.png">
+<script>if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js");</script>
+</head>
+<body>
+
+<div class="legal-banner">
+⚠️ Date statistice informative. NU garanție de câștig. Pariați responsabil. 18+.
+</div>
+
+<header>
+  <div class="container">
+    <h1><a href="index.html">POSEIDON</a></h1>
+    <p class="tagline">Predicții fotbal cu metodologie verificabilă</p>
+    <nav>
+      <a href="index.html" class="active">Predicții</a>
+      <a href="track-record.html">Track record</a>
+      <a href="metodologie.html">Metodologie</a>
+      <a class="patreon" href="https://patreon.com/AndreeaPoseidon" target="_blank" rel="noopener">☕ Susține</a>
+    </nav>
+  </div>
+</header>
+
+<main class="container">
+
+  <section class="intro">
+    <h2>Predicții pentru următoarele zile</h2>
+    <p>Model Poisson + Dixon-Coles cu calibrare per-ligă. Predicțiile sunt înghețate la generare (07:15 UTC zilnic) și verificabile post-meci.</p>
+    <p class="muted">Marker <span class="warn-tag">⚠️ ligă necalibrată</span> apare pe ligile unde modelul nu a demonstrat calibrare pe backtest.</p>
+    <div class="card-info">
+      <strong>Probabilități calibrate empirical.</strong> Cifrele afișate pe Over/BTTS sunt re-mapate pe baza
+      a 65.250 meciuri de backtest (TEST 2026, zero leakage). Când modelul brut zice "85% BTTS" dar în istoric pe acel
+      interval s-a întâmplat doar 67% din timp, afișăm <strong>67%</strong>, nu 85%.
+      Pe markets unde modelul brut diferă semnificativ (≥3pp) de realitate, apare valoarea brută ca notă
+      sub probabilitate. Vezi <a href="track-record.html">track record</a> pentru tabelul complet.
+    </div>
+  </section>
+
+  <section class="filters">
+    <label>Zi:
+      <select id="filter-day"><option value="">Toate zilele</option></select>
+    </label>
+    <label>Ligă:
+      <select id="filter-league"><option value="">Toate ligile</option></select>
+    </label>
+    <label>Țară:
+      <select id="filter-country"><option value="">Toate țările</option></select>
+    </label>
+    <label class="cb">
+      <input type="checkbox" id="filter-calibrated-only"> Doar ligi calibrate
+    </label>
+  </section>
+
+  <div id="match-count" class="match-count"></div>
+
+  <div id="matches"></div>
+
+</main>
+
+<footer>
+  <div class="container">
+    <p><strong>POSEIDON</strong> — model statistic open. Sursă date: API-Football (FT + HT scor) + ratings Bayesian propriu.</p>
+    <p>⚠️ <strong>Informativ.</strong> NU recomandare de pariere. <strong>NU garanție.</strong> Pariați responsabil. <strong>18+</strong>.</p>
+    <p class="muted">Dacă pariatul devine problemă: <a href="https://www.jocresponsabil.ro" target="_blank" rel="noopener">jocresponsabil.ro</a></p>
+  </div>
+</footer>
+
+<script src="assets/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,3066 @@
+{
+ "generated_at": "2026-06-02T10:07:06+00:00",
+ "meta": {
+  "n_total": 65250,
+  "n_whitelist_inter": 7089,
+  "methodology": "TRAIN 2024-2025 / TEST 2026, ratings frozen 2025-12-31, calibrare per-ligă cu shrinkage K=14"
+ },
+ "markets": [
+  {
+   "name": "Over 1.5 goluri (FT)",
+   "scope": "toate 65,250 meciuri",
+   "buckets": [
+    {
+     "range": "50–60%",
+     "n": 7585,
+     "hit_pct": 66.04,
+     "wlo_pct": 64.96,
+     "diff_pp": 11.04
+    },
+    {
+     "range": "60–70%",
+     "n": 14827,
+     "hit_pct": 71.37,
+     "wlo_pct": 70.64,
+     "diff_pp": 6.37
+    },
+    {
+     "range": "70–80%",
+     "n": 19711,
+     "hit_pct": 76.11,
+     "wlo_pct": 75.51,
+     "diff_pp": 1.11
+    },
+    {
+     "range": "80–90%",
+     "n": 15019,
+     "hit_pct": 82.71,
+     "wlo_pct": 82.1,
+     "diff_pp": -2.29
+    },
+    {
+     "range": "90–100%",
+     "n": 4306,
+     "hit_pct": 89.27,
+     "wlo_pct": 88.31,
+     "diff_pp": -5.73
+    }
+   ]
+  },
+  {
+   "name": "Over 1.5 goluri (FT) — sub-set ligi top calibrate",
+   "scope": "7,089 meciuri pe sub-set restrâns (calibrare strictă verificată)",
+   "buckets": [
+    {
+     "range": "50–60%",
+     "n": 401,
+     "hit_pct": 69.58,
+     "wlo_pct": 64.9,
+     "diff_pp": 14.58
+    },
+    {
+     "range": "60–70%",
+     "n": 1706,
+     "hit_pct": 72.92,
+     "wlo_pct": 70.76,
+     "diff_pp": 7.92
+    },
+    {
+     "range": "70–80%",
+     "n": 2886,
+     "hit_pct": 75.47,
+     "wlo_pct": 73.86,
+     "diff_pp": 0.47
+    },
+    {
+     "range": "80–90%",
+     "n": 1811,
+     "hit_pct": 80.34,
+     "wlo_pct": 78.45,
+     "diff_pp": -4.66
+    },
+    {
+     "range": "90–100%",
+     "n": 187,
+     "hit_pct": 89.84,
+     "wlo_pct": 84.68,
+     "diff_pp": -5.16
+    }
+   ]
+  },
+  {
+   "name": "Over 2.5 goluri (FT)",
+   "scope": "toate 65,250 meciuri",
+   "buckets": [
+    {
+     "range": "50–60%",
+     "n": 14143,
+     "hit_pct": 55.11,
+     "wlo_pct": 54.29,
+     "diff_pp": 0.11
+    },
+    {
+     "range": "60–70%",
+     "n": 9855,
+     "hit_pct": 62.86,
+     "wlo_pct": 61.9,
+     "diff_pp": -2.14
+    },
+    {
+     "range": "70–80%",
+     "n": 5522,
+     "hit_pct": 69.32,
+     "wlo_pct": 68.09,
+     "diff_pp": -5.68
+    },
+    {
+     "range": "80–90%",
+     "n": 2087,
+     "hit_pct": 77.19,
+     "wlo_pct": 75.34,
+     "diff_pp": -7.81
+    },
+    {
+     "range": "90–100%",
+     "n": 359,
+     "hit_pct": 83.29,
+     "wlo_pct": 79.08,
+     "diff_pp": -11.71
+    }
+   ]
+  },
+  {
+   "name": "Over 2.5 goluri (FT) — sub-set ligi top calibrate",
+   "scope": "7,089 meciuri pe sub-set restrâns (calibrare strictă verificată)",
+   "buckets": [
+    {
+     "range": "50–60%",
+     "n": 2088,
+     "hit_pct": 53.3,
+     "wlo_pct": 51.16,
+     "diff_pp": -1.7
+    },
+    {
+     "range": "60–70%",
+     "n": 1246,
+     "hit_pct": 61.24,
+     "wlo_pct": 58.5,
+     "diff_pp": -3.76
+    },
+    {
+     "range": "70–80%",
+     "n": 427,
+     "hit_pct": 68.62,
+     "wlo_pct": 64.07,
+     "diff_pp": -6.38
+    },
+    {
+     "range": "80–90%",
+     "n": 80,
+     "hit_pct": 80.0,
+     "wlo_pct": 69.95,
+     "diff_pp": -5.0
+    },
+    {
+     "range": "90–100%",
+     "n": 6,
+     "hit_pct": 66.67,
+     "wlo_pct": 30.0,
+     "diff_pp": -28.33
+    }
+   ]
+  },
+  {
+   "name": "Over 3.5 goluri (FT)",
+   "scope": "toate 65,250 meciuri",
+   "buckets": [
+    {
+     "range": "50–60%",
+     "n": 4661,
+     "hit_pct": 47.78,
+     "wlo_pct": 46.35,
+     "diff_pp": -7.22
+    },
+    {
+     "range": "60–70%",
+     "n": 2136,
+     "hit_pct": 54.49,
+     "wlo_pct": 52.38,
+     "diff_pp": -10.51
+    },
+    {
+     "range": "70–80%",
+     "n": 905,
+     "hit_pct": 59.34,
+     "wlo_pct": 56.1,
+     "diff_pp": -15.66
+    },
+    {
+     "range": "80–90%",
+     "n": 255,
+     "hit_pct": 63.14,
+     "wlo_pct": 57.06,
+     "diff_pp": -21.86
+    },
+    {
+     "range": "90–100%",
+     "n": 49,
+     "hit_pct": 63.27,
+     "wlo_pct": 49.27,
+     "diff_pp": -31.73
+    }
+   ]
+  },
+  {
+   "name": "Over 3.5 goluri (FT) — sub-set ligi top calibrate",
+   "scope": "7,089 meciuri pe sub-set restrâns (calibrare strictă verificată)",
+   "buckets": [
+    {
+     "range": "50–60%",
+     "n": 387,
+     "hit_pct": 44.19,
+     "wlo_pct": 39.32,
+     "diff_pp": -10.81
+    },
+    {
+     "range": "60–70%",
+     "n": 102,
+     "hit_pct": 57.84,
+     "wlo_pct": 48.15,
+     "diff_pp": -7.16
+    },
+    {
+     "range": "70–80%",
+     "n": 23,
+     "hit_pct": 47.83,
+     "wlo_pct": 29.24,
+     "diff_pp": -27.17
+    },
+    {
+     "range": "80–90%",
+     "n": 2,
+     "hit_pct": 0.0,
+     "wlo_pct": 0.0,
+     "diff_pp": -85.0
+    },
+    {
+     "range": "90–100%",
+     "n": 0,
+     "hit_pct": 0.0,
+     "wlo_pct": 0.0,
+     "diff_pp": 0.0
+    }
+   ]
+  },
+  {
+   "name": "BTTS (FT)",
+   "scope": "toate 65,250 meciuri",
+   "buckets": [
+    {
+     "range": "50–60%",
+     "n": 16717,
+     "hit_pct": 55.58,
+     "wlo_pct": 54.83,
+     "diff_pp": 0.58
+    },
+    {
+     "range": "60–70%",
+     "n": 8504,
+     "hit_pct": 59.97,
+     "wlo_pct": 58.93,
+     "diff_pp": -5.03
+    },
+    {
+     "range": "70–80%",
+     "n": 2607,
+     "hit_pct": 66.94,
+     "wlo_pct": 65.11,
+     "diff_pp": -8.06
+    },
+    {
+     "range": "80–90%",
+     "n": 390,
+     "hit_pct": 67.18,
+     "wlo_pct": 62.37,
+     "diff_pp": -17.82
+    },
+    {
+     "range": "90–100%",
+     "n": 4,
+     "hit_pct": 75.0,
+     "wlo_pct": 30.06,
+     "diff_pp": -20.0
+    }
+   ]
+  },
+  {
+   "name": "BTTS (FT) — sub-set ligi top calibrate",
+   "scope": "7,089 meciuri pe sub-set restrâns (calibrare strictă verificată)",
+   "buckets": [
+    {
+     "range": "50–60%",
+     "n": 2442,
+     "hit_pct": 55.41,
+     "wlo_pct": 53.43,
+     "diff_pp": 0.41
+    },
+    {
+     "range": "60–70%",
+     "n": 902,
+     "hit_pct": 59.98,
+     "wlo_pct": 56.74,
+     "diff_pp": -5.02
+    },
+    {
+     "range": "70–80%",
+     "n": 131,
+     "hit_pct": 66.41,
+     "wlo_pct": 57.96,
+     "diff_pp": -8.59
+    },
+    {
+     "range": "80–90%",
+     "n": 8,
+     "hit_pct": 62.5,
+     "wlo_pct": 30.57,
+     "diff_pp": -22.5
+    },
+    {
+     "range": "90–100%",
+     "n": 0,
+     "hit_pct": 0.0,
+     "wlo_pct": 0.0,
+     "diff_pp": 0.0
+    }
+   ]
+  },
+  {
+   "name": "HT Over 0.5",
+   "scope": "toate 65,250 meciuri",
+   "buckets": [
+    {
+     "range": "50–60%",
+     "n": 11388,
+     "hit_pct": 66.23,
+     "wlo_pct": 65.35,
+     "diff_pp": 11.23
+    },
+    {
+     "range": "60–70%",
+     "n": 19556,
+     "hit_pct": 68.65,
+     "wlo_pct": 68.0,
+     "diff_pp": 3.65
+    },
+    {
+     "range": "70–80%",
+     "n": 18925,
+     "hit_pct": 73.72,
+     "wlo_pct": 73.09,
+     "diff_pp": -1.28
+    },
+    {
+     "range": "80–90%",
+     "n": 7249,
+     "hit_pct": 79.56,
+     "wlo_pct": 78.61,
+     "diff_pp": -5.44
+    },
+    {
+     "range": "90–100%",
+     "n": 662,
+     "hit_pct": 84.74,
+     "wlo_pct": 81.8,
+     "diff_pp": -10.26
+    }
+   ]
+  },
+  {
+   "name": "HT Over 0.5 — sub-set ligi top calibrate",
+   "scope": "7,089 meciuri pe sub-set restrâns (calibrare strictă verificată)",
+   "buckets": [
+    {
+     "range": "50–60%",
+     "n": 942,
+     "hit_pct": 68.15,
+     "wlo_pct": 65.11,
+     "diff_pp": 13.15
+    },
+    {
+     "range": "60–70%",
+     "n": 2451,
+     "hit_pct": 69.89,
+     "wlo_pct": 68.04,
+     "diff_pp": 4.89
+    },
+    {
+     "range": "70–80%",
+     "n": 2701,
+     "hit_pct": 72.12,
+     "wlo_pct": 70.4,
+     "diff_pp": -2.88
+    },
+    {
+     "range": "80–90%",
+     "n": 663,
+     "hit_pct": 76.32,
+     "wlo_pct": 72.94,
+     "diff_pp": -8.68
+    },
+    {
+     "range": "90–100%",
+     "n": 18,
+     "hit_pct": 94.44,
+     "wlo_pct": 74.24,
+     "diff_pp": -0.56
+    }
+   ]
+  },
+  {
+   "name": "HT Over 1.5",
+   "scope": "toate 65,250 meciuri",
+   "buckets": [
+    {
+     "range": "50–60%",
+     "n": 6437,
+     "hit_pct": 44.21,
+     "wlo_pct": 43.0,
+     "diff_pp": -10.79
+    },
+    {
+     "range": "60–70%",
+     "n": 2627,
+     "hit_pct": 50.59,
+     "wlo_pct": 48.68,
+     "diff_pp": -14.41
+    },
+    {
+     "range": "70–80%",
+     "n": 712,
+     "hit_pct": 55.76,
+     "wlo_pct": 52.09,
+     "diff_pp": -19.24
+    },
+    {
+     "range": "80–90%",
+     "n": 139,
+     "hit_pct": 61.15,
+     "wlo_pct": 52.85,
+     "diff_pp": -23.85
+    },
+    {
+     "range": "90–100%",
+     "n": 10,
+     "hit_pct": 60.0,
+     "wlo_pct": 31.27,
+     "diff_pp": -35.0
+    }
+   ]
+  },
+  {
+   "name": "HT Over 1.5 — sub-set ligi top calibrate",
+   "scope": "7,089 meciuri pe sub-set restrâns (calibrare strictă verificată)",
+   "buckets": [
+    {
+     "range": "50–60%",
+     "n": 713,
+     "hit_pct": 41.51,
+     "wlo_pct": 37.95,
+     "diff_pp": -13.49
+    },
+    {
+     "range": "60–70%",
+     "n": 185,
+     "hit_pct": 47.57,
+     "wlo_pct": 40.49,
+     "diff_pp": -17.43
+    },
+    {
+     "range": "70–80%",
+     "n": 30,
+     "hit_pct": 46.67,
+     "wlo_pct": 30.23,
+     "diff_pp": -28.33
+    },
+    {
+     "range": "80–90%",
+     "n": 2,
+     "hit_pct": 50.0,
+     "wlo_pct": 9.45,
+     "diff_pp": -35.0
+    },
+    {
+     "range": "90–100%",
+     "n": 0,
+     "hit_pct": 0.0,
+     "wlo_pct": 0.0,
+     "diff_pp": 0.0
+    }
+   ]
+  }
+ ],
+ "leagues": [
+  {
+   "country": "World",
+   "league": "Friendlies Clubs",
+   "n": 2868,
+   "bias_pp": -1.14,
+   "calibrated": true
+  },
+  {
+   "country": "Brazil",
+   "league": "Serie D",
+   "n": 404,
+   "bias_pp": -3.16,
+   "calibrated": true
+  },
+  {
+   "country": "Japan",
+   "league": "J2 League",
+   "n": 380,
+   "bias_pp": 2.63,
+   "calibrated": true
+  },
+  {
+   "country": "Germany",
+   "league": "U19 Bundesliga",
+   "n": 357,
+   "bias_pp": -1.26,
+   "calibrated": true
+  },
+  {
+   "country": "Ghana",
+   "league": "Division One League",
+   "n": 347,
+   "bias_pp": -16.38,
+   "calibrated": false
+  },
+  {
+   "country": "Turkey",
+   "league": "2. Lig",
+   "n": 314,
+   "bias_pp": 0.94,
+   "calibrated": true
+  },
+  {
+   "country": "Mexico",
+   "league": "Liga Premier Serie A",
+   "n": 271,
+   "bias_pp": 0.51,
+   "calibrated": true
+  },
+  {
+   "country": "Argentina",
+   "league": "Primera Nacional",
+   "n": 269,
+   "bias_pp": -4.19,
+   "calibrated": true
+  },
+  {
+   "country": "England",
+   "league": "League One",
+   "n": 266,
+   "bias_pp": -5.29,
+   "calibrated": true
+  },
+  {
+   "country": "Italy",
+   "league": "Campionato Primavera - 2",
+   "n": 266,
+   "bias_pp": 1.76,
+   "calibrated": true
+  },
+  {
+   "country": "England",
+   "league": "League Two",
+   "n": 265,
+   "bias_pp": 4.27,
+   "calibrated": true
+  },
+  {
+   "country": "England",
+   "league": "National League - North",
+   "n": 265,
+   "bias_pp": -7.78,
+   "calibrated": true
+  },
+  {
+   "country": "England",
+   "league": "National League - South",
+   "n": 260,
+   "bias_pp": -12.35,
+   "calibrated": false
+  },
+  {
+   "country": "Argentina",
+   "league": "Liga Profesional Argentina",
+   "n": 255,
+   "bias_pp": -6.57,
+   "calibrated": true
+  },
+  {
+   "country": "England",
+   "league": "National League",
+   "n": 254,
+   "bias_pp": -8.52,
+   "calibrated": true
+  },
+  {
+   "country": "England",
+   "league": "Championship",
+   "n": 250,
+   "bias_pp": -1.72,
+   "calibrated": true
+  },
+  {
+   "country": "Algeria",
+   "league": "Ligue 2",
+   "n": 243,
+   "bias_pp": -15.66,
+   "calibrated": false
+  },
+  {
+   "country": "Spain",
+   "league": "Segunda División",
+   "n": 231,
+   "bias_pp": -7.58,
+   "calibrated": true
+  },
+  {
+   "country": "USA",
+   "league": "Major League Soccer",
+   "n": 218,
+   "bias_pp": -8.04,
+   "calibrated": true
+  },
+  {
+   "country": "Argentina",
+   "league": "Reserve League",
+   "n": 213,
+   "bias_pp": -6.69,
+   "calibrated": true
+  },
+  {
+   "country": "Congo-DR",
+   "league": "Ligue 1",
+   "n": 209,
+   "bias_pp": 5.23,
+   "calibrated": true
+  },
+  {
+   "country": "England",
+   "league": "Non League Premier - Southern Central",
+   "n": 204,
+   "bias_pp": -3.45,
+   "calibrated": true
+  },
+  {
+   "country": "Colombia",
+   "league": "Primera A",
+   "n": 202,
+   "bias_pp": -9.6,
+   "calibrated": true
+  },
+  {
+   "country": "England",
+   "league": "Non League Premier - Southern South",
+   "n": 202,
+   "bias_pp": -4.6,
+   "calibrated": true
+  },
+  {
+   "country": "Belgium",
+   "league": "First Amateur Division",
+   "n": 200,
+   "bias_pp": -9.5,
+   "calibrated": true
+  },
+  {
+   "country": "Italy",
+   "league": "Serie B",
+   "n": 200,
+   "bias_pp": -0.06,
+   "calibrated": true
+  },
+  {
+   "country": "Wales",
+   "league": "FAW Championship",
+   "n": 200,
+   "bias_pp": 0.23,
+   "calibrated": true
+  },
+  {
+   "country": "England",
+   "league": "Non League Premier - Isthmian",
+   "n": 199,
+   "bias_pp": 2.43,
+   "calibrated": true
+  },
+  {
+   "country": "Kenya",
+   "league": "Super League",
+   "n": 199,
+   "bias_pp": -20.26,
+   "calibrated": false
+  },
+  {
+   "country": "USA",
+   "league": "USL League Two",
+   "n": 199,
+   "bias_pp": 0.88,
+   "calibrated": true
+  },
+  {
+   "country": "Argentina",
+   "league": "Primera B Metropolitana",
+   "n": 197,
+   "bias_pp": 7.44,
+   "calibrated": true
+  },
+  {
+   "country": "Italy",
+   "league": "Campionato Primavera - 1",
+   "n": 196,
+   "bias_pp": -5.93,
+   "calibrated": true
+  },
+  {
+   "country": "England",
+   "league": "Premier League",
+   "n": 194,
+   "bias_pp": 8.26,
+   "calibrated": true
+  },
+  {
+   "country": "Iraq",
+   "league": "Iraqi League",
+   "n": 191,
+   "bias_pp": -11.97,
+   "calibrated": false
+  },
+  {
+   "country": "Spain",
+   "league": "La Liga",
+   "n": 191,
+   "bias_pp": -8.5,
+   "calibrated": true
+  },
+  {
+   "country": "Germany",
+   "league": "3. Liga",
+   "n": 190,
+   "bias_pp": -9.69,
+   "calibrated": true
+  },
+  {
+   "country": "Japan",
+   "league": "J1 League",
+   "n": 190,
+   "bias_pp": -10.83,
+   "calibrated": false
+  },
+  {
+   "country": "Spain",
+   "league": "Primera División RFEF - Group 1",
+   "n": 190,
+   "bias_pp": -1.81,
+   "calibrated": true
+  },
+  {
+   "country": "Spain",
+   "league": "Primera División RFEF - Group 2",
+   "n": 190,
+   "bias_pp": -14.57,
+   "calibrated": false
+  },
+  {
+   "country": "Nigeria",
+   "league": "NPFL",
+   "n": 189,
+   "bias_pp": -11.84,
+   "calibrated": false
+  },
+  {
+   "country": "Egypt",
+   "league": "Premier League",
+   "n": 186,
+   "bias_pp": -3.89,
+   "calibrated": true
+  },
+  {
+   "country": "Saudi-Arabia",
+   "league": "Pro League",
+   "n": 186,
+   "bias_pp": -0.71,
+   "calibrated": true
+  },
+  {
+   "country": "Tunisia",
+   "league": "Ligue 2",
+   "n": 186,
+   "bias_pp": -5.29,
+   "calibrated": true
+  },
+  {
+   "country": "Turkey",
+   "league": "1. Lig",
+   "n": 185,
+   "bias_pp": -6.17,
+   "calibrated": true
+  },
+  {
+   "country": "England",
+   "league": "Non League Div One - Isthmian North",
+   "n": 184,
+   "bias_pp": 2.71,
+   "calibrated": true
+  },
+  {
+   "country": "Italy",
+   "league": "Serie A",
+   "n": 184,
+   "bias_pp": 0.36,
+   "calibrated": true
+  },
+  {
+   "country": "England",
+   "league": "Non League Premier - Northern",
+   "n": 182,
+   "bias_pp": 8.81,
+   "calibrated": true
+  },
+  {
+   "country": "Netherlands",
+   "league": "Eerste Divisie",
+   "n": 182,
+   "bias_pp": 4.74,
+   "calibrated": true
+  },
+  {
+   "country": "Argentina",
+   "league": "Primera C",
+   "n": 181,
+   "bias_pp": 10.69,
+   "calibrated": false
+  },
+  {
+   "country": "England",
+   "league": "Non League Div One - Northern Midlands",
+   "n": 180,
+   "bias_pp": 2.38,
+   "calibrated": true
+  },
+  {
+   "country": "Germany",
+   "league": "Oberliga - Westfalen",
+   "n": 178,
+   "bias_pp": 4.91,
+   "calibrated": true
+  },
+  {
+   "country": "Zambia",
+   "league": "Super League",
+   "n": 178,
+   "bias_pp": -1.97,
+   "calibrated": true
+  },
+  {
+   "country": "Brazil",
+   "league": "Serie A",
+   "n": 177,
+   "bias_pp": -9.9,
+   "calibrated": true
+  },
+  {
+   "country": "England",
+   "league": "Non League Div One - Northern West",
+   "n": 175,
+   "bias_pp": -4.2,
+   "calibrated": true
+  },
+  {
+   "country": "Bulgaria",
+   "league": "Third League - Southeast",
+   "n": 171,
+   "bias_pp": -5.16,
+   "calibrated": true
+  },
+  {
+   "country": "Benin",
+   "league": "Championnat National",
+   "n": 170,
+   "bias_pp": -15.51,
+   "calibrated": false
+  },
+  {
+   "country": "England",
+   "league": "Premier League 2 Division One",
+   "n": 170,
+   "bias_pp": 6.31,
+   "calibrated": true
+  },
+  {
+   "country": "Italy",
+   "league": "Serie C - Girone A",
+   "n": 170,
+   "bias_pp": -14.3,
+   "calibrated": false
+  },
+  {
+   "country": "Italy",
+   "league": "Serie C - Girone C",
+   "n": 170,
+   "bias_pp": 8.07,
+   "calibrated": true
+  },
+  {
+   "country": "Saudi-Arabia",
+   "league": "Division 1",
+   "n": 169,
+   "bias_pp": -19.55,
+   "calibrated": false
+  },
+  {
+   "country": "USA",
+   "league": "MLS Next Pro",
+   "n": 169,
+   "bias_pp": 7.65,
+   "calibrated": true
+  },
+  {
+   "country": "Kenya",
+   "league": "FKF Premier League",
+   "n": 167,
+   "bias_pp": -5.49,
+   "calibrated": true
+  },
+  {
+   "country": "Spain",
+   "league": "Tercera División RFEF - Group 1",
+   "n": 167,
+   "bias_pp": -13.73,
+   "calibrated": false
+  },
+  {
+   "country": "Germany",
+   "league": "Bundesliga",
+   "n": 166,
+   "bias_pp": -1.72,
+   "calibrated": true
+  },
+  {
+   "country": "England",
+   "league": "Non League Div One - Isthmian South Central",
+   "n": 164,
+   "bias_pp": -3.08,
+   "calibrated": true
+  },
+  {
+   "country": "England",
+   "league": "Non League Div One - Isthmian South East",
+   "n": 164,
+   "bias_pp": 1.12,
+   "calibrated": true
+  },
+  {
+   "country": "England",
+   "league": "Non League Div One - Northern East",
+   "n": 164,
+   "bias_pp": 3.41,
+   "calibrated": true
+  },
+  {
+   "country": "England",
+   "league": "Non League Div One - Southern Central",
+   "n": 164,
+   "bias_pp": -8.05,
+   "calibrated": true
+  },
+  {
+   "country": "Spain",
+   "league": "Tercera División RFEF - Group 6",
+   "n": 164,
+   "bias_pp": -4.56,
+   "calibrated": true
+  },
+  {
+   "country": "England",
+   "league": "Non League Div One - Southern South",
+   "n": 162,
+   "bias_pp": 5.34,
+   "calibrated": true
+  },
+  {
+   "country": "Spain",
+   "league": "Tercera División RFEF - Group 9",
+   "n": 162,
+   "bias_pp": -1.13,
+   "calibrated": true
+  },
+  {
+   "country": "Belgium",
+   "league": "Jupiler Pro League",
+   "n": 161,
+   "bias_pp": -5.67,
+   "calibrated": true
+  },
+  {
+   "country": "Ethiopia",
+   "league": "Premier League",
+   "n": 161,
+   "bias_pp": 0.66,
+   "calibrated": true
+  },
+  {
+   "country": "Netherlands",
+   "league": "Tweede Divisie",
+   "n": 161,
+   "bias_pp": -0.05,
+   "calibrated": true
+  },
+  {
+   "country": "Rwanda",
+   "league": "National Soccer League",
+   "n": 161,
+   "bias_pp": -9.98,
+   "calibrated": true
+  },
+  {
+   "country": "Angola",
+   "league": "Girabola",
+   "n": 160,
+   "bias_pp": -6.8,
+   "calibrated": true
+  },
+  {
+   "country": "England",
+   "league": "Professional Development League",
+   "n": 160,
+   "bias_pp": 0.84,
+   "calibrated": true
+  },
+  {
+   "country": "Spain",
+   "league": "Tercera División RFEF - Group 11",
+   "n": 160,
+   "bias_pp": -3.83,
+   "calibrated": true
+  },
+  {
+   "country": "Spain",
+   "league": "Tercera División RFEF - Group 13",
+   "n": 160,
+   "bias_pp": -15.85,
+   "calibrated": false
+  },
+  {
+   "country": "Spain",
+   "league": "Tercera División RFEF - Group 10",
+   "n": 159,
+   "bias_pp": 0.48,
+   "calibrated": true
+  },
+  {
+   "country": "Spain",
+   "league": "Tercera División RFEF - Group 5",
+   "n": 159,
+   "bias_pp": -0.37,
+   "calibrated": true
+  },
+  {
+   "country": "Spain",
+   "league": "Tercera División RFEF - Group 8",
+   "n": 159,
+   "bias_pp": -18.0,
+   "calibrated": false
+  },
+  {
+   "country": "World",
+   "league": "Friendlies",
+   "n": 159,
+   "bias_pp": -2.51,
+   "calibrated": true
+  },
+  {
+   "country": "Mexico",
+   "league": "Liga MX",
+   "n": 158,
+   "bias_pp": 3.32,
+   "calibrated": true
+  },
+  {
+   "country": "Mexico",
+   "league": "Liga MX U21",
+   "n": 158,
+   "bias_pp": -1.75,
+   "calibrated": true
+  },
+  {
+   "country": "Spain",
+   "league": "Tercera División RFEF - Group 14",
+   "n": 158,
+   "bias_pp": -12.58,
+   "calibrated": false
+  },
+  {
+   "country": "Spain",
+   "league": "Tercera División RFEF - Group 15",
+   "n": 158,
+   "bias_pp": -5.54,
+   "calibrated": true
+  },
+  {
+   "country": "Spain",
+   "league": "Tercera División RFEF - Group 16",
+   "n": 158,
+   "bias_pp": -9.75,
+   "calibrated": true
+  },
+  {
+   "country": "Spain",
+   "league": "Tercera División RFEF - Group 17",
+   "n": 158,
+   "bias_pp": -12.79,
+   "calibrated": false
+  },
+  {
+   "country": "Spain",
+   "league": "Tercera División RFEF - Group 18",
+   "n": 158,
+   "bias_pp": 15.35,
+   "calibrated": false
+  },
+  {
+   "country": "Spain",
+   "league": "Tercera División RFEF - Group 2",
+   "n": 158,
+   "bias_pp": -3.25,
+   "calibrated": true
+  },
+  {
+   "country": "Spain",
+   "league": "Tercera División RFEF - Group 3",
+   "n": 158,
+   "bias_pp": -11.27,
+   "calibrated": false
+  },
+  {
+   "country": "Spain",
+   "league": "Tercera División RFEF - Group 4",
+   "n": 158,
+   "bias_pp": -11.34,
+   "calibrated": false
+  },
+  {
+   "country": "Spain",
+   "league": "Tercera División RFEF - Group 7",
+   "n": 158,
+   "bias_pp": -7.15,
+   "calibrated": true
+  },
+  {
+   "country": "France",
+   "league": "Ligue 1",
+   "n": 157,
+   "bias_pp": 5.93,
+   "calibrated": true
+  },
+  {
+   "country": "Portugal",
+   "league": "Segunda Liga",
+   "n": 156,
+   "bias_pp": 5.1,
+   "calibrated": true
+  },
+  {
+   "country": "Belgium",
+   "league": "Second Amateur Division - ACFF",
+   "n": 155,
+   "bias_pp": -8.75,
+   "calibrated": true
+  },
+  {
+   "country": "Germany",
+   "league": "2. Bundesliga",
+   "n": 155,
+   "bias_pp": -3.54,
+   "calibrated": true
+  },
+  {
+   "country": "Jamaica",
+   "league": "Premier League",
+   "n": 155,
+   "bias_pp": -4.13,
+   "calibrated": true
+  },
+  {
+   "country": "Portugal",
+   "league": "Primeira Liga",
+   "n": 155,
+   "bias_pp": 2.19,
+   "calibrated": true
+  },
+  {
+   "country": "Switzerland",
+   "league": "1. Liga Promotion",
+   "n": 155,
+   "bias_pp": -6.7,
+   "calibrated": true
+  },
+  {
+   "country": "Indonesia",
+   "league": "Liga 1",
+   "n": 153,
+   "bias_pp": -14.61,
+   "calibrated": false
+  },
+  {
+   "country": "Italy",
+   "league": "Serie C - Girone B",
+   "n": 153,
+   "bias_pp": 2.08,
+   "calibrated": true
+  },
+  {
+   "country": "Netherlands",
+   "league": "Derde Divisie - Saturday",
+   "n": 153,
+   "bias_pp": -2.47,
+   "calibrated": true
+  },
+  {
+   "country": "Netherlands",
+   "league": "Derde Divisie - Sunday",
+   "n": 153,
+   "bias_pp": 0.16,
+   "calibrated": true
+  },
+  {
+   "country": "Peru",
+   "league": "Primera División",
+   "n": 153,
+   "bias_pp": -4.13,
+   "calibrated": true
+  },
+  {
+   "country": "Romania",
+   "league": "Liga I",
+   "n": 153,
+   "bias_pp": -2.13,
+   "calibrated": true
+  },
+  {
+   "country": "Turkey",
+   "league": "Süper Lig",
+   "n": 153,
+   "bias_pp": -6.86,
+   "calibrated": true
+  },
+  {
+   "country": "Israel",
+   "league": "Liga Leumit",
+   "n": 152,
+   "bias_pp": -2.37,
+   "calibrated": true
+  },
+  {
+   "country": "Mexico",
+   "league": "Liga MX Femenil",
+   "n": 152,
+   "bias_pp": 3.16,
+   "calibrated": true
+  },
+  {
+   "country": "Thailand",
+   "league": "Thai League 2",
+   "n": 150,
+   "bias_pp": -4.23,
+   "calibrated": true
+  },
+  {
+   "country": "Netherlands",
+   "league": "Eredivisie",
+   "n": 149,
+   "bias_pp": -2.01,
+   "calibrated": true
+  },
+  {
+   "country": "Argentina",
+   "league": "Torneo Federal A",
+   "n": 148,
+   "bias_pp": 12.61,
+   "calibrated": false
+  },
+  {
+   "country": "Germany",
+   "league": "Regionalliga - West",
+   "n": 147,
+   "bias_pp": 7.51,
+   "calibrated": true
+  },
+  {
+   "country": "Spain",
+   "league": "Tercera División RFEF - Group 12",
+   "n": 147,
+   "bias_pp": 23.31,
+   "calibrated": false
+  },
+  {
+   "country": "France",
+   "league": "Ligue 2",
+   "n": 146,
+   "bias_pp": 2.04,
+   "calibrated": true
+  },
+  {
+   "country": "Guatemala",
+   "league": "Liga Nacional",
+   "n": 146,
+   "bias_pp": -4.68,
+   "calibrated": true
+  },
+  {
+   "country": "Poland",
+   "league": "Ekstraklasa",
+   "n": 146,
+   "bias_pp": 5.03,
+   "calibrated": true
+  },
+  {
+   "country": "Egypt",
+   "league": "Second League - Group A",
+   "n": 145,
+   "bias_pp": -2.09,
+   "calibrated": true
+  },
+  {
+   "country": "El-Salvador",
+   "league": "Primera Division",
+   "n": 145,
+   "bias_pp": -3.6,
+   "calibrated": true
+  },
+  {
+   "country": "Spain",
+   "league": "Segunda División RFEF - Group 5",
+   "n": 145,
+   "bias_pp": -8.0,
+   "calibrated": true
+  },
+  {
+   "country": "France",
+   "league": "National 1",
+   "n": 144,
+   "bias_pp": -6.34,
+   "calibrated": true
+  },
+  {
+   "country": "Germany",
+   "league": "Oberliga - Niederrhein",
+   "n": 144,
+   "bias_pp": -2.81,
+   "calibrated": true
+  },
+  {
+   "country": "San-Marino",
+   "league": "Campionato",
+   "n": 144,
+   "bias_pp": -2.6,
+   "calibrated": true
+  },
+  {
+   "country": "Spain",
+   "league": "Segunda División RFEF - Group 1",
+   "n": 144,
+   "bias_pp": -16.91,
+   "calibrated": false
+  },
+  {
+   "country": "Spain",
+   "league": "Segunda División RFEF - Group 2",
+   "n": 144,
+   "bias_pp": -12.74,
+   "calibrated": false
+  },
+  {
+   "country": "Spain",
+   "league": "Segunda División RFEF - Group 3",
+   "n": 144,
+   "bias_pp": 0.39,
+   "calibrated": true
+  },
+  {
+   "country": "Spain",
+   "league": "Segunda División RFEF - Group 4",
+   "n": 144,
+   "bias_pp": -17.05,
+   "calibrated": false
+  },
+  {
+   "country": "Uganda",
+   "league": "Premier League",
+   "n": 144,
+   "bias_pp": 15.87,
+   "calibrated": false
+  },
+  {
+   "country": "Kosovo",
+   "league": "Liga E Pare",
+   "n": 143,
+   "bias_pp": -12.28,
+   "calibrated": false
+  },
+  {
+   "country": "Uruguay",
+   "league": "Primera División - Apertura",
+   "n": 143,
+   "bias_pp": -8.59,
+   "calibrated": true
+  },
+  {
+   "country": "Brazil",
+   "league": "Paulista - A2",
+   "n": 142,
+   "bias_pp": -2.22,
+   "calibrated": true
+  },
+  {
+   "country": "Bulgaria",
+   "league": "First League",
+   "n": 142,
+   "bias_pp": 10.01,
+   "calibrated": false
+  },
+  {
+   "country": "Poland",
+   "league": "III Liga - Group 3",
+   "n": 142,
+   "bias_pp": 7.17,
+   "calibrated": true
+  },
+  {
+   "country": "Italy",
+   "league": "Serie D - Girone B",
+   "n": 141,
+   "bias_pp": -7.13,
+   "calibrated": true
+  },
+  {
+   "country": "Italy",
+   "league": "Serie D - Girone C",
+   "n": 141,
+   "bias_pp": -3.69,
+   "calibrated": true
+  },
+  {
+   "country": "Italy",
+   "league": "Serie D - Girone E",
+   "n": 141,
+   "bias_pp": 1.23,
+   "calibrated": true
+  },
+  {
+   "country": "Brazil",
+   "league": "Brasileiro U20 A",
+   "n": 140,
+   "bias_pp": -11.07,
+   "calibrated": false
+  },
+  {
+   "country": "Italy",
+   "league": "Serie D - Girone A",
+   "n": 140,
+   "bias_pp": -11.44,
+   "calibrated": false
+  },
+  {
+   "country": "Italy",
+   "league": "Serie D - Girone D",
+   "n": 140,
+   "bias_pp": -4.63,
+   "calibrated": true
+  },
+  {
+   "country": "Italy",
+   "league": "Serie D - Girone G",
+   "n": 140,
+   "bias_pp": 10.99,
+   "calibrated": false
+  },
+  {
+   "country": "Italy",
+   "league": "Serie D - Girone H",
+   "n": 140,
+   "bias_pp": -18.93,
+   "calibrated": false
+  },
+  {
+   "country": "Italy",
+   "league": "Serie D - Girone I",
+   "n": 140,
+   "bias_pp": -5.75,
+   "calibrated": true
+  },
+  {
+   "country": "Poland",
+   "league": "III Liga - Group 2",
+   "n": 140,
+   "bias_pp": -9.93,
+   "calibrated": true
+  },
+  {
+   "country": "Germany",
+   "league": "Regionalliga - Bayern",
+   "n": 139,
+   "bias_pp": 6.66,
+   "calibrated": true
+  },
+  {
+   "country": "Germany",
+   "league": "Regionalliga - Nordost",
+   "n": 139,
+   "bias_pp": -14.06,
+   "calibrated": false
+  },
+  {
+   "country": "Italy",
+   "league": "Serie D - Girone F",
+   "n": 139,
+   "bias_pp": 3.28,
+   "calibrated": true
+  },
+  {
+   "country": "Poland",
+   "league": "III Liga - Group 1",
+   "n": 139,
+   "bias_pp": 12.59,
+   "calibrated": false
+  },
+  {
+   "country": "Poland",
+   "league": "I Liga",
+   "n": 138,
+   "bias_pp": 0.67,
+   "calibrated": true
+  },
+  {
+   "country": "Ghana",
+   "league": "Premier League",
+   "n": 137,
+   "bias_pp": -16.45,
+   "calibrated": false
+  },
+  {
+   "country": "Poland",
+   "league": "III Liga - Group 4",
+   "n": 137,
+   "bias_pp": 11.34,
+   "calibrated": false
+  },
+  {
+   "country": "Portugal",
+   "league": "Liga 3",
+   "n": 137,
+   "bias_pp": -4.35,
+   "calibrated": true
+  },
+  {
+   "country": "Bulgaria",
+   "league": "Third League - Southwest",
+   "n": 136,
+   "bias_pp": 17.97,
+   "calibrated": false
+  },
+  {
+   "country": "France",
+   "league": "National 2 - Group B",
+   "n": 136,
+   "bias_pp": 1.08,
+   "calibrated": true
+  },
+  {
+   "country": "Germany",
+   "league": "Oberliga - Baden-Württemberg",
+   "n": 136,
+   "bias_pp": -10.68,
+   "calibrated": false
+  },
+  {
+   "country": "Poland",
+   "league": "II Liga - East",
+   "n": 136,
+   "bias_pp": -7.8,
+   "calibrated": true
+  },
+  {
+   "country": "Serbia",
+   "league": "Super Liga",
+   "n": 136,
+   "bias_pp": 8.75,
+   "calibrated": true
+  },
+  {
+   "country": "Germany",
+   "league": "Oberliga - Hamburg",
+   "n": 135,
+   "bias_pp": 5.49,
+   "calibrated": true
+  },
+  {
+   "country": "Australia",
+   "league": "New South Wales NPL",
+   "n": 134,
+   "bias_pp": 8.46,
+   "calibrated": true
+  },
+  {
+   "country": "Brazil",
+   "league": "Paulista - A3",
+   "n": 134,
+   "bias_pp": -7.99,
+   "calibrated": true
+  },
+  {
+   "country": "Brazil",
+   "league": "Paulista - A4",
+   "n": 134,
+   "bias_pp": 10.39,
+   "calibrated": false
+  },
+  {
+   "country": "Czech-Republic",
+   "league": "3. liga - MSFL",
+   "n": 134,
+   "bias_pp": 12.85,
+   "calibrated": false
+  },
+  {
+   "country": "Bulgaria",
+   "league": "Third League - Northeast",
+   "n": 133,
+   "bias_pp": -9.61,
+   "calibrated": true
+  },
+  {
+   "country": "Germany",
+   "league": "Oberliga - Hessen",
+   "n": 133,
+   "bias_pp": -10.94,
+   "calibrated": false
+  },
+  {
+   "country": "France",
+   "league": "National 2 - Group A",
+   "n": 132,
+   "bias_pp": -3.77,
+   "calibrated": true
+  },
+  {
+   "country": "Paraguay",
+   "league": "Division Profesional - Apertura",
+   "n": 132,
+   "bias_pp": -5.65,
+   "calibrated": true
+  },
+  {
+   "country": "Romania",
+   "league": "Liga II",
+   "n": 132,
+   "bias_pp": -9.56,
+   "calibrated": true
+  },
+  {
+   "country": "Botswana",
+   "league": "Premier League",
+   "n": 131,
+   "bias_pp": -0.43,
+   "calibrated": true
+  },
+  {
+   "country": "Colombia",
+   "league": "Primera B",
+   "n": 131,
+   "bias_pp": 3.94,
+   "calibrated": true
+  },
+  {
+   "country": "Germany",
+   "league": "Oberliga - Rheinland-Pfalz / Saar",
+   "n": 131,
+   "bias_pp": -4.14,
+   "calibrated": true
+  },
+  {
+   "country": "South-Africa",
+   "league": "Premier Soccer League",
+   "n": 131,
+   "bias_pp": -12.8,
+   "calibrated": false
+  },
+  {
+   "country": "Czech-Republic",
+   "league": "3. liga - CFL B",
+   "n": 130,
+   "bias_pp": -7.28,
+   "calibrated": true
+  },
+  {
+   "country": "France",
+   "league": "National 2 - Group C",
+   "n": 130,
+   "bias_pp": -10.15,
+   "calibrated": false
+  },
+  {
+   "country": "South-Africa",
+   "league": "Diski Challenge",
+   "n": 130,
+   "bias_pp": -7.49,
+   "calibrated": true
+  },
+  {
+   "country": "Romania",
+   "league": "Liga III - Play-offs",
+   "n": 129,
+   "bias_pp": 8.52,
+   "calibrated": true
+  },
+  {
+   "country": "South-Africa",
+   "league": "1st Division",
+   "n": 129,
+   "bias_pp": -8.9,
+   "calibrated": true
+  },
+  {
+   "country": "Austria",
+   "league": "Regionalliga - Ost",
+   "n": 128,
+   "bias_pp": -7.36,
+   "calibrated": true
+  },
+  {
+   "country": "Czech-Republic",
+   "league": "3. liga - CFL A",
+   "n": 128,
+   "bias_pp": 6.33,
+   "calibrated": true
+  },
+  {
+   "country": "Czech-Republic",
+   "league": "Czech Liga",
+   "n": 128,
+   "bias_pp": -0.92,
+   "calibrated": true
+  },
+  {
+   "country": "Lesotho",
+   "league": "Premier League",
+   "n": 128,
+   "bias_pp": 5.12,
+   "calibrated": true
+  },
+  {
+   "country": "Scotland",
+   "league": "Football League - Highland League",
+   "n": 127,
+   "bias_pp": 10.81,
+   "calibrated": false
+  },
+  {
+   "country": "Ecuador",
+   "league": "Liga Pro",
+   "n": 126,
+   "bias_pp": 10.41,
+   "calibrated": false
+  },
+  {
+   "country": "Germany",
+   "league": "Regionalliga - SudWest",
+   "n": 126,
+   "bias_pp": -1.22,
+   "calibrated": true
+  },
+  {
+   "country": "World",
+   "league": "CONMEBOL Libertadores",
+   "n": 126,
+   "bias_pp": 2.83,
+   "calibrated": true
+  },
+  {
+   "country": "Cameroon",
+   "league": "Elite One",
+   "n": 125,
+   "bias_pp": -8.01,
+   "calibrated": true
+  },
+  {
+   "country": "Costa-Rica",
+   "league": "Liga de Ascenso",
+   "n": 125,
+   "bias_pp": -7.26,
+   "calibrated": true
+  },
+  {
+   "country": "Eswatini",
+   "league": "Premier League",
+   "n": 125,
+   "bias_pp": 11.47,
+   "calibrated": false
+  },
+  {
+   "country": "Greece",
+   "league": "Super League 1",
+   "n": 125,
+   "bias_pp": 10.05,
+   "calibrated": false
+  },
+  {
+   "country": "England",
+   "league": "U18 Premier League - South",
+   "n": 124,
+   "bias_pp": 9.38,
+   "calibrated": true
+  },
+  {
+   "country": "Honduras",
+   "league": "Liga Nacional",
+   "n": 124,
+   "bias_pp": 8.76,
+   "calibrated": true
+  },
+  {
+   "country": "Serbia",
+   "league": "Prva Liga",
+   "n": 124,
+   "bias_pp": -2.78,
+   "calibrated": true
+  },
+  {
+   "country": "Indonesia",
+   "league": "Liga 2",
+   "n": 123,
+   "bias_pp": -17.83,
+   "calibrated": false
+  },
+  {
+   "country": "Portugal",
+   "league": "Liga Revelação U23",
+   "n": 123,
+   "bias_pp": -7.16,
+   "calibrated": true
+  },
+  {
+   "country": "Cyprus",
+   "league": "1. Division",
+   "n": 122,
+   "bias_pp": -4.95,
+   "calibrated": true
+  },
+  {
+   "country": "Switzerland",
+   "league": "1. Liga Classic - Group 1",
+   "n": 122,
+   "bias_pp": -15.46,
+   "calibrated": false
+  },
+  {
+   "country": "Luxembourg",
+   "league": "National Division",
+   "n": 121,
+   "bias_pp": 2.25,
+   "calibrated": true
+  },
+  {
+   "country": "Macedonia",
+   "league": "Second League",
+   "n": 121,
+   "bias_pp": -19.05,
+   "calibrated": false
+  },
+  {
+   "country": "Oman",
+   "league": "Professional League",
+   "n": 121,
+   "bias_pp": 1.14,
+   "calibrated": true
+  },
+  {
+   "country": "Switzerland",
+   "league": "1. Liga Classic - Group 2",
+   "n": 121,
+   "bias_pp": -4.18,
+   "calibrated": true
+  },
+  {
+   "country": "Tanzania",
+   "league": "Ligi kuu Bara",
+   "n": 121,
+   "bias_pp": -2.63,
+   "calibrated": true
+  },
+  {
+   "country": "USA",
+   "league": "USL Championship",
+   "n": 121,
+   "bias_pp": -3.46,
+   "calibrated": true
+  },
+  {
+   "country": "Belgium",
+   "league": "Challenger Pro League",
+   "n": 120,
+   "bias_pp": -4.79,
+   "calibrated": true
+  },
+  {
+   "country": "Brazil",
+   "league": "Copa Do Brasil",
+   "n": 120,
+   "bias_pp": 1.4,
+   "calibrated": true
+  },
+  {
+   "country": "Bulgaria",
+   "league": "Second League",
+   "n": 120,
+   "bias_pp": -13.43,
+   "calibrated": false
+  },
+  {
+   "country": "Burkina-Faso",
+   "league": "Ligue 1",
+   "n": 120,
+   "bias_pp": -14.23,
+   "calibrated": false
+  },
+  {
+   "country": "China",
+   "league": "Super League",
+   "n": 120,
+   "bias_pp": 3.28,
+   "calibrated": true
+  },
+  {
+   "country": "Croatia",
+   "league": "Second NL",
+   "n": 120,
+   "bias_pp": 5.38,
+   "calibrated": true
+  },
+  {
+   "country": "Germany",
+   "league": "Oberliga - Nordost-Süd",
+   "n": 120,
+   "bias_pp": 4.47,
+   "calibrated": true
+  },
+  {
+   "country": "Germany",
+   "league": "Regionalliga - Nord",
+   "n": 120,
+   "bias_pp": -6.09,
+   "calibrated": true
+  },
+  {
+   "country": "Hungary",
+   "league": "NB II",
+   "n": 120,
+   "bias_pp": -4.0,
+   "calibrated": true
+  },
+  {
+   "country": "Ivory-Coast",
+   "league": "Ligue 1",
+   "n": 120,
+   "bias_pp": -0.45,
+   "calibrated": true
+  },
+  {
+   "country": "Spain",
+   "league": "Primera División Femenina",
+   "n": 120,
+   "bias_pp": -0.31,
+   "calibrated": true
+  },
+  {
+   "country": "Switzerland",
+   "league": "1. Liga Classic - Group 3",
+   "n": 120,
+   "bias_pp": -1.88,
+   "calibrated": true
+  },
+  {
+   "country": "Tunisia",
+   "league": "Ligue 1",
+   "n": 120,
+   "bias_pp": 18.69,
+   "calibrated": false
+  },
+  {
+   "country": "Switzerland",
+   "league": "Super League",
+   "n": 118,
+   "bias_pp": -9.88,
+   "calibrated": true
+  },
+  {
+   "country": "Russia",
+   "league": "First League",
+   "n": 117,
+   "bias_pp": -12.9,
+   "calibrated": false
+  },
+  {
+   "country": "Portugal",
+   "league": "Júniores U19",
+   "n": 116,
+   "bias_pp": 2.35,
+   "calibrated": true
+  },
+  {
+   "country": "Germany",
+   "league": "Oberliga - Bayern Süd",
+   "n": 115,
+   "bias_pp": 1.62,
+   "calibrated": true
+  },
+  {
+   "country": "Germany",
+   "league": "Oberliga - Niedersachsen",
+   "n": 115,
+   "bias_pp": 0.38,
+   "calibrated": true
+  },
+  {
+   "country": "Germany",
+   "league": "Oberliga - Nordost-Nord",
+   "n": 115,
+   "bias_pp": 12.1,
+   "calibrated": false
+  },
+  {
+   "country": "Venezuela",
+   "league": "Primera División",
+   "n": 115,
+   "bias_pp": -7.5,
+   "calibrated": true
+  },
+  {
+   "country": "Croatia",
+   "league": "Third NL - Jug",
+   "n": 114,
+   "bias_pp": 7.93,
+   "calibrated": true
+  },
+  {
+   "country": "Germany",
+   "league": "Oberliga - Bayern Nord",
+   "n": 114,
+   "bias_pp": 0.1,
+   "calibrated": true
+  },
+  {
+   "country": "Israel",
+   "league": "Ligat Ha'al",
+   "n": 114,
+   "bias_pp": 0.04,
+   "calibrated": true
+  },
+  {
+   "country": "Mexico",
+   "league": "Liga de Expansión MX",
+   "n": 114,
+   "bias_pp": 2.8,
+   "calibrated": true
+  },
+  {
+   "country": "Austria",
+   "league": "Regionalliga - West",
+   "n": 113,
+   "bias_pp": -3.6,
+   "calibrated": true
+  },
+  {
+   "country": "Czech-Republic",
+   "league": "FNL",
+   "n": 113,
+   "bias_pp": 9.52,
+   "calibrated": true
+  },
+  {
+   "country": "Ukraine",
+   "league": "Druha Liga - Group A",
+   "n": 113,
+   "bias_pp": -8.32,
+   "calibrated": true
+  },
+  {
+   "country": "Ukraine",
+   "league": "Premier League",
+   "n": 113,
+   "bias_pp": 1.15,
+   "calibrated": true
+  },
+  {
+   "country": "Austria",
+   "league": "Regionalliga - Mitte",
+   "n": 112,
+   "bias_pp": 9.06,
+   "calibrated": true
+  },
+  {
+   "country": "Belgium",
+   "league": "Second Amateur Division - VFV A",
+   "n": 112,
+   "bias_pp": -0.22,
+   "calibrated": true
+  },
+  {
+   "country": "Belgium",
+   "league": "Second Amateur Division - VFV B",
+   "n": 112,
+   "bias_pp": -11.87,
+   "calibrated": false
+  },
+  {
+   "country": "Chile",
+   "league": "Primera B",
+   "n": 112,
+   "bias_pp": -9.73,
+   "calibrated": true
+  },
+  {
+   "country": "Cyprus",
+   "league": "2. Division",
+   "n": 112,
+   "bias_pp": -11.44,
+   "calibrated": false
+  },
+  {
+   "country": "Germany",
+   "league": "Oberliga - Mittelrhein",
+   "n": 112,
+   "bias_pp": -2.77,
+   "calibrated": true
+  },
+  {
+   "country": "Morocco",
+   "league": "Botola 2",
+   "n": 112,
+   "bias_pp": 0.98,
+   "calibrated": true
+  },
+  {
+   "country": "Scotland",
+   "league": "Football League - Lowland League",
+   "n": 112,
+   "bias_pp": -2.39,
+   "calibrated": true
+  },
+  {
+   "country": "Slovakia",
+   "league": "3. liga - West",
+   "n": 112,
+   "bias_pp": -6.22,
+   "calibrated": true
+  },
+  {
+   "country": "Slovenia",
+   "league": "2. SNL",
+   "n": 112,
+   "bias_pp": 7.44,
+   "calibrated": true
+  },
+  {
+   "country": "Thailand",
+   "league": "Thai League 1",
+   "n": 112,
+   "bias_pp": 15.57,
+   "calibrated": false
+  },
+  {
+   "country": "Turkey",
+   "league": "3. Lig - Group 1",
+   "n": 112,
+   "bias_pp": -10.6,
+   "calibrated": false
+  },
+  {
+   "country": "Turkey",
+   "league": "3. Lig - Group 2",
+   "n": 112,
+   "bias_pp": -14.95,
+   "calibrated": false
+  },
+  {
+   "country": "Turkey",
+   "league": "3. Lig - Group 3",
+   "n": 112,
+   "bias_pp": 14.72,
+   "calibrated": false
+  },
+  {
+   "country": "Ukraine",
+   "league": "U19 League",
+   "n": 112,
+   "bias_pp": 4.71,
+   "calibrated": true
+  },
+  {
+   "country": "World",
+   "league": "CONMEBOL Sudamericana",
+   "n": 112,
+   "bias_pp": 10.83,
+   "calibrated": false
+  },
+  {
+   "country": "Burundi",
+   "league": "Ligue A",
+   "n": 111,
+   "bias_pp": -7.5,
+   "calibrated": true
+  },
+  {
+   "country": "Chile",
+   "league": "Primera División",
+   "n": 111,
+   "bias_pp": -5.7,
+   "calibrated": true
+  },
+  {
+   "country": "Germany",
+   "league": "Oberliga - Bremen",
+   "n": 111,
+   "bias_pp": -5.67,
+   "calibrated": true
+  },
+  {
+   "country": "Algeria",
+   "league": "Ligue 1",
+   "n": 110,
+   "bias_pp": -21.16,
+   "calibrated": false
+  },
+  {
+   "country": "Brazil",
+   "league": "Serie B",
+   "n": 110,
+   "bias_pp": -2.92,
+   "calibrated": true
+  },
+  {
+   "country": "Cyprus",
+   "league": "3. Division",
+   "n": 110,
+   "bias_pp": -10.73,
+   "calibrated": false
+  },
+  {
+   "country": "Israel",
+   "league": "Liga Alef",
+   "n": 110,
+   "bias_pp": -2.35,
+   "calibrated": true
+  },
+  {
+   "country": "Turkey",
+   "league": "3. Lig - Group 4",
+   "n": 110,
+   "bias_pp": -17.44,
+   "calibrated": false
+  },
+  {
+   "country": "Morocco",
+   "league": "Botola Pro",
+   "n": 109,
+   "bias_pp": 4.03,
+   "calibrated": true
+  },
+  {
+   "country": "Senegal",
+   "league": "Ligue 1",
+   "n": 109,
+   "bias_pp": -2.32,
+   "calibrated": true
+  },
+  {
+   "country": "United-Arab-Emirates",
+   "league": "Division 1",
+   "n": 109,
+   "bias_pp": -5.08,
+   "calibrated": true
+  },
+  {
+   "country": "Poland",
+   "league": "Central Youth League",
+   "n": 107,
+   "bias_pp": 6.13,
+   "calibrated": true
+  },
+  {
+   "country": "Austria",
+   "league": "Landesliga - Burgenland",
+   "n": 106,
+   "bias_pp": 8.53,
+   "calibrated": true
+  },
+  {
+   "country": "Slovakia",
+   "league": "2. liga",
+   "n": 106,
+   "bias_pp": 10.45,
+   "calibrated": false
+  },
+  {
+   "country": "Australia",
+   "league": "Victoria NPL",
+   "n": 105,
+   "bias_pp": 3.53,
+   "calibrated": true
+  },
+  {
+   "country": "Greece",
+   "league": "Super League 2",
+   "n": 105,
+   "bias_pp": -3.7,
+   "calibrated": true
+  },
+  {
+   "country": "Scotland",
+   "league": "Premiership",
+   "n": 105,
+   "bias_pp": -8.25,
+   "calibrated": true
+  },
+  {
+   "country": "Armenia",
+   "league": "First League",
+   "n": 104,
+   "bias_pp": 2.11,
+   "calibrated": true
+  },
+  {
+   "country": "Azerbaijan",
+   "league": "Premyer Liqa",
+   "n": 104,
+   "bias_pp": -6.44,
+   "calibrated": true
+  },
+  {
+   "country": "Czech-Republic",
+   "league": "1. Liga U19",
+   "n": 104,
+   "bias_pp": 6.39,
+   "calibrated": true
+  },
+  {
+   "country": "Czech-Republic",
+   "league": "4. liga - Divizie A",
+   "n": 104,
+   "bias_pp": -1.93,
+   "calibrated": true
+  },
+  {
+   "country": "Czech-Republic",
+   "league": "4. liga - Divizie C",
+   "n": 104,
+   "bias_pp": 1.06,
+   "calibrated": true
+  },
+  {
+   "country": "Czech-Republic",
+   "league": "4. liga - Divizie D",
+   "n": 104,
+   "bias_pp": -13.5,
+   "calibrated": false
+  },
+  {
+   "country": "Czech-Republic",
+   "league": "4. liga - Divizie F",
+   "n": 104,
+   "bias_pp": 4.2,
+   "calibrated": true
+  },
+  {
+   "country": "Hungary",
+   "league": "NB III - Northeast",
+   "n": 104,
+   "bias_pp": -17.42,
+   "calibrated": false
+  },
+  {
+   "country": "Hungary",
+   "league": "NB III - Northwest",
+   "n": 104,
+   "bias_pp": -9.09,
+   "calibrated": true
+  },
+  {
+   "country": "Macedonia",
+   "league": "First League",
+   "n": 104,
+   "bias_pp": -7.17,
+   "calibrated": true
+  },
+  {
+   "country": "Australia",
+   "league": "New South Wales NPL 2",
+   "n": 103,
+   "bias_pp": -2.05,
+   "calibrated": true
+  },
+  {
+   "country": "Czech-Republic",
+   "league": "4. liga - Divizie B",
+   "n": 103,
+   "bias_pp": -3.97,
+   "calibrated": true
+  },
+  {
+   "country": "Malta",
+   "league": "Premier League",
+   "n": 103,
+   "bias_pp": -1.8,
+   "calibrated": true
+  },
+  {
+   "country": "Serbia",
+   "league": "Srpska Liga - East",
+   "n": 103,
+   "bias_pp": -22.03,
+   "calibrated": false
+  },
+  {
+   "country": "Germany",
+   "league": "Oberliga - Schleswig-Holstein",
+   "n": 102,
+   "bias_pp": 1.46,
+   "calibrated": true
+  },
+  {
+   "country": "France",
+   "league": "National 3 - Group F",
+   "n": 101,
+   "bias_pp": 5.5,
+   "calibrated": true
+  },
+  {
+   "country": "Albania",
+   "league": "Superliga",
+   "n": 100,
+   "bias_pp": -13.83,
+   "calibrated": false
+  },
+  {
+   "country": "Northern-Ireland",
+   "league": "Premiership",
+   "n": 100,
+   "bias_pp": -17.45,
+   "calibrated": false
+  },
+  {
+   "country": "Russia",
+   "league": "Premier League",
+   "n": 100,
+   "bias_pp": 5.22,
+   "calibrated": true
+  },
+  {
+   "country": "United-Arab-Emirates",
+   "league": "Pro League",
+   "n": 100,
+   "bias_pp": 1.2,
+   "calibrated": true
+  },
+  {
+   "country": "Vietnam",
+   "league": "V.League 1",
+   "n": 100,
+   "bias_pp": 1.83,
+   "calibrated": true
+  },
+  {
+   "country": "South-Korea",
+   "league": "K League 2",
+   "n": 99,
+   "bias_pp": -6.44,
+   "calibrated": true
+  },
+  {
+   "country": "Albania",
+   "league": "1st Division",
+   "n": 98,
+   "bias_pp": -9.71,
+   "calibrated": true
+  },
+  {
+   "country": "Nicaragua",
+   "league": "Primera Division",
+   "n": 98,
+   "bias_pp": -0.76,
+   "calibrated": true
+  },
+  {
+   "country": "Serbia",
+   "league": "Srpska Liga - West",
+   "n": 98,
+   "bias_pp": 0.61,
+   "calibrated": true
+  },
+  {
+   "country": "Syria",
+   "league": "Premier League",
+   "n": 98,
+   "bias_pp": -6.64,
+   "calibrated": true
+  },
+  {
+   "country": "France",
+   "league": "National 3 - Group E",
+   "n": 97,
+   "bias_pp": 5.57,
+   "calibrated": true
+  },
+  {
+   "country": "Kazakhstan",
+   "league": "Premier League",
+   "n": 97,
+   "bias_pp": 28.03,
+   "calibrated": false
+  },
+  {
+   "country": "Costa-Rica",
+   "league": "Primera División",
+   "n": 96,
+   "bias_pp": -1.22,
+   "calibrated": true
+  },
+  {
+   "country": "Croatia",
+   "league": "First NL",
+   "n": 96,
+   "bias_pp": -10.99,
+   "calibrated": false
+  },
+  {
+   "country": "France",
+   "league": "National 3 - Group B",
+   "n": 96,
+   "bias_pp": -7.61,
+   "calibrated": true
+  },
+  {
+   "country": "Ireland",
+   "league": "Premier Division",
+   "n": 96,
+   "bias_pp": -12.74,
+   "calibrated": false
+  },
+  {
+   "country": "Ukraine",
+   "league": "Persha Liga",
+   "n": 96,
+   "bias_pp": -5.91,
+   "calibrated": true
+  },
+  {
+   "country": "England",
+   "league": "U18 Premier League - North",
+   "n": 94,
+   "bias_pp": 1.56,
+   "calibrated": true
+  },
+  {
+   "country": "France",
+   "league": "National 3 - Group H",
+   "n": 94,
+   "bias_pp": -14.33,
+   "calibrated": false
+  },
+  {
+   "country": "Northern-Ireland",
+   "league": "Championship",
+   "n": 94,
+   "bias_pp": 5.57,
+   "calibrated": true
+  },
+  {
+   "country": "Serbia",
+   "league": "Srpska Liga - Vojvodina",
+   "n": 94,
+   "bias_pp": -18.09,
+   "calibrated": false
+  },
+  {
+   "country": "Austria",
+   "league": "Bundesliga",
+   "n": 93,
+   "bias_pp": -1.02,
+   "calibrated": true
+  },
+  {
+   "country": "Zimbabwe",
+   "league": "Premier Soccer League",
+   "n": 93,
+   "bias_pp": -8.12,
+   "calibrated": true
+  },
+  {
+   "country": "Austria",
+   "league": "2. Liga",
+   "n": 91,
+   "bias_pp": 2.29,
+   "calibrated": true
+  },
+  {
+   "country": "Austria",
+   "league": "Landesliga - Oberosterreich",
+   "n": 91,
+   "bias_pp": 12.93,
+   "calibrated": false
+  },
+  {
+   "country": "Austria",
+   "league": "Landesliga - Steiermark",
+   "n": 91,
+   "bias_pp": -11.88,
+   "calibrated": false
+  },
+  {
+   "country": "Croatia",
+   "league": "HNL",
+   "n": 91,
+   "bias_pp": -2.91,
+   "calibrated": true
+  },
+  {
+   "country": "Gambia",
+   "league": "GFA League",
+   "n": 91,
+   "bias_pp": 9.06,
+   "calibrated": true
+  },
+  {
+   "country": "Hungary",
+   "league": "NB III - Southwest",
+   "n": 91,
+   "bias_pp": -6.69,
+   "calibrated": true
+  },
+  {
+   "country": "Kosovo",
+   "league": "Superliga",
+   "n": 91,
+   "bias_pp": -5.03,
+   "calibrated": true
+  },
+  {
+   "country": "Slovakia",
+   "league": "3. liga - Center",
+   "n": 91,
+   "bias_pp": 38.43,
+   "calibrated": false
+  },
+  {
+   "country": "Slovakia",
+   "league": "3. liga - East",
+   "n": 91,
+   "bias_pp": -5.65,
+   "calibrated": true
+  },
+  {
+   "country": "Australia",
+   "league": "A-League",
+   "n": 90,
+   "bias_pp": -0.98,
+   "calibrated": true
+  },
+  {
+   "country": "Brazil",
+   "league": "Serie C",
+   "n": 90,
+   "bias_pp": -6.9,
+   "calibrated": true
+  },
+  {
+   "country": "Colombia",
+   "league": "Liga Femenina",
+   "n": 90,
+   "bias_pp": -7.07,
+   "calibrated": true
+  },
+  {
+   "country": "Czech-Republic",
+   "league": "4. liga - Divizie E",
+   "n": 90,
+   "bias_pp": -2.83,
+   "calibrated": true
+  },
+  {
+   "country": "Denmark",
+   "league": "2. Division",
+   "n": 90,
+   "bias_pp": 9.45,
+   "calibrated": true
+  },
+  {
+   "country": "Guinea",
+   "league": "Ligue 1",
+   "n": 90,
+   "bias_pp": -6.96,
+   "calibrated": true
+  },
+  {
+   "country": "Hungary",
+   "league": "NB I",
+   "n": 90,
+   "bias_pp": 1.67,
+   "calibrated": true
+  },
+  {
+   "country": "Hungary",
+   "league": "NB III - Southeast",
+   "n": 90,
+   "bias_pp": -12.09,
+   "calibrated": false
+  },
+  {
+   "country": "Ireland",
+   "league": "First Division",
+   "n": 90,
+   "bias_pp": 9.37,
+   "calibrated": true
+  },
+  {
+   "country": "Serbia",
+   "league": "Srpska Liga - Belgrade",
+   "n": 90,
+   "bias_pp": -8.22,
+   "calibrated": true
+  },
+  {
+   "country": "South-Korea",
+   "league": "K League 1",
+   "n": 90,
+   "bias_pp": 4.29,
+   "calibrated": true
+  },
+  {
+   "country": "Switzerland",
+   "league": "Challenge League",
+   "n": 90,
+   "bias_pp": -16.52,
+   "calibrated": false
+  },
+  {
+   "country": "Liberia",
+   "league": "LFA First Division",
+   "n": 89,
+   "bias_pp": 5.33,
+   "calibrated": true
+  },
+  {
+   "country": "Malta",
+   "league": "Challenge League",
+   "n": 89,
+   "bias_pp": -5.1,
+   "calibrated": true
+  },
+  {
+   "country": "Northern-Ireland",
+   "league": "Premier Intermediate League",
+   "n": 89,
+   "bias_pp": -1.41,
+   "calibrated": true
+  },
+  {
+   "country": "Norway",
+   "league": "Eliteserien",
+   "n": 89,
+   "bias_pp": -1.71,
+   "calibrated": true
+  },
+  {
+   "country": "Portugal",
+   "league": "Campeonato de Portugal Prio - Group A",
+   "n": 88,
+   "bias_pp": 0.47,
+   "calibrated": true
+  },
+  {
+   "country": "Uzbekistan",
+   "league": "Super League",
+   "n": 88,
+   "bias_pp": -4.13,
+   "calibrated": true
+  },
+  {
+   "country": "Bosnia",
+   "league": "1st League - RS",
+   "n": 87,
+   "bias_pp": 2.42,
+   "calibrated": true
+  },
+  {
+   "country": "Montenegro",
+   "league": "First League",
+   "n": 87,
+   "bias_pp": 12.08,
+   "calibrated": false
+  },
+  {
+   "country": "Scotland",
+   "league": "League One",
+   "n": 87,
+   "bias_pp": -0.61,
+   "calibrated": true
+  },
+  {
+   "country": "Scotland",
+   "league": "League Two",
+   "n": 87,
+   "bias_pp": 3.0,
+   "calibrated": true
+  },
+  {
+   "country": "Jordan",
+   "league": "League",
+   "n": 86,
+   "bias_pp": -18.09,
+   "calibrated": false
+  },
+  {
+   "country": "Panama",
+   "league": "Liga Panameña de Fútbol",
+   "n": 86,
+   "bias_pp": -18.48,
+   "calibrated": false
+  },
+  {
+   "country": "Bosnia",
+   "league": "Premijer Liga",
+   "n": 85,
+   "bias_pp": 9.38,
+   "calibrated": true
+  },
+  {
+   "country": "Denmark",
+   "league": "3. Division",
+   "n": 85,
+   "bias_pp": -10.82,
+   "calibrated": false
+  },
+  {
+   "country": "Denmark",
+   "league": "Superliga",
+   "n": 85,
+   "bias_pp": 8.69,
+   "calibrated": true
+  },
+  {
+   "country": "Montenegro",
+   "league": "Second League",
+   "n": 85,
+   "bias_pp": -6.51,
+   "calibrated": true
+  },
+  {
+   "country": "Portugal",
+   "league": "Campeonato de Portugal Prio - Group B",
+   "n": 85,
+   "bias_pp": -8.0,
+   "calibrated": true
+  },
+  {
+   "country": "Bosnia",
+   "league": "1st League - FBiH",
+   "n": 84,
+   "bias_pp": -2.36,
+   "calibrated": true
+  },
+  {
+   "country": "Denmark",
+   "league": "1. Division",
+   "n": 84,
+   "bias_pp": -5.36,
+   "calibrated": true
+  },
+  {
+   "country": "Germany",
+   "league": "2. Frauen Bundesliga",
+   "n": 84,
+   "bias_pp": 20.01,
+   "calibrated": false
+  },
+  {
+   "country": "Germany",
+   "league": "Frauen Bundesliga",
+   "n": 84,
+   "bias_pp": -1.9,
+   "calibrated": true
+  },
+  {
+   "country": "Portugal",
+   "league": "Campeonato de Portugal Prio - Group C",
+   "n": 84,
+   "bias_pp": -16.3,
+   "calibrated": false
+  },
+  {
+   "country": "Portugal",
+   "league": "Campeonato de Portugal Prio - Group D",
+   "n": 84,
+   "bias_pp": -1.2,
+   "calibrated": true
+  },
+  {
+   "country": "Slovakia",
+   "league": "Super Liga",
+   "n": 84,
+   "bias_pp": 2.58,
+   "calibrated": true
+  },
+  {
+   "country": "Slovenia",
+   "league": "3. SNL - West",
+   "n": 84,
+   "bias_pp": -3.81,
+   "calibrated": true
+  },
+  {
+   "country": "Austria",
+   "league": "Landesliga - Karnten",
+   "n": 83,
+   "bias_pp": -1.01,
+   "calibrated": true
+  },
+  {
+   "country": "France",
+   "league": "National 3 - Group D",
+   "n": 83,
+   "bias_pp": 13.8,
+   "calibrated": false
+  },
+  {
+   "country": "Cameroon",
+   "league": "Elite Two",
+   "n": 82,
+   "bias_pp": -13.48,
+   "calibrated": false
+  },
+  {
+   "country": "China",
+   "league": "League Two",
+   "n": 82,
+   "bias_pp": 0.46,
+   "calibrated": true
+  },
+  {
+   "country": "France",
+   "league": "National 3 - Group G",
+   "n": 82,
+   "bias_pp": 17.29,
+   "calibrated": false
+  },
+  {
+   "country": "Iran",
+   "league": "Azadegan League",
+   "n": 81,
+   "bias_pp": -7.26,
+   "calibrated": true
+  },
+  {
+   "country": "Scotland",
+   "league": "Championship",
+   "n": 81,
+   "bias_pp": 8.25,
+   "calibrated": true
+  },
+  {
+   "country": "Sweden",
+   "league": "Allsvenskan",
+   "n": 81,
+   "bias_pp": -16.35,
+   "calibrated": false
+  },
+  {
+   "country": "World",
+   "league": "UEFA Champions League",
+   "n": 81,
+   "bias_pp": -11.92,
+   "calibrated": false
+  },
+  {
+   "country": "World",
+   "league": "UEFA Europa League",
+   "n": 81,
+   "bias_pp": 1.5,
+   "calibrated": true
+  },
+  {
+   "country": "Belarus",
+   "league": "1. Division",
+   "n": 80,
+   "bias_pp": -10.37,
+   "calibrated": false
+  },
+  {
+   "country": "Belarus",
+   "league": "Premier League",
+   "n": 80,
+   "bias_pp": 6.38,
+   "calibrated": true
+  },
+  {
+   "country": "Cambodia",
+   "league": "C-League",
+   "n": 80,
+   "bias_pp": 3.17,
+   "calibrated": true
+  },
+  {
+   "country": "Georgia",
+   "league": "Erovnuli Liga",
+   "n": 80,
+   "bias_pp": -2.72,
+   "calibrated": true
+  },
+  {
+   "country": "Georgia",
+   "league": "Erovnuli Liga 2",
+   "n": 80,
+   "bias_pp": 18.22,
+   "calibrated": false
+  },
+  {
+   "country": "Latvia",
+   "league": "Virsliga",
+   "n": 80,
+   "bias_pp": -7.49,
+   "calibrated": true
+  },
+  {
+   "country": "Russia",
+   "league": "Second League A - Fall Season Gold",
+   "n": 80,
+   "bias_pp": -10.6,
+   "calibrated": false
+  },
+  {
+   "country": "Russia",
+   "league": "Second League A - Fall Season Silver",
+   "n": 80,
+   "bias_pp": 4.91,
+   "calibrated": true
+  },
+  {
+   "country": "Sweden",
+   "league": "Superettan",
+   "n": 80,
+   "bias_pp": 2.04,
+   "calibrated": true
+  }
+ ]
+}

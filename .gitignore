@@ -1,0 +1,62 @@
+# POSEIDON site — repo PUBLIC.
+# Blochez accidental orice fișier intern de pipeline / model / credențiale.
+
+# 1. Fișiere SO macOS / editor
+.DS_Store
+*.swp
+*~
+.vscode/
+.idea/
+
+# 2. CSV-uri brute interne — NU intră NICIODATĂ în repo public
+*.csv
+data/*.csv
+
+# 3. Whitelist/blacklist interne — pe laptop, NU public
+*whitelist*
+*blacklist*
+*calibration*.csv
+*per_league*
+
+# 4. Logs / temp
+*.log
+logs/
+*.tmp
+*.bak
+*.bak_*
+
+# 5. Credențiale / configurări locale
+.env
+*.env
+.telegram_config*
+*config*.json
+!manifest.json
+
+# 6. Scripturi interne POSEIDON pipeline (NU public)
+scripts/poseidon/
+**/predict_daily.py
+**/ratings.py
+**/bayesian_mc.py
+**/dixon_coles.py
+**/bivariate.py
+**/freeze_predictions.py
+**/resolve_history.py
+**/backtest_*.py
+**/build_public_json.py
+
+# 7. Modele ML / weights
+*.pkl
+*.joblib
+*.h5
+models/
+
+# 8. Python intern
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# 9. Misc
+node_modules/
+*.zip
+*.tar.gz

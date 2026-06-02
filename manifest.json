@@ -1,0 +1,25 @@
+{
+  "name": "POSEIDON — Predicții fotbal",
+  "short_name": "POSEIDON",
+  "description": "Predicții fotbal pe model statistic. Date informative, NU garanție de câștig.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#1e3a8a",
+  "theme_color": "#1e3a8a",
+  "orientation": "portrait-primary",
+  "lang": "ro",
+  "icons": [
+    {
+      "src": "assets/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

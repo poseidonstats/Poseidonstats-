@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>POSEIDON — Metodologie</title>
+<link rel="stylesheet" href="assets/style.css">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#1e3a8a">
+<link rel="apple-touch-icon" href="assets/icon-192.png">
+<script>if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js");</script>
+</head>
+<body>
+
+<div class="legal-banner">
+⚠️ Date statistice informative. NU garanție de câștig. Pariați responsabil. 18+.
+</div>
+
+<header>
+  <div class="container">
+    <h1><a href="index.html">POSEIDON</a></h1>
+    <p class="tagline">Predicții fotbal cu metodologie verificabilă</p>
+    <nav>
+      <a href="index.html">Predicții</a>
+      <a href="track-record.html">Track record</a>
+      <a href="metodologie.html" class="active">Metodologie</a>
+      <a class="patreon" href="https://patreon.com/AndreeaPoseidon" target="_blank" rel="noopener">☕ Susține</a>
+    </nav>
+  </div>
+</header>
+
+<main class="container">
+
+  <section>
+    <h2>Cum funcționează POSEIDON</h2>
+
+    <h3>1. Ratings echipă (Poisson Bayesian)</h3>
+    <p>Fiecare echipă primește două rate-uri relative:</p>
+    <ul>
+      <li><strong>Attack</strong> — golurile marcate ÷ media ligii (1.0 = echipă medie)</li>
+      <li><strong>Defense</strong> — golurile primite ÷ media ligii (mai mic = mai bine)</li>
+    </ul>
+    <p>Rate-urile sunt ponderate cu <strong>time-decay exponențial</strong> (half-life 140 zile) — meciurile recente contează mai mult.
+    Bootstrap pentru intervale de încredere.</p>
+
+    <h3>2. Lambda per meci (xG estimat)</h3>
+    <p>Pentru un meci HOME vs AWAY:</p>
+    <pre>λ_home = attack_HOME × defense_AWAY × home_advantage × μ_league_calibrat
+λ_away = attack_AWAY × defense_HOME × μ_league_calibrat</pre>
+    <p>Unde <code>μ_league_calibrat</code> = media ligii × scale per-ligă, calibrată empirical.</p>
+
+    <h3>3. Calibrare per-ligă (anti-bias)</h3>
+    <p>Modelul fără calibrare supra-estimează masiv ligile cu scor mare (Nordic +22%) și sub-estimează cele cu scor mic (Sud-America −22%).
+    Soluție: cal_scale_lg = goluri reale ÷ goluri prezise, derivat exclusiv pe TRAIN, cu <strong>shrinkage Bayesian K=14</strong> spre prior 0.78
+    (pentru ligile cu sample mic).</p>
+
+    <h3>4. Simulare Monte Carlo (200k–1M iterații)</h3>
+    <p>Pentru fiecare meci, lambda_home și lambda_away sunt sample-uite din distribuții Normal posteriori
+    (cu varianța din bootstrap), apoi se simulează golurile cu Poisson.
+    Probabilitățile <em>1X2, Over/Under, BTTS, scor exact</em> se obțin din 200k+ partide simulate.</p>
+
+    <h3>5. Dixon-Coles correction</h3>
+    <p>Poisson clasic sub-estimează scoruri low (0-0, 1-0, 0-1, 1-1). Correction <code>ρ</code> fitat
+    pe ultimele 5000 meciuri ajustează matricea Poisson pe scorurile mici.</p>
+
+    <h3>Whitelist & blacklist ligi</h3>
+    <p>După backtest pe 66k meciuri, ligile sunt clasificate:</p>
+    <ul>
+      <li><strong>Calibrate (220 ligi)</strong>: bias între ±10% pe sample N≥80 — modelul livrează predicții fiabile.</li>
+      <li><strong>Necalibrate</strong>: bias mai mare ±10% sau sample insuficient — predicțiile sunt afișate dar
+      cu marker <span class="warn-tag">⚠️ ligă necalibrată</span>.</li>
+      <li><strong>Blacklist (94 ligi)</strong>: ligi cu anomalii structurale (date corupte, scoruri suspecte) — predicțiile NU sunt afișate.</li>
+    </ul>
+
+    <h3>Limitări cunoscute</h3>
+    <ul>
+      <li>Modelul nu vede: schimbări recente lot, accidentări, motivație, vreme, arbitraj.</li>
+      <li>Modelul nu prezice: scorul exact (e probabilistic), goluri în minute specifice.</li>
+      <li>Pe ligi necalibrate sau cu sample mic (N&lt;80), predicțiile pot diverge de realitate.</li>
+    </ul>
+
+    <h3>Filozofie</h3>
+    <p>Modelul NU înlocuiește gândirea. Predicțiile arată <em>cât de des s-a întâmplat un eveniment în condiții similare</em>,
+    nu garanție de viitor. Dacă POSEIDON zice 60% Over 2.5, asta înseamnă că în condiții identice istorice s-a întâmplat ~60% din timp —
+    care e diferit de "se va întâmpla".</p>
+
+  </section>
+
+</main>
+
+<footer>
+  <div class="container">
+    <p><strong>POSEIDON</strong> — model statistic open. Sursă date: API-Football.</p>
+    <p>⚠️ <strong>Informativ.</strong> NU recomandare de pariere. NU garanție. Pariați responsabil. <strong>18+</strong>.</p>
+    <p class="muted">Dacă pariatul devine problemă: <a href="https://www.jocresponsabil.ro" target="_blank" rel="noopener">jocresponsabil.ro</a></p>
+  </div>
+</footer>
+
+</body>
+</html>
