@@ -74,11 +74,12 @@
   </section>
 
   <section>
-    <h3>Sursă & reproductibilitate</h3>
+    <h3>Sursă & metodologie</h3>
     <ul>
-      <li>Backtest: <code>backtest_66k_results.csv</code> generat de <code>backtest_66k_perrow.py</code>. Metodologie zero-leakage (TRAIN 2024-2025 / TEST 2026).</li>
-      <li>Jurnal forward: <code>poseidon_history.csv</code> append-only, resolve zilnic.</li>
-      <li>Calibrare per-ligă: <code>per_league_cal_scale.csv</code> (1098 ligi, shrinkage K=14).</li>
+      <li><strong>Backtest istoric</strong> — 65.250 meciuri jucate în 2026, predicții generate cu ratings calculate strict pe 2024-2025 (zero leakage temporal).</li>
+      <li><strong>Jurnal forward</strong> — predicții înghețate la generare (07:15 zilnic), comparate cu rezultatul real după ce s-au jucat meciurile.</li>
+      <li><strong>Calibrare per-ligă</strong> — 1.098 ligi cu shrinkage Bayesian K=14, pentru a evita supra-fitare pe ligi cu sample mic.</li>
+      <li><strong>Reproductibilitate</strong> — metodologia este descrisă complet la <a href="metodologie.html">Metodologie</a>.</li>
     </ul>
   </section>
 
