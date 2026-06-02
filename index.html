@@ -33,15 +33,21 @@
 <main class="container">
 
   <section class="intro">
-    <h2>Predicții pentru următoarele zile</h2>
-    <p>Model Poisson + Dixon-Coles cu calibrare per-ligă. Predicțiile sunt înghețate la generare (07:15 UTC zilnic) și verificabile post-meci.</p>
-    <p class="muted">Marker <span class="warn-tag">⚠️ ligă necalibrată</span> apare pe ligile unde modelul nu a demonstrat calibrare pe backtest.</p>
+    <div class="trust-line">
+      <span class="trust-item"><strong>200.000</strong> simulări Monte Carlo / meci</span>
+      <span class="trust-item"><strong>65.250</strong> meciuri calibrare empirical</span>
+      <span class="trust-item"><strong>270/371</strong> ligi validate ±10%</span>
+      <span class="trust-item"><strong>0</strong> leakage temporal</span>
+    </div>
+    <h2>Predicții pentru următoarele 7 zile</h2>
+    <p>Model Poisson + Dixon-Coles + ratings Bayesian cu calibrare per-ligă. Predicțiile sunt înghețate la generare (07:15 zilnic) și verificabile post-meci.</p>
     <div class="card-info">
       <strong>Probabilități calibrate empirical.</strong> Cifrele afișate pe Over/BTTS sunt re-mapate pe baza
       a 65.250 meciuri de backtest (TEST 2026, zero leakage). Când modelul brut zice "85% BTTS" dar în istoric pe acel
       interval s-a întâmplat doar 67% din timp, afișăm <strong>67%</strong>, nu 85%.
-      Pe markets unde modelul brut diferă semnificativ (≥3pp) de realitate, apare valoarea brută ca notă
-      sub probabilitate. Vezi <a href="track-record.html">track record</a> pentru tabelul complet.
+      Marker <span class="warn-tag">⚠️ ligă necalibrată</span> apare pe ligile unde modelul nu a demonstrat calibrare.
+      Badge <span class="pick-badge pick-strong" style="font-size:0.7rem;padding:2px 8px">★ pick</span> pe alegerile cu probabilitate dominantă ≥65%.
+      Vezi <a href="track-record.html">track record</a> pentru tabelul complet de calibrare.
     </div>
   </section>
 

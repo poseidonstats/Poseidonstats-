@@ -73,6 +73,30 @@ async function renderIndex() {
   update();
 }
 
+function pickBadge(name, prob, minThreshold = 0.65) {
+  if (prob == null || prob < minThreshold) return "";
+  const cls = prob >= 0.80 ? "pick-elite" : prob >= 0.70 ? "pick-strong" : "pick-good";
+  return `<span class="pick-badge ${cls}">★ ${name}</span>`;
+}
+
+function rawNote(raw, cal) {
+  if (raw == null || Math.abs(raw - cal) < 0.03) return "";
+  return `<span class="raw-note">brut ${fmtPct(raw)}</span>`;
+}
+
+function xgBar(xgH, xgA) {
+  const total = xgH + xgA;
+  if (!total) return "";
+  const hPct = (xgH / total) * 100;
+  return `<div class="xg-bar">
+    <div class="xg-bar-h" style="width:${hPct}%"></div>
+    <div class="xg-bar-a" style="width:${100 - hPct}%"></div>
+    <div class="xg-bar-labels">
+      <span>${fmtNum(xgH)}</span><span>${fmtNum(xgA)}</span>
+    </div>
+  </div>`;
+}
+
 function renderMatch(m) {
   const calibTag = m.calibrated
     ? `<span class="ok-tag">✓ calibrată</span>`
@@ -83,62 +107,98 @@ function renderMatch(m) {
     hour: "2-digit", minute: "2-digit"
   });
 
+  // Pick principal: cel mai mare prob ≥65% (combined OU + BTTS + 1X2)
+  const picks = [];
+  if (m.prob_home >= 0.65) picks.push(["1 (home)", m.prob_home]);
+  if (m.prob_away >= 0.65) picks.push(["2 (away)", m.prob_away]);
+  if (m.prob_over_2_5 >= 0.65) picks.push(["Over 2.5", m.prob_over_2_5]);
+  if (m.prob_over_1_5 >= 0.75) picks.push(["Over 1.5", m.prob_over_1_5]);
+  if (m.prob_over_3_5 >= 0.65) picks.push(["Over 3.5", m.prob_over_3_5]);
+  if (m.prob_btts >= 0.65) picks.push(["BTTS Da", m.prob_btts]);
+  if ((1 - m.prob_btts) >= 0.65) picks.push(["BTTS Nu", 1 - m.prob_btts]);
+  if ((1 - m.prob_over_2_5) >= 0.65) picks.push(["Under 2.5", 1 - m.prob_over_2_5]);
+  picks.sort((a, b) => b[1] - a[1]);
+  const picksHtml = picks.slice(0, 3).map(([name, p]) => pickBadge(name, p)).join(" ");
+
+  // Pick 1X2 (cel mai probabil)
+  const pick1x2 = m.prob_home >= m.prob_draw && m.prob_home >= m.prob_away ? "1"
+                : m.prob_away >= m.prob_draw ? "2" : "X";
+
   return `<div class="match ${m.calibrated ? "" : "uncalibrated"}">
     <div class="match-header">
-      <div>
-        <div class="match-teams">${esc(m.home_team)} vs ${esc(m.away_team)}</div>
+      <div class="match-title">
+        <div class="match-teams">${esc(m.home_team)} <span class="vs">vs</span> ${esc(m.away_team)}</div>
         <div class="match-meta">
-          <span class="liga">${esc(m.country)} / ${esc(m.league)}</span>
-          · ${dateStr}
+          <span class="liga">${esc(m.country)} · ${esc(m.league)}</span>
+          <span class="when">${dateStr}</span>
+          ${calibTag}
         </div>
       </div>
-      <div>${calibTag}</div>
+      ${picksHtml ? `<div class="picks-row">${picksHtml}</div>` : ""}
     </div>
 
-    <div class="xg-row">
-      <strong>xG estimat:</strong>
-      ${esc(m.home_team)} ${fmtNum(m.xg_home)} — ${fmtNum(m.xg_away)} ${esc(m.away_team)}
-      <span class="muted">· scor probabil: ${m.top_score_h}–${m.top_score_a} (${fmtPct(m.top_score_prob)})</span>
+    <div class="xg-section">
+      <div class="xg-label">xG model (Poisson + Dixon-Coles + 200K simulări Monte Carlo)</div>
+      ${xgBar(m.xg_home, m.xg_away)}
+      <div class="score-prob">
+        <span class="score-label">Scor probabil</span>
+        <span class="score-val">${m.top_score_h}–${m.top_score_a}</span>
+        <span class="score-pct">(${fmtPct(m.top_score_prob)})</span>
+      </div>
     </div>
 
-    <div class="markets">
-      <div class="market">
-        <span class="label">1 (home win)</span>
-        <span class="val ${pctClass(m.prob_home)}">${fmtPct(m.prob_home)}</span>
-      </div>
-      <div class="market">
-        <span class="label">X (egal)</span>
-        <span class="val ${pctClass(m.prob_draw)}">${fmtPct(m.prob_draw)}</span>
-      </div>
-      <div class="market">
-        <span class="label">2 (away win)</span>
-        <span class="val ${pctClass(m.prob_away)}">${fmtPct(m.prob_away)}</span>
-      </div>
-      <div class="market">
-        <span class="label">Over 1.5</span>
-        <span class="val ${pctClass(m.prob_over_1_5)}">${fmtPct(m.prob_over_1_5)}</span>
-      </div>
-      <div class="market">
-        <span class="label">Over 2.5</span>
-        <span class="val ${pctClass(m.prob_over_2_5)}">${fmtPct(m.prob_over_2_5)}</span>
-        ${m.prob_over_2_5_raw && Math.abs(m.prob_over_2_5_raw - m.prob_over_2_5) >= 0.03
-          ? `<span class="raw-note">model brut ${fmtPct(m.prob_over_2_5_raw)}</span>` : ""}
-      </div>
-      <div class="market">
-        <span class="label">Over 3.5</span>
-        <span class="val ${pctClass(m.prob_over_3_5)}">${fmtPct(m.prob_over_3_5)}</span>
-      </div>
-      <div class="market">
-        <span class="label">BTTS</span>
-        <span class="val ${pctClass(m.prob_btts)}">${fmtPct(m.prob_btts)}</span>
-        ${m.prob_btts_raw && Math.abs(m.prob_btts_raw - m.prob_btts) >= 0.03
-          ? `<span class="raw-note">model brut ${fmtPct(m.prob_btts_raw)}</span>` : ""}
-      </div>
-      <div class="market">
-        <span class="label">HT Over 0.5</span>
-        <span class="val ${pctClass(m.prob_ht_over_0_5)}">${fmtPct(m.prob_ht_over_0_5)}</span>
+    <div class="phase-row ft">
+      <div class="phase-label">⏱ FT · 90 min</div>
+      <div class="markets-grid">
+        <div class="market ${pick1x2 === "1" ? "pick" : ""}">
+          <span class="label">1</span>
+          <span class="val ${pctClass(m.prob_home)}">${fmtPct(m.prob_home)}</span>
+        </div>
+        <div class="market ${pick1x2 === "X" ? "pick" : ""}">
+          <span class="label">X</span>
+          <span class="val ${pctClass(m.prob_draw)}">${fmtPct(m.prob_draw)}</span>
+        </div>
+        <div class="market ${pick1x2 === "2" ? "pick" : ""}">
+          <span class="label">2</span>
+          <span class="val ${pctClass(m.prob_away)}">${fmtPct(m.prob_away)}</span>
+        </div>
+        <div class="market">
+          <span class="label">O1.5</span>
+          <span class="val ${pctClass(m.prob_over_1_5)}">${fmtPct(m.prob_over_1_5)}</span>
+        </div>
+        <div class="market">
+          <span class="label">O2.5</span>
+          <span class="val ${pctClass(m.prob_over_2_5)}">${fmtPct(m.prob_over_2_5)}</span>
+          ${rawNote(m.prob_over_2_5_raw, m.prob_over_2_5)}
+        </div>
+        <div class="market">
+          <span class="label">O3.5</span>
+          <span class="val ${pctClass(m.prob_over_3_5)}">${fmtPct(m.prob_over_3_5)}</span>
+        </div>
+        <div class="market">
+          <span class="label">BTTS</span>
+          <span class="val ${pctClass(m.prob_btts)}">${fmtPct(m.prob_btts)}</span>
+          ${rawNote(m.prob_btts_raw, m.prob_btts)}
+        </div>
       </div>
     </div>
+
+    ${m.ht_prob_home != null ? `<div class="phase-row ht">
+      <div class="phase-label">⌛ HT · prima repriză ${m.xg_home_ht ? `<span class="muted-xs">(xG ${m.xg_home_ht}–${m.xg_away_ht})</span>` : ""}</div>
+      <div class="markets-grid">
+        <div class="market"><span class="label">1H</span><span class="val ${pctClass(m.ht_prob_home)}">${fmtPct(m.ht_prob_home)}</span></div>
+        <div class="market"><span class="label">XH</span><span class="val ${pctClass(m.ht_prob_draw)}">${fmtPct(m.ht_prob_draw)}</span></div>
+        <div class="market"><span class="label">2H</span><span class="val ${pctClass(m.ht_prob_away)}">${fmtPct(m.ht_prob_away)}</span></div>
+        <div class="market"><span class="label">HT O0.5</span><span class="val ${pctClass(m.prob_ht_over_0_5)}">${fmtPct(m.prob_ht_over_0_5)}</span></div>
+        <div class="market"><span class="label">HT O1.5</span><span class="val ${pctClass(m.prob_ht_over_1_5)}">${fmtPct(m.prob_ht_over_1_5)}</span></div>
+        <div class="market"><span class="label">HT BTTS</span><span class="val ${pctClass(m.ht_prob_btts)}">${fmtPct(m.ht_prob_btts)}</span></div>
+        ${m.ht_top_score_h != null ? `<div class="market score-ht">
+          <span class="label">Scor HT</span>
+          <span class="val">${m.ht_top_score_h}–${m.ht_top_score_a}</span>
+          <span class="raw-note">${fmtPct(m.ht_top_score_prob)}</span>
+        </div>` : ""}
+      </div>
+    </div>` : ""}
   </div>`;
 }
 
