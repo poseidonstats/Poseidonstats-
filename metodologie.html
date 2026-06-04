@@ -40,57 +40,48 @@
 <main class="container">
 
   <section>
-    <h2>Cum funcționează POSEIDON</h2>
+    <h2 data-i18n="metod.h2">Cum funcționează POSEIDON</h2>
 
-    <h3>1. Ratings echipă (Poisson Bayesian)</h3>
-    <p>Fiecare echipă primește două rate-uri relative:</p>
+    <h3 data-i18n="metod.h3.1">1. Ratings echipă (Poisson Bayesian)</h3>
+    <p data-i18n="metod.p.1a">Fiecare echipă primește două rate-uri relative:</p>
     <ul>
-      <li><strong>Attack</strong> — golurile marcate ÷ media ligii (1.0 = echipă medie)</li>
-      <li><strong>Defense</strong> — golurile primite ÷ media ligii (mai mic = mai bine)</li>
+      <li data-i18n="metod.li.attack"><strong>Attack</strong> — golurile marcate ÷ media ligii (1.0 = echipă medie)</li>
+      <li data-i18n="metod.li.defense"><strong>Defense</strong> — golurile primite ÷ media ligii (mai mic = mai bine)</li>
     </ul>
-    <p>Rate-urile sunt ponderate cu <strong>time-decay exponențial</strong> — meciurile recente contează mai mult decât cele vechi.
-    Bootstrap pentru intervale de încredere.</p>
+    <p data-i18n="metod.p.1b">Rate-urile sunt ponderate cu <strong>time-decay exponențial</strong> — meciurile recente contează mai mult decât cele vechi. Bootstrap pentru intervale de încredere.</p>
 
-    <h3>2. Lambda per meci (xG estimat)</h3>
-    <p>Pentru un meci HOME vs AWAY:</p>
+    <h3 data-i18n="metod.h3.2">2. Lambda per meci (xG estimat)</h3>
+    <p data-i18n="metod.p.2a">Pentru un meci HOME vs AWAY:</p>
     <pre>λ_home = attack_HOME × defense_AWAY × home_advantage × μ_league_calibrat
 λ_away = attack_AWAY × defense_HOME × μ_league_calibrat</pre>
-    <p>Unde <code>μ_league_calibrat</code> = media ligii × scale per-ligă, calibrată empirical.</p>
+    <p data-i18n="metod.p.2b">Unde <code>μ_league_calibrat</code> = media ligii × scale per-ligă, calibrată empirical.</p>
 
-    <h3>3. Calibrare per-ligă (anti-bias)</h3>
-    <p>Modelul fără calibrare supra-estimează masiv ligile cu scor mare (Nordic +22%) și sub-estimează cele cu scor mic (Sud-America −22%).
-    Soluție: un factor de scalare per ligă, derivat exclusiv pe TRAIN, cu <strong>shrinkage Bayesian</strong> spre o medie prudentă —
-    aplicat mai puternic pe ligile cu sample mic, pentru a evita supra-fitarea.</p>
+    <h3 data-i18n="metod.h3.3">3. Calibrare per-ligă (anti-bias)</h3>
+    <p data-i18n="metod.p.3">Modelul fără calibrare supra-estimează masiv ligile cu scor mare (Nordic +22%) și sub-estimează cele cu scor mic (Sud-America −22%). Soluție: un factor de scalare per ligă, derivat exclusiv pe TRAIN, cu <strong>shrinkage Bayesian</strong> spre o medie prudentă — aplicat mai puternic pe ligile cu sample mic, pentru a evita supra-fitarea.</p>
 
-    <h3>4. Simulare Monte Carlo (200k–1M iterații)</h3>
-    <p>Pentru fiecare meci, lambda_home și lambda_away sunt sample-uite din distribuții Normal posteriori
-    (cu varianța din bootstrap), apoi se simulează golurile cu Poisson.
-    Probabilitățile <em>1X2, Over/Under, BTTS, scor exact</em> se obțin din 200k+ partide simulate.</p>
+    <h3 data-i18n="metod.h3.4">4. Simulare Monte Carlo (200k–1M iterații)</h3>
+    <p data-i18n="metod.p.4">Pentru fiecare meci, lambda_home și lambda_away sunt sample-uite din distribuții Normal posteriori (cu varianța din bootstrap), apoi se simulează golurile cu Poisson. Probabilitățile <em>1X2, Over/Under, BTTS, scor exact</em> se obțin din 200k+ partide simulate.</p>
 
-    <h3>5. Dixon-Coles correction</h3>
-    <p>Poisson clasic sub-estimează scoruri low (0-0, 1-0, 0-1, 1-1). Corecția <code>ρ</code>, fitată
-    pe meciurile recente, ajustează matricea Poisson pe scorurile mici.</p>
+    <h3 data-i18n="metod.h3.5">5. Dixon-Coles correction</h3>
+    <p data-i18n="metod.p.5">Poisson clasic sub-estimează scoruri low (0-0, 1-0, 0-1, 1-1). Corecția <code>ρ</code>, fitată pe meciurile recente, ajustează matricea Poisson pe scorurile mici.</p>
 
-    <h3>Whitelist & blacklist ligi</h3>
-    <p>După backtest pe 66k meciuri, ligile sunt clasificate:</p>
+    <h3 data-i18n="metod.h3.wb">Whitelist & blacklist ligi</h3>
+    <p data-i18n="metod.p.wb">După backtest pe 66k meciuri, ligile sunt clasificate:</p>
     <ul>
-      <li><strong>Calibrate (220 ligi)</strong>: bias între ±10% pe sample N≥80 — modelul livrează predicții fiabile.</li>
-      <li><strong>Necalibrate</strong>: bias mai mare ±10% sau sample insuficient — predicțiile sunt afișate dar
-      cu marker <span class="warn-tag">⚠️ ligă necalibrată</span>.</li>
-      <li><strong>Blacklist (94 ligi)</strong>: ligi cu anomalii structurale (date corupte, scoruri suspecte) — predicțiile NU sunt afișate.</li>
+      <li data-i18n="metod.li.calibrate"><strong>Calibrate (220 ligi)</strong>: bias între ±10% pe sample N≥80 — modelul livrează predicții fiabile.</li>
+      <li data-i18n="metod.li.necalibrate"><strong>Necalibrate</strong>: bias mai mare ±10% sau sample insuficient — predicțiile sunt afișate dar cu marker <span class="warn-tag">⚠️ ligă necalibrată</span>.</li>
+      <li data-i18n="metod.li.blacklist"><strong>Blacklist (94 ligi)</strong>: ligi cu anomalii structurale (date corupte, scoruri suspecte) — predicțiile NU sunt afișate.</li>
     </ul>
 
-    <h3>Limitări cunoscute</h3>
+    <h3 data-i18n="metod.h3.limit">Limitări cunoscute</h3>
     <ul>
-      <li>Modelul nu vede: schimbări recente lot, accidentări, motivație, vreme, arbitraj.</li>
-      <li>Modelul nu prezice: scorul exact (e probabilistic), goluri în minute specifice.</li>
-      <li>Pe ligi necalibrate sau cu sample mic (N&lt;80), predicțiile pot diverge de realitate.</li>
+      <li data-i18n="metod.li.limit1">Modelul nu vede: schimbări recente lot, accidentări, motivație, vreme, arbitraj.</li>
+      <li data-i18n="metod.li.limit2">Modelul nu prezice: scorul exact (e probabilistic), goluri în minute specifice.</li>
+      <li data-i18n="metod.li.limit3">Pe ligi necalibrate sau cu sample mic (N&lt;80), predicțiile pot diverge de realitate.</li>
     </ul>
 
-    <h3>Filozofie</h3>
-    <p>Modelul NU înlocuiește gândirea. Predicțiile arată <em>cât de des s-a întâmplat un eveniment în condiții similare</em>,
-    nu garanție de viitor. Dacă POSEIDON zice 60% Over 2.5, asta înseamnă că în condiții identice istorice s-a întâmplat ~60% din timp —
-    care e diferit de "se va întâmpla".</p>
+    <h3 data-i18n="metod.h3.philo">Filozofie</h3>
+    <p data-i18n="metod.p.philo">Modelul NU înlocuiește gândirea. Predicțiile arată <em>cât de des s-a întâmplat un eveniment în condiții similare</em>, nu garanție de viitor. Dacă POSEIDON zice 60% Over 2.5, asta înseamnă că în condiții identice istorice s-a întâmplat ~60% din timp — care e diferit de "se va întâmpla".</p>
 
   </section>
 

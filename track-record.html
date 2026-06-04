@@ -40,50 +40,47 @@
 <main class="container">
 
   <section class="intro">
-    <h2>Track record — calibrare verificabilă</h2>
-    <p>Două surse, etichetate explicit:</p>
+    <h2 data-i18n="tr.h2">Track record — calibrare verificabilă</h2>
+    <p data-i18n="tr.p.sub">Două surse, etichetate explicit:</p>
     <ul>
-      <li><strong>Validare istorică (backtest)</strong> — pe meciuri din ianuarie–mai 2026, ratings calculate strict pe 2024–2025 (zero leakage).</li>
-      <li><strong>Performanță live (forward)</strong> — predicții înghețate înainte de meci, începând cu 2 iunie 2026.</li>
+      <li data-i18n="tr.li.backtest"><strong>Validare istorică (backtest)</strong> — pe meciuri din ianuarie–mai 2026, ratings calculate strict pe 2024–2025 (zero leakage).</li>
+      <li data-i18n="tr.li.forward"><strong>Performanță live (forward)</strong> — predicții înghețate înainte de meci, începând cu 2 iunie 2026.</li>
     </ul>
-    <p class="muted">Backtest = cum a mers pe trecut. Live = ce se întâmplă de acum încolo, verificabil rând cu rând.</p>
+    <p class="muted" data-i18n="tr.p.muted">Backtest = cum a mers pe trecut. Live = ce se întâmplă de acum încolo, verificabil rând cu rând.</p>
   </section>
 
   <section id="calibration-section">
-    <h3>Validare istorică — calibrare pe bucket</h3>
-    <p>Pentru fiecare piață, când modelul prezice prob X%, în câte cazuri reale s-a întâmplat?</p>
+    <h3 data-i18n="tr.h3.calib">Validare istorică — calibrare pe bucket</h3>
+    <p data-i18n="tr.p.calib">Pentru fiecare piață, când modelul prezice prob X%, în câte cazuri reale s-a întâmplat?</p>
 
     <div class="card-info">
-      <strong>De ce bucket-uri și nu accuracy global:</strong> un model care zice "55%" și nimerește 55% din cazuri e <em>calibrat</em>.
-      Un model care zice "55%" dar nimerește 65% e <em>conservator</em>. Un model care zice "75%" dar real 60% e
-      <em>supra-încrezător</em>. Calibrarea pe bucket arată exact unde modelul e onest și unde mai are loc de îmbunătățire.
+      <strong data-i18n="tr.card.title">De ce bucket-uri și nu accuracy global:</strong> <span data-i18n="tr.card.body">un model care zice "55%" și nimerește 55% din cazuri e <em>calibrat</em>. Un model care zice "55%" dar nimerește 65% e <em>conservator</em>. Un model care zice "75%" dar real 60% e <em>supra-încrezător</em>. Calibrarea pe bucket arată exact unde modelul e onest și unde mai are loc de îmbunătățire.</span>
     </div>
 
     <div id="calibration-tables"></div>
   </section>
 
   <section id="leagues-section">
-    <h3>Per ligă — unde modelul e bun, unde nu</h3>
-    <p>Backtest pe ligile cu sample suficient (N≥80). Marker <span class="ok-tag">✓ calibrat</span> = bias ±10%.
-       <span class="warn-tag">⚠️ slab</span> = bias mai mare de ±10%.</p>
+    <h3 data-i18n="tr.h3.leagues">Per ligă — unde modelul e bun, unde nu</h3>
+    <p data-i18n="tr.p.leagues">Backtest pe ligile cu sample suficient (N≥80). Marker <span class="ok-tag">✓ calibrat</span> = bias ±10%. <span class="warn-tag">⚠️ slab</span> = bias mai mare de ±10%.</p>
     <div id="leagues-tables"></div>
   </section>
 
   <section id="forward-section">
-    <h3>Performanță live (forward — în acumulare)</h3>
-    <p>Predicții înghețate la generare (07:15 zilnic), comparate cu rezultatul real după meci. Excluse meciurile neplayed.</p>
+    <h3 data-i18n="tr.h3.fwd">Performanță live (forward — în acumulare)</h3>
+    <p data-i18n="tr.p.fwd">Predicții înghețate la generare (07:15 zilnic), comparate cu rezultatul real după meci. Excluse meciurile neplayed.</p>
     <div id="forward-stats">
-      <p class="muted">Se încarcă...</p>
+      <p class="muted" data-i18n="loading">Se încarcă...</p>
     </div>
   </section>
 
   <section>
-    <h3>Sursă & metodologie</h3>
+    <h3 data-i18n="tr.h3.source">Sursă & metodologie</h3>
     <ul>
-      <li><strong>Backtest istoric</strong> — 65.250 meciuri jucate în 2026, predicții generate cu ratings calculate strict pe 2024-2025 (zero leakage temporal).</li>
-      <li><strong>Jurnal forward</strong> — predicții înghețate la generare (07:15 zilnic), comparate cu rezultatul real după ce s-au jucat meciurile.</li>
-      <li><strong>Calibrare per-ligă</strong> — 1.098 ligi cu shrinkage Bayesian K=14, pentru a evita supra-fitare pe ligi cu sample mic.</li>
-      <li><strong>Reproductibilitate</strong> — metodologia este descrisă complet la <a href="metodologie.html">Metodologie</a>.</li>
+      <li data-i18n="tr.li.source.bt"><strong>Backtest istoric</strong> — 65.250 meciuri jucate în 2026, predicții generate cu ratings calculate strict pe 2024-2025 (zero leakage temporal).</li>
+      <li data-i18n="tr.li.source.fwd"><strong>Jurnal forward</strong> — predicții înghețate la generare (07:15 zilnic), comparate cu rezultatul real după ce s-au jucat meciurile.</li>
+      <li data-i18n="tr.li.source.calib"><strong>Calibrare per-ligă</strong> — pe sute de ligi cu shrinkage Bayesian, pentru a evita supra-fitare pe ligi cu sample mic.</li>
+      <li data-i18n="tr.li.source.repro"><strong>Reproductibilitate</strong> — metodologia este descrisă complet la <a href="metodologie.html">Metodologie</a>.</li>
     </ul>
   </section>
 

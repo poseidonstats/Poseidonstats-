@@ -49,7 +49,7 @@
     </div>
     <h2 data-i18n="index.h2">Predicții pentru următoarele 7 zile</h2>
     <p data-i18n="index.intro">Model Poisson + Dixon-Coles + ratings Bayesian cu calibrare per-ligă. Predicțiile sunt înghețate la generare (07:15 zilnic) și verificabile post-meci.</p>
-    <div class="card-info">
+    <div class="card-info" data-i18n="index.cardinfo.body">
       <strong>Probabilități calibrate empirical.</strong> Cifrele afișate pe Over/BTTS sunt re-mapate pe baza
       a 65.250 meciuri de backtest (TEST 2026, zero leakage). Când modelul brut zice "85% BTTS" dar în istoric pe acel
       interval s-a întâmplat doar 67% din timp, afișăm <strong>67%</strong>, nu 85%.
@@ -62,53 +62,53 @@
   <!-- Suport section — SUS, vizibil înainte de meciuri -->
   <section class="support-cta">
     <div class="support-icon">🔱</div>
-    <h2>Susține POSEIDON</h2>
-    <p class="support-tagline">Predicțiile rămân <strong>GRATIS și fără reclame</strong> pentru toată lumea.</p>
+    <h2 data-i18n="support.h2">Susține POSEIDON</h2>
+    <p class="support-tagline" data-i18n="support.tagline">Predicțiile rămân <strong>GRATIS și fără reclame</strong> pentru toată lumea.</p>
 
     <div class="support-reasons">
       <div class="reason">
         <span class="reason-icon">📡</span>
-        <strong>Infrastructură</strong>
-        <span>Actualizare zilnică automată + bază de date pe 300.000+ meciuri istorice</span>
+        <strong data-i18n="support.infra">Infrastructură</strong>
+        <span data-i18n="support.infra.desc">Actualizare zilnică automată + bază de date pe 300.000+ meciuri istorice</span>
       </div>
       <div class="reason">
         <span class="reason-icon">⚙️</span>
-        <strong>Cercetare</strong>
-        <span>Calibrare empirical, validare per ligă, dezvoltare model</span>
+        <strong data-i18n="support.research">Cercetare</strong>
+        <span data-i18n="support.research.desc">Calibrare empirical, validare per ligă, dezvoltare model</span>
       </div>
       <div class="reason">
         <span class="reason-icon">🚫</span>
-        <strong>Zero reclame</strong>
-        <span>Zero link-uri către case de pariuri. Strict informativ.</span>
+        <strong data-i18n="support.noads">Zero reclame</strong>
+        <span data-i18n="support.noads.desc">Zero link-uri către case de pariuri. Strict informativ.</span>
       </div>
       <div class="reason">
         <span class="reason-icon">📊</span>
-        <strong>Open data</strong>
-        <span>Track record verificabil, predicții înghețate înainte de meci</span>
+        <strong data-i18n="support.opendata">Open data</strong>
+        <span data-i18n="support.opendata.desc">Track record verificabil, predicții înghețate înainte de meci</span>
       </div>
     </div>
 
-    <a href="https://patreon.com/PoseidonPredictions" target="_blank" rel="noopener" class="support-btn">
+    <a href="https://patreon.com/PoseidonPredictions" target="_blank" rel="noopener" class="support-btn" data-i18n="support.btn">
       ☕ Susține cu $3 / lună — Cafeaua POSEIDON
     </a>
-    <p class="support-note">Donație lunară simbolică. Anulezi oricând. Procesat de Patreon.</p>
+    <p class="support-note" data-i18n="support.note">Donație lunară simbolică. Anulezi oricând. Procesat de Patreon.</p>
     <p class="support-contact">
-      📧 Întrebări, colaborări, feedback: <a href="mailto:contact@poseidonstats.com">contact@poseidonstats.com</a>
+      <span data-i18n="support.contact">📧 Întrebări, colaborări, feedback:</span> <a href="mailto:contact@poseidonstats.com">contact@poseidonstats.com</a>
     </p>
   </section>
 
   <section class="filters">
-    <label>Zi:
-      <select id="filter-day"><option value="">Toate zilele</option></select>
+    <label><span data-i18n="filters.day">Zi:</span>
+      <select id="filter-day"><option value="" data-i18n="filters.allday">Toate zilele</option></select>
     </label>
-    <label>Ligă:
-      <select id="filter-league"><option value="">Toate ligile</option></select>
+    <label><span data-i18n="filters.league">Ligă:</span>
+      <select id="filter-league"><option value="" data-i18n="filters.allleague">Toate ligile</option></select>
     </label>
-    <label>Țară:
-      <select id="filter-country"><option value="">Toate țările</option></select>
+    <label><span data-i18n="filters.country">Țară:</span>
+      <select id="filter-country"><option value="" data-i18n="filters.allcountry">Toate țările</option></select>
     </label>
     <label class="cb">
-      <input type="checkbox" id="filter-calibrated-only"> Doar ligi calibrate
+      <input type="checkbox" id="filter-calibrated-only"> <span data-i18n="filters.calibratedonly">Doar ligi calibrate</span>
     </label>
   </section>
 
