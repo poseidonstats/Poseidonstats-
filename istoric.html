@@ -16,7 +16,7 @@
 </head>
 <body>
 
-<div class="legal-banner">
+<div class="legal-banner" data-i18n="banner.legal">
 ⚠️ Date statistice informative. NU garanție de câștig. Pariați responsabil. 18+.
 </div>
 
@@ -27,13 +27,13 @@
       <span class="brand-name">POSEIDON</span>
       <span class="brand-pulse"></span>
     </a>
-    <p class="tagline">Predicții fotbal calibrate pe <strong>65.250 meciuri reale</strong> · zero leakage</p>
+    <p class="tagline" data-i18n="tagline">Predicții fotbal calibrate pe <strong>65.250 meciuri reale</strong> · zero leakage</p>
     <nav>
-      <a href="index.html">Predicții</a>
-      <a href="istoric.html" class="active">Istoric</a>
-      <a href="track-record.html">Track record</a>
-      <a href="metodologie.html">Metodologie</a>
-      <a class="patreon" href="https://patreon.com/PoseidonPredictions" target="_blank" rel="noopener">☕ Susține</a>
+      <a href="index.html" data-i18n="nav.predictii">Predicții</a>
+      <a href="istoric.html" class="active" data-i18n="nav.istoric">Istoric</a>
+      <a href="track-record.html" data-i18n="nav.trackrecord">Track record</a>
+      <a href="metodologie.html" data-i18n="nav.metodologie">Metodologie</a>
+      <a class="patreon" href="https://patreon.com/PoseidonPredictions" target="_blank" rel="noopener" data-i18n="nav.sustine">☕ Susține</a>
     </nav>
   </div>
 </header>
@@ -41,37 +41,35 @@
 <main class="container">
 
   <section class="intro">
-    <h2>Istoric public — rând cu rând</h2>
-    <p>Toate predicțiile cu probabilitate <strong>≥65%</strong> (sugestii ★ pick), înghețate la generare și afișate <strong>WIN și LOSS</strong> deopotrivă.
+    <h2 data-i18n="istoric.h2">Istoric public — rând cu rând</h2>
+    <p data-i18n="istoric.intro">Toate predicțiile cu probabilitate <strong>≥65%</strong> (sugestii ★ pick), înghețate la generare și afișate <strong>WIN și LOSS</strong> deopotrivă.
     Cumulat per piață cu <em>Wilson lower bound 95%</em> + tier statistic strict.</p>
     <div class="card-info">
-      <strong>De ce și LOSS-urile?</strong> Modelul greșește. Calibrarea istorică (bucket 80-90% pe Over 1.5 = real 82.7%)
-      lasă ~17% LOSSes. Site-urile care promit „90% hit" pe mii de predicții mint matematic — Wilson lower bound o demonstrează.
-      Aici vezi exact ce a propus modelul, când și cu ce rezultat.
+      <strong data-i18n="istoric.cardinfo.title">De ce și LOSS-urile?</strong> <span data-i18n="istoric.cardinfo.body">Modelul greșește. Calibrarea istorică (bucket 80-90% pe Over 1.5 = real 82.7%) lasă ~17% LOSSes. Site-urile care promit „90% hit" pe mii de predicții mint matematic — Wilson lower bound o demonstrează.</span>
     </div>
   </section>
 
   <section id="cumulat-section">
-    <h3>Cumulat per piață (din jurnalul live)</h3>
-    <div id="cumulat-stats" class="muted">Se încarcă...</div>
+    <h3 data-i18n="istoric.cumulat.h3">Cumulat per piață (din jurnalul live)</h3>
+    <div id="cumulat-stats" class="muted" data-i18n="loading">Se încarcă...</div>
   </section>
 
   <section id="filters" class="filters">
-    <label>Piață:
+    <label><span data-i18n="filters.market">Piață:</span>
       <select id="filter-market">
-        <option value="">Toate</option>
+        <option value="" data-i18n="filters.allmarket">Toate</option>
       </select>
     </label>
-    <label>Rezultat:
+    <label><span data-i18n="filters.result">Rezultat:</span>
       <select id="filter-result">
-        <option value="">Toate</option>
-        <option value="WIN">Doar WIN</option>
-        <option value="LOSS">Doar LOSS</option>
-        <option value="PENDING">În curs / programate</option>
+        <option value="" data-i18n="filters.allresult">Toate</option>
+        <option value="WIN" data-i18n="filters.onlywin">Doar WIN</option>
+        <option value="LOSS" data-i18n="filters.onlyloss">Doar LOSS</option>
+        <option value="PENDING" data-i18n="filters.onlypending">În curs / programate</option>
       </select>
     </label>
     <label class="cb">
-      <input type="checkbox" id="filter-calibrated-only"> Doar ligi calibrate
+      <input type="checkbox" id="filter-calibrated-only"> <span data-i18n="filters.calibratedonly">Doar ligi calibrate</span>
     </label>
   </section>
 
@@ -96,9 +94,9 @@
 
 <footer>
   <div class="container">
-    <p><strong>POSEIDON</strong> — model statistic propriu, ratings Bayesian cu calibrare per-ligă.</p>
-    <p>⚠️ <strong>Informativ.</strong> NU recomandare de pariere. NU garanție. Pariați responsabil. <strong>18+</strong>.</p>
-    <p class="muted">Contact: <a href="mailto:contact@poseidonstats.com">contact@poseidonstats.com</a> · Dacă pariatul devine problemă: <a href="https://www.jocresponsabil.ro" target="_blank" rel="noopener">jocresponsabil.ro</a></p>
+    <p data-i18n="footer.title"><strong>POSEIDON</strong> — model statistic propriu, ratings Bayesian cu calibrare per-ligă.</p>
+    <p data-i18n="footer.disclaimer">⚠️ <strong>Informativ.</strong> NU recomandare de pariere. NU garanție. Pariați responsabil. <strong>18+</strong>.</p>
+    <p class="muted"><span data-i18n="footer.contact">Contact:</span> <a href="mailto:contact@poseidonstats.com">contact@poseidonstats.com</a> · <span data-i18n="footer.problem">Dacă pariatul devine problemă:</span> <a href="https://www.jocresponsabil.ro" target="_blank" rel="noopener">jocresponsabil.ro</a></p>
   </div>
 </footer>
 

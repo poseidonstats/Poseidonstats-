@@ -16,7 +16,7 @@
 </head>
 <body>
 
-<div class="legal-banner">
+<div class="legal-banner" data-i18n="banner.legal">
 ⚠️ Date statistice informative. NU garanție de câștig. Pariați responsabil. 18+.
 </div>
 
@@ -27,13 +27,13 @@
       <span class="brand-name">POSEIDON</span>
       <span class="brand-pulse"></span>
     </a>
-    <p class="tagline">Predicții fotbal calibrate pe <strong>65.250 meciuri reale</strong> · zero leakage</p>
+    <p class="tagline" data-i18n="tagline">Predicții fotbal calibrate pe <strong>65.250 meciuri reale</strong> · zero leakage</p>
     <nav>
-      <a href="index.html" class="active">Predicții</a>
-      <a href="istoric.html">Istoric</a>
-      <a href="track-record.html">Track record</a>
-      <a href="metodologie.html">Metodologie</a>
-      <a class="patreon" href="https://patreon.com/PoseidonPredictions" target="_blank" rel="noopener">☕ Susține</a>
+      <a href="index.html" class="active" data-i18n="nav.predictii">Predicții</a>
+      <a href="istoric.html" data-i18n="nav.istoric">Istoric</a>
+      <a href="track-record.html" data-i18n="nav.trackrecord">Track record</a>
+      <a href="metodologie.html" data-i18n="nav.metodologie">Metodologie</a>
+      <a class="patreon" href="https://patreon.com/PoseidonPredictions" target="_blank" rel="noopener" data-i18n="nav.sustine">☕ Susține</a>
     </nav>
   </div>
 </header>
@@ -42,13 +42,13 @@
 
   <section class="intro">
     <div class="trust-line">
-      <span class="trust-item"><strong>200.000</strong> simulări Monte Carlo / meci</span>
-      <span class="trust-item"><strong>65.250</strong> meciuri calibrare empirical</span>
-      <span class="trust-item"><strong>270/371</strong> ligi validate ±10%</span>
-      <span class="trust-item"><strong>0</strong> leakage temporal</span>
+      <span class="trust-item"><strong>200.000</strong> <span data-i18n="trust.simulari">simulări Monte Carlo / meci</span></span>
+      <span class="trust-item"><strong>65.250</strong> <span data-i18n="trust.meciuri">meciuri calibrare empirical</span></span>
+      <span class="trust-item"><strong>270/371</strong> <span data-i18n="trust.ligi">ligi validate ±10%</span></span>
+      <span class="trust-item"><strong>0</strong> <span data-i18n="trust.leakage">leakage temporal</span></span>
     </div>
-    <h2>Predicții pentru următoarele 7 zile</h2>
-    <p>Model Poisson + Dixon-Coles + ratings Bayesian cu calibrare per-ligă. Predicțiile sunt înghețate la generare (07:15 zilnic) și verificabile post-meci.</p>
+    <h2 data-i18n="index.h2">Predicții pentru următoarele 7 zile</h2>
+    <p data-i18n="index.intro">Model Poisson + Dixon-Coles + ratings Bayesian cu calibrare per-ligă. Predicțiile sunt înghețate la generare (07:15 zilnic) și verificabile post-meci.</p>
     <div class="card-info">
       <strong>Probabilități calibrate empirical.</strong> Cifrele afișate pe Over/BTTS sunt re-mapate pe baza
       a 65.250 meciuri de backtest (TEST 2026, zero leakage). Când modelul brut zice "85% BTTS" dar în istoric pe acel
@@ -120,9 +120,9 @@
 
 <footer>
   <div class="container">
-    <p><strong>POSEIDON</strong> — model statistic propriu, ratings Bayesian cu calibrare per-ligă.</p>
-    <p>⚠️ <strong>Informativ.</strong> NU recomandare de pariere. <strong>NU garanție.</strong> Pariați responsabil. <strong>18+</strong>.</p>
-    <p class="muted">Contact: <a href="mailto:contact@poseidonstats.com">contact@poseidonstats.com</a> · Dacă pariatul devine problemă: <a href="https://www.jocresponsabil.ro" target="_blank" rel="noopener">jocresponsabil.ro</a></p>
+    <p data-i18n="footer.title"><strong>POSEIDON</strong> — model statistic propriu, ratings Bayesian cu calibrare per-ligă.</p>
+    <p data-i18n="footer.disclaimer">⚠️ <strong>Informativ.</strong> NU recomandare de pariere. <strong>NU garanție.</strong> Pariați responsabil. <strong>18+</strong>.</p>
+    <p class="muted"><span data-i18n="footer.contact">Contact:</span> <a href="mailto:contact@poseidonstats.com">contact@poseidonstats.com</a> · <span data-i18n="footer.problem">Dacă pariatul devine problemă:</span> <a href="https://www.jocresponsabil.ro" target="_blank" rel="noopener">jocresponsabil.ro</a></p>
   </div>
 </footer>
 

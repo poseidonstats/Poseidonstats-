@@ -4,6 +4,73 @@ const PRED_URL = "data/predictions.json";
 const CALIB_URL = "data/calibration.json";
 const FORWARD_URL = "data/forward.json";
 const HISTORY_URL = "data/history.json";
+const I18N_URL = "assets/i18n.json";
+
+/* ============== i18n ============== */
+let I18N = null;
+let LANG = "ro";
+
+function detectLang() {
+  const saved = localStorage.getItem("poseidon_lang");
+  if (saved && ["ro","en","es","it"].includes(saved)) return saved;
+  const bl = (navigator.language || "ro").slice(0,2).toLowerCase();
+  if (["en","es","it","ro"].includes(bl)) return bl;
+  return "ro";
+}
+
+function t(key) {
+  if (!I18N) return key;
+  return (I18N[LANG] && I18N[LANG][key]) || (I18N.ro && I18N.ro[key]) || key;
+}
+
+function applyI18n() {
+  if (!I18N) return;
+  document.querySelectorAll("[data-i18n]").forEach(el => {
+    const key = el.getAttribute("data-i18n");
+    el.innerHTML = t(key);
+  });
+  document.querySelectorAll("[data-i18n-attr]").forEach(el => {
+    // format: "attr:key,attr:key"
+    el.getAttribute("data-i18n-attr").split(",").forEach(pair => {
+      const [attr, key] = pair.split(":");
+      el.setAttribute(attr.trim(), t(key.trim()));
+    });
+  });
+  document.documentElement.lang = LANG;
+}
+
+async function initI18n() {
+  I18N = await fetchJSON(I18N_URL);
+  LANG = detectLang();
+  applyI18n();
+  mountLangSwitcher();
+}
+
+function mountLangSwitcher() {
+  const nav = document.querySelector("header nav");
+  if (!nav || nav.querySelector(".lang-switcher")) return;
+  const wrap = document.createElement("span");
+  wrap.className = "lang-switcher";
+  const FLAGS = { ro:"🇷🇴", en:"🇬🇧", es:"🇪🇸", it:"🇮🇹" };
+  wrap.innerHTML = `<select class="lang-select" aria-label="Language">
+    ${["ro","en","es","it"].map(l => `<option value="${l}" ${l===LANG?"selected":""}>${FLAGS[l]} ${I18N && I18N[l] ? I18N[l]["lang.name"] : l.toUpperCase()}</option>`).join("")}
+  </select>`;
+  nav.appendChild(wrap);
+  wrap.querySelector("select").addEventListener("change", e => {
+    LANG = e.target.value;
+    localStorage.setItem("poseidon_lang", LANG);
+    applyI18n();
+    // Re-render pagini dinamice
+    if (document.getElementById("matches")) renderIndex();
+    if (document.getElementById("days-list")) renderIstoric();
+    if (document.getElementById("calibration-tables")) renderTrackRecord();
+  });
+}
+
+// Auto-init pe TOATE paginile (cu i18n.json fetch)
+if (typeof window !== "undefined") {
+  document.addEventListener("DOMContentLoaded", () => { initI18n(); });
+}
 
 async function fetchJSON(url) {
   try {
