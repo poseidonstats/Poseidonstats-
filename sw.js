@@ -1,7 +1,8 @@
 /* POSEIDON Service Worker — cache-first pentru shell, network-first pentru date. */
-const CACHE = "poseidon-v9";
+const CACHE = "poseidon-v10";
 const SHELL = [
   "./index.html",
+  "./istoric.html",
   "./track-record.html",
   "./metodologie.html",
   "./assets/style.css",

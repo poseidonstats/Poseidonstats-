@@ -3,6 +3,7 @@
 const PRED_URL = "data/predictions.json";
 const CALIB_URL = "data/calibration.json";
 const FORWARD_URL = "data/forward.json";
+const HISTORY_URL = "data/history.json";
 
 async function fetchJSON(url) {
   try {
@@ -297,3 +298,147 @@ async function renderTrackRecord() {
 }
 
 if (document.getElementById("matches")) renderIndex();
+
+
+/* ============== ISTORIC (pagina istoric.html) ============== */
+
+let _histData = null;
+
+async function renderIstoric() {
+  const data = await fetchJSON(HISTORY_URL);
+  if (!data) {
+    document.getElementById("days-list").innerHTML =
+      `<p class="muted">Datele se încarcă... Dacă persistă, jurnalul nu e încă publicat.</p>`;
+    return;
+  }
+  _histData = data;
+
+  // Cumulat per piață
+  const cumHtml = (data.cumulated_markets || []).length
+    ? `<table class="cumulat-table">
+        <thead><tr><th>Piață</th><th>N</th><th>WIN</th><th>LOSS</th><th>Hit %</th><th>Wlo 95%</th><th>Tier</th></tr></thead>
+        <tbody>${data.cumulated_markets.map(m => {
+          const tierClass = m.tier === "STRONG ROBUST" ? "tier-elite"
+            : m.tier === "ROBUST" ? "tier-strong"
+            : m.tier === "PROMISING" ? "tier-good"
+            : m.tier === "PRE-PROMISING" ? "tier-mid"
+            : "tier-noise";
+          return `<tr>
+            <td><strong>${esc(m.name)}</strong></td>
+            <td>${m.n}</td>
+            <td class="num-win">${m.wins}</td>
+            <td class="num-loss">${m.losses}</td>
+            <td>${m.hit_pct.toFixed(1)}%</td>
+            <td>${m.wlo_pct.toFixed(1)}%</td>
+            <td><span class="tier-badge ${tierClass}">${m.tier}</span></td>
+          </tr>`;
+        }).join("")}</tbody>
+      </table>
+      <p class="muted">${esc(data.note || "")}</p>`
+    : `<p class="muted">Jurnal încă în acumulare — verifică din nou peste câteva zile.</p>`;
+  document.getElementById("cumulat-stats").innerHTML = cumHtml;
+
+  // Populez filtru piață
+  const allPicks = new Set();
+  for (const d of data.days) for (const m of d.matches) for (const p of m.picks) allPicks.add(p.market);
+  const sel = document.getElementById("filter-market");
+  [...allPicks].sort().forEach(m => sel.add(new Option(m, m)));
+
+  // Hook filters
+  ["filter-market", "filter-result", "filter-calibrated-only"].forEach(id => {
+    const el = document.getElementById(id);
+    el.addEventListener(el.tagName === "SELECT" ? "change" : "change", renderIstoricDays);
+  });
+
+  renderIstoricDays();
+}
+
+function renderIstoricDays() {
+  if (!_histData) return;
+  const mF = document.getElementById("filter-market").value;
+  const rF = document.getElementById("filter-result").value;
+  const cF = document.getElementById("filter-calibrated-only").checked;
+
+  const html = _histData.days.map(d => {
+    const visibleMatches = d.matches.map(m => {
+      const visPicks = m.picks.filter(p => {
+        if (mF && p.market !== mF) return false;
+        if (rF && p.outcome !== rF) return false;
+        return true;
+      });
+      if (visPicks.length === 0) return null;
+      if (cF && !m.calibrated_lg) return null;
+      return { ...m, picks: visPicks };
+    }).filter(Boolean);
+
+    if (visibleMatches.length === 0) return "";
+
+    const statusBadge = d.status === "resolved"
+      ? `<span class="day-status status-resolved">REZOLVATĂ</span>`
+      : d.status === "partial"
+      ? `<span class="day-status status-partial">PARȚIAL REZOLVATĂ</span>`
+      : d.status === "in_progress"
+      ? `<span class="day-status status-live">ÎN CURS</span>`
+      : `<span class="day-status status-scheduled">PROGRAMATĂ</span>`;
+
+    const t = d.totals;
+    const totalsLine = t.wins + t.losses > 0
+      ? `${t.picks} picks · <strong class="num-win">${t.wins} WIN</strong> · <strong class="num-loss">${t.losses} LOSS</strong>${t.pending > 0 ? ` · ${t.pending} pending` : ""}`
+      : `${t.picks} picks · ${t.pending} pending`;
+
+    return `<details class="day-card" ${d.status !== "scheduled" ? "open" : ""}>
+      <summary>
+        <span class="day-date">${fmtDayDate(d.date)}</span>
+        ${statusBadge}
+        <span class="day-totals">${totalsLine}</span>
+      </summary>
+      <div class="day-matches">
+        ${visibleMatches.map(m => renderHistMatch(m)).join("")}
+      </div>
+    </details>`;
+  }).join("");
+
+  document.getElementById("days-list").innerHTML = html
+    || `<p class="muted">Niciun pick care să se potrivească filtrelor.</p>`;
+}
+
+function fmtDayDate(s) {
+  const d = new Date(s + "T12:00:00Z");
+  const wd = ["Duminică", "Luni", "Marți", "Miercuri", "Joi", "Vineri", "Sâmbătă"][d.getUTCDay()];
+  const m = ["ianuarie", "februarie", "martie", "aprilie", "mai", "iunie",
+             "iulie", "august", "septembrie", "octombrie", "noiembrie", "decembrie"][d.getUTCMonth()];
+  return `${wd}, ${d.getUTCDate()} ${m} ${d.getUTCFullYear()}`;
+}
+
+function renderHistMatch(m) {
+  const ftHtml = (m.ft_h != null && m.ft_a != null)
+    ? `<strong>${m.ft_h}–${m.ft_a}</strong>${m.ht_h != null ? ` <span class="muted">(HT ${m.ht_h}–${m.ht_a})</span>` : ""}`
+    : `<span class="muted">—</span>`;
+
+  const picksHtml = m.picks.map(p => {
+    const cls = p.outcome === "WIN" ? "pick-win"
+      : p.outcome === "LOSS" ? "pick-loss"
+      : "pick-pending";
+    const mark = p.outcome === "WIN" ? "✓"
+      : p.outcome === "LOSS" ? "✗"
+      : "⏳";
+    return `<span class="pick-row ${cls}">★ ${esc(p.market)} ${p.prob}% <span class="pick-mark">${mark}</span></span>`;
+  }).join(" ");
+
+  const calMark = m.calibrated_lg
+    ? `<span class="ok-tag">✓ calibrată</span>`
+    : `<span class="warn-tag">⚠️ ligă slab calibrată</span>`;
+
+  return `<div class="hist-match">
+    <div class="hist-match-head">
+      <span class="hist-time">${esc(m.time)}</span>
+      <span class="hist-teams"><strong>${esc(m.home)}</strong> vs <strong>${esc(m.away)}</strong></span>
+      <span class="hist-ft">${ftHtml}</span>
+    </div>
+    <div class="hist-match-meta">
+      <span class="muted">${esc(m.country)} · ${esc(m.league)}</span>
+      ${calMark}
+    </div>
+    <div class="hist-match-picks">${picksHtml}</div>
+  </div>`;
+}

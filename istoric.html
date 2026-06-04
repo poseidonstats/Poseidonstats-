@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://gc.zgo.at; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://poseidonstats.goatcounter.com; font-src 'self'; base-uri 'self'; form-action 'none';">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>POSEIDON — Istoric predicții public</title>
+<meta name="description" content="Istoric public al predicțiilor POSEIDON pe zile. Toate picks ≥65% rând cu rând. WIN și LOSS publicate onest.">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#1e3a8a">
+<link rel="apple-touch-icon" href="assets/icon-192.png">
+<script>if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js");</script>
+<script data-goatcounter="https://poseidonstats.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+
+<div class="legal-banner">
+⚠️ Date statistice informative. NU garanție de câștig. Pariați responsabil. 18+.
+</div>
+
+<header>
+  <div class="container">
+    <a href="index.html" class="brand">
+      <span class="brand-icon">🔱</span>
+      <span class="brand-name">POSEIDON</span>
+      <span class="brand-pulse"></span>
+    </a>
+    <p class="tagline">Predicții fotbal calibrate pe <strong>65.250 meciuri reale</strong> · zero leakage</p>
+    <nav>
+      <a href="index.html">Predicții</a>
+      <a href="istoric.html" class="active">Istoric</a>
+      <a href="track-record.html">Track record</a>
+      <a href="metodologie.html">Metodologie</a>
+      <a class="patreon" href="https://patreon.com/PoseidonPredictions" target="_blank" rel="noopener">☕ Susține</a>
+    </nav>
+  </div>
+</header>
+
+<main class="container">
+
+  <section class="intro">
+    <h2>Istoric public — rând cu rând</h2>
+    <p>Toate predicțiile cu probabilitate <strong>≥65%</strong> (sugestii ★ pick), înghețate la generare și afișate <strong>WIN și LOSS</strong> deopotrivă.
+    Cumulat per piață cu <em>Wilson lower bound 95%</em> + tier statistic strict.</p>
+    <div class="card-info">
+      <strong>De ce și LOSS-urile?</strong> Modelul greșește. Calibrarea istorică (bucket 80-90% pe Over 1.5 = real 82.7%)
+      lasă ~17% LOSSes. Site-urile care promit „90% hit" pe mii de predicții mint matematic — Wilson lower bound o demonstrează.
+      Aici vezi exact ce a propus modelul, când și cu ce rezultat.
+    </div>
+  </section>
+
+  <section id="cumulat-section">
+    <h3>Cumulat per piață (din jurnalul live)</h3>
+    <div id="cumulat-stats" class="muted">Se încarcă...</div>
+  </section>
+
+  <section id="filters" class="filters">
+    <label>Piață:
+      <select id="filter-market">
+        <option value="">Toate</option>
+      </select>
+    </label>
+    <label>Rezultat:
+      <select id="filter-result">
+        <option value="">Toate</option>
+        <option value="WIN">Doar WIN</option>
+        <option value="LOSS">Doar LOSS</option>
+        <option value="PENDING">În curs / programate</option>
+      </select>
+    </label>
+    <label class="cb">
+      <input type="checkbox" id="filter-calibrated-only"> Doar ligi calibrate
+    </label>
+  </section>
+
+  <section id="days-section">
+    <div id="days-list">
+      <p class="muted">Se încarcă istoricul...</p>
+    </div>
+  </section>
+
+  <section>
+    <h3>Citire onestă</h3>
+    <ul>
+      <li><strong>Tier-uri statistice</strong>: NOISE (N&lt;30), PRE-PROMISING (N≥30), PROMISING (N≥100 + hit≥70% + Wlo≥55%),
+      ROBUST (N≥300 + hit≥70% + Wlo≥60%), STRONG ROBUST (N≥500 + hit≥75% + Wlo≥70%).</li>
+      <li><strong>Wlo</strong> (Wilson lower bound 95%) = pragul realist sub care hit-rate-ul nu pică în 95% din cazuri. Cu cât N e mai mic, cu atât Wlo e mai depărtat de hit% afișat.</li>
+      <li><strong>Sample mic ≠ performanță</strong>: o singură zi 7/7 e NOROC. Doar N≥300 cu Wlo&gt;60% se consideră semnal real.</li>
+      <li><strong>Marker ⚠️</strong> apare pe ligi care nu sunt în lista celor 220 calibrate empirical — predicții afișate, dar cu rezervă.</li>
+    </ul>
+  </section>
+
+</main>
+
+<footer>
+  <div class="container">
+    <p><strong>POSEIDON</strong> — model statistic propriu, ratings Bayesian cu calibrare per-ligă.</p>
+    <p>⚠️ <strong>Informativ.</strong> NU recomandare de pariere. NU garanție. Pariați responsabil. <strong>18+</strong>.</p>
+    <p class="muted">Contact: <a href="mailto:contact@poseidonstats.com">contact@poseidonstats.com</a> · Dacă pariatul devine problemă: <a href="https://www.jocresponsabil.ro" target="_blank" rel="noopener">jocresponsabil.ro</a></p>
+  </div>
+</footer>
+
+<script src="assets/app.js"></script>
+<script>renderIstoric();</script>
+</body>
+</html>
