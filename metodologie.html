@@ -47,7 +47,7 @@
       <li><strong>Attack</strong> — golurile marcate ÷ media ligii (1.0 = echipă medie)</li>
       <li><strong>Defense</strong> — golurile primite ÷ media ligii (mai mic = mai bine)</li>
     </ul>
-    <p>Rate-urile sunt ponderate cu <strong>time-decay exponențial</strong> (half-life 140 zile) — meciurile recente contează mai mult.
+    <p>Rate-urile sunt ponderate cu <strong>time-decay exponențial</strong> — meciurile recente contează mai mult decât cele vechi.
     Bootstrap pentru intervale de încredere.</p>
 
     <h3>2. Lambda per meci (xG estimat)</h3>
@@ -58,8 +58,8 @@
 
     <h3>3. Calibrare per-ligă (anti-bias)</h3>
     <p>Modelul fără calibrare supra-estimează masiv ligile cu scor mare (Nordic +22%) și sub-estimează cele cu scor mic (Sud-America −22%).
-    Soluție: cal_scale_lg = goluri reale ÷ goluri prezise, derivat exclusiv pe TRAIN, cu <strong>shrinkage Bayesian K=14</strong> spre prior 0.78
-    (pentru ligile cu sample mic).</p>
+    Soluție: un factor de scalare per ligă, derivat exclusiv pe TRAIN, cu <strong>shrinkage Bayesian</strong> spre o medie prudentă —
+    aplicat mai puternic pe ligile cu sample mic, pentru a evita supra-fitarea.</p>
 
     <h3>4. Simulare Monte Carlo (200k–1M iterații)</h3>
     <p>Pentru fiecare meci, lambda_home și lambda_away sunt sample-uite din distribuții Normal posteriori
@@ -67,8 +67,8 @@
     Probabilitățile <em>1X2, Over/Under, BTTS, scor exact</em> se obțin din 200k+ partide simulate.</p>
 
     <h3>5. Dixon-Coles correction</h3>
-    <p>Poisson clasic sub-estimează scoruri low (0-0, 1-0, 0-1, 1-1). Correction <code>ρ</code> fitat
-    pe ultimele 5000 meciuri ajustează matricea Poisson pe scorurile mici.</p>
+    <p>Poisson clasic sub-estimează scoruri low (0-0, 1-0, 0-1, 1-1). Corecția <code>ρ</code>, fitată
+    pe meciurile recente, ajustează matricea Poisson pe scorurile mici.</p>
 
     <h3>Whitelist & blacklist ligi</h3>
     <p>După backtest pe 66k meciuri, ligile sunt clasificate:</p>
