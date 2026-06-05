@@ -1,6 +1,155 @@
 {
- "generated_at": "2026-06-05T02:26:27+00:00",
+ "generated_at": "2026-06-05T04:50:01+00:00",
  "days": [
+  {
+   "date": "2026-06-16",
+   "status": "scheduled",
+   "matches": [
+    {
+     "fixture_id": 1489378,
+     "time": "04:00",
+     "country": "World",
+     "league": "World Cup",
+     "home": "Iran",
+     "away": "New Zealand",
+     "calibrated_lg": false,
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 82,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "1 (Home)",
+       "prob": 80,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null
+    },
+    {
+     "fixture_id": 1489383,
+     "time": "22:00",
+     "country": "World",
+     "league": "World Cup",
+     "home": "France",
+     "away": "Senegal",
+     "calibrated_lg": false,
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 79,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null
+    }
+   ],
+   "totals": {
+    "picks": 3,
+    "wins": 0,
+    "losses": 0,
+    "pending": 3
+   }
+  },
+  {
+   "date": "2026-06-15",
+   "status": "scheduled",
+   "matches": [
+    {
+     "fixture_id": 1489380,
+     "time": "19:00",
+     "country": "World",
+     "league": "World Cup",
+     "home": "Spain",
+     "away": "Cape Verde Islands",
+     "calibrated_lg": false,
+     "picks": [
+      {
+       "market": "Under 3.5",
+       "prob": 70,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null
+    },
+    {
+     "fixture_id": 1489377,
+     "time": "22:00",
+     "country": "World",
+     "league": "World Cup",
+     "home": "Belgium",
+     "away": "Egypt",
+     "calibrated_lg": false,
+     "picks": [
+      {
+       "market": "Under 3.5",
+       "prob": 87,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "Under 2.5",
+       "prob": 72,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "BTTS Nu",
+       "prob": 69,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null
+    },
+    {
+     "fixture_id": 1489379,
+     "time": "01:00",
+     "country": "World",
+     "league": "World Cup",
+     "home": "Saudi Arabia",
+     "away": "Uruguay",
+     "calibrated_lg": false,
+     "picks": [
+      {
+       "market": "Under 3.5",
+       "prob": 94,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "Under 2.5",
+       "prob": 83,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "BTTS Nu",
+       "prob": 78,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null
+    }
+   ],
+   "totals": {
+    "picks": 7,
+    "wins": 0,
+    "losses": 0,
+    "pending": 7
+   }
+  },
   {
    "date": "2026-06-14",
    "status": "scheduled",
@@ -3902,6 +4051,218 @@
       {
        "market": "Over 2.5",
        "prob": 69,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null
+    },
+    {
+     "fixture_id": 1548331,
+     "time": "19:00",
+     "country": "Morocco",
+     "league": "Botola Pro",
+     "home": "Yacoub El Mansour",
+     "away": "CODM Meknès",
+     "calibrated_lg": false,
+     "picks": [
+      {
+       "market": "Under 3.5",
+       "prob": 83,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "Under 2.5",
+       "prob": 65,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null
+    },
+    {
+     "fixture_id": 1548332,
+     "time": "21:00",
+     "country": "Morocco",
+     "league": "Botola Pro",
+     "home": "Kawkab Marrakech",
+     "away": "Raja Casablanca",
+     "calibrated_lg": false,
+     "picks": [
+      {
+       "market": "Under 3.5",
+       "prob": 94,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "Under 2.5",
+       "prob": 82,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "BTTS Nu",
+       "prob": 74,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null
+    },
+    {
+     "fixture_id": 1548333,
+     "time": "21:00",
+     "country": "Morocco",
+     "league": "Botola Pro",
+     "home": "CR Khemis Zemamra",
+     "away": "UTS Rabat",
+     "calibrated_lg": false,
+     "picks": [
+      {
+       "market": "Under 3.5",
+       "prob": 77,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null
+    },
+    {
+     "fixture_id": 1548334,
+     "time": "23:00",
+     "country": "Morocco",
+     "league": "Botola Pro",
+     "home": "Maghreb Fès",
+     "away": "FAR Rabat",
+     "calibrated_lg": false,
+     "picks": [
+      {
+       "market": "Under 3.5",
+       "prob": 91,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "Under 2.5",
+       "prob": 77,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "BTTS Nu",
+       "prob": 69,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null
+    }
+   ],
+   "totals": {
+    "picks": 16,
+    "wins": 0,
+    "losses": 0,
+    "pending": 16
+   }
+  },
+  {
+   "date": "2026-06-08",
+   "status": "scheduled",
+   "matches": [
+    {
+     "fixture_id": 1548327,
+     "time": "19:00",
+     "country": "Morocco",
+     "league": "Botola Pro",
+     "home": "FUS Rabat",
+     "away": "Difaa EL Jadida",
+     "calibrated_lg": false,
+     "picks": [
+      {
+       "market": "Under 3.5",
+       "prob": 75,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null
+    },
+    {
+     "fixture_id": 1548328,
+     "time": "21:00",
+     "country": "Morocco",
+     "league": "Botola Pro",
+     "home": "Renaissance Berkane",
+     "away": "Ittihad Tanger",
+     "calibrated_lg": false,
+     "picks": [
+      {
+       "market": "Under 3.5",
+       "prob": 86,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "Under 2.5",
+       "prob": 68,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "BTTS Nu",
+       "prob": 66,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null
+    },
+    {
+     "fixture_id": 1548329,
+     "time": "21:00",
+     "country": "Morocco",
+     "league": "Botola Pro",
+     "home": "Wydad AC",
+     "away": "Olympique Safi",
+     "calibrated_lg": false,
+     "picks": [
+      {
+       "market": "Under 3.5",
+       "prob": 74,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null
+    },
+    {
+     "fixture_id": 1548330,
+     "time": "23:00",
+     "country": "Morocco",
+     "league": "Botola Pro",
+     "home": "Olympique Dcheïra",
+     "away": "Hassania Agadir",
+     "calibrated_lg": false,
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 79,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "Under 3.5",
+       "prob": 67,
        "outcome": "PENDING"
       }
      ],
@@ -12899,23 +13260,23 @@
       {
        "market": "Under 3.5",
        "prob": 92,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       },
       {
        "market": "BTTS Nu",
        "prob": 80,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       },
       {
        "market": "Under 2.5",
        "prob": 80,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 2,
+     "ft_a": 0,
+     "ht_h": 0,
+     "ht_a": 0
     },
     {
      "fixture_id": 1545733,
@@ -13150,9 +13511,9 @@
    ],
    "totals": {
     "picks": 131,
-    "wins": 87,
+    "wins": 90,
     "losses": 36,
-    "pending": 8
+    "pending": 5
    }
   }
  ],
