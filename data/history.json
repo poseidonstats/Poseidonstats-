@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-06-05T07:17:17+00:00",
+ "generated_at": "2026-06-06T01:19:00+00:00",
  "days": [
   {
    "date": "2026-06-16",
@@ -5355,18 +5355,18 @@
       {
        "market": "Over 1.5",
        "prob": 77,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       },
       {
        "market": "Under 3.5",
        "prob": 69,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 2,
+     "ft_a": 1,
+     "ht_h": 1,
+     "ht_a": 0
     },
     {
      "fixture_id": 1487610,
@@ -5380,13 +5380,13 @@
       {
        "market": "Over 1.5",
        "prob": 81,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 10,
+     "ft_a": 1,
+     "ht_h": 4,
+     "ht_a": 0
     },
     {
      "fixture_id": 1487711,
@@ -5500,23 +5500,23 @@
       {
        "market": "1 (Home)",
        "prob": 82,
-       "outcome": "PENDING"
+       "outcome": "LOSS"
       },
       {
        "market": "Over 1.5",
        "prob": 80,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       },
       {
        "market": "BTTS Nu",
        "prob": 67,
-       "outcome": "PENDING"
+       "outcome": "LOSS"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 4,
+     "ft_a": 4,
+     "ht_h": 2,
+     "ht_a": 3
     },
     {
      "fixture_id": 1487716,
@@ -5595,13 +5595,13 @@
       {
        "market": "Under 3.5",
        "prob": 75,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 2,
+     "ft_a": 1,
+     "ht_h": 1,
+     "ht_a": 0
     },
     {
      "fixture_id": 1487832,
@@ -5690,13 +5690,13 @@
       {
        "market": "Over 1.5",
        "prob": 80,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 1,
+     "ft_a": 8,
+     "ht_h": 0,
+     "ht_a": 3
     },
     {
      "fixture_id": 1449469,
@@ -6276,9 +6276,9 @@
    ],
    "totals": {
     "picks": 164,
-    "wins": 3,
-    "losses": 1,
-    "pending": 160
+    "wins": 9,
+    "losses": 3,
+    "pending": 152
    }
   },
   {
@@ -7217,28 +7217,28 @@
       {
        "market": "1 (Home)",
        "prob": 93,
-       "outcome": "PENDING"
+       "outcome": "LOSS"
       },
       {
        "market": "Over 1.5",
        "prob": 89,
-       "outcome": "PENDING"
+       "outcome": "LOSS"
       },
       {
        "market": "Over 2.5",
        "prob": 74,
-       "outcome": "PENDING"
+       "outcome": "LOSS"
       },
       {
        "market": "BTTS Nu",
        "prob": 74,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 0,
+     "ft_a": 1,
+     "ht_h": 0,
+     "ht_a": 1
     },
     {
      "fixture_id": 1489865,
@@ -7482,23 +7482,23 @@
       {
        "market": "Over 1.5",
        "prob": 85,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       },
       {
        "market": "Over 2.5",
        "prob": 66,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       },
       {
        "market": "BTTS Da",
        "prob": 66,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 4,
+     "ft_a": 1,
+     "ht_h": 3,
+     "ht_a": 1
     },
     {
      "fixture_id": 1490101,
@@ -7742,23 +7742,23 @@
       {
        "market": "Over 1.5",
        "prob": 92,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       },
       {
        "market": "Over 2.5",
        "prob": 78,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       },
       {
        "market": "BTTS Da",
        "prob": 75,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 2,
+     "ft_a": 1,
+     "ht_h": 1,
+     "ht_a": 0
     },
     {
      "fixture_id": 1490722,
@@ -8133,9 +8133,9 @@
    ],
    "totals": {
     "picks": 162,
-    "wins": 1,
-    "losses": 2,
-    "pending": 159
+    "wins": 8,
+    "losses": 5,
+    "pending": 149
    }
   },
   {
@@ -8154,13 +8154,13 @@
       {
        "market": "Under 3.5",
        "prob": 75,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 1,
+     "ft_a": 1,
+     "ht_h": 1,
+     "ht_a": 0
     },
     {
      "fixture_id": 1464655,
@@ -8569,13 +8569,13 @@
       {
        "market": "Under 3.5",
        "prob": 81,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 0,
+     "ft_a": 0,
+     "ht_h": 0,
+     "ht_a": 0
     },
     {
      "fixture_id": 1397961,
@@ -8669,23 +8669,23 @@
       {
        "market": "Over 1.5",
        "prob": 90,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       },
       {
        "market": "Over 2.5",
        "prob": 75,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       },
       {
        "market": "2 (Away)",
        "prob": 67,
-       "outcome": "PENDING"
+       "outcome": "LOSS"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 2,
+     "ft_a": 1,
+     "ht_h": 0,
+     "ht_a": 1
     },
     {
      "fixture_id": 1397966,
@@ -8699,13 +8699,13 @@
       {
        "market": "Over 1.5",
        "prob": 81,
-       "outcome": "PENDING"
+       "outcome": "LOSS"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 1,
+     "ft_a": 0,
+     "ht_h": 0,
+     "ht_a": 0
     },
     {
      "fixture_id": 1397968,
@@ -8719,13 +8719,13 @@
       {
        "market": "Under 3.5",
        "prob": 74,
-       "outcome": "PENDING"
+       "outcome": "LOSS"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 1,
+     "ft_a": 3,
+     "ht_h": 1,
+     "ht_a": 2
     },
     {
      "fixture_id": 1418142,
@@ -8839,23 +8839,23 @@
       {
        "market": "Over 1.5",
        "prob": 93,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       },
       {
        "market": "Over 2.5",
        "prob": 81,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       },
       {
        "market": "BTTS Da",
        "prob": 78,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 2,
+     "ft_a": 3,
+     "ht_h": 0,
+     "ht_a": 0
     },
     {
      "fixture_id": 1465144,
@@ -8904,23 +8904,23 @@
       {
        "market": "Over 1.5",
        "prob": 93,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       },
       {
        "market": "Over 2.5",
        "prob": 80,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       },
       {
        "market": "BTTS Da",
        "prob": 77,
-       "outcome": "PENDING"
+       "outcome": "LOSS"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 0,
+     "ft_a": 5,
+     "ht_h": 0,
+     "ht_a": 4
     },
     {
      "fixture_id": 1465146,
@@ -9115,9 +9115,9 @@
    ],
    "totals": {
     "picks": 89,
-    "wins": 9,
-    "losses": 1,
-    "pending": 79
+    "wins": 18,
+    "losses": 5,
+    "pending": 66
    }
   },
   {
@@ -11996,7 +11996,7 @@
   },
   {
    "date": "2026-06-02",
-   "status": "partial",
+   "status": "resolved",
    "matches": [
     {
      "fixture_id": 1507322,
@@ -12785,23 +12785,23 @@
       {
        "market": "Under 3.5",
        "prob": 87,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       },
       {
        "market": "Under 2.5",
        "prob": 70,
-       "outcome": "PENDING"
+       "outcome": "LOSS"
       },
       {
        "market": "BTTS Nu",
        "prob": 67,
-       "outcome": "PENDING"
+       "outcome": "LOSS"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 1,
+     "ft_a": 2,
+     "ht_h": 0,
+     "ht_a": 1
     },
     {
      "fixture_id": 1545731,
@@ -13290,18 +13290,18 @@
       {
        "market": "Under 3.5",
        "prob": 77,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       },
       {
        "market": "1 (Home)",
        "prob": 67,
-       "outcome": "PENDING"
+       "outcome": "LOSS"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 0,
+     "ft_a": 0,
+     "ht_h": 0,
+     "ht_a": 0
     },
     {
      "fixture_id": 1536929,
@@ -13511,29 +13511,29 @@
    ],
    "totals": {
     "picks": 131,
-    "wins": 90,
-    "losses": 36,
-    "pending": 5
+    "wins": 92,
+    "losses": 39,
+    "pending": 0
    }
   }
  ],
  "cumulated_markets": [
   {
    "name": "Over 1.5",
-   "n": 94,
-   "wins": 83,
-   "losses": 11,
-   "hit_pct": 88.3,
-   "wlo_pct": 80.2,
-   "tier": "PRE-PROMISING"
+   "n": 105,
+   "wins": 92,
+   "losses": 13,
+   "hit_pct": 87.6,
+   "wlo_pct": 80.0,
+   "tier": "PROMISING"
   },
   {
    "name": "Over 2.5",
-   "n": 41,
-   "wins": 33,
-   "losses": 8,
-   "hit_pct": 80.5,
-   "wlo_pct": 66.0,
+   "n": 47,
+   "wins": 38,
+   "losses": 9,
+   "hit_pct": 80.9,
+   "wlo_pct": 67.5,
    "tier": "PRE-PROMISING"
   },
   {
@@ -13547,21 +13547,21 @@
   },
   {
    "name": "BTTS Da",
-   "n": 24,
-   "wins": 21,
-   "losses": 3,
-   "hit_pct": 87.5,
-   "wlo_pct": 69.0,
+   "n": 28,
+   "wins": 24,
+   "losses": 4,
+   "hit_pct": 85.7,
+   "wlo_pct": 68.5,
    "tier": "NOISE"
   },
   {
    "name": "HT Over 0.5",
-   "n": 99,
-   "wins": 81,
-   "losses": 18,
-   "hit_pct": 81.8,
-   "wlo_pct": 73.1,
-   "tier": "PRE-PROMISING"
+   "n": 115,
+   "wins": 93,
+   "losses": 22,
+   "hit_pct": 80.9,
+   "wlo_pct": 72.7,
+   "tier": "PROMISING"
   },
   {
    "name": "HT Over 1.5",
