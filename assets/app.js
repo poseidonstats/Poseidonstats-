@@ -114,30 +114,70 @@ async function renderIndex() {
   const selDay = document.getElementById("filter-day");
   const selLeague = document.getElementById("filter-league");
   const selCountry = document.getElementById("filter-country");
+  const selMarket = document.getElementById("filter-market");
+  const selMinProb = document.getElementById("filter-minprob");
+  const selSort = document.getElementById("filter-sort");
+  const chkCalib = document.getElementById("filter-calibrated-only");
   days.forEach(d => selDay.add(new Option(d, d)));
   leagues.forEach(l => selLeague.add(new Option(l, l)));
   countries.forEach(c => selCountry.add(new Option(c, c)));
+
+  // Pe baza calibrată (afișată). Returnează valoarea pentru piața selectată.
+  function probForMarket(m, mk) {
+    if (mk === "over_1_5")    return m.prob_over_1_5;
+    if (mk === "over_2_5")    return m.prob_over_2_5;
+    if (mk === "over_3_5")    return m.prob_over_3_5;
+    if (mk === "btts")        return m.prob_btts;
+    if (mk === "ht_over_0_5") return m.prob_ht_over_0_5;
+    if (mk === "ht_over_1_5") return m.prob_ht_over_1_5;
+    if (mk === "1x2")         return Math.max(m.prob_home || 0, m.prob_away || 0);
+    // Toate piețele: cea mai mare prob găsită
+    return Math.max(
+      m.prob_over_1_5 || 0, m.prob_over_2_5 || 0, m.prob_over_3_5 || 0,
+      m.prob_btts || 0, m.prob_ht_over_0_5 || 0, m.prob_ht_over_1_5 || 0,
+      m.prob_home || 0, m.prob_away || 0
+    );
+  }
 
   function update() {
     const fd = selDay.value;
     const fl = selLeague.value;
     const fc = selCountry.value;
-    const calibOnly = document.getElementById("filter-calibrated-only").checked;
+    const fmk = selMarket.value;
+    const fmin = parseFloat(selMinProb.value) || 0;
+    const calibOnly = chkCalib.checked;
     let filtered = matches.filter(m => {
       if (fd && !m.match_date.startsWith(fd)) return false;
       if (fl && m.league !== fl) return false;
       if (fc && m.country !== fc) return false;
       if (calibOnly && !m.calibrated) return false;
+      if (fmin > 0) {
+        const p = probForMarket(m, fmk);
+        if (p == null || p < fmin) return false;
+      }
       return true;
     });
-    filtered.sort((a, b) => a.match_date.localeCompare(b.match_date));
+    const sortMode = selSort.value;
+    if (sortMode === "prob_desc") {
+      filtered.sort((a, b) => probForMarket(b, fmk) - probForMarket(a, fmk));
+    } else if (sortMode === "league") {
+      filtered.sort((a, b) => (a.league || "").localeCompare(b.league || "") || a.match_date.localeCompare(b.match_date));
+    } else {
+      filtered.sort((a, b) => a.match_date.localeCompare(b.match_date));
+    }
     document.getElementById("match-count").textContent =
       `${filtered.length} meciuri afișate (din ${matches.length} totale).`;
     document.getElementById("matches").innerHTML = filtered.map(renderMatch).join("");
   }
 
-  [selDay, selLeague, selCountry].forEach(s => s.addEventListener("change", update));
-  document.getElementById("filter-calibrated-only").addEventListener("change", update);
+  [selDay, selLeague, selCountry, selMarket, selMinProb, selSort].forEach(s => s.addEventListener("change", update));
+  chkCalib.addEventListener("change", update);
+  document.getElementById("filter-reset").addEventListener("click", () => {
+    selDay.value = ""; selLeague.value = ""; selCountry.value = "";
+    selMarket.value = ""; selMinProb.value = "0.70"; selSort.value = "time";
+    chkCalib.checked = false;
+    update();
+  });
   update();
 }
 

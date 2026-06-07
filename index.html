@@ -101,16 +101,51 @@
     <label><span data-i18n="filters.day">Zi:</span>
       <select id="filter-day"><option value="" data-i18n="filters.allday">Toate zilele</option></select>
     </label>
+    <label><span data-i18n="filters.market">Piață:</span>
+      <select id="filter-market">
+        <option value="" data-i18n="filters.allmarket">Toate piețele</option>
+        <option value="over_1_5">Over 1.5</option>
+        <option value="over_2_5">Over 2.5</option>
+        <option value="over_3_5">Over 3.5</option>
+        <option value="btts">BTTS Da</option>
+        <option value="ht_over_0_5">HT Over 0.5</option>
+        <option value="ht_over_1_5">HT Over 1.5</option>
+        <option value="1x2">1X2 (Home / Away)</option>
+      </select>
+    </label>
+    <label><span data-i18n="filters.minprob">Prob. minimă:</span>
+      <select id="filter-minprob">
+        <option value="0" data-i18n="filters.minprob.all">Orice</option>
+        <option value="0.65">≥ 65%</option>
+        <option value="0.70" selected>≥ 70%</option>
+        <option value="0.75">≥ 75%</option>
+        <option value="0.80">≥ 80%</option>
+        <option value="0.85">≥ 85%</option>
+      </select>
+    </label>
     <label><span data-i18n="filters.league">Ligă:</span>
       <select id="filter-league"><option value="" data-i18n="filters.allleague">Toate ligile</option></select>
     </label>
     <label><span data-i18n="filters.country">Țară:</span>
       <select id="filter-country"><option value="" data-i18n="filters.allcountry">Toate țările</option></select>
     </label>
+    <label><span data-i18n="filters.sort">Sortare:</span>
+      <select id="filter-sort">
+        <option value="time" data-i18n="filters.sort.time">Oră (cronologic)</option>
+        <option value="prob_desc" data-i18n="filters.sort.probdesc">Probabilitate (mare → mică)</option>
+        <option value="league" data-i18n="filters.sort.league">Ligă (A → Z)</option>
+      </select>
+    </label>
     <label class="cb">
       <input type="checkbox" id="filter-calibrated-only"> <span data-i18n="filters.calibratedonly">Doar ligi calibrate</span>
     </label>
+    <button type="button" id="filter-reset" class="filter-reset" data-i18n="filters.reset">Resetează filtrele</button>
   </section>
+
+  <p class="filter-note muted" data-i18n="filters.note">
+    Filtrele ajută la navigare prin date. Cifrele afișate sunt cele calibrate empiric.
+    Fiecare predicție rămâne individuală — site-ul nu construiește bilete și nu combină meciuri.
+  </p>
 
   <div id="match-count" class="match-count"></div>
 

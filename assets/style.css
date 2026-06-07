@@ -352,6 +352,27 @@ p { margin-bottom: 10px; }
   border-radius: 4px;
   background: #fff;
 }
+.filter-reset {
+  margin-left: auto;
+  padding: 8px 14px;
+  font-size: 0.85rem;
+  color: #1e3a8a;
+  background: #f3f4f6;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.filter-reset:hover { background: #e5e7eb; }
+.filter-note {
+  font-size: 0.82rem;
+  margin: 0 0 12px;
+  padding: 8px 12px;
+  background: #f9fafb;
+  border-left: 3px solid #d4a017;
+  border-radius: 2px;
+  color: #6b7280;
+}
 
 .match-count {
   color: #6b7280;
