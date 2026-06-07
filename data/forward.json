@@ -1,47 +1,47 @@
 {
- "generated_at": "2026-06-06T04:50:07+00:00",
- "n_total": 1009,
- "n_resolved": 243,
- "n_pending": 760,
- "n_not_played": 6,
+ "generated_at": "2026-06-07T01:07:53+00:00",
+ "n_total": 1010,
+ "n_resolved": 566,
+ "n_pending": 436,
+ "n_not_played": 8,
  "markets": [
   {
    "name": "Over 1.5 goluri (FT)",
    "buckets": [
     {
      "range": "50–60%",
-     "n": 20,
-     "hit_pct": 70.0,
-     "wlo_pct": 48.1,
-     "diff_pp": 15.0
+     "n": 37,
+     "hit_pct": 64.86,
+     "wlo_pct": 48.76,
+     "diff_pp": 9.86
     },
     {
      "range": "60–70%",
-     "n": 33,
-     "hit_pct": 66.67,
-     "wlo_pct": 49.61,
-     "diff_pp": 1.67
+     "n": 76,
+     "hit_pct": 67.11,
+     "wlo_pct": 55.94,
+     "diff_pp": 2.11
     },
     {
      "range": "70–80%",
-     "n": 63,
-     "hit_pct": 82.54,
-     "wlo_pct": 71.38,
-     "diff_pp": 7.54
+     "n": 159,
+     "hit_pct": 77.99,
+     "wlo_pct": 70.93,
+     "diff_pp": 2.99
     },
     {
      "range": "80–90%",
-     "n": 67,
-     "hit_pct": 85.07,
-     "wlo_pct": 74.66,
-     "diff_pp": 0.07
+     "n": 160,
+     "hit_pct": 86.25,
+     "wlo_pct": 80.06,
+     "diff_pp": 1.25
     },
     {
      "range": "90–100%",
-     "n": 41,
-     "hit_pct": 90.24,
-     "wlo_pct": 77.45,
-     "diff_pp": -4.76
+     "n": 92,
+     "hit_pct": 91.3,
+     "wlo_pct": 83.77,
+     "diff_pp": -3.7
     }
    ]
   },
@@ -50,38 +50,38 @@
    "buckets": [
     {
      "range": "50–60%",
-     "n": 57,
-     "hit_pct": 68.42,
-     "wlo_pct": 55.52,
-     "diff_pp": 13.42
+     "n": 140,
+     "hit_pct": 64.29,
+     "wlo_pct": 56.06,
+     "diff_pp": 9.29
     },
     {
      "range": "60–70%",
-     "n": 33,
-     "hit_pct": 72.73,
-     "wlo_pct": 55.78,
-     "diff_pp": 7.73
+     "n": 87,
+     "hit_pct": 64.37,
+     "wlo_pct": 53.89,
+     "diff_pp": -0.63
     },
     {
      "range": "70–80%",
-     "n": 45,
-     "hit_pct": 77.78,
-     "wlo_pct": 63.73,
-     "diff_pp": 2.78
+     "n": 90,
+     "hit_pct": 76.67,
+     "wlo_pct": 66.95,
+     "diff_pp": 1.67
     },
     {
      "range": "80–90%",
-     "n": 12,
-     "hit_pct": 91.67,
-     "wlo_pct": 64.61,
-     "diff_pp": 6.67
+     "n": 35,
+     "hit_pct": 85.71,
+     "wlo_pct": 70.62,
+     "diff_pp": 0.71
     },
     {
      "range": "90–100%",
-     "n": 3,
-     "hit_pct": 33.33,
-     "wlo_pct": 6.15,
-     "diff_pp": -61.67
+     "n": 5,
+     "hit_pct": 40.0,
+     "wlo_pct": 11.76,
+     "diff_pp": -55.0
     }
    ]
   },
@@ -90,31 +90,31 @@
    "buckets": [
     {
      "range": "50–60%",
-     "n": 33,
-     "hit_pct": 42.42,
-     "wlo_pct": 27.24,
-     "diff_pp": -12.58
+     "n": 71,
+     "hit_pct": 47.89,
+     "wlo_pct": 36.68,
+     "diff_pp": -7.11
     },
     {
      "range": "60–70%",
-     "n": 21,
-     "hit_pct": 66.67,
-     "wlo_pct": 45.37,
-     "diff_pp": 1.67
+     "n": 47,
+     "hit_pct": 65.96,
+     "wlo_pct": 51.67,
+     "diff_pp": 0.96
     },
     {
      "range": "70–80%",
-     "n": 4,
-     "hit_pct": 75.0,
-     "wlo_pct": 30.06,
-     "diff_pp": 0.0
+     "n": 11,
+     "hit_pct": 63.64,
+     "wlo_pct": 35.38,
+     "diff_pp": -11.36
     },
     {
      "range": "80–90%",
-     "n": 3,
-     "hit_pct": 66.67,
-     "wlo_pct": 20.77,
-     "diff_pp": -18.33
+     "n": 4,
+     "hit_pct": 75.0,
+     "wlo_pct": 30.06,
+     "diff_pp": -10.0
     },
     {
      "range": "90–100%",
@@ -130,31 +130,31 @@
    "buckets": [
     {
      "range": "50–60%",
-     "n": 64,
-     "hit_pct": 68.75,
-     "wlo_pct": 56.61,
-     "diff_pp": 13.75
+     "n": 165,
+     "hit_pct": 64.24,
+     "wlo_pct": 56.68,
+     "diff_pp": 9.24
     },
     {
      "range": "60–70%",
-     "n": 37,
-     "hit_pct": 81.08,
-     "wlo_pct": 65.79,
-     "diff_pp": 16.08
+     "n": 90,
+     "hit_pct": 71.11,
+     "wlo_pct": 61.04,
+     "diff_pp": 6.11
     },
     {
      "range": "70–80%",
-     "n": 19,
-     "hit_pct": 78.95,
-     "wlo_pct": 56.67,
-     "diff_pp": 3.95
+     "n": 53,
+     "hit_pct": 75.47,
+     "wlo_pct": 62.43,
+     "diff_pp": 0.47
     },
     {
      "range": "80–90%",
-     "n": 0,
-     "hit_pct": 0.0,
-     "wlo_pct": 0.0,
-     "diff_pp": 0.0
+     "n": 7,
+     "hit_pct": 71.43,
+     "wlo_pct": 35.89,
+     "diff_pp": -13.57
     },
     {
      "range": "90–100%",
@@ -170,38 +170,38 @@
    "buckets": [
     {
      "range": "50–60%",
-     "n": 32,
-     "hit_pct": 75.0,
-     "wlo_pct": 57.89,
-     "diff_pp": 20.0
+     "n": 77,
+     "hit_pct": 64.94,
+     "wlo_pct": 53.8,
+     "diff_pp": 9.94
     },
     {
      "range": "60–70%",
-     "n": 47,
-     "hit_pct": 76.6,
-     "wlo_pct": 62.78,
-     "diff_pp": 11.6
+     "n": 126,
+     "hit_pct": 70.63,
+     "wlo_pct": 62.17,
+     "diff_pp": 5.63
     },
     {
      "range": "70–80%",
-     "n": 69,
-     "hit_pct": 75.36,
-     "wlo_pct": 64.04,
-     "diff_pp": 0.36
+     "n": 156,
+     "hit_pct": 80.13,
+     "wlo_pct": 73.18,
+     "diff_pp": 5.13
     },
     {
      "range": "80–90%",
-     "n": 41,
-     "hit_pct": 82.93,
-     "wlo_pct": 68.74,
-     "diff_pp": -2.07
+     "n": 106,
+     "hit_pct": 85.85,
+     "wlo_pct": 77.96,
+     "diff_pp": 0.85
     },
     {
      "range": "90–100%",
-     "n": 7,
-     "hit_pct": 100.0,
-     "wlo_pct": 64.57,
-     "diff_pp": 5.0
+     "n": 18,
+     "hit_pct": 88.89,
+     "wlo_pct": 67.2,
+     "diff_pp": -6.11
     }
    ]
   },
@@ -210,31 +210,31 @@
    "buckets": [
     {
      "range": "50–60%",
-     "n": 30,
-     "hit_pct": 56.67,
-     "wlo_pct": 39.2,
-     "diff_pp": 1.67
+     "n": 67,
+     "hit_pct": 56.72,
+     "wlo_pct": 44.81,
+     "diff_pp": 1.72
     },
     {
      "range": "60–70%",
-     "n": 16,
-     "hit_pct": 62.5,
-     "wlo_pct": 38.64,
-     "diff_pp": -2.5
+     "n": 38,
+     "hit_pct": 65.79,
+     "wlo_pct": 49.89,
+     "diff_pp": 0.79
     },
     {
      "range": "70–80%",
-     "n": 4,
-     "hit_pct": 100.0,
-     "wlo_pct": 51.01,
-     "diff_pp": 25.0
+     "n": 12,
+     "hit_pct": 75.0,
+     "wlo_pct": 46.77,
+     "diff_pp": 0.0
     },
     {
      "range": "80–90%",
-     "n": 1,
-     "hit_pct": 0.0,
-     "wlo_pct": 0.0,
-     "diff_pp": -85.0
+     "n": 4,
+     "hit_pct": 25.0,
+     "wlo_pct": 4.56,
+     "diff_pp": -60.0
     },
     {
      "range": "90–100%",
