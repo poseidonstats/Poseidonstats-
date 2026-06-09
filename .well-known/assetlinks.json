@@ -1,0 +1,10 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.poseidonstats.app",
+      "sha256_cert_fingerprints": ["19:2C:DA:F5:9F:EF:24:75:82:AF:0C:92:F5:46:E3:BA:E9:3F:EA:80:D4:A5:84:C3:CD:17:82:0D:E2:E5:24:AC"]
+    }
+  }
+]
