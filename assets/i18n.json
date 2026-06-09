@@ -79,7 +79,6 @@
     "footer.problem": "Dacă pariatul devine problemă:",
     "loading": "Se încarcă...",
     "nopicks": "Niciun pick care să se potrivească filtrelor.",
-
     "metod.h2": "Cum funcționează POSEIDON",
     "metod.h3.1": "1. Ratings echipă (Poisson Bayesian)",
     "metod.p.1a": "Fiecare echipă primește două rate-uri relative:",
@@ -106,7 +105,6 @@
     "metod.li.limit3": "Pe ligi necalibrate sau cu sample mic (N&lt;80), predicțiile pot diverge de realitate.",
     "metod.h3.philo": "Filozofie",
     "metod.p.philo": "Modelul NU înlocuiește gândirea. Predicțiile arată <em>cât de des s-a întâmplat un eveniment în condiții similare</em>, nu garanție de viitor. Dacă POSEIDON zice 60% Over 2.5, asta înseamnă că în condiții identice istorice s-a întâmplat ~60% din timp — care e diferit de „se va întâmpla\".",
-
     "tr.h2": "Track record — calibrare verificabilă",
     "tr.p.sub": "Două surse, etichetate explicit:",
     "tr.li.backtest": "<strong>Validare istorică (backtest)</strong> — pe meciuri din ianuarie–mai 2026, ratings calculate strict pe 2024–2025 (zero leakage).",
@@ -124,7 +122,8 @@
     "tr.li.source.bt": "<strong>Backtest istoric</strong> — 65.250 meciuri jucate în 2026, predicții generate cu ratings calculate strict pe 2024-2025 (zero leakage temporal).",
     "tr.li.source.fwd": "<strong>Jurnal forward</strong> — predicții înghețate la generare (07:15 zilnic), comparate cu rezultatul real după ce s-au jucat meciurile.",
     "tr.li.source.calib": "<strong>Calibrare per-ligă</strong> — pe sute de ligi cu shrinkage Bayesian, pentru a evita supra-fitare pe ligi cu sample mic.",
-    "tr.li.source.repro": "<strong>Reproductibilitate</strong> — metodologia este descrisă complet la <a href=\"metodologie.html\">Metodologie</a>."
+    "tr.li.source.repro": "<strong>Reproductibilitate</strong> — metodologia este descrisă complet la <a href=\"metodologie.html\">Metodologie</a>.",
+    "footer.terms": "Termeni și Condiții"
   },
   "en": {
     "lang.name": "English",
@@ -206,7 +205,6 @@
     "footer.problem": "If gambling becomes a problem:",
     "loading": "Loading...",
     "nopicks": "No pick matches the filters.",
-
     "metod.h2": "How POSEIDON works",
     "metod.h3.1": "1. Team ratings (Bayesian Poisson)",
     "metod.p.1a": "Each team gets two relative ratings:",
@@ -233,7 +231,6 @@
     "metod.li.limit3": "On uncalibrated leagues or with small sample (N&lt;80), predictions may diverge from reality.",
     "metod.h3.philo": "Philosophy",
     "metod.p.philo": "The model does NOT replace thinking. Predictions show <em>how often an event has happened in similar conditions</em>, not a guarantee of the future. If POSEIDON says 60% Over 2.5, it means that in identical historical conditions it happened ~60% of the time — which is different from „it will happen\".",
-
     "tr.h2": "Track record — verifiable calibration",
     "tr.p.sub": "Two sources, explicitly labeled:",
     "tr.li.backtest": "<strong>Historical validation (backtest)</strong> — on matches from January–May 2026, ratings calculated strictly on 2024–2025 (zero leakage).",
@@ -251,7 +248,8 @@
     "tr.li.source.bt": "<strong>Historical backtest</strong> — 65,250 matches played in 2026, predictions generated with ratings calculated strictly on 2024–2025 (zero temporal leakage).",
     "tr.li.source.fwd": "<strong>Forward journal</strong> — predictions frozen at generation (07:15 daily), compared with the real result after matches are played.",
     "tr.li.source.calib": "<strong>Per-league calibration</strong> — on hundreds of leagues with Bayesian shrinkage, to avoid overfitting on small-sample leagues.",
-    "tr.li.source.repro": "<strong>Reproducibility</strong> — the methodology is described in full at <a href=\"metodologie.html\">Methodology</a>."
+    "tr.li.source.repro": "<strong>Reproducibility</strong> — the methodology is described in full at <a href=\"metodologie.html\">Methodology</a>.",
+    "footer.terms": "Terms & Conditions"
   },
   "es": {
     "lang.name": "Español",
@@ -333,7 +331,6 @@
     "footer.problem": "Si las apuestas se vuelven un problema:",
     "loading": "Cargando...",
     "nopicks": "Ningún pick coincide con los filtros.",
-
     "metod.h2": "Cómo funciona POSEIDON",
     "metod.h3.1": "1. Ratings de equipo (Poisson Bayesiano)",
     "metod.p.1a": "Cada equipo recibe dos ratings relativos:",
@@ -360,7 +357,6 @@
     "metod.li.limit3": "En ligas no calibradas o con muestra pequeña (N&lt;80), las predicciones pueden divergir de la realidad.",
     "metod.h3.philo": "Filosofía",
     "metod.p.philo": "El modelo NO reemplaza el pensamiento. Las predicciones muestran <em>con qué frecuencia ha ocurrido un evento en condiciones similares</em>, no una garantía del futuro. Si POSEIDON dice 60% Over 2.5, significa que en condiciones históricas idénticas ocurrió ~60% del tiempo — lo cual es diferente de „va a ocurrir\".",
-
     "tr.h2": "Track record — calibración verificable",
     "tr.p.sub": "Dos fuentes, explícitamente etiquetadas:",
     "tr.li.backtest": "<strong>Validación histórica (backtest)</strong> — en partidos de enero–mayo 2026, ratings calculados estrictamente en 2024–2025 (cero leakage).",
@@ -378,7 +374,8 @@
     "tr.li.source.bt": "<strong>Backtest histórico</strong> — 65.250 partidos jugados en 2026, predicciones generadas con ratings calculados estrictamente en 2024–2025 (cero leakage temporal).",
     "tr.li.source.fwd": "<strong>Diario forward</strong> — predicciones congeladas al generar (07:15 diariamente), comparadas con el resultado real después del partido.",
     "tr.li.source.calib": "<strong>Calibración por liga</strong> — en cientos de ligas con shrinkage Bayesiano, para evitar sobreajuste en ligas con muestra pequeña.",
-    "tr.li.source.repro": "<strong>Reproducibilidad</strong> — la metodología está descrita completamente en <a href=\"metodologie.html\">Metodología</a>."
+    "tr.li.source.repro": "<strong>Reproducibilidad</strong> — la metodología está descrita completamente en <a href=\"metodologie.html\">Metodología</a>.",
+    "footer.terms": "Términos y Condiciones"
   },
   "it": {
     "lang.name": "Italiano",
@@ -460,7 +457,6 @@
     "footer.problem": "Se il gioco diventa un problema:",
     "loading": "Caricamento...",
     "nopicks": "Nessun pick corrisponde ai filtri.",
-
     "metod.h2": "Come funziona POSEIDON",
     "metod.h3.1": "1. Rating delle squadre (Poisson Bayesiano)",
     "metod.p.1a": "Ogni squadra riceve due rating relativi:",
@@ -487,7 +483,6 @@
     "metod.li.limit3": "Su campionati non calibrati o con campione piccolo (N&lt;80), i pronostici possono divergere dalla realtà.",
     "metod.h3.philo": "Filosofia",
     "metod.p.philo": "Il modello NON sostituisce il pensiero. I pronostici mostrano <em>quanto spesso un evento è successo in condizioni simili</em>, non una garanzia del futuro. Se POSEIDON dice 60% Over 2.5, significa che in condizioni storiche identiche è successo ~60% delle volte — il che è diverso da „succederà\".",
-
     "tr.h2": "Track record — calibrazione verificabile",
     "tr.p.sub": "Due fonti, esplicitamente etichettate:",
     "tr.li.backtest": "<strong>Validazione storica (backtest)</strong> — su partite da gennaio–maggio 2026, rating calcolati strettamente su 2024–2025 (zero leakage).",
@@ -505,6 +500,7 @@
     "tr.li.source.bt": "<strong>Backtest storico</strong> — 65.250 partite giocate nel 2026, pronostici generati con rating calcolati strettamente su 2024–2025 (zero leakage temporale).",
     "tr.li.source.fwd": "<strong>Diario forward</strong> — pronostici congelati alla generazione (07:15 ogni giorno), confrontati con il risultato reale dopo che le partite sono state giocate.",
     "tr.li.source.calib": "<strong>Calibrazione per campionato</strong> — su centinaia di campionati con shrinkage Bayesiano, per evitare overfitting su campionati con campione piccolo.",
-    "tr.li.source.repro": "<strong>Riproducibilità</strong> — la metodologia è descritta completamente in <a href=\"metodologie.html\">Metodologia</a>."
+    "tr.li.source.repro": "<strong>Riproducibilità</strong> — la metodologia è descritta completamente in <a href=\"metodologie.html\">Metodologia</a>.",
+    "footer.terms": "Termini e Condizioni"
   }
 }
