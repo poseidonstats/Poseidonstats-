@@ -567,6 +567,20 @@ p { margin-bottom: 10px; }
   background: linear-gradient(135deg, #ecfdf5, #d1fae5);
   border-color: #10b981;
 }
+/* 🆕 10 iun 2026 — Highlight pe piața activă filtrată (border auriu + glow subtil). */
+.market.market-filtered {
+  border: 2px solid #f59e0b;
+  box-shadow: 0 0 0 1px rgba(245, 158, 11, 0.25);
+  position: relative;
+}
+.market.market-filtered::after {
+  content: "★";
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  font-size: 0.7rem;
+  color: #f59e0b;
+}
 .market.score-ht {
   background: #faf5ff;
   border: 1px solid #e9d5ff;

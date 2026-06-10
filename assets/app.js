@@ -167,7 +167,7 @@ async function renderIndex() {
     }
     document.getElementById("match-count").textContent =
       `${filtered.length} meciuri afișate (din ${matches.length} totale).`;
-    document.getElementById("matches").innerHTML = filtered.map(renderMatch).join("");
+    document.getElementById("matches").innerHTML = filtered.map(m => renderMatch(m, fmk)).join("");
   }
 
   [selDay, selLeague, selCountry, selMarket, selMinProb, selSort].forEach(s => s.addEventListener("change", update));
@@ -205,7 +205,23 @@ function xgBar(xgH, xgA) {
   </div>`;
 }
 
-function renderMatch(m) {
+// 10 iun 2026 — Mapping filter market → label din card (pentru highlight piață filtrată).
+// 1x2 = highlight pe TOATE 3 (1, X, 2) fiindcă filtrul prinde oricare.
+const MARKET_FILTER_TO_LABEL = {
+  over_1_5: ["O1.5"],
+  over_2_5: ["O2.5"],
+  over_3_5: ["O3.5"],
+  btts: ["BTTS"],
+  ht_over_0_5: ["HT O0.5"],
+  ht_over_1_5: ["HT O1.5"],
+  "1x2": ["1", "X", "2"],
+};
+function isFilteredMarket(label, filterMarket) {
+  const targets = MARKET_FILTER_TO_LABEL[filterMarket];
+  return targets ? targets.includes(label) : false;
+}
+
+function renderMatch(m, filterMarket = "") {
   const calibTag = m.calibrated
     ? `<span class="ok-tag">✓ calibrată</span>`
     : `<span class="warn-tag">⚠️ ligă necalibrată</span>`;
@@ -217,18 +233,22 @@ function renderMatch(m) {
     timeZone: "Europe/Bucharest"
   });
 
-  // Pick principal: cel mai mare prob ≥65% (combined OU + BTTS + 1X2)
+  // 🆕 10 iun 2026 — Acumulator STRICT cu DOAR cele 2 piețe brand (Over 1.5 + HT Over 0.5).
+  // Decizie pe baza calibration.json (TEST 65.250 meciuri):
+  //   - Over 1.5 ≥75%: bucket 70-80% drift +1.11pp, 80-90% -2.29pp ✅
+  //   - HT Over 0.5 ≥70%: bucket 70-80% drift -1.28pp, 80-90% -5.44pp ✅
+  // SCOSE: 1/X/2 (1X2 nu apare în calibration.json — drift necunoscut, nu pot apăra),
+  //        Under 2.5 (zonele 65%+ corespund Over 2.5 ≤35% care nu sunt în calibration.json),
+  //        Over 3.5 (drift -15 la -32pp pe toate bucket-urile peste prag),
+  //        BTTS Da/Nu (drift -8 la -18pp peste 70%, nu e în brandul oficial),
+  //        Over 2.5 (deși marginal-OK la 60-70%, nu e în cele 2 piețe brand).
+  // Filosofie: badge = piață APĂRABILĂ cu calibration.json în mână. Coerent cu mesajul
+  // "DOAR Over 1.5 + HT Over 0.5" din clipuri/descriere.
   const picks = [];
-  if (m.prob_home >= 0.65) picks.push(["1 (home)", m.prob_home]);
-  if (m.prob_away >= 0.65) picks.push(["2 (away)", m.prob_away]);
-  if (m.prob_over_2_5 >= 0.65) picks.push(["Over 2.5", m.prob_over_2_5]);
   if (m.prob_over_1_5 >= 0.75) picks.push(["Over 1.5", m.prob_over_1_5]);
-  if (m.prob_over_3_5 >= 0.65) picks.push(["Over 3.5", m.prob_over_3_5]);
-  if (m.prob_btts >= 0.65) picks.push(["BTTS Da", m.prob_btts]);
-  if ((1 - m.prob_btts) >= 0.65) picks.push(["BTTS Nu", 1 - m.prob_btts]);
-  if ((1 - m.prob_over_2_5) >= 0.65) picks.push(["Under 2.5", 1 - m.prob_over_2_5]);
+  if (m.prob_ht_over_0_5 >= 0.70) picks.push(["HT Over 0.5", m.prob_ht_over_0_5]);
   picks.sort((a, b) => b[1] - a[1]);
-  const picksHtml = picks.slice(0, 3).map(([name, p]) => pickBadge(name, p)).join(" ");
+  const picksHtml = picks.map(([name, p]) => pickBadge(name, p)).join(" ");
 
   // Pick 1X2 (cel mai probabil)
   const pick1x2 = m.prob_home >= m.prob_draw && m.prob_home >= m.prob_away ? "1"
@@ -260,32 +280,32 @@ function renderMatch(m) {
     <div class="phase-row ft">
       <div class="phase-label">⏱ FT · 90 min</div>
       <div class="markets-grid">
-        <div class="market ${pick1x2 === "1" ? "pick" : ""}">
+        <div class="market ${pick1x2 === "1" ? "pick" : ""} ${isFilteredMarket("1", filterMarket) ? "market-filtered" : ""}">
           <span class="label">1</span>
           <span class="val ${pctClass(m.prob_home)}">${fmtPct(m.prob_home)}</span>
         </div>
-        <div class="market ${pick1x2 === "X" ? "pick" : ""}">
+        <div class="market ${pick1x2 === "X" ? "pick" : ""} ${isFilteredMarket("X", filterMarket) ? "market-filtered" : ""}">
           <span class="label">X</span>
           <span class="val ${pctClass(m.prob_draw)}">${fmtPct(m.prob_draw)}</span>
         </div>
-        <div class="market ${pick1x2 === "2" ? "pick" : ""}">
+        <div class="market ${pick1x2 === "2" ? "pick" : ""} ${isFilteredMarket("2", filterMarket) ? "market-filtered" : ""}">
           <span class="label">2</span>
           <span class="val ${pctClass(m.prob_away)}">${fmtPct(m.prob_away)}</span>
         </div>
-        <div class="market">
+        <div class="market ${isFilteredMarket("O1.5", filterMarket) ? "market-filtered" : ""}">
           <span class="label">O1.5</span>
           <span class="val ${pctClass(m.prob_over_1_5)}">${fmtPct(m.prob_over_1_5)}</span>
         </div>
-        <div class="market">
+        <div class="market ${isFilteredMarket("O2.5", filterMarket) ? "market-filtered" : ""}">
           <span class="label">O2.5</span>
           <span class="val ${pctClass(m.prob_over_2_5)}">${fmtPct(m.prob_over_2_5)}</span>
           ${rawNote(m.prob_over_2_5_raw, m.prob_over_2_5)}
         </div>
-        <div class="market">
+        <div class="market ${isFilteredMarket("O3.5", filterMarket) ? "market-filtered" : ""}">
           <span class="label">O3.5</span>
           <span class="val ${pctClass(m.prob_over_3_5)}">${fmtPct(m.prob_over_3_5)}</span>
         </div>
-        <div class="market">
+        <div class="market ${isFilteredMarket("BTTS", filterMarket) ? "market-filtered" : ""}">
           <span class="label">BTTS</span>
           <span class="val ${pctClass(m.prob_btts)}">${fmtPct(m.prob_btts)}</span>
           ${rawNote(m.prob_btts_raw, m.prob_btts)}
@@ -299,8 +319,8 @@ function renderMatch(m) {
         <div class="market"><span class="label">1H</span><span class="val ${pctClass(m.ht_prob_home)}">${fmtPct(m.ht_prob_home)}</span></div>
         <div class="market"><span class="label">XH</span><span class="val ${pctClass(m.ht_prob_draw)}">${fmtPct(m.ht_prob_draw)}</span></div>
         <div class="market"><span class="label">2H</span><span class="val ${pctClass(m.ht_prob_away)}">${fmtPct(m.ht_prob_away)}</span></div>
-        <div class="market"><span class="label">HT O0.5</span><span class="val ${pctClass(m.prob_ht_over_0_5)}">${fmtPct(m.prob_ht_over_0_5)}</span></div>
-        <div class="market"><span class="label">HT O1.5</span><span class="val ${pctClass(m.prob_ht_over_1_5)}">${fmtPct(m.prob_ht_over_1_5)}</span></div>
+        <div class="market ${isFilteredMarket("HT O0.5", filterMarket) ? "market-filtered" : ""}"><span class="label">HT O0.5</span><span class="val ${pctClass(m.prob_ht_over_0_5)}">${fmtPct(m.prob_ht_over_0_5)}</span></div>
+        <div class="market ${isFilteredMarket("HT O1.5", filterMarket) ? "market-filtered" : ""}"><span class="label">HT O1.5</span><span class="val ${pctClass(m.prob_ht_over_1_5)}">${fmtPct(m.prob_ht_over_1_5)}</span></div>
         <div class="market"><span class="label">HT BTTS</span><span class="val ${pctClass(m.ht_prob_btts)}">${fmtPct(m.ht_prob_btts)}</span></div>
         ${m.ht_top_score_h != null ? `<div class="market score-ht">
           <span class="label">Scor HT</span>
