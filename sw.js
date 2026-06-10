@@ -1,5 +1,5 @@
 /* POSEIDON Service Worker — cache-first pentru shell, network-first pentru date. */
-const CACHE = "poseidon-v14";
+const CACHE = "poseidon-v15";
 const SHELL = [
   "./index.html",
   "./istoric.html",
