@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-06-09T15:52:37+00:00",
+ "generated_at": "2026-06-10T04:50:06+00:00",
  "days": [
   {
    "date": "2026-06-16",
@@ -155,6 +155,241 @@
    "status": "scheduled",
    "matches": [
     {
+     "fixture_id": 1465753,
+     "time": "18:00",
+     "country": "Austria",
+     "league": "Landesliga - Wien",
+     "home": "Schwechat",
+     "away": "LAC-Inter",
+     "calibrated_lg": false,
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 88,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "Over 2.5",
+       "prob": 71,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "BTTS Da",
+       "prob": 65,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null
+    },
+    {
+     "fixture_id": 1493531,
+     "time": "03:00",
+     "country": "USA",
+     "league": "USL Championship",
+     "home": "Birmingham Legion",
+     "away": "Las Vegas Lights",
+     "calibrated_lg": false,
+     "picks": [
+      {
+       "market": "Under 3.5",
+       "prob": 78,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null
+    },
+    {
+     "fixture_id": 1493533,
+     "time": "04:00",
+     "country": "USA",
+     "league": "USL Championship",
+     "home": "Colorado Springs",
+     "away": "Sacramento Republic",
+     "calibrated_lg": false,
+     "picks": [
+      {
+       "market": "Under 3.5",
+       "prob": 80,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null
+    },
+    {
+     "fixture_id": 1493534,
+     "time": "04:00",
+     "country": "USA",
+     "league": "USL Championship",
+     "home": "El Paso Locomotive",
+     "away": "Phoenix Rising",
+     "calibrated_lg": false,
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 86,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "Over 2.5",
+       "prob": 67,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "BTTS Da",
+       "prob": 67,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null
+    },
+    {
+     "fixture_id": 1493537,
+     "time": "03:00",
+     "country": "USA",
+     "league": "USL Championship",
+     "home": "Louisville City",
+     "away": "Brooklyn",
+     "calibrated_lg": false,
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 85,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "1 (Home)",
+       "prob": 72,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "Over 2.5",
+       "prob": 67,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null
+    },
+    {
+     "fixture_id": 1493538,
+     "time": "04:30",
+     "country": "USA",
+     "league": "USL Championship",
+     "home": "New Mexico United",
+     "away": "Orange County SC",
+     "calibrated_lg": false,
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 76,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "Under 3.5",
+       "prob": 69,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null
+    },
+    {
+     "fixture_id": 1493539,
+     "time": "05:00",
+     "country": "USA",
+     "league": "USL Championship",
+     "home": "Oakland Roots",
+     "away": "Miami FC",
+     "calibrated_lg": false,
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 82,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null
+    },
+    {
+     "fixture_id": 1493857,
+     "time": "06:00",
+     "country": "USA",
+     "league": "USL League One",
+     "home": "Alta",
+     "away": "Spokane Velocity",
+     "calibrated_lg": false,
+     "picks": [
+      {
+       "market": "Under 3.5",
+       "prob": 76,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null
+    },
+    {
+     "fixture_id": 1493859,
+     "time": "03:30",
+     "country": "USA",
+     "league": "USL League One",
+     "home": "Corpus Christi",
+     "away": "Richmond Kickers",
+     "calibrated_lg": false,
+     "picks": [
+      {
+       "market": "Under 3.5",
+       "prob": 74,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null
+    },
+    {
+     "fixture_id": 1493861,
+     "time": "03:00",
+     "country": "USA",
+     "league": "USL League One",
+     "home": "Forward Madison",
+     "away": "Boise",
+     "calibrated_lg": false,
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 79,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null
+    },
+    {
      "fixture_id": 1489372,
      "time": "04:00",
      "country": "World",
@@ -166,456 +401,6 @@
       {
        "market": "Under 3.5",
        "prob": 72,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
-    },
-    {
-     "fixture_id": 1487463,
-     "time": "18:00",
-     "country": "Czech-Republic",
-     "league": "3. liga - MSFL",
-     "home": "Blansko",
-     "away": "Hodonín",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 87,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "Over 2.5",
-       "prob": 70,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "2 (Away)",
-       "prob": 65,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
-    },
-    {
-     "fixture_id": 1487465,
-     "time": "18:00",
-     "country": "Czech-Republic",
-     "league": "3. liga - MSFL",
-     "home": "Frýdek-Místek",
-     "away": "Unie Hlubina",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 83,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
-    },
-    {
-     "fixture_id": 1487466,
-     "time": "18:00",
-     "country": "Czech-Republic",
-     "league": "3. liga - MSFL",
-     "home": "Vrchovina",
-     "away": "Hlučín",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 88,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "1 (Home)",
-       "prob": 72,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "Over 2.5",
-       "prob": 72,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
-    },
-    {
-     "fixture_id": 1487612,
-     "time": "18:30",
-     "country": "Czech-Republic",
-     "league": "4. liga - Divizie D",
-     "home": "FS Třebíč",
-     "away": "Velké Meziříčí",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 84,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
-    },
-    {
-     "fixture_id": 1487613,
-     "time": "18:30",
-     "country": "Czech-Republic",
-     "league": "4. liga - Divizie D",
-     "home": "Humpolec",
-     "away": "Velká Bíteš",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 89,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "Over 2.5",
-       "prob": 73,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "BTTS Da",
-       "prob": 71,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
-    },
-    {
-     "fixture_id": 1487614,
-     "time": "18:30",
-     "country": "Czech-Republic",
-     "league": "4. liga - Divizie D",
-     "home": "Pelhřimov",
-     "away": "Sokol Tasovice",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 92,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "Over 2.5",
-       "prob": 78,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "BTTS Da",
-       "prob": 74,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
-    },
-    {
-     "fixture_id": 1487615,
-     "time": "18:30",
-     "country": "Czech-Republic",
-     "league": "4. liga - Divizie D",
-     "home": "Sparta Brno",
-     "away": "Chotebor",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 90,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "Over 2.5",
-       "prob": 76,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "BTTS Da",
-       "prob": 71,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
-    },
-    {
-     "fixture_id": 1487616,
-     "time": "18:30",
-     "country": "Czech-Republic",
-     "league": "4. liga - Divizie D",
-     "home": "Dálnice Speřice",
-     "away": "Havlíčkův Brod",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Under 3.5",
-       "prob": 73,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
-    },
-    {
-     "fixture_id": 1487617,
-     "time": "18:30",
-     "country": "Czech-Republic",
-     "league": "4. liga - Divizie D",
-     "home": "Žďár nad Sázavou",
-     "away": "Kuřim",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Under 3.5",
-       "prob": 70,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
-    },
-    {
-     "fixture_id": 1487618,
-     "time": "18:30",
-     "country": "Czech-Republic",
-     "league": "4. liga - Divizie D",
-     "home": "Ždírec nad Doubravou",
-     "away": "Znojmo",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 80,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
-    },
-    {
-     "fixture_id": 1487717,
-     "time": "18:30",
-     "country": "Czech-Republic",
-     "league": "4. liga - Divizie E",
-     "home": "Baťov",
-     "away": "Slavičín",
-     "calibrated_lg": true,
-     "picks": [
-      {
-       "market": "Under 3.5",
-       "prob": 82,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
-    },
-    {
-     "fixture_id": 1487718,
-     "time": "18:30",
-     "country": "Czech-Republic",
-     "league": "4. liga - Divizie E",
-     "home": "Brumov",
-     "away": "Sokol Lanžhot",
-     "calibrated_lg": true,
-     "picks": [
-      {
-       "market": "Under 3.5",
-       "prob": 76,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
-    },
-    {
-     "fixture_id": 1487719,
-     "time": "18:30",
-     "country": "Czech-Republic",
-     "league": "4. liga - Divizie E",
-     "home": "Bzenec",
-     "away": "Uherský Brod",
-     "calibrated_lg": true,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 83,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
-    },
-    {
-     "fixture_id": 1487720,
-     "time": "18:30",
-     "country": "Czech-Republic",
-     "league": "4. liga - Divizie E",
-     "home": "Kozlovice",
-     "away": "Břeclav",
-     "calibrated_lg": true,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 78,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
-    },
-    {
-     "fixture_id": 1487721,
-     "time": "18:30",
-     "country": "Czech-Republic",
-     "league": "4. liga - Divizie E",
-     "home": "Nové Sady",
-     "away": "Skaštice",
-     "calibrated_lg": true,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 75,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "Under 3.5",
-       "prob": 70,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
-    },
-    {
-     "fixture_id": 1487723,
-     "time": "18:30",
-     "country": "Czech-Republic",
-     "league": "4. liga - Divizie E",
-     "home": "Strání",
-     "away": "Holešov",
-     "calibrated_lg": true,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 83,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "1 (Home)",
-       "prob": 65,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
-    },
-    {
-     "fixture_id": 1487836,
-     "time": "18:30",
-     "country": "Czech-Republic",
-     "league": "4. liga - Divizie F",
-     "home": "Bospor Bohumín",
-     "away": "Valašské Meziříčí",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 94,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "Over 2.5",
-       "prob": 84,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "BTTS Da",
-       "prob": 73,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "1 (Home)",
-       "prob": 70,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "Over 3.5",
-       "prob": 69,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
-    },
-    {
-     "fixture_id": 1487837,
-     "time": "18:30",
-     "country": "Czech-Republic",
-     "league": "4. liga - Divizie F",
-     "home": "Cesky Tesin",
-     "away": "Bílovec",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 78,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "2 (Away)",
-       "prob": 71,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "Under 3.5",
-       "prob": 66,
        "outcome": "PENDING"
       }
      ],
@@ -646,101 +431,6 @@
       {
        "market": "BTTS Da",
        "prob": 68,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
-    },
-    {
-     "fixture_id": 1487840,
-     "time": "18:30",
-     "country": "Czech-Republic",
-     "league": "4. liga - Divizie F",
-     "home": "Jiskra Rýmařov",
-     "away": "Pustá Polom",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 81,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
-    },
-    {
-     "fixture_id": 1487841,
-     "time": "18:30",
-     "country": "Czech-Republic",
-     "league": "4. liga - Divizie F",
-     "home": "Stonava",
-     "away": "Havířov",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 85,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "Over 2.5",
-       "prob": 65,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
-    },
-    {
-     "fixture_id": 1487842,
-     "time": "18:30",
-     "country": "Czech-Republic",
-     "league": "4. liga - Divizie F",
-     "home": "Vratimov",
-     "away": "Šumperk",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Under 3.5",
-       "prob": 77,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
-    },
-    {
-     "fixture_id": 1487843,
-     "time": "18:30",
-     "country": "Czech-Republic",
-     "league": "4. liga - Divizie F",
-     "home": "Zabreh",
-     "away": "Nový Jičín",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Under 3.5",
-       "prob": 91,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "Under 2.5",
-       "prob": 76,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "BTTS Nu",
-       "prob": 69,
        "outcome": "PENDING"
       }
      ],
@@ -816,7 +506,7 @@
     },
     {
      "fixture_id": 1493865,
-     "time": "23:00",
+     "time": "02:00",
      "country": "USA",
      "league": "USL League One",
      "home": "Westchester SC",
@@ -836,7 +526,7 @@
     },
     {
      "fixture_id": 1465747,
-     "time": "00:00",
+     "time": "18:00",
      "country": "Austria",
      "league": "Landesliga - Wien",
      "home": "Slovan HAC",
@@ -861,7 +551,7 @@
     },
     {
      "fixture_id": 1465748,
-     "time": "00:00",
+     "time": "18:00",
      "country": "Austria",
      "league": "Landesliga - Wien",
      "home": "Stadlau",
@@ -886,7 +576,7 @@
     },
     {
      "fixture_id": 1465750,
-     "time": "00:00",
+     "time": "18:00",
      "country": "Austria",
      "league": "Landesliga - Wien",
      "home": "Hellas Kagran",
@@ -916,7 +606,7 @@
     },
     {
      "fixture_id": 1465751,
-     "time": "00:00",
+     "time": "18:00",
      "country": "Austria",
      "league": "Landesliga - Wien",
      "home": "Simmeringer SC",
@@ -941,7 +631,7 @@
     },
     {
      "fixture_id": 1465752,
-     "time": "00:00",
+     "time": "18:00",
      "country": "Austria",
      "league": "Landesliga - Wien",
      "home": "1980 Wien",
@@ -971,7 +661,7 @@
     },
     {
      "fixture_id": 1465754,
-     "time": "00:00",
+     "time": "18:00",
      "country": "Austria",
      "league": "Landesliga - Wien",
      "home": "Gerasdorf Stammersdorf",
@@ -1026,16 +716,376 @@
     }
    ],
    "totals": {
-    "picks": 72,
+    "picks": 46,
     "wins": 0,
     "losses": 0,
-    "pending": 72
+    "pending": 46
    }
   },
   {
    "date": "2026-06-13",
    "status": "scheduled",
    "matches": [
+    {
+     "fixture_id": 1464663,
+     "time": "18:00",
+     "country": "Austria",
+     "league": "Landesliga - Oberosterreich",
+     "home": "Bad Schallerbach",
+     "away": "SK Vorwarts Steyr",
+     "calibrated_lg": false,
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 77,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "Under 3.5",
+       "prob": 68,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null
+    },
+    {
+     "fixture_id": 1464664,
+     "time": "18:00",
+     "country": "Austria",
+     "league": "Landesliga - Oberosterreich",
+     "home": "Grün Weiß Micheldorf",
+     "away": "Pregarten",
+     "calibrated_lg": false,
+     "picks": [
+      {
+       "market": "Under 3.5",
+       "prob": 83,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null
+    },
+    {
+     "fixture_id": 1464665,
+     "time": "18:00",
+     "country": "Austria",
+     "league": "Landesliga - Oberosterreich",
+     "home": "Ostermiething",
+     "away": "Union Vöcklamarkt",
+     "calibrated_lg": false,
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 84,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null
+    },
+    {
+     "fixture_id": 1464667,
+     "time": "18:00",
+     "country": "Austria",
+     "league": "Landesliga - Oberosterreich",
+     "home": "Mondsee",
+     "away": "Union Perg",
+     "calibrated_lg": false,
+     "picks": [
+      {
+       "market": "Under 3.5",
+       "prob": 75,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null
+    },
+    {
+     "fixture_id": 1464668,
+     "time": "18:00",
+     "country": "Austria",
+     "league": "Landesliga - Oberosterreich",
+     "home": "Vortuna Bad Leonfelden",
+     "away": "Weißkirchen / Allhaming",
+     "calibrated_lg": false,
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 88,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "Over 2.5",
+       "prob": 71,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "BTTS Da",
+       "prob": 69,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null
+    },
+    {
+     "fixture_id": 1464669,
+     "time": "18:00",
+     "country": "Austria",
+     "league": "Landesliga - Oberosterreich",
+     "home": "Gschwandt",
+     "away": "Union Edelweiß",
+     "calibrated_lg": false,
+     "picks": [
+      {
+       "market": "Under 3.5",
+       "prob": 70,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null
+    },
+    {
+     "fixture_id": 1464670,
+     "time": "18:00",
+     "country": "Austria",
+     "league": "Landesliga - Oberosterreich",
+     "home": "Friedburg / Pöndorf",
+     "away": "Bad Ischl",
+     "calibrated_lg": false,
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 97,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "Over 2.5",
+       "prob": 92,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "1 (Home)",
+       "prob": 81,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "Over 3.5",
+       "prob": 81,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "BTTS Da",
+       "prob": 75,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null
+    },
+    {
+     "fixture_id": 1465326,
+     "time": "18:00",
+     "country": "Austria",
+     "league": "Landesliga - Tirol",
+     "home": "Kundl",
+     "away": "Mils",
+     "calibrated_lg": false,
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 95,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "Over 2.5",
+       "prob": 86,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "1 (Home)",
+       "prob": 84,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "Over 3.5",
+       "prob": 73,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null
+    },
+    {
+     "fixture_id": 1465327,
+     "time": "18:00",
+     "country": "Austria",
+     "league": "Landesliga - Tirol",
+     "home": "St. Johann in Tirol",
+     "away": "Völs",
+     "calibrated_lg": false,
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 84,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "1 (Home)",
+       "prob": 70,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "Over 2.5",
+       "prob": 65,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null
+    },
+    {
+     "fixture_id": 1465328,
+     "time": "18:00",
+     "country": "Austria",
+     "league": "Landesliga - Tirol",
+     "home": "Innsbrucker AC",
+     "away": "Fügen",
+     "calibrated_lg": false,
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 87,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "Over 2.5",
+       "prob": 70,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "BTTS Da",
+       "prob": 67,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null
+    },
+    {
+     "fixture_id": 1465330,
+     "time": "18:00",
+     "country": "Austria",
+     "league": "Landesliga - Tirol",
+     "home": "Kematen",
+     "away": "Silz / Mötz",
+     "calibrated_lg": false,
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 97,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "Over 2.5",
+       "prob": 89,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "BTTS Da",
+       "prob": 84,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "Over 3.5",
+       "prob": 78,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null
+    },
+    {
+     "fixture_id": 1465331,
+     "time": "18:00",
+     "country": "Austria",
+     "league": "Landesliga - Tirol",
+     "home": "Wörgl",
+     "away": "Oberperfuss",
+     "calibrated_lg": false,
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 90,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "Over 2.5",
+       "prob": 76,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "BTTS Da",
+       "prob": 72,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null
+    },
+    {
+     "fixture_id": 1465332,
+     "time": "18:00",
+     "country": "Austria",
+     "league": "Landesliga - Tirol",
+     "home": "Volders",
+     "away": "Ebbs",
+     "calibrated_lg": false,
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 85,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "Over 2.5",
+       "prob": 66,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null
+    },
     {
      "fixture_id": 1489370,
      "time": "04:00",
@@ -1173,26 +1223,6 @@
       {
        "market": "2 (Away)",
        "prob": 67,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
-    },
-    {
-     "fixture_id": 1398964,
-     "time": "18:00",
-     "country": "Austria",
-     "league": "Regionalliga - West",
-     "home": "Imst",
-     "away": "Kuchl",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 81,
        "outcome": "PENDING"
       }
      ],
@@ -1602,38 +1632,8 @@
      "ht_a": null
     },
     {
-     "fixture_id": 1489868,
-     "time": "18:00",
-     "country": "Czech-Republic",
-     "league": "4. liga - Divizie A",
-     "home": "Slavoj Český Krumlov",
-     "away": "Hluboka nad Vltavou",
-     "calibrated_lg": true,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 88,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "Over 2.5",
-       "prob": 71,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "BTTS Da",
-       "prob": 69,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
-    },
-    {
      "fixture_id": 1489869,
-     "time": "18:00",
+     "time": "11:30",
      "country": "Czech-Republic",
      "league": "4. liga - Divizie A",
      "home": "Komárov",
@@ -1653,7 +1653,7 @@
     },
     {
      "fixture_id": 1489870,
-     "time": "18:00",
+     "time": "15:00",
      "country": "Czech-Republic",
      "league": "4. liga - Divizie A",
      "home": "Hořovicko",
@@ -1678,7 +1678,7 @@
     },
     {
      "fixture_id": 1489871,
-     "time": "18:00",
+     "time": "11:30",
      "country": "Czech-Republic",
      "league": "4. liga - Divizie A",
      "home": "Milin",
@@ -1702,33 +1702,8 @@
      "ht_a": null
     },
     {
-     "fixture_id": 1489873,
-     "time": "18:00",
-     "country": "Czech-Republic",
-     "league": "4. liga - Divizie A",
-     "home": "Rokycany",
-     "away": "Spartak Soběslav",
-     "calibrated_lg": true,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 76,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "Under 3.5",
-       "prob": 70,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
-    },
-    {
      "fixture_id": 1489875,
-     "time": "18:00",
+     "time": "11:30",
      "country": "Czech-Republic",
      "league": "4. liga - Divizie A",
      "home": "TJ Přeštice",
@@ -1758,7 +1733,7 @@
     },
     {
      "fixture_id": 1489989,
-     "time": "18:00",
+     "time": "11:15",
      "country": "Czech-Republic",
      "league": "4. liga - Divizie C",
      "home": "Chlumec nad Cidlinou",
@@ -1778,7 +1753,7 @@
     },
     {
      "fixture_id": 1489990,
-     "time": "18:00",
+     "time": "14:30",
      "country": "Czech-Republic",
      "league": "4. liga - Divizie C",
      "home": "Dobrovice",
@@ -1803,7 +1778,7 @@
     },
     {
      "fixture_id": 1489991,
-     "time": "18:00",
+     "time": "11:30",
      "country": "Czech-Republic",
      "league": "4. liga - Divizie C",
      "home": "Hlinsko",
@@ -1833,7 +1808,7 @@
     },
     {
      "fixture_id": 1489992,
-     "time": "18:00",
+     "time": "17:00",
      "country": "Czech-Republic",
      "league": "4. liga - Divizie C",
      "home": "Náchod",
@@ -1908,7 +1883,7 @@
     },
     {
      "fixture_id": 1489995,
-     "time": "18:00",
+     "time": "16:30",
      "country": "Czech-Republic",
      "league": "4. liga - Divizie C",
      "home": "Trutnov",
@@ -1938,7 +1913,7 @@
     },
     {
      "fixture_id": 1490108,
-     "time": "18:00",
+     "time": "11:15",
      "country": "Czech-Republic",
      "league": "4. liga - Divizie B",
      "home": "Louny",
@@ -1963,7 +1938,7 @@
     },
     {
      "fixture_id": 1490109,
-     "time": "18:00",
+     "time": "14:30",
      "country": "Czech-Republic",
      "league": "4. liga - Divizie B",
      "home": "Mariánské Lázně",
@@ -1983,7 +1958,7 @@
     },
     {
      "fixture_id": 1490111,
-     "time": "18:00",
+     "time": "11:15",
      "country": "Czech-Republic",
      "league": "4. liga - Divizie B",
      "home": "Olympie Březová",
@@ -2023,7 +1998,7 @@
     },
     {
      "fixture_id": 1490112,
-     "time": "18:00",
+     "time": "16:00",
      "country": "Czech-Republic",
      "league": "4. liga - Divizie B",
      "home": "Ostrov",
@@ -2078,7 +2053,7 @@
     },
     {
      "fixture_id": 1490114,
-     "time": "18:00",
+     "time": "15:00",
      "country": "Czech-Republic",
      "league": "4. liga - Divizie B",
      "home": "Slaný",
@@ -2108,7 +2083,7 @@
     },
     {
      "fixture_id": 1490115,
-     "time": "18:00",
+     "time": "11:15",
      "country": "Czech-Republic",
      "league": "4. liga - Divizie B",
      "home": "Baník Sokolov",
@@ -2128,7 +2103,7 @@
     },
     {
      "fixture_id": 1490727,
-     "time": "18:00",
+     "time": "12:00",
      "country": "Czech-Republic",
      "league": "1. Liga U19",
      "home": "Zbrojovka Brno U19",
@@ -2157,43 +2132,8 @@
      "ht_a": null
     },
     {
-     "fixture_id": 1490728,
-     "time": "18:00",
-     "country": "Czech-Republic",
-     "league": "1. Liga U19",
-     "home": "České Budějovice U19",
-     "away": "Viktoria Plzeň U19",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 95,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "Over 2.5",
-       "prob": 86,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "BTTS Da",
-       "prob": 82,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "Over 3.5",
-       "prob": 72,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
-    },
-    {
      "fixture_id": 1490729,
-     "time": "18:00",
+     "time": "11:15",
      "country": "Czech-Republic",
      "league": "1. Liga U19",
      "home": "Pardubice U19",
@@ -2222,38 +2162,8 @@
      "ht_a": null
     },
     {
-     "fixture_id": 1490730,
-     "time": "18:00",
-     "country": "Czech-Republic",
-     "league": "1. Liga U19",
-     "home": "Vysočina Jihlava U19",
-     "away": "Karviná U19",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 91,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "Over 2.5",
-       "prob": 77,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "BTTS Da",
-       "prob": 71,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
-    },
-    {
      "fixture_id": 1490731,
-     "time": "18:00",
+     "time": "13:15",
      "country": "Czech-Republic",
      "league": "1. Liga U19",
      "home": "Slovan Liberec U19",
@@ -2287,68 +2197,8 @@
      "ht_a": null
     },
     {
-     "fixture_id": 1490732,
-     "time": "18:00",
-     "country": "Czech-Republic",
-     "league": "1. Liga U19",
-     "home": "Slovácko U19",
-     "away": "Mladá Boleslav U19",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 87,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "Over 2.5",
-       "prob": 70,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "BTTS Da",
-       "prob": 68,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
-    },
-    {
-     "fixture_id": 1490733,
-     "time": "18:00",
-     "country": "Czech-Republic",
-     "league": "1. Liga U19",
-     "home": "Sparta Praha U19",
-     "away": "Sigma Olomouc U19",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 85,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "Over 2.5",
-       "prob": 66,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "BTTS Da",
-       "prob": 65,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
-    },
-    {
      "fixture_id": 1490734,
-     "time": "18:00",
+     "time": "11:30",
      "country": "Czech-Republic",
      "league": "1. Liga U19",
      "home": "Zlín U19",
@@ -2383,7 +2233,7 @@
     },
     {
      "fixture_id": 1464666,
-     "time": "19:00",
+     "time": "18:00",
      "country": "Austria",
      "league": "Landesliga - Oberosterreich",
      "home": "St. Martin i.M.",
@@ -2462,28 +2312,8 @@
      "ht_a": null
     },
     {
-     "fixture_id": 1493531,
-     "time": "23:00",
-     "country": "USA",
-     "league": "USL Championship",
-     "home": "Birmingham Legion",
-     "away": "Las Vegas Lights",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Under 3.5",
-       "prob": 78,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
-    },
-    {
      "fixture_id": 1493532,
-     "time": "23:00",
+     "time": "02:30",
      "country": "USA",
      "league": "USL Championship",
      "home": "Charleston Battery",
@@ -2502,58 +2332,8 @@
      "ht_a": null
     },
     {
-     "fixture_id": 1493533,
-     "time": "23:00",
-     "country": "USA",
-     "league": "USL Championship",
-     "home": "Colorado Springs",
-     "away": "Sacramento Republic",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Under 3.5",
-       "prob": 80,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
-    },
-    {
-     "fixture_id": 1493534,
-     "time": "23:00",
-     "country": "USA",
-     "league": "USL Championship",
-     "home": "El Paso Locomotive",
-     "away": "Phoenix Rising",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 86,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "Over 2.5",
-       "prob": 67,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "BTTS Da",
-       "prob": 67,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
-    },
-    {
      "fixture_id": 1493535,
-     "time": "23:00",
+     "time": "02:00",
      "country": "USA",
      "league": "USL Championship",
      "home": "Lexington",
@@ -2578,7 +2358,7 @@
     },
     {
      "fixture_id": 1493536,
-     "time": "23:00",
+     "time": "01:00",
      "country": "USA",
      "league": "USL Championship",
      "home": "Loudoun United",
@@ -2602,83 +2382,8 @@
      "ht_a": null
     },
     {
-     "fixture_id": 1493537,
-     "time": "23:00",
-     "country": "USA",
-     "league": "USL Championship",
-     "home": "Louisville City",
-     "away": "Brooklyn",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 85,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "1 (Home)",
-       "prob": 72,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "Over 2.5",
-       "prob": 67,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
-    },
-    {
-     "fixture_id": 1493538,
-     "time": "23:00",
-     "country": "USA",
-     "league": "USL Championship",
-     "home": "New Mexico United",
-     "away": "Orange County SC",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 76,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "Under 3.5",
-       "prob": 69,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
-    },
-    {
-     "fixture_id": 1493539,
-     "time": "23:00",
-     "country": "USA",
-     "league": "USL Championship",
-     "home": "Oakland Roots",
-     "away": "Miami FC",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 82,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
-    },
-    {
      "fixture_id": 1493540,
-     "time": "23:00",
+     "time": "02:00",
      "country": "USA",
      "league": "USL Championship",
      "home": "Pittsburgh Riverhounds",
@@ -2698,7 +2403,7 @@
     },
     {
      "fixture_id": 1493541,
-     "time": "23:00",
+     "time": "02:00",
      "country": "USA",
      "league": "USL Championship",
      "home": "Sporting JAX",
@@ -2718,7 +2423,7 @@
     },
     {
      "fixture_id": 1493542,
-     "time": "23:00",
+     "time": "02:30",
      "country": "USA",
      "league": "USL Championship",
      "home": "Tampa Bay Rowdies",
@@ -2737,28 +2442,8 @@
      "ht_a": null
     },
     {
-     "fixture_id": 1493857,
-     "time": "23:00",
-     "country": "USA",
-     "league": "USL League One",
-     "home": "Alta",
-     "away": "Spokane Velocity",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Under 3.5",
-       "prob": 76,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
-    },
-    {
      "fixture_id": 1493858,
-     "time": "23:00",
+     "time": "02:00",
      "country": "USA",
      "league": "USL League One",
      "home": "Charlotte Independence",
@@ -2777,28 +2462,8 @@
      "ht_a": null
     },
     {
-     "fixture_id": 1493859,
-     "time": "23:00",
-     "country": "USA",
-     "league": "USL League One",
-     "home": "Corpus Christi",
-     "away": "Richmond Kickers",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Under 3.5",
-       "prob": 74,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
-    },
-    {
      "fixture_id": 1493860,
-     "time": "23:00",
+     "time": "02:30",
      "country": "USA",
      "league": "USL League One",
      "home": "Fort Wayne",
@@ -2822,28 +2487,8 @@
      "ht_a": null
     },
     {
-     "fixture_id": 1493861,
-     "time": "23:00",
-     "country": "USA",
-     "league": "USL League One",
-     "home": "Forward Madison",
-     "away": "Boise",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 79,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
-    },
-    {
      "fixture_id": 1493862,
-     "time": "23:00",
+     "time": "02:00",
      "country": "USA",
      "league": "USL League One",
      "home": "One Knoxville",
@@ -2873,7 +2518,7 @@
     },
     {
      "fixture_id": 1493863,
-     "time": "23:00",
+     "time": "01:30",
      "country": "USA",
      "league": "USL League One",
      "home": "Portland Hearts of Pine",
@@ -2893,7 +2538,7 @@
     },
     {
      "fixture_id": 1493864,
-     "time": "23:00",
+     "time": "02:30",
      "country": "USA",
      "league": "USL League One",
      "home": "Sarasota Paradise",
@@ -2923,6 +2568,321 @@
       {
        "market": "Under 3.5",
        "prob": 74,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null
+    },
+    {
+     "fixture_id": 1487463,
+     "time": "18:00",
+     "country": "Czech-Republic",
+     "league": "3. liga - MSFL",
+     "home": "Blansko",
+     "away": "Hodonín",
+     "calibrated_lg": false,
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 87,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "Over 2.5",
+       "prob": 70,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "2 (Away)",
+       "prob": 65,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null
+    },
+    {
+     "fixture_id": 1487612,
+     "time": "11:30",
+     "country": "Czech-Republic",
+     "league": "4. liga - Divizie D",
+     "home": "FS Třebíč",
+     "away": "Velké Meziříčí",
+     "calibrated_lg": false,
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 84,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null
+    },
+    {
+     "fixture_id": 1487613,
+     "time": "18:00",
+     "country": "Czech-Republic",
+     "league": "4. liga - Divizie D",
+     "home": "Humpolec",
+     "away": "Velká Bíteš",
+     "calibrated_lg": false,
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 89,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "Over 2.5",
+       "prob": 73,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "BTTS Da",
+       "prob": 71,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null
+    },
+    {
+     "fixture_id": 1487615,
+     "time": "11:30",
+     "country": "Czech-Republic",
+     "league": "4. liga - Divizie D",
+     "home": "Sparta Brno",
+     "away": "Chotebor",
+     "calibrated_lg": false,
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 90,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "Over 2.5",
+       "prob": 76,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "BTTS Da",
+       "prob": 71,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null
+    },
+    {
+     "fixture_id": 1487616,
+     "time": "16:00",
+     "country": "Czech-Republic",
+     "league": "4. liga - Divizie D",
+     "home": "Dálnice Speřice",
+     "away": "Havlíčkův Brod",
+     "calibrated_lg": false,
+     "picks": [
+      {
+       "market": "Under 3.5",
+       "prob": 73,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null
+    },
+    {
+     "fixture_id": 1487617,
+     "time": "16:00",
+     "country": "Czech-Republic",
+     "league": "4. liga - Divizie D",
+     "home": "Žďár nad Sázavou",
+     "away": "Kuřim",
+     "calibrated_lg": false,
+     "picks": [
+      {
+       "market": "Under 3.5",
+       "prob": 70,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null
+    },
+    {
+     "fixture_id": 1487618,
+     "time": "16:30",
+     "country": "Czech-Republic",
+     "league": "4. liga - Divizie D",
+     "home": "Ždírec nad Doubravou",
+     "away": "Znojmo",
+     "calibrated_lg": false,
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 80,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null
+    },
+    {
+     "fixture_id": 1487718,
+     "time": "18:00",
+     "country": "Czech-Republic",
+     "league": "4. liga - Divizie E",
+     "home": "Brumov",
+     "away": "Sokol Lanžhot",
+     "calibrated_lg": true,
+     "picks": [
+      {
+       "market": "Under 3.5",
+       "prob": 76,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null
+    },
+    {
+     "fixture_id": 1487721,
+     "time": "16:00",
+     "country": "Czech-Republic",
+     "league": "4. liga - Divizie E",
+     "home": "Nové Sady",
+     "away": "Skaštice",
+     "calibrated_lg": true,
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 75,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "Under 3.5",
+       "prob": 70,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null
+    },
+    {
+     "fixture_id": 1487837,
+     "time": "11:15",
+     "country": "Czech-Republic",
+     "league": "4. liga - Divizie F",
+     "home": "Cesky Tesin",
+     "away": "Bílovec",
+     "calibrated_lg": false,
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 78,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "2 (Away)",
+       "prob": 71,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "Under 3.5",
+       "prob": 66,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null
+    },
+    {
+     "fixture_id": 1487840,
+     "time": "15:00",
+     "country": "Czech-Republic",
+     "league": "4. liga - Divizie F",
+     "home": "Jiskra Rýmařov",
+     "away": "Pustá Polom",
+     "calibrated_lg": false,
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 81,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null
+    },
+    {
+     "fixture_id": 1487842,
+     "time": "11:15",
+     "country": "Czech-Republic",
+     "league": "4. liga - Divizie F",
+     "home": "Vratimov",
+     "away": "Šumperk",
+     "calibrated_lg": false,
+     "picks": [
+      {
+       "market": "Under 3.5",
+       "prob": 77,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null
+    },
+    {
+     "fixture_id": 1487843,
+     "time": "16:00",
+     "country": "Czech-Republic",
+     "league": "4. liga - Divizie F",
+     "home": "Zabreh",
+     "away": "Nový Jičín",
+     "calibrated_lg": false,
+     "picks": [
+      {
+       "market": "Under 3.5",
+       "prob": 91,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "Under 2.5",
+       "prob": 76,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "BTTS Nu",
+       "prob": 69,
        "outcome": "PENDING"
       }
      ],
@@ -2963,10 +2923,10 @@
     }
    ],
    "totals": {
-    "picks": 160,
+    "picks": 184,
     "wins": 0,
     "losses": 0,
-    "pending": 160
+    "pending": 184
    }
   },
   {
@@ -2974,368 +2934,8 @@
    "status": "scheduled",
    "matches": [
     {
-     "fixture_id": 1464663,
-     "time": "16:00",
-     "country": "Austria",
-     "league": "Landesliga - Oberosterreich",
-     "home": "Bad Schallerbach",
-     "away": "SK Vorwarts Steyr",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 77,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "Under 3.5",
-       "prob": 68,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
-    },
-    {
-     "fixture_id": 1464664,
-     "time": "16:00",
-     "country": "Austria",
-     "league": "Landesliga - Oberosterreich",
-     "home": "Grün Weiß Micheldorf",
-     "away": "Pregarten",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Under 3.5",
-       "prob": 83,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
-    },
-    {
-     "fixture_id": 1464665,
-     "time": "16:00",
-     "country": "Austria",
-     "league": "Landesliga - Oberosterreich",
-     "home": "Ostermiething",
-     "away": "Union Vöcklamarkt",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 84,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
-    },
-    {
-     "fixture_id": 1464667,
-     "time": "16:00",
-     "country": "Austria",
-     "league": "Landesliga - Oberosterreich",
-     "home": "Mondsee",
-     "away": "Union Perg",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Under 3.5",
-       "prob": 75,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
-    },
-    {
-     "fixture_id": 1464668,
-     "time": "16:00",
-     "country": "Austria",
-     "league": "Landesliga - Oberosterreich",
-     "home": "Vortuna Bad Leonfelden",
-     "away": "Weißkirchen / Allhaming",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 88,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "Over 2.5",
-       "prob": 71,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "BTTS Da",
-       "prob": 69,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
-    },
-    {
-     "fixture_id": 1464669,
-     "time": "16:00",
-     "country": "Austria",
-     "league": "Landesliga - Oberosterreich",
-     "home": "Gschwandt",
-     "away": "Union Edelweiß",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Under 3.5",
-       "prob": 70,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
-    },
-    {
-     "fixture_id": 1464670,
-     "time": "16:00",
-     "country": "Austria",
-     "league": "Landesliga - Oberosterreich",
-     "home": "Friedburg / Pöndorf",
-     "away": "Bad Ischl",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 97,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "Over 2.5",
-       "prob": 92,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "1 (Home)",
-       "prob": 81,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "Over 3.5",
-       "prob": 81,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "BTTS Da",
-       "prob": 75,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
-    },
-    {
-     "fixture_id": 1465326,
-     "time": "16:00",
-     "country": "Austria",
-     "league": "Landesliga - Tirol",
-     "home": "Kundl",
-     "away": "Mils",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 95,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "Over 2.5",
-       "prob": 86,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "1 (Home)",
-       "prob": 84,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "Over 3.5",
-       "prob": 73,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
-    },
-    {
-     "fixture_id": 1465327,
-     "time": "16:00",
-     "country": "Austria",
-     "league": "Landesliga - Tirol",
-     "home": "St. Johann in Tirol",
-     "away": "Völs",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 84,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "1 (Home)",
-       "prob": 70,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "Over 2.5",
-       "prob": 65,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
-    },
-    {
-     "fixture_id": 1465328,
-     "time": "16:00",
-     "country": "Austria",
-     "league": "Landesliga - Tirol",
-     "home": "Innsbrucker AC",
-     "away": "Fügen",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 87,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "Over 2.5",
-       "prob": 70,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "BTTS Da",
-       "prob": 67,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
-    },
-    {
-     "fixture_id": 1465330,
-     "time": "16:00",
-     "country": "Austria",
-     "league": "Landesliga - Tirol",
-     "home": "Kematen",
-     "away": "Silz / Mötz",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 97,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "Over 2.5",
-       "prob": 89,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "BTTS Da",
-       "prob": 84,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "Over 3.5",
-       "prob": 78,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
-    },
-    {
-     "fixture_id": 1465331,
-     "time": "16:00",
-     "country": "Austria",
-     "league": "Landesliga - Tirol",
-     "home": "Wörgl",
-     "away": "Oberperfuss",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 90,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "Over 2.5",
-       "prob": 76,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "BTTS Da",
-       "prob": 72,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
-    },
-    {
-     "fixture_id": 1465332,
-     "time": "16:00",
-     "country": "Austria",
-     "league": "Landesliga - Tirol",
-     "home": "Volders",
-     "away": "Ebbs",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 85,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "Over 2.5",
-       "prob": 66,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
-    },
-    {
      "fixture_id": 1464425,
-     "time": "19:30",
+     "time": "20:00",
      "country": "Austria",
      "league": "Landesliga - Niederosterreich",
      "home": "Ybbs",
@@ -3434,38 +3034,8 @@
      "ht_a": null
     },
     {
-     "fixture_id": 1465753,
-     "time": "20:00",
-     "country": "Austria",
-     "league": "Landesliga - Wien",
-     "home": "Schwechat",
-     "away": "LAC-Inter",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 88,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "Over 2.5",
-       "prob": 71,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "BTTS Da",
-       "prob": 65,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
-    },
-    {
      "fixture_id": 1464428,
-     "time": "20:30",
+     "time": "20:00",
      "country": "Austria",
      "league": "Landesliga - Niederosterreich",
      "home": "Korneuburg",
@@ -3485,7 +3055,7 @@
     },
     {
      "fixture_id": 1464423,
-     "time": "21:00",
+     "time": "20:00",
      "country": "Austria",
      "league": "Landesliga - Niederosterreich",
      "home": "Kilb",
@@ -3545,7 +3115,7 @@
     },
     {
      "fixture_id": 1492713,
-     "time": "21:45",
+     "time": "22:00",
      "country": "Ireland",
      "league": "Premier Division",
      "home": "Shelbourne",
@@ -3697,19 +3267,404 @@
      "ft_a": null,
      "ht_h": null,
      "ht_a": null
+    },
+    {
+     "fixture_id": 1398964,
+     "time": "20:30",
+     "country": "Austria",
+     "league": "Regionalliga - West",
+     "home": "Imst",
+     "away": "Kuchl",
+     "calibrated_lg": false,
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 81,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null
+    },
+    {
+     "fixture_id": 1489873,
+     "time": "18:00",
+     "country": "Czech-Republic",
+     "league": "4. liga - Divizie A",
+     "home": "Rokycany",
+     "away": "Spartak Soběslav",
+     "calibrated_lg": true,
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 76,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "Under 3.5",
+       "prob": 70,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null
+    },
+    {
+     "fixture_id": 1490728,
+     "time": "12:00",
+     "country": "Czech-Republic",
+     "league": "1. Liga U19",
+     "home": "České Budějovice U19",
+     "away": "Viktoria Plzeň U19",
+     "calibrated_lg": false,
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 95,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "Over 2.5",
+       "prob": 86,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "BTTS Da",
+       "prob": 82,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "Over 3.5",
+       "prob": 72,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null
+    },
+    {
+     "fixture_id": 1487465,
+     "time": "18:30",
+     "country": "Czech-Republic",
+     "league": "3. liga - MSFL",
+     "home": "Frýdek-Místek",
+     "away": "Unie Hlubina",
+     "calibrated_lg": false,
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 83,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null
+    },
+    {
+     "fixture_id": 1487466,
+     "time": "19:00",
+     "country": "Czech-Republic",
+     "league": "3. liga - MSFL",
+     "home": "Vrchovina",
+     "away": "Hlučín",
+     "calibrated_lg": false,
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 88,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "1 (Home)",
+       "prob": 72,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "Over 2.5",
+       "prob": 72,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null
+    },
+    {
+     "fixture_id": 1487614,
+     "time": "19:00",
+     "country": "Czech-Republic",
+     "league": "4. liga - Divizie D",
+     "home": "Pelhřimov",
+     "away": "Sokol Tasovice",
+     "calibrated_lg": false,
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 92,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "Over 2.5",
+       "prob": 78,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "BTTS Da",
+       "prob": 74,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null
+    },
+    {
+     "fixture_id": 1487717,
+     "time": "19:00",
+     "country": "Czech-Republic",
+     "league": "4. liga - Divizie E",
+     "home": "Baťov",
+     "away": "Slavičín",
+     "calibrated_lg": true,
+     "picks": [
+      {
+       "market": "Under 3.5",
+       "prob": 82,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null
+    },
+    {
+     "fixture_id": 1487719,
+     "time": "18:30",
+     "country": "Czech-Republic",
+     "league": "4. liga - Divizie E",
+     "home": "Bzenec",
+     "away": "Uherský Brod",
+     "calibrated_lg": true,
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 83,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null
+    },
+    {
+     "fixture_id": 1487723,
+     "time": "19:00",
+     "country": "Czech-Republic",
+     "league": "4. liga - Divizie E",
+     "home": "Strání",
+     "away": "Holešov",
+     "calibrated_lg": true,
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 83,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "1 (Home)",
+       "prob": 65,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null
+    },
+    {
+     "fixture_id": 1487836,
+     "time": "18:30",
+     "country": "Czech-Republic",
+     "league": "4. liga - Divizie F",
+     "home": "Bospor Bohumín",
+     "away": "Valašské Meziříčí",
+     "calibrated_lg": false,
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 94,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "Over 2.5",
+       "prob": 84,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "BTTS Da",
+       "prob": 73,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "1 (Home)",
+       "prob": 70,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "Over 3.5",
+       "prob": 69,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null
+    },
+    {
+     "fixture_id": 1487841,
+     "time": "18:30",
+     "country": "Czech-Republic",
+     "league": "4. liga - Divizie F",
+     "home": "Stonava",
+     "away": "Havířov",
+     "calibrated_lg": false,
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 85,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "Over 2.5",
+       "prob": 65,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null
     }
    ],
    "totals": {
-    "picks": 58,
+    "picks": 47,
     "wins": 0,
     "losses": 0,
-    "pending": 58
+    "pending": 47
    }
   },
   {
    "date": "2026-06-11",
    "status": "scheduled",
    "matches": [
+    {
+     "fixture_id": 1493528,
+     "time": "05:00",
+     "country": "USA",
+     "league": "USL Championship",
+     "home": "Monterey Bay",
+     "away": "Sporting JAX",
+     "calibrated_lg": false,
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 80,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null
+    },
+    {
+     "fixture_id": 1493529,
+     "time": "05:30",
+     "country": "USA",
+     "league": "USL Championship",
+     "home": "Phoenix Rising",
+     "away": "Louisville City",
+     "calibrated_lg": false,
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 80,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null
+    },
+    {
+     "fixture_id": 1493853,
+     "time": "06:00",
+     "country": "USA",
+     "league": "USL League One",
+     "home": "Alta",
+     "away": "Sarasota Paradise",
+     "calibrated_lg": false,
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 75,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "Under 3.5",
+       "prob": 68,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null
+    },
+    {
+     "fixture_id": 1493854,
+     "time": "04:30",
+     "country": "USA",
+     "league": "USL League One",
+     "home": "Boise",
+     "away": "Richmond Kickers",
+     "calibrated_lg": false,
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 84,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "1 (Home)",
+       "prob": 66,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "Over 2.5",
+       "prob": 66,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null
+    },
     {
      "fixture_id": 1489369,
      "time": "22:00",
@@ -3744,18 +3699,78 @@
      "ft_a": null,
      "ht_h": null,
      "ht_a": null
+    },
+    {
+     "fixture_id": 1490730,
+     "time": "13:00",
+     "country": "Czech-Republic",
+     "league": "1. Liga U19",
+     "home": "Vysočina Jihlava U19",
+     "away": "Karviná U19",
+     "calibrated_lg": false,
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 91,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "Over 2.5",
+       "prob": 77,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "BTTS Da",
+       "prob": 71,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null
+    },
+    {
+     "fixture_id": 1490733,
+     "time": "14:00",
+     "country": "Czech-Republic",
+     "league": "1. Liga U19",
+     "home": "Sparta Praha U19",
+     "away": "Sigma Olomouc U19",
+     "calibrated_lg": false,
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 85,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "Over 2.5",
+       "prob": 66,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "BTTS Da",
+       "prob": 65,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null
     }
    ],
    "totals": {
-    "picks": 4,
+    "picks": 17,
     "wins": 0,
     "losses": 0,
-    "pending": 4
+    "pending": 17
    }
   },
   {
    "date": "2026-06-10",
-   "status": "scheduled",
+   "status": "in_progress",
    "matches": [
     {
      "fixture_id": 1546281,
@@ -3809,7 +3824,7 @@
     },
     {
      "fixture_id": 1493527,
-     "time": "23:00",
+     "time": "02:30",
      "country": "USA",
      "league": "USL Championship",
      "home": "Detroit City",
@@ -3833,48 +3848,8 @@
      "ht_a": null
     },
     {
-     "fixture_id": 1493528,
-     "time": "23:00",
-     "country": "USA",
-     "league": "USL Championship",
-     "home": "Monterey Bay",
-     "away": "Sporting JAX",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 80,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
-    },
-    {
-     "fixture_id": 1493529,
-     "time": "23:00",
-     "country": "USA",
-     "league": "USL Championship",
-     "home": "Phoenix Rising",
-     "away": "Louisville City",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 80,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
-    },
-    {
      "fixture_id": 1493530,
-     "time": "23:00",
+     "time": "02:00",
      "country": "USA",
      "league": "USL Championship",
      "home": "Tampa Bay Rowdies",
@@ -3893,63 +3868,8 @@
      "ht_a": null
     },
     {
-     "fixture_id": 1493853,
-     "time": "23:00",
-     "country": "USA",
-     "league": "USL League One",
-     "home": "Alta",
-     "away": "Sarasota Paradise",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 75,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "Under 3.5",
-       "prob": 68,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
-    },
-    {
-     "fixture_id": 1493854,
-     "time": "23:00",
-     "country": "USA",
-     "league": "USL League One",
-     "home": "Boise",
-     "away": "Richmond Kickers",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 84,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "1 (Home)",
-       "prob": 66,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "Over 2.5",
-       "prob": 66,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
-    },
-    {
      "fixture_id": 1493855,
-     "time": "23:00",
+     "time": "02:30",
      "country": "USA",
      "league": "USL League One",
      "home": "Charlotte Independence",
@@ -3979,7 +3899,7 @@
     },
     {
      "fixture_id": 1493856,
-     "time": "23:00",
+     "time": "02:00",
      "country": "USA",
      "league": "USL League One",
      "home": "Westchester SC",
@@ -3996,18 +3916,208 @@
      "ft_a": null,
      "ht_h": null,
      "ht_a": null
+    },
+    {
+     "fixture_id": 1489868,
+     "time": "19:00",
+     "country": "Czech-Republic",
+     "league": "4. liga - Divizie A",
+     "home": "Slavoj Český Krumlov",
+     "away": "Hluboka nad Vltavou",
+     "calibrated_lg": true,
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 88,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "Over 2.5",
+       "prob": 71,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "BTTS Da",
+       "prob": 69,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null
+    },
+    {
+     "fixture_id": 1490732,
+     "time": "14:00",
+     "country": "Czech-Republic",
+     "league": "1. Liga U19",
+     "home": "Slovácko U19",
+     "away": "Mladá Boleslav U19",
+     "calibrated_lg": false,
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 87,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "Over 2.5",
+       "prob": 70,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "BTTS Da",
+       "prob": 68,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null
+    },
+    {
+     "fixture_id": 1487720,
+     "time": "18:30",
+     "country": "Czech-Republic",
+     "league": "4. liga - Divizie E",
+     "home": "Kozlovice",
+     "away": "Břeclav",
+     "calibrated_lg": true,
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 78,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null
+    },
+    {
+     "fixture_id": 1543273,
+     "time": "20:45",
+     "country": "Brazil",
+     "league": "Carioca A2",
+     "home": "América RJ",
+     "away": "Cabofriense",
+     "calibrated_lg": false,
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 77,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "Under 3.5",
+       "prob": 67,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null
+    },
+    {
+     "fixture_id": 1543272,
+     "time": "23:00",
+     "country": "Brazil",
+     "league": "Carioca A2",
+     "home": "CFRJ / Maricá",
+     "away": "Bonsucesso",
+     "calibrated_lg": false,
+     "picks": [
+      {
+       "market": "Under 3.5",
+       "prob": 76,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null
+    },
+    {
+     "fixture_id": 1542173,
+     "time": "17:30",
+     "country": "Iran",
+     "league": "Azadegan League",
+     "home": "Naft Bandar Abbas",
+     "away": "Shahrdari Noshahr",
+     "calibrated_lg": false,
+     "picks": [
+      {
+       "market": "Under 3.5",
+       "prob": 99,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "Under 2.5",
+       "prob": 96,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "BTTS Nu",
+       "prob": 93,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "Under 1.5",
+       "prob": 85,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null
+    },
+    {
+     "fixture_id": 1550832,
+     "time": "02:00",
+     "country": "World",
+     "league": "Friendlies",
+     "home": "Brazil U17",
+     "away": "United States U17",
+     "calibrated_lg": true,
+     "picks": [
+      {
+       "market": "1 (Home)",
+       "prob": 78,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "Over 1.5",
+       "prob": 77,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "BTTS Nu",
+       "prob": 69,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null
     }
    ],
    "totals": {
-    "picks": 18,
+    "picks": 28,
     "wins": 0,
     "losses": 0,
-    "pending": 18
+    "pending": 28
    }
   },
   {
    "date": "2026-06-09",
-   "status": "in_progress",
+   "status": "partial",
    "matches": [
     {
      "fixture_id": 1548188,
@@ -4021,23 +4131,23 @@
       {
        "market": "Over 1.5",
        "prob": 76,
-       "outcome": "PENDING"
+       "outcome": "LOSS"
       },
       {
        "market": "1 (Home)",
        "prob": 74,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       },
       {
        "market": "Under 3.5",
        "prob": 69,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 1,
+     "ft_a": 0,
+     "ht_h": 1,
+     "ht_a": 0
     },
     {
      "fixture_id": 1547739,
@@ -4051,13 +4161,13 @@
       {
        "market": "Under 3.5",
        "prob": 78,
-       "outcome": "PENDING"
+       "outcome": "LOSS"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 2,
+     "ft_a": 2,
+     "ht_h": 0,
+     "ht_a": 1
     },
     {
      "fixture_id": 1548054,
@@ -4071,23 +4181,23 @@
       {
        "market": "Over 1.5",
        "prob": 87,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       },
       {
        "market": "BTTS Da",
        "prob": 70,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       },
       {
        "market": "Over 2.5",
        "prob": 69,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 3,
+     "ft_a": 2,
+     "ht_h": 1,
+     "ht_a": 0
     },
     {
      "fixture_id": 1548331,
@@ -4101,18 +4211,18 @@
       {
        "market": "Under 3.5",
        "prob": 83,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       },
       {
        "market": "Under 2.5",
        "prob": 65,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 1,
+     "ft_a": 1,
+     "ht_h": 0,
+     "ht_a": 0
     },
     {
      "fixture_id": 1548332,
@@ -4126,23 +4236,23 @@
       {
        "market": "Under 3.5",
        "prob": 94,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       },
       {
        "market": "Under 2.5",
        "prob": 82,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       },
       {
        "market": "BTTS Nu",
        "prob": 74,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 2,
+     "ft_a": 0,
+     "ht_h": 0,
+     "ht_a": 0
     },
     {
      "fixture_id": 1548333,
@@ -4156,13 +4266,13 @@
       {
        "market": "Under 3.5",
        "prob": 77,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 0,
+     "ft_a": 1,
+     "ht_h": 0,
+     "ht_a": 1
     },
     {
      "fixture_id": 1548334,
@@ -4176,23 +4286,23 @@
       {
        "market": "Under 3.5",
        "prob": 91,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       },
       {
        "market": "Under 2.5",
        "prob": 77,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       },
       {
        "market": "BTTS Nu",
        "prob": 69,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 0,
+     "ft_a": 0,
+     "ht_h": 0,
+     "ht_a": 0
     },
     {
      "fixture_id": 1542167,
@@ -4241,18 +4351,18 @@
       {
        "market": "Under 3.5",
        "prob": 83,
-       "outcome": "PENDING"
+       "outcome": "LOSS"
       },
       {
        "market": "Under 2.5",
        "prob": 67,
-       "outcome": "PENDING"
+       "outcome": "LOSS"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 2,
+     "ft_a": 2,
+     "ht_h": 1,
+     "ht_a": 0
     },
     {
      "fixture_id": 1550649,
@@ -4266,13 +4376,13 @@
       {
        "market": "Under 3.5",
        "prob": 74,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 0,
+     "ft_a": 0,
+     "ht_h": 0,
+     "ht_a": 0
     },
     {
      "fixture_id": 1550650,
@@ -4286,63 +4396,28 @@
       {
        "market": "1 (Home)",
        "prob": 86,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       },
       {
        "market": "Over 1.5",
        "prob": 82,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       },
       {
        "market": "BTTS Nu",
        "prob": 71,
-       "outcome": "PENDING"
+       "outcome": "LOSS"
       },
       {
        "market": "Over 2.5",
        "prob": 66,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
-    },
-    {
-     "fixture_id": 1542173,
-     "time": "17:30",
-     "country": "Iran",
-     "league": "Azadegan League",
-     "home": "Naft Bandar Abbas",
-     "away": "Shahrdari Noshahr",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Under 3.5",
-       "prob": 99,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "Under 2.5",
-       "prob": 96,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "BTTS Nu",
-       "prob": 93,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "Under 1.5",
-       "prob": 85,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 3,
+     "ft_a": 1,
+     "ht_h": 2,
+     "ht_a": 0
     },
     {
      "fixture_id": 1550652,
@@ -4356,16 +4431,16 @@
       {
        "market": "Under 3.5",
        "prob": 85,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       },
       {
        "market": "Under 2.5",
        "prob": 68,
-       "outcome": "PENDING"
+       "outcome": "LOSS"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
+     "ft_h": 2,
+     "ft_a": 1,
      "ht_h": null,
      "ht_a": null
     },
@@ -4381,23 +4456,23 @@
       {
        "market": "Over 1.5",
        "prob": 86,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       },
       {
        "market": "1 (Home)",
        "prob": 69,
-       "outcome": "PENDING"
+       "outcome": "LOSS"
       },
       {
        "market": "Over 2.5",
        "prob": 68,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 1,
+     "ft_a": 7,
+     "ht_h": 1,
+     "ht_a": 4
     },
     {
      "fixture_id": 1548680,
@@ -4411,13 +4486,13 @@
       {
        "market": "Over 1.5",
        "prob": 79,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 2,
+     "ft_a": 1,
+     "ht_h": 0,
+     "ht_a": 0
     },
     {
      "fixture_id": 1504241,
@@ -4431,18 +4506,18 @@
       {
        "market": "Under 3.5",
        "prob": 85,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       },
       {
        "market": "Under 2.5",
        "prob": 69,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 0,
+     "ft_a": 0,
+     "ht_h": 0,
+     "ht_a": 0
     },
     {
      "fixture_id": 1544367,
@@ -4456,23 +4531,23 @@
       {
        "market": "Under 3.5",
        "prob": 80,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       },
       {
        "market": "BTTS Nu",
        "prob": 74,
-       "outcome": "PENDING"
+       "outcome": "LOSS"
       },
       {
        "market": "1 (Home)",
        "prob": 70,
-       "outcome": "PENDING"
+       "outcome": "LOSS"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 1,
+     "ft_a": 2,
+     "ht_h": 0,
+     "ht_a": 0
     },
     {
      "fixture_id": 1545274,
@@ -4486,13 +4561,13 @@
       {
        "market": "Over 1.5",
        "prob": 80,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 3,
+     "ft_a": 2,
+     "ht_h": 1,
+     "ht_a": 0
     },
     {
      "fixture_id": 1550660,
@@ -4536,21 +4611,21 @@
       {
        "market": "2 (Away)",
        "prob": 75,
-       "outcome": "PENDING"
+       "outcome": "LOSS"
       },
       {
        "market": "Under 3.5",
        "prob": 75,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       },
       {
        "market": "BTTS Nu",
        "prob": 69,
-       "outcome": "PENDING"
+       "outcome": "LOSS"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
+     "ft_h": 2,
+     "ft_a": 1,
      "ht_h": null,
      "ht_a": null
     },
@@ -4566,13 +4641,13 @@
       {
        "market": "Over 1.5",
        "prob": 81,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 2,
+     "ft_a": 2,
+     "ht_h": 0,
+     "ht_a": 0
     },
     {
      "fixture_id": 1550662,
@@ -4586,23 +4661,23 @@
       {
        "market": "Under 3.5",
        "prob": 91,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       },
       {
        "market": "Under 2.5",
        "prob": 77,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       },
       {
        "market": "BTTS Nu",
        "prob": 72,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 0,
+     "ft_a": 1,
+     "ht_h": 0,
+     "ht_a": 0
     },
     {
      "fixture_id": 1550663,
@@ -4616,23 +4691,23 @@
       {
        "market": "Under 3.5",
        "prob": 93,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       },
       {
        "market": "Under 2.5",
        "prob": 82,
-       "outcome": "PENDING"
+       "outcome": "LOSS"
       },
       {
        "market": "BTTS Nu",
        "prob": 76,
-       "outcome": "PENDING"
+       "outcome": "LOSS"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 2,
+     "ft_a": 1,
+     "ht_h": 1,
+     "ht_a": 0
     },
     {
      "fixture_id": 1497593,
@@ -4646,13 +4721,13 @@
       {
        "market": "Over 1.5",
        "prob": 83,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 2,
+     "ft_a": 2,
+     "ht_h": 0,
+     "ht_a": 0
     },
     {
      "fixture_id": 1497595,
@@ -4666,23 +4741,23 @@
       {
        "market": "Over 1.5",
        "prob": 85,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       },
       {
        "market": "1 (Home)",
        "prob": 67,
-       "outcome": "PENDING"
+       "outcome": "LOSS"
       },
       {
        "market": "Over 2.5",
        "prob": 66,
-       "outcome": "PENDING"
+       "outcome": "LOSS"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 1,
+     "ft_a": 1,
+     "ht_h": 0,
+     "ht_a": 1
     },
     {
      "fixture_id": 1497596,
@@ -4696,13 +4771,13 @@
       {
        "market": "Over 1.5",
        "prob": 79,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 1,
+     "ft_a": 2,
+     "ht_h": 1,
+     "ht_a": 2
     },
     {
      "fixture_id": 1497598,
@@ -4716,23 +4791,23 @@
       {
        "market": "Over 1.5",
        "prob": 89,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       },
       {
        "market": "Over 2.5",
        "prob": 74,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       },
       {
        "market": "BTTS Da",
        "prob": 71,
-       "outcome": "PENDING"
+       "outcome": "LOSS"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 3,
+     "ft_a": 0,
+     "ht_h": 3,
+     "ht_a": 0
     },
     {
      "fixture_id": 1497599,
@@ -4746,18 +4821,18 @@
       {
        "market": "Over 1.5",
        "prob": 78,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       },
       {
        "market": "Under 3.5",
        "prob": 67,
-       "outcome": "PENDING"
+       "outcome": "LOSS"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 4,
+     "ft_a": 2,
+     "ht_h": 4,
+     "ht_a": 1
     },
     {
      "fixture_id": 1525493,
@@ -4771,23 +4846,23 @@
       {
        "market": "Under 3.5",
        "prob": 86,
-       "outcome": "PENDING"
+       "outcome": "LOSS"
       },
       {
        "market": "Under 2.5",
        "prob": 71,
-       "outcome": "PENDING"
+       "outcome": "LOSS"
       },
       {
        "market": "BTTS Nu",
        "prob": 69,
-       "outcome": "PENDING"
+       "outcome": "LOSS"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 3,
+     "ft_a": 1,
+     "ht_h": 0,
+     "ht_a": 1
     },
     {
      "fixture_id": 1543831,
@@ -4801,23 +4876,23 @@
       {
        "market": "Under 3.5",
        "prob": 79,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       },
       {
        "market": "BTTS Nu",
        "prob": 70,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       },
       {
        "market": "1 (Home)",
        "prob": 67,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 3,
+     "ft_a": 0,
+     "ht_h": 2,
+     "ht_a": 0
     },
     {
      "fixture_id": 1543832,
@@ -4831,53 +4906,28 @@
       {
        "market": "1 (Home)",
        "prob": 87,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       },
       {
        "market": "Over 1.5",
        "prob": 85,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       },
       {
        "market": "Over 2.5",
        "prob": 70,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       },
       {
        "market": "BTTS Nu",
        "prob": 69,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
-    },
-    {
-     "fixture_id": 1545632,
-     "time": "20:00",
-     "country": "Sweden",
-     "league": "Svenska Cupen",
-     "home": "Räppe",
-     "away": "Hässleholms IF",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 78,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "Under 3.5",
-       "prob": 66,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 3,
+     "ft_a": 0,
+     "ht_h": 2,
+     "ht_a": 0
     },
     {
      "fixture_id": 1548681,
@@ -4891,13 +4941,13 @@
       {
        "market": "Under 3.5",
        "prob": 79,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 3,
+     "ft_a": 0,
+     "ht_h": 2,
+     "ht_a": 0
     },
     {
      "fixture_id": 1545631,
@@ -4911,23 +4961,23 @@
       {
        "market": "Over 1.5",
        "prob": 86,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       },
       {
        "market": "Over 2.5",
        "prob": 68,
-       "outcome": "PENDING"
+       "outcome": "LOSS"
       },
       {
        "market": "BTTS Da",
        "prob": 66,
-       "outcome": "PENDING"
+       "outcome": "LOSS"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 0,
+     "ft_a": 2,
+     "ht_h": 0,
+     "ht_a": 1
     },
     {
      "fixture_id": 1512453,
@@ -4941,23 +4991,23 @@
       {
        "market": "Under 3.5",
        "prob": 86,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       },
       {
        "market": "Under 2.5",
        "prob": 70,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       },
       {
        "market": "BTTS Nu",
        "prob": 66,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 1,
+     "ft_a": 0,
+     "ht_h": 1,
+     "ht_a": 0
     },
     {
      "fixture_id": 1512455,
@@ -4971,23 +5021,23 @@
       {
        "market": "Over 1.5",
        "prob": 91,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       },
       {
        "market": "Over 2.5",
        "prob": 78,
-       "outcome": "PENDING"
+       "outcome": "LOSS"
       },
       {
        "market": "1 (Home)",
        "prob": 75,
-       "outcome": "PENDING"
+       "outcome": "LOSS"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 1,
+     "ft_a": 1,
+     "ht_h": 0,
+     "ht_a": 0
     },
     {
      "fixture_id": 1512458,
@@ -5001,13 +5051,13 @@
       {
        "market": "Under 3.5",
        "prob": 83,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 1,
+     "ft_a": 0,
+     "ht_h": 1,
+     "ht_a": 0
     },
     {
      "fixture_id": 1512462,
@@ -5021,13 +5071,13 @@
       {
        "market": "Over 1.5",
        "prob": 83,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 0,
+     "ft_a": 4,
+     "ht_h": 0,
+     "ht_a": 3
     },
     {
      "fixture_id": 1526166,
@@ -5041,13 +5091,13 @@
       {
        "market": "Over 1.5",
        "prob": 83,
-       "outcome": "PENDING"
+       "outcome": "LOSS"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 1,
+     "ft_a": 0,
+     "ht_h": 0,
+     "ht_a": 0
     },
     {
      "fixture_id": 1543891,
@@ -5086,18 +5136,18 @@
       {
        "market": "Over 1.5",
        "prob": 77,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       },
       {
        "market": "Under 3.5",
        "prob": 67,
-       "outcome": "PENDING"
+       "outcome": "LOSS"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 1,
+     "ft_a": 3,
+     "ht_h": 0,
+     "ht_a": 3
     },
     {
      "fixture_id": 1543893,
@@ -5111,13 +5161,13 @@
       {
        "market": "Under 3.5",
        "prob": 70,
-       "outcome": "PENDING"
+       "outcome": "LOSS"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 7,
+     "ft_a": 0,
+     "ht_h": 4,
+     "ht_a": 0
     },
     {
      "fixture_id": 1543896,
@@ -5131,11 +5181,11 @@
       {
        "market": "Under 3.5",
        "prob": 71,
-       "outcome": "PENDING"
+       "outcome": "LOSS"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
+     "ft_h": 0,
+     "ft_a": 4,
      "ht_h": null,
      "ht_a": null
     },
@@ -5151,11 +5201,11 @@
       {
        "market": "Under 3.5",
        "prob": 79,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
+     "ft_h": 1,
+     "ft_a": 1,
      "ht_h": null,
      "ht_a": null
     },
@@ -5171,13 +5221,13 @@
       {
        "market": "Over 1.5",
        "prob": 84,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 2,
+     "ft_a": 0,
+     "ht_h": 0,
+     "ht_a": 0
     },
     {
      "fixture_id": 1544813,
@@ -5191,13 +5241,13 @@
       {
        "market": "1 (Home)",
        "prob": 69,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 2,
+     "ft_a": 1,
+     "ht_h": 1,
+     "ht_a": 1
     },
     {
      "fixture_id": 1546506,
@@ -5211,23 +5261,23 @@
       {
        "market": "Under 3.5",
        "prob": 94,
-       "outcome": "PENDING"
+       "outcome": "LOSS"
       },
       {
        "market": "Under 2.5",
        "prob": 84,
-       "outcome": "PENDING"
+       "outcome": "LOSS"
       },
       {
        "market": "BTTS Nu",
        "prob": 79,
-       "outcome": "PENDING"
+       "outcome": "LOSS"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 5,
+     "ft_a": 1,
+     "ht_h": 1,
+     "ht_a": 1
     },
     {
      "fixture_id": 1550664,
@@ -5241,18 +5291,18 @@
       {
        "market": "Under 3.5",
        "prob": 83,
-       "outcome": "PENDING"
+       "outcome": "LOSS"
       },
       {
        "market": "Under 2.5",
        "prob": 65,
-       "outcome": "PENDING"
+       "outcome": "LOSS"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 2,
+     "ft_a": 6,
+     "ht_h": 2,
+     "ht_a": 2
     },
     {
      "fixture_id": 1548457,
@@ -5266,23 +5316,23 @@
       {
        "market": "Under 3.5",
        "prob": 93,
-       "outcome": "PENDING"
+       "outcome": "LOSS"
       },
       {
        "market": "Under 2.5",
        "prob": 81,
-       "outcome": "PENDING"
+       "outcome": "LOSS"
       },
       {
        "market": "BTTS Nu",
        "prob": 79,
-       "outcome": "PENDING"
+       "outcome": "LOSS"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 3,
+     "ft_a": 1,
+     "ht_h": 2,
+     "ht_a": 0
     },
     {
      "fixture_id": 1526553,
@@ -5296,23 +5346,23 @@
       {
        "market": "Under 3.5",
        "prob": 90,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       },
       {
        "market": "Under 2.5",
        "prob": 77,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       },
       {
        "market": "BTTS Nu",
        "prob": 70,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 0,
+     "ft_a": 1,
+     "ht_h": 0,
+     "ht_a": 0
     },
     {
      "fixture_id": 1526557,
@@ -5326,18 +5376,18 @@
       {
        "market": "Under 3.5",
        "prob": 87,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       },
       {
        "market": "Under 2.5",
        "prob": 71,
-       "outcome": "PENDING"
+       "outcome": "LOSS"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 2,
+     "ft_a": 1,
+     "ht_h": 2,
+     "ht_a": 0
     },
     {
      "fixture_id": 1512456,
@@ -5351,13 +5401,13 @@
       {
        "market": "Under 3.5",
        "prob": 78,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 2,
+     "ft_a": 0,
+     "ht_h": 1,
+     "ht_a": 0
     },
     {
      "fixture_id": 1512465,
@@ -5371,13 +5421,13 @@
       {
        "market": "Under 3.5",
        "prob": 80,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 2,
+     "ft_a": 1,
+     "ht_h": 0,
+     "ht_a": 1
     },
     {
      "fixture_id": 1520715,
@@ -5391,23 +5441,23 @@
       {
        "market": "Under 3.5",
        "prob": 87,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       },
       {
        "market": "Under 2.5",
        "prob": 70,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       },
       {
        "market": "BTTS Nu",
        "prob": 65,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 0,
+     "ft_a": 1,
+     "ht_h": 0,
+     "ht_a": 1
     },
     {
      "fixture_id": 1520717,
@@ -5421,28 +5471,28 @@
       {
        "market": "Under 3.5",
        "prob": 96,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       },
       {
        "market": "Under 2.5",
        "prob": 87,
-       "outcome": "PENDING"
+       "outcome": "LOSS"
       },
       {
        "market": "BTTS Nu",
        "prob": 79,
-       "outcome": "PENDING"
+       "outcome": "LOSS"
       },
       {
        "market": "Under 1.5",
        "prob": 65,
-       "outcome": "PENDING"
+       "outcome": "LOSS"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 1,
+     "ft_a": 2,
+     "ht_h": 1,
+     "ht_a": 1
     },
     {
      "fixture_id": 1524818,
@@ -5456,13 +5506,13 @@
       {
        "market": "Over 1.5",
        "prob": 81,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 1,
+     "ft_a": 3,
+     "ht_h": 1,
+     "ht_a": 2
     },
     {
      "fixture_id": 1548297,
@@ -5476,23 +5526,23 @@
       {
        "market": "Over 1.5",
        "prob": 87,
-       "outcome": "PENDING"
+       "outcome": "LOSS"
       },
       {
        "market": "Over 2.5",
        "prob": 70,
-       "outcome": "PENDING"
+       "outcome": "LOSS"
       },
       {
        "market": "1 (Home)",
        "prob": 67,
-       "outcome": "PENDING"
+       "outcome": "LOSS"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 0,
+     "ft_a": 1,
+     "ht_h": 0,
+     "ht_a": 1
     },
     {
      "fixture_id": 1524819,
@@ -5506,23 +5556,23 @@
       {
        "market": "Over 1.5",
        "prob": 89,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       },
       {
        "market": "Over 2.5",
        "prob": 74,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       },
       {
        "market": "BTTS Da",
        "prob": 68,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 1,
+     "ft_a": 3,
+     "ht_h": 0,
+     "ht_a": 2
     },
     {
      "fixture_id": 1524825,
@@ -5536,13 +5586,13 @@
       {
        "market": "Over 1.5",
        "prob": 79,
-       "outcome": "PENDING"
+       "outcome": "LOSS"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 0,
+     "ft_a": 1,
+     "ht_h": 0,
+     "ht_a": 1
     },
     {
      "fixture_id": 1532150,
@@ -5556,23 +5606,23 @@
       {
        "market": "Under 3.5",
        "prob": 92,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       },
       {
        "market": "BTTS Nu",
        "prob": 84,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       },
       {
        "market": "Under 2.5",
        "prob": 80,
-       "outcome": "PENDING"
+       "outcome": "LOSS"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 0,
+     "ft_a": 3,
+     "ht_h": 0,
+     "ht_a": 0
     },
     {
      "fixture_id": 1544368,
@@ -5586,50 +5636,20 @@
       {
        "market": "Under 3.5",
        "prob": 74,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
-    },
-    {
-     "fixture_id": 1550832,
-     "time": "02:00",
-     "country": "World",
-     "league": "Friendlies",
-     "home": "Brazil U17",
-     "away": "United States U17",
-     "calibrated_lg": true,
-     "picks": [
-      {
-       "market": "1 (Home)",
-       "prob": 78,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "Over 1.5",
-       "prob": 77,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "BTTS Nu",
-       "prob": 69,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 0,
+     "ft_a": 0,
+     "ht_h": 0,
+     "ht_a": 0
     }
    ],
    "totals": {
-    "picks": 137,
-    "wins": 0,
-    "losses": 0,
-    "pending": 137
+    "picks": 128,
+    "wins": 74,
+    "losses": 45,
+    "pending": 9
    }
   },
   {
@@ -22746,31 +22766,6 @@
      "ht_a": 1
     },
     {
-     "fixture_id": 1543273,
-     "time": "21:00",
-     "country": "Brazil",
-     "league": "Carioca A2",
-     "home": "América RJ",
-     "away": "Cabofriense",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 77,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "Under 3.5",
-       "prob": 67,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
-    },
-    {
      "fixture_id": 1546352,
      "time": "21:00",
      "country": "Brazil",
@@ -24236,26 +24231,6 @@
      "ht_a": 4
     },
     {
-     "fixture_id": 1543272,
-     "time": "23:00",
-     "country": "Brazil",
-     "league": "Carioca A2",
-     "home": "CFRJ / Maricá",
-     "away": "Bonsucesso",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Under 3.5",
-       "prob": 76,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
-    },
-    {
      "fixture_id": 1543276,
      "time": "23:00",
      "country": "Brazil",
@@ -25397,10 +25372,10 @@
     }
    ],
    "totals": {
-    "picks": 912,
+    "picks": 909,
     "wins": 645,
     "losses": 230,
-    "pending": 37
+    "pending": 34
    }
   },
   {
@@ -30655,20 +30630,20 @@
  "cumulated_markets": [
   {
    "name": "Over 1.5",
-   "n": 442,
-   "wins": 372,
-   "losses": 70,
-   "hit_pct": 84.2,
+   "n": 465,
+   "wins": 391,
+   "losses": 74,
+   "hit_pct": 84.1,
    "wlo_pct": 80.5,
    "tier": "ROBUST"
   },
   {
    "name": "Over 2.5",
-   "n": 208,
-   "wins": 141,
-   "losses": 67,
-   "hit_pct": 67.8,
-   "wlo_pct": 61.2,
+   "n": 218,
+   "wins": 147,
+   "losses": 71,
+   "hit_pct": 67.4,
+   "wlo_pct": 61.0,
    "tier": "PRE-PROMISING"
   },
   {
@@ -30682,21 +30657,21 @@
   },
   {
    "name": "BTTS Da",
-   "n": 107,
-   "wins": 75,
-   "losses": 32,
-   "hit_pct": 70.1,
-   "wlo_pct": 60.8,
-   "tier": "PROMISING"
+   "n": 111,
+   "wins": 77,
+   "losses": 34,
+   "hit_pct": 69.4,
+   "wlo_pct": 60.3,
+   "tier": "PRE-PROMISING"
   },
   {
    "name": "HT Over 0.5",
-   "n": 489,
-   "wins": 375,
-   "losses": 114,
+   "n": 514,
+   "wins": 394,
+   "losses": 120,
    "hit_pct": 76.7,
-   "wlo_pct": 72.7,
-   "tier": "ROBUST"
+   "wlo_pct": 72.8,
+   "tier": "STRONG ROBUST"
   },
   {
    "name": "HT Over 1.5",
