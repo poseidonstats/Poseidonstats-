@@ -6,7 +6,12 @@
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://gc.zgo.at; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://poseidonstats.goatcounter.com; font-src 'self'; base-uri 'self'; form-action 'none';">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <title>POSEIDON — Istoric predicții public</title>
-<meta name="description" content="Istoric public al predicțiilor POSEIDON pe zile. Toate picks ≥65% rând cu rând. WIN și LOSS publicate onest.">
+<meta name="description" content="Istoric public al predicțiilor POSEIDON pe zile. Toate predicțiile ≥65%, rând cu rând. WIN și LOSS publicate onest.">
+<meta property="og:title" content="POSEIDON — Istoric predicții public">
+<meta property="og:description" content="Istoric public pe zile, WIN și LOSS deopotrivă. Predicții înghețate la generare, verificabile rând cu rând.">
+<meta property="og:image" content="https://poseidonstats.com/assets/icon-512.png">
+<meta property="og:url" content="https://poseidonstats.com/istoric.html">
+<meta property="og:type" content="website">
 <link rel="stylesheet" href="assets/style.css">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#1e3a8a">
@@ -42,7 +47,7 @@
 
   <section class="intro">
     <h2 data-i18n="istoric.h2">Istoric public — rând cu rând</h2>
-    <p data-i18n="istoric.intro">Toate predicțiile cu probabilitate <strong>≥65%</strong> (sugestii ★ pick), înghețate la generare și afișate <strong>WIN și LOSS</strong> deopotrivă.
+    <p data-i18n="istoric.intro">Toate predicțiile cu probabilitate <strong>≥65%</strong> (sugestii marcate ★), înghețate la generare și afișate <strong>WIN și LOSS</strong> deopotrivă.
     Cumulat per piață cu <em>Wilson lower bound 95%</em> + tier statistic strict.</p>
     <div class="card-info">
       <strong data-i18n="istoric.cardinfo.title">De ce și LOSS-urile?</strong> <span data-i18n="istoric.cardinfo.body">Modelul greșește. Calibrarea istorică (bucket 80-90% pe Over 1.5 = real 82.7%) lasă ~17% LOSSes. Site-urile care promit „90% hit" pe mii de predicții mint matematic — Wilson lower bound o demonstrează.</span>
@@ -51,7 +56,7 @@
 
   <section id="cumulat-section">
     <h3 data-i18n="istoric.cumulat.h3">Cumulat per piață (din jurnalul live)</h3>
-    <div id="cumulat-stats" class="muted" data-i18n="loading">Se încarcă...</div>
+    <div id="cumulat-stats" class="muted" data-i18n="empty.fwd.static">Jurnalul live a început pe <strong>2 iunie 2026</strong>. Tabelul se populează pe măsură ce se joacă meciurile.</div>
   </section>
 
   <section id="filters" class="filters">
@@ -75,7 +80,7 @@
 
   <section id="days-section">
     <div id="days-list">
-      <p class="muted">Se încarcă istoricul...</p>
+      <p class="muted" data-i18n="empty.fwd.static">Jurnalul live a început pe <strong>2 iunie 2026</strong>. Tabelul se populează pe măsură ce se joacă meciurile.</p>
     </div>
   </section>
 
@@ -86,7 +91,7 @@
       ROBUST (N≥300 + hit≥70% + Wlo≥60%), STRONG ROBUST (N≥500 + hit≥75% + Wlo≥70%).</li>
       <li><strong>Wlo</strong> (Wilson lower bound 95%) = pragul realist sub care hit-rate-ul nu pică în 95% din cazuri. Cu cât N e mai mic, cu atât Wlo e mai depărtat de hit% afișat.</li>
       <li><strong>Sample mic ≠ performanță</strong>: o singură zi 7/7 e NOROC. Doar N≥300 cu Wlo&gt;60% se consideră semnal real.</li>
-      <li><strong>Marker ⚠️</strong> apare pe ligi care nu sunt în lista celor 220 calibrate empirical — predicții afișate, dar cu rezervă.</li>
+      <li><strong>Marker ⚠️</strong> apare pe ligi care nu sunt în lista celor <span data-stat="leagues-cal">270</span> de ligi calibrate empiric — predicții afișate, dar cu rezervă.</li>
     </ul>
   </section>
 

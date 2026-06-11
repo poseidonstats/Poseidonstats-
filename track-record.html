@@ -6,6 +6,12 @@
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://gc.zgo.at; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://poseidonstats.goatcounter.com; font-src 'self'; base-uri 'self'; form-action 'none';">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <title>POSEIDON — Track record (calibrare verificabilă)</title>
+<meta name="description" content="Track record verificabil POSEIDON: calibrare pe bucket din backtest istoric + performanță live din jurnalul forward, cu predicții înghețate înainte de meci.">
+<meta property="og:title" content="POSEIDON — Track record (calibrare verificabilă)">
+<meta property="og:description" content="Calibrare pe bucket din backtest + performanță live din jurnal forward. Predicții înghețate înainte de meci, verificabile.">
+<meta property="og:image" content="https://poseidonstats.com/assets/icon-512.png">
+<meta property="og:url" content="https://poseidonstats.com/track-record.html">
+<meta property="og:type" content="website">
 <link rel="stylesheet" href="assets/style.css">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#1e3a8a">
@@ -43,7 +49,7 @@
     <h2 data-i18n="tr.h2">Track record — calibrare verificabilă</h2>
     <p data-i18n="tr.p.sub">Două surse, etichetate explicit:</p>
     <ul>
-      <li data-i18n="tr.li.backtest"><strong>Validare istorică (backtest)</strong> — pe meciuri din ianuarie–mai 2026, ratings calculate strict pe 2024–2025 (zero leakage).</li>
+      <li data-i18n="tr.li.backtest"><strong>Validare istorică (backtest)</strong> — backtest pe 65.250 meciuri jucate în ianuarie–mai 2026, cu ratings calculate strict pe 2024–2025 (înghețate la 31 dec 2025). Zero leakage.</li>
       <li data-i18n="tr.li.forward"><strong>Performanță live (forward)</strong> — predicții înghețate înainte de meci, începând cu 2 iunie 2026.</li>
     </ul>
     <p class="muted" data-i18n="tr.p.muted">Backtest = cum a mers pe trecut. Live = ce se întâmplă de acum încolo, verificabil rând cu rând.</p>
@@ -70,18 +76,24 @@
     <h3 data-i18n="tr.h3.fwd">Performanță live (forward — în acumulare)</h3>
     <p data-i18n="tr.p.fwd">Predicții înghețate la generare (07:15 zilnic), comparate cu rezultatul real după meci. Excluse meciurile neplayed.</p>
     <div id="forward-stats">
-      <p class="muted" data-i18n="loading">Se încarcă...</p>
+      <p class="muted" data-i18n="empty.fwd.static">Jurnalul live a început pe <strong>2 iunie 2026</strong>. Tabelul se populează pe măsură ce se joacă meciurile.</p>
     </div>
   </section>
 
   <section>
     <h3 data-i18n="tr.h3.source">Sursă & metodologie</h3>
     <ul>
-      <li data-i18n="tr.li.source.bt"><strong>Backtest istoric</strong> — 65.250 meciuri jucate în 2026, predicții generate cu ratings calculate strict pe 2024-2025 (zero leakage temporal).</li>
+      <li data-i18n="tr.li.source.bt"><strong>Backtest istoric</strong> — backtest pe 65.250 meciuri jucate în ianuarie–mai 2026, cu ratings calculate strict pe 2024–2025 (înghețate la 31 dec 2025). Zero leakage temporal.</li>
       <li data-i18n="tr.li.source.fwd"><strong>Jurnal forward</strong> — predicții înghețate la generare (07:15 zilnic), comparate cu rezultatul real după ce s-au jucat meciurile.</li>
       <li data-i18n="tr.li.source.calib"><strong>Calibrare per-ligă</strong> — pe sute de ligi cu shrinkage Bayesian, pentru a evita supra-fitare pe ligi cu sample mic.</li>
       <li data-i18n="tr.li.source.repro"><strong>Reproductibilitate</strong> — metodologia este descrisă complet la <a href="metodologie.html">Metodologie</a>.</li>
     </ul>
+  </section>
+
+  <!-- Patreon compact — pe această pagină încrederea e deja construită -->
+  <section class="support-compact">
+    <span class="support-compact-text">🔱 <span data-i18n="support.tagline">Predicțiile rămân <strong>GRATIS și fără reclame</strong> pentru toată lumea.</span></span>
+    <a href="https://patreon.com/PoseidonPredictions" target="_blank" rel="noopener" class="support-btn support-btn-compact" data-i18n="support.btn">☕ Susține cu $3 / lună — Cafeaua POSEIDON</a>
   </section>
 
 </main>

@@ -6,6 +6,12 @@
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://gc.zgo.at; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://poseidonstats.goatcounter.com; font-src 'self'; base-uri 'self'; form-action 'none';">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <title>POSEIDON — Metodologie</title>
+<meta name="description" content="Cum funcționează modelul POSEIDON: Poisson + Dixon-Coles, ratings Bayesian, simulare Monte Carlo, calibrare per-ligă și limitări cunoscute.">
+<meta property="og:title" content="POSEIDON — Metodologie">
+<meta property="og:description" content="Poisson + Dixon-Coles, ratings Bayesian, Monte Carlo, calibrare per-ligă — metodologia completă, cu limitări cunoscute.">
+<meta property="og:image" content="https://poseidonstats.com/assets/icon-512.png">
+<meta property="og:url" content="https://poseidonstats.com/metodologie.html">
+<meta property="og:type" content="website">
 <link rel="stylesheet" href="assets/style.css">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#1e3a8a">
@@ -54,7 +60,7 @@
     <p data-i18n="metod.p.2a">Pentru un meci HOME vs AWAY:</p>
     <pre>λ_home = attack_HOME × defense_AWAY × home_advantage × μ_league_calibrat
 λ_away = attack_AWAY × defense_HOME × μ_league_calibrat</pre>
-    <p data-i18n="metod.p.2b">Unde <code>μ_league_calibrat</code> = media ligii × scale per-ligă, calibrată empirical.</p>
+    <p data-i18n="metod.p.2b">Unde <code>μ_league_calibrat</code> = media ligii × scale per-ligă, calibrată empiric.</p>
 
     <h3 data-i18n="metod.h3.3">3. Calibrare per-ligă (anti-bias)</h3>
     <p data-i18n="metod.p.3">Modelul fără calibrare supra-estimează masiv ligile cu scor mare (Nordic +22%) și sub-estimează cele cu scor mic (Sud-America −22%). Soluție: un factor de scalare per ligă, derivat exclusiv pe TRAIN, cu <strong>shrinkage Bayesian</strong> spre o medie prudentă — aplicat mai puternic pe ligile cu sample mic, pentru a evita supra-fitarea.</p>
@@ -66,11 +72,12 @@
     <p data-i18n="metod.p.5">Poisson clasic sub-estimează scoruri low (0-0, 1-0, 0-1, 1-1). Corecția <code>ρ</code>, fitată pe meciurile recente, ajustează matricea Poisson pe scorurile mici.</p>
 
     <h3 data-i18n="metod.h3.wb">Whitelist & blacklist ligi</h3>
-    <p data-i18n="metod.p.wb">După backtest pe 66k meciuri, ligile sunt clasificate:</p>
+    <p data-i18n="metod.p.wb">După backtest pe 65.250 meciuri jucate în ianuarie–mai 2026, cu ratings calculate strict pe 2024–2025 (înghețate la 31 dec 2025), ligile sunt clasificate:</p>
     <ul>
-      <li data-i18n="metod.li.calibrate"><strong>Calibrate (220 ligi)</strong>: bias între ±10% pe sample N≥80 — modelul livrează predicții fiabile.</li>
+      <li data-i18n="metod.li.calibrate"><strong>Calibrate (<span data-stat="leagues-cal">270</span> ligi)</strong>: bias între ±10% pe sample N≥80 — modelul livrează predicții fiabile.</li>
       <li data-i18n="metod.li.necalibrate"><strong>Necalibrate</strong>: bias mai mare ±10% sau sample insuficient — predicțiile sunt afișate dar cu marker <span class="warn-tag">⚠️ ligă necalibrată</span>.</li>
-      <li data-i18n="metod.li.blacklist"><strong>Blacklist (94 ligi)</strong>: ligi cu anomalii structurale (date corupte, scoruri suspecte) — predicțiile NU sunt afișate.</li>
+      <!-- TODO: export blacklist count în calibration.json (task pipeline viitor) — până atunci fără cifră -->
+      <li data-i18n="metod.li.blacklist"><strong>Blacklist</strong>: ligi cu anomalii structurale (date corupte, scoruri suspecte) — predicțiile NU sunt afișate.</li>
     </ul>
 
     <h3 data-i18n="metod.h3.limit">Limitări cunoscute</h3>
@@ -95,5 +102,6 @@
   </div>
 </footer>
 
+<script src="assets/app.js"></script>
 </body>
 </html>

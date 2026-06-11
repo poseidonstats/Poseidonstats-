@@ -7,6 +7,11 @@
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <title>POSEIDON — Predicții fotbal pe model statistic</title>
 <meta name="description" content="Predicții fotbal generate de un model statistic Poisson + Dixon-Coles. Date informative, transparente, verificabile.">
+<meta property="og:title" content="POSEIDON — Predicții fotbal pe model statistic">
+<meta property="og:description" content="Ce șanse reale are meciul de azi? Cifre, nu păreri. Model statistic calibrat, gratis, fără reclame.">
+<meta property="og:image" content="https://poseidonstats.com/assets/icon-512.png">
+<meta property="og:url" content="https://poseidonstats.com/">
+<meta property="og:type" content="website">
 <link rel="stylesheet" href="assets/style.css">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#1e3a8a">
@@ -41,60 +46,27 @@
 <main class="container">
 
   <section class="intro">
+    <div class="hero">
+      <h1 class="hero-title" data-i18n="hero.title">Ce șanse reale are meciul de azi? Cifre, nu păreri.</h1>
+      <p class="hero-sub" data-i18n="hero.sub">Un model statistic, calibrat pe zeci de mii de meciuri. Gratis, fără reclame, fără promisiuni.</p>
+    </div>
     <div class="trust-line">
       <span class="trust-item"><strong>200.000</strong> <span data-i18n="trust.simulari">simulări Monte Carlo / meci</span></span>
-      <span class="trust-item"><strong>65.250</strong> <span data-i18n="trust.meciuri">meciuri calibrare empirical</span></span>
-      <span class="trust-item"><strong>270/371</strong> <span data-i18n="trust.ligi">ligi validate ±10%</span></span>
+      <span class="trust-item"><strong>65.250</strong> <span data-i18n="trust.meciuri">meciuri calibrare empirică</span></span>
+      <span class="trust-item"><strong data-stat="leagues">270/366</strong> <span data-i18n="trust.ligi">ligi validate ±10%</span></span>
       <span class="trust-item"><strong>0</strong> <span data-i18n="trust.leakage">leakage temporal</span></span>
     </div>
     <h2 data-i18n="index.h2">Predicții pentru următoarele 7 zile</h2>
     <p data-i18n="index.intro">Model Poisson + Dixon-Coles + ratings Bayesian cu calibrare per-ligă. Predicțiile sunt înghețate la generare (07:15 zilnic) și verificabile post-meci.</p>
     <div class="card-info" data-i18n="index.cardinfo.body">
-      <strong>Probabilități calibrate empirical.</strong> Cifrele afișate sunt re-mapate pe baza
-      a 65.250 meciuri de backtest (TEST 2026, zero leakage). Când modelul brut zice "85%" pe un anumit
+      <strong>Probabilități calibrate empiric.</strong> Cifrele afișate sunt re-mapate pe baza unui
+      backtest pe 65.250 meciuri jucate în ianuarie–mai 2026, cu ratings calculate strict pe 2024–2025
+      (înghețate la 31 dec 2025) — zero leakage (modelul nu a văzut viitorul). Când modelul brut zice "85%" pe un anumit
       interval dar în istoric s-a întâmplat doar 67% din timp, afișăm <strong>67%</strong>, nu 85%.
       Marker <span class="warn-tag">⚠️ ligă necalibrată</span> apare pe ligile unde modelul nu a demonstrat calibrare.
-      Badge <span class="pick-badge pick-strong" style="font-size:0.7rem;padding:2px 8px">★ pick</span> pe alegerile cu probabilitate dominantă ≥65%.
+      Marcaj <span class="pick-badge pick-strong" style="font-size:0.7rem;padding:2px 8px">★</span> pe alegerile cu probabilitate dominantă ≥65%.
       Vezi <a href="istoric.html">istoric</a> sau <a href="track-record.html">track record</a> pentru tabelul complet de calibrare.
     </div>
-  </section>
-
-  <!-- Suport section — SUS, vizibil înainte de meciuri -->
-  <section class="support-cta">
-    <div class="support-icon">🔱</div>
-    <h2 data-i18n="support.h2">Susține POSEIDON</h2>
-    <p class="support-tagline" data-i18n="support.tagline">Predicțiile rămân <strong>GRATIS și fără reclame</strong> pentru toată lumea.</p>
-
-    <div class="support-reasons">
-      <div class="reason">
-        <span class="reason-icon">📡</span>
-        <strong data-i18n="support.infra">Infrastructură</strong>
-        <span data-i18n="support.infra.desc">Actualizare zilnică automată + bază de date pe 300.000+ meciuri istorice</span>
-      </div>
-      <div class="reason">
-        <span class="reason-icon">⚙️</span>
-        <strong data-i18n="support.research">Cercetare</strong>
-        <span data-i18n="support.research.desc">Calibrare empirical, validare per ligă, dezvoltare model</span>
-      </div>
-      <div class="reason">
-        <span class="reason-icon">🚫</span>
-        <strong data-i18n="support.noads">Zero reclame</strong>
-        <span data-i18n="support.noads.desc">Zero link-uri către case de pariuri. Strict informativ.</span>
-      </div>
-      <div class="reason">
-        <span class="reason-icon">📊</span>
-        <strong data-i18n="support.opendata">Open data</strong>
-        <span data-i18n="support.opendata.desc">Track record verificabil, predicții înghețate înainte de meci</span>
-      </div>
-    </div>
-
-    <a href="https://patreon.com/PoseidonPredictions" target="_blank" rel="noopener" class="support-btn" data-i18n="support.btn">
-      ☕ Susține cu $3 / lună — Cafeaua POSEIDON
-    </a>
-    <p class="support-note" data-i18n="support.note">Donație lunară simbolică. Anulezi oricând. Procesat de Patreon.</p>
-    <p class="support-contact">
-      <span data-i18n="support.contact">📧 Întrebări, colaborări, feedback:</span> <a href="mailto:contact@poseidonstats.com">contact@poseidonstats.com</a>
-    </p>
   </section>
 
   <section class="filters">
@@ -144,12 +116,50 @@
 
   <p class="filter-note muted" data-i18n="filters.note">
     Filtrele ajută la navigare prin date. Cifrele afișate sunt cele calibrate empiric.
-    Fiecare predicție rămâne individuală — site-ul nu construiește bilete și nu combină meciuri.
+    Fiecare predicție e individuală — site-ul nu combină meciuri și nu face recomandări de joc.
   </p>
 
   <div id="match-count" class="match-count"></div>
 
   <div id="matches"></div>
+
+  <!-- Suport section — JOS, după ce vizitatorul a văzut valoarea (mutat 11 iun) -->
+  <section class="support-cta">
+    <div class="support-icon">🔱</div>
+    <h2 data-i18n="support.h2">Susține POSEIDON</h2>
+    <p class="support-tagline" data-i18n="support.tagline">Predicțiile rămân <strong>GRATIS și fără reclame</strong> pentru toată lumea.</p>
+
+    <div class="support-reasons">
+      <div class="reason">
+        <span class="reason-icon">📡</span>
+        <strong data-i18n="support.infra">Infrastructură</strong>
+        <span data-i18n="support.infra.desc">Actualizare zilnică automată + bază de date pe 300.000+ meciuri istorice</span>
+      </div>
+      <div class="reason">
+        <span class="reason-icon">⚙️</span>
+        <strong data-i18n="support.research">Cercetare</strong>
+        <span data-i18n="support.research.desc">Calibrare empirică, validare per ligă, dezvoltare model</span>
+      </div>
+      <div class="reason">
+        <span class="reason-icon">🚫</span>
+        <strong data-i18n="support.noads">Zero reclame</strong>
+        <span data-i18n="support.noads.desc">Zero link-uri către case de pariuri. Strict informativ.</span>
+      </div>
+      <div class="reason">
+        <span class="reason-icon">📊</span>
+        <strong data-i18n="support.opendata">Open data</strong>
+        <span data-i18n="support.opendata.desc">Track record verificabil, predicții înghețate înainte de meci</span>
+      </div>
+    </div>
+
+    <a href="https://patreon.com/PoseidonPredictions" target="_blank" rel="noopener" class="support-btn" data-i18n="support.btn">
+      ☕ Susține cu $3 / lună — Cafeaua POSEIDON
+    </a>
+    <p class="support-note" data-i18n="support.note">Donație lunară simbolică. Anulezi oricând. Procesat de Patreon.</p>
+    <p class="support-contact">
+      <span data-i18n="support.contact">📧 Întrebări, colaborări, feedback:</span> <a href="mailto:contact@poseidonstats.com">contact@poseidonstats.com</a>
+    </p>
+  </section>
 
 </main>
 

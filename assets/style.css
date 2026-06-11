@@ -249,6 +249,29 @@ nav a.patreon:hover {
   margin-top: 12px;
   margin-bottom: 8px;
 }
+
+/* Patreon compact — un rând + buton, pe paginile unde încrederea e câștigată */
+.support-compact {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: linear-gradient(135deg, #0c1e4f, #1e3a8a);
+  color: #fff;
+  border-radius: 8px;
+  padding: 14px 18px;
+  margin: 20px 0;
+}
+.support-compact-text { font-size: 0.95rem; }
+.support-btn-compact {
+  padding: 10px 18px;
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+@media (max-width: 600px) {
+  .support-compact { flex-direction: column; text-align: center; }
+}
 .support-contact {
   color: #cbd5e1;
   font-size: 0.85rem;
@@ -287,6 +310,28 @@ p { margin-bottom: 10px; }
   border-radius: 8px;
   margin-bottom: 20px;
   box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+
+/* Hero — prima frază pentru vizitatorul nou, limbaj uman înainte de cifre */
+.hero {
+  text-align: center;
+  padding: 10px 8px 16px;
+}
+.hero-title {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.5rem;
+  line-height: 1.25;
+  color: #0c1e4f;
+  margin-bottom: 8px;
+}
+.hero-sub {
+  font-size: 0.95rem;
+  color: #4b5563;
+  margin-bottom: 0;
+}
+@media (max-width: 600px) {
+  .hero-title { font-size: 1.25rem; }
+  .hero-sub { font-size: 0.9rem; }
 }
 
 /* Trust line — bandă vendabilă cu cifre cheie */

@@ -44,6 +44,8 @@ async function initI18n() {
   LANG = detectLang();
   applyI18n();
   mountLangSwitcher();
+  // Cifrele vii se injectează DUPĂ i18n (applyI18n rescrie innerHTML pe [data-i18n])
+  loadLiveStats().then(injectLiveStats);
 }
 
 function mountLangSwitcher() {
@@ -60,6 +62,7 @@ function mountLangSwitcher() {
     LANG = e.target.value;
     localStorage.setItem("poseidon_lang", LANG);
     applyI18n();
+    injectLiveStats(); // re-injectare după ce applyI18n a rescris [data-i18n]
     // Re-render pagini dinamice
     if (document.getElementById("matches")) renderIndex();
     if (document.getElementById("days-list")) renderIstoric();
@@ -95,6 +98,64 @@ function fmtPct(p) {
 function fmtNum(n, d = 2) {
   if (n == null || isNaN(n)) return "—";
   return Number(n).toFixed(d);
+}
+
+/* ============== Cifre vii (sursă unică: JSON-urile publicate) ==============
+   Cifrele VII (ligi calibrate, jurnal live) se citesc din calibration.json /
+   forward.json și se injectează în elementele [data-stat]. Fetch eșuat →
+   rămâne fallback-ul static din HTML. Cifra de BACKTEST (65.250) e fereastră
+   ÎNCHISĂ și rămâne STATICĂ în text — nu o lega niciodată dinamic aici. */
+let LIVE_STATS = null;
+
+async function loadLiveStats() {
+  if (LIVE_STATS) return LIVE_STATS;
+  const [calib, fwd] = await Promise.all([fetchJSON(CALIB_URL), fetchJSON(FORWARD_URL)]);
+  const s = {};
+  if (calib && Array.isArray(calib.leagues) && calib.leagues.length) {
+    const cal = calib.leagues.filter(l => l.calibrated).length;
+    s["leagues-cal"] = String(cal);
+    s["leagues"] = cal + "/" + calib.leagues.length;
+  }
+  if (fwd && fwd.n_total != null) {
+    s["fwd-frozen"] = String(fwd.n_total);
+    s["fwd-resolved"] = String(fwd.n_resolved ?? 0);
+  }
+  LIVE_STATS = s;
+  return s;
+}
+
+function injectLiveStats() {
+  if (!LIVE_STATS) return;
+  document.querySelectorAll("[data-stat]").forEach(el => {
+    const v = LIVE_STATS[el.getAttribute("data-stat")];
+    if (v != null) el.textContent = v;
+  });
+}
+
+/* ============== Empty state onest (zero loader infinit) ==============
+   Jurnalul forward a pornit pe 2 iunie 2026. Când datele lipsesc sau fetch-ul
+   eșuează, scepticul primește un răspuns concret, nu "Se încarcă...". */
+const FORWARD_START = "2026-06-02";
+
+function tt(key, fallbackRo) {
+  // t() cu fallback explicit RO — render-ele pot rula înainte ca i18n.json să fie încărcat
+  const v = t(key);
+  return v === key ? fallbackRo : v;
+}
+
+function honestEmptyHtml(frozen) {
+  const days = Math.max(1, Math.floor((Date.now() - new Date(FORWARD_START + "T00:00:00Z").getTime()) / 86400000));
+  let txt;
+  if (frozen != null) {
+    txt = tt("empty.fwd.full",
+      "Jurnalul live a început pe <strong>2 iunie 2026</strong>. Până acum: {days} zile, {frozen} predicții înghețate. Tabelul se populează pe măsură ce se joacă meciurile.")
+      .replace("{days}", days).replace("{frozen}", frozen);
+  } else {
+    txt = tt("empty.fwd.basic",
+      "Jurnalul live a început pe <strong>2 iunie 2026</strong> ({days} zile). Tabelul se populează pe măsură ce se joacă meciurile.")
+      .replace("{days}", days);
+  }
+  return `<div class="calibration-card"><p>${txt}</p></div>`;
 }
 
 /* ============== INDEX (predicții) ============== */
@@ -184,7 +245,8 @@ async function renderIndex() {
 function pickBadge(name, prob, minThreshold = 0.65) {
   if (prob == null || prob < minThreshold) return "";
   const cls = prob >= 0.80 ? "pick-elite" : prob >= 0.70 ? "pick-strong" : "pick-good";
-  return `<span class="pick-badge ${cls}">★ ${name}</span>`;
+  const tip = tt("pick.tooltip", "Probabilitate dominantă, calibrată empiric. Informativ — nu recomandare.");
+  return `<span class="pick-badge ${cls}" title="${tip}">★ ${name}</span>`;
 }
 
 function rawNote(raw, cal) {
@@ -401,9 +463,12 @@ async function renderTrackRecord() {
       ${bad.length > 30 ? `<p class="muted">… +${bad.length - 30} ligi</p>` : ""}
     </div>`;
     document.getElementById("leagues-tables").innerHTML = html;
+  } else {
+    document.getElementById("leagues-tables").innerHTML =
+      `<p class="muted">Tabelul per ligă se publică odată cu datele de calibrare — vezi secțiunea de mai sus.</p>`;
   }
 
-  // Forward
+  // Forward — date reale SAU empty state onest (niciodată loader infinit)
   const fwd = await fetchJSON(FORWARD_URL);
   const fwdHtml = (fwd && fwd.n_resolved > 0)
     ? `<div class="calibration-card">
@@ -417,11 +482,7 @@ async function renderTrackRecord() {
           </tr>`).join("")}</tbody></table>
         </div>`).join("")}
       </div>`
-    : `<div class="calibration-card">
-        <p>Jurnal forward în acumulare din <strong>2 iunie 2026</strong>.
-        Primele rezultate live apar în câteva zile, după ce meciurile se joacă.</p>
-        ${fwd ? `<p class="muted">Total predicții înghețate: ${fwd.n_total || 0} (toate pending încă).</p>` : ""}
-      </div>`;
+    : honestEmptyHtml(fwd ? (fwd.n_total || 0) : null);
   document.getElementById("forward-stats").innerHTML = fwdHtml;
 }
 
@@ -435,8 +496,13 @@ let _histData = null;
 async function renderIstoric() {
   const data = await fetchJSON(HISTORY_URL);
   if (!data) {
-    document.getElementById("days-list").innerHTML =
-      `<p class="muted">Datele se încarcă... Dacă persistă, jurnalul nu e încă publicat.</p>`;
+    // history.json indisponibil — empty state onest pe AMBELE secțiuni
+    // (înainte, #cumulat-stats rămânea blocat pe "Se încarcă..." pentru totdeauna).
+    // Încerc forward.json pentru cifre concrete; dacă pică și el, mesaj static.
+    await loadLiveStats();
+    const frozen = LIVE_STATS && LIVE_STATS["fwd-frozen"] ? LIVE_STATS["fwd-frozen"] : null;
+    document.getElementById("cumulat-stats").innerHTML = honestEmptyHtml(frozen);
+    document.getElementById("days-list").innerHTML = honestEmptyHtml(frozen);
     return;
   }
   _histData = data;
@@ -463,7 +529,7 @@ async function renderIstoric() {
         }).join("")}</tbody>
       </table>
       <p class="muted">${esc(data.note || "")}</p>`
-    : `<p class="muted">Jurnal încă în acumulare — verifică din nou peste câteva zile.</p>`;
+    : honestEmptyHtml(data.n_total != null ? data.n_total : null);
   document.getElementById("cumulat-stats").innerHTML = cumHtml;
 
   // Populez filtru piață
