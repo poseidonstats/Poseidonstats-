@@ -179,6 +179,7 @@ async function renderIndex() {
   const selMinProb = document.getElementById("filter-minprob");
   const selSort = document.getElementById("filter-sort");
   const chkCalib = document.getElementById("filter-calibrated-only");
+  const chkCalibMk = document.getElementById("filter-calibrated-markets");
   days.forEach(d => selDay.add(new Option(d, d)));
   leagues.forEach(l => selLeague.add(new Option(l, l)));
   countries.forEach(c => selCountry.add(new Option(c, c)));
@@ -228,15 +229,19 @@ async function renderIndex() {
     }
     document.getElementById("match-count").textContent =
       `${filtered.length} meciuri afișate (din ${matches.length} totale).`;
-    document.getElementById("matches").innerHTML = filtered.map(m => renderMatch(m, fmk)).join("");
+    const matchesEl = document.getElementById("matches");
+    matchesEl.classList.toggle("only-calibrated-markets", !!(chkCalibMk && chkCalibMk.checked));
+    matchesEl.innerHTML = filtered.map(m => renderMatch(m, fmk)).join("");
   }
 
   [selDay, selLeague, selCountry, selMarket, selMinProb, selSort].forEach(s => s.addEventListener("change", update));
   chkCalib.addEventListener("change", update);
+  if (chkCalibMk) chkCalibMk.addEventListener("change", update);
   document.getElementById("filter-reset").addEventListener("click", () => {
     selDay.value = ""; selLeague.value = ""; selCountry.value = "";
     selMarket.value = ""; selMinProb.value = "0.70"; selSort.value = "time";
     chkCalib.checked = false;
+    if (chkCalibMk) chkCalibMk.checked = false;
     update();
   });
   update();
@@ -253,6 +258,68 @@ function rawNote(raw, cal) {
   if (raw == null || Math.abs(raw - cal) < 0.03) return "";
   return `<span class="raw-note">brut ${fmtPct(raw)}</span>`;
 }
+
+/* ============== Marcaj onestitate per piață ==============
+   Doar Over 1.5 și HT Over 0.5 au calibrare empirică VALIDATĂ (audit 10 iun).
+   Restul piețelor afișează probabilități fără re-mapare validată → marcaj ⚠️
+   tappabil (touch-first: popover la tap, title= bonus pe desktop).
+   TODO: leagă lista de calibration.json când pipeline-ul exportă flag `validated`
+   per piață (aceeași familie cu TODO-ul blacklist count din metodologie.html).
+   NU deriva mecanic din diff_pp: pragul de validare e decizie de brand
+   (ex. HT O0.5 are un bucket la -5.44pp dar e validat în context), nu
+   proprietate a datelor. */
+const CALIBRATED_MARKETS = ["O1.5", "HT O0.5"];
+
+function warnTipText(kind) {
+  return kind === "raw"
+    ? tt("market.warn.raw", "Probabilitate brută a modelului, fără re-mapare empirică.")
+    : tt("market.warn.uncal", "Probabilitate fără calibrare empirică validată pe această piață. Poate supraestima șansele reale.");
+}
+
+function warnMark(kind) {
+  const tip = warnTipText(kind);
+  return `<button type="button" class="market-warn" data-warn="${kind}" title="${tip}" aria-label="${tip}">⚠️</button>`;
+}
+
+/* Popover singleton — tap pe ⚠️ deschide explicația, tap în afară o închide. */
+function ensureWarnPopover() {
+  let pop = document.getElementById("warn-popover");
+  if (!pop) {
+    pop = document.createElement("div");
+    pop.id = "warn-popover";
+    pop.setAttribute("role", "tooltip");
+    pop.style.display = "none";
+    document.body.appendChild(pop);
+  }
+  return pop;
+}
+
+let _warnOpenFor = null;
+document.addEventListener("click", e => {
+  const btn = e.target.closest(".market-warn");
+  const pop = ensureWarnPopover();
+  if (btn) {
+    e.preventDefault();
+    if (_warnOpenFor === btn) { // al doilea tap pe același ⚠️ → închide
+      pop.style.display = "none";
+      _warnOpenFor = null;
+      return;
+    }
+    pop.textContent = warnTipText(btn.getAttribute("data-warn"));
+    pop.style.display = "block";
+    const r = btn.getBoundingClientRect();
+    const popW = Math.min(280, window.innerWidth - 24);
+    pop.style.maxWidth = popW + "px";
+    let left = r.left + window.scrollX + r.width / 2 - popW / 2;
+    left = Math.max(12, Math.min(left, window.scrollX + window.innerWidth - popW - 12));
+    pop.style.left = left + "px";
+    pop.style.top = (r.bottom + window.scrollY + 6) + "px";
+    _warnOpenFor = btn;
+  } else if (!e.target.closest("#warn-popover")) {
+    pop.style.display = "none";
+    _warnOpenFor = null;
+  }
+});
 
 function xgBar(xgH, xgA) {
   const total = xgH + xgA;
@@ -343,35 +410,41 @@ function renderMatch(m, filterMarket = "") {
     <div class="phase-row ft">
       <div class="phase-label">⏱ FT · 90 min</div>
       <div class="markets-grid">
-        <div class="market ${pick1x2 === "1" ? "pick" : ""} ${isFilteredMarket("1", filterMarket) ? "market-filtered" : ""}">
+        <div class="market uncal-market ${pick1x2 === "1" ? "pick" : ""} ${isFilteredMarket("1", filterMarket) ? "market-filtered" : ""}">
           <span class="label">1</span>
           <span class="val ${pctClass(m.prob_home)}">${fmtPct(m.prob_home)}</span>
+          ${warnMark("raw")}
         </div>
-        <div class="market ${pick1x2 === "X" ? "pick" : ""} ${isFilteredMarket("X", filterMarket) ? "market-filtered" : ""}">
+        <div class="market uncal-market ${pick1x2 === "X" ? "pick" : ""} ${isFilteredMarket("X", filterMarket) ? "market-filtered" : ""}">
           <span class="label">X</span>
           <span class="val ${pctClass(m.prob_draw)}">${fmtPct(m.prob_draw)}</span>
+          ${warnMark("raw")}
         </div>
-        <div class="market ${pick1x2 === "2" ? "pick" : ""} ${isFilteredMarket("2", filterMarket) ? "market-filtered" : ""}">
+        <div class="market uncal-market ${pick1x2 === "2" ? "pick" : ""} ${isFilteredMarket("2", filterMarket) ? "market-filtered" : ""}">
           <span class="label">2</span>
           <span class="val ${pctClass(m.prob_away)}">${fmtPct(m.prob_away)}</span>
+          ${warnMark("raw")}
         </div>
         <div class="market ${isFilteredMarket("O1.5", filterMarket) ? "market-filtered" : ""}">
           <span class="label">O1.5</span>
           <span class="val ${pctClass(m.prob_over_1_5)}">${fmtPct(m.prob_over_1_5)}</span>
         </div>
-        <div class="market ${isFilteredMarket("O2.5", filterMarket) ? "market-filtered" : ""}">
+        <div class="market uncal-market ${isFilteredMarket("O2.5", filterMarket) ? "market-filtered" : ""}">
           <span class="label">O2.5</span>
           <span class="val ${pctClass(m.prob_over_2_5)}">${fmtPct(m.prob_over_2_5)}</span>
           ${rawNote(m.prob_over_2_5_raw, m.prob_over_2_5)}
+          ${warnMark("uncal")}
         </div>
-        <div class="market ${isFilteredMarket("O3.5", filterMarket) ? "market-filtered" : ""}">
+        <div class="market uncal-market ${isFilteredMarket("O3.5", filterMarket) ? "market-filtered" : ""}">
           <span class="label">O3.5</span>
           <span class="val ${pctClass(m.prob_over_3_5)}">${fmtPct(m.prob_over_3_5)}</span>
+          ${warnMark("uncal")}
         </div>
-        <div class="market ${isFilteredMarket("BTTS", filterMarket) ? "market-filtered" : ""}">
+        <div class="market uncal-market ${isFilteredMarket("BTTS", filterMarket) ? "market-filtered" : ""}">
           <span class="label">BTTS</span>
           <span class="val ${pctClass(m.prob_btts)}">${fmtPct(m.prob_btts)}</span>
           ${rawNote(m.prob_btts_raw, m.prob_btts)}
+          ${warnMark("uncal")}
         </div>
       </div>
     </div>
@@ -379,12 +452,12 @@ function renderMatch(m, filterMarket = "") {
     ${m.ht_prob_home != null ? `<div class="phase-row ht">
       <div class="phase-label">⌛ HT · prima repriză ${m.xg_home_ht ? `<span class="muted-xs">(xG ${m.xg_home_ht}–${m.xg_away_ht})</span>` : ""}</div>
       <div class="markets-grid">
-        <div class="market"><span class="label">1H</span><span class="val ${pctClass(m.ht_prob_home)}">${fmtPct(m.ht_prob_home)}</span></div>
-        <div class="market"><span class="label">XH</span><span class="val ${pctClass(m.ht_prob_draw)}">${fmtPct(m.ht_prob_draw)}</span></div>
-        <div class="market"><span class="label">2H</span><span class="val ${pctClass(m.ht_prob_away)}">${fmtPct(m.ht_prob_away)}</span></div>
+        <div class="market uncal-market"><span class="label">1H</span><span class="val ${pctClass(m.ht_prob_home)}">${fmtPct(m.ht_prob_home)}</span>${warnMark("raw")}</div>
+        <div class="market uncal-market"><span class="label">XH</span><span class="val ${pctClass(m.ht_prob_draw)}">${fmtPct(m.ht_prob_draw)}</span>${warnMark("raw")}</div>
+        <div class="market uncal-market"><span class="label">2H</span><span class="val ${pctClass(m.ht_prob_away)}">${fmtPct(m.ht_prob_away)}</span>${warnMark("raw")}</div>
         <div class="market ${isFilteredMarket("HT O0.5", filterMarket) ? "market-filtered" : ""}"><span class="label">HT O0.5</span><span class="val ${pctClass(m.prob_ht_over_0_5)}">${fmtPct(m.prob_ht_over_0_5)}</span></div>
-        <div class="market ${isFilteredMarket("HT O1.5", filterMarket) ? "market-filtered" : ""}"><span class="label">HT O1.5</span><span class="val ${pctClass(m.prob_ht_over_1_5)}">${fmtPct(m.prob_ht_over_1_5)}</span></div>
-        <div class="market"><span class="label">HT BTTS</span><span class="val ${pctClass(m.ht_prob_btts)}">${fmtPct(m.ht_prob_btts)}</span></div>
+        <div class="market uncal-market ${isFilteredMarket("HT O1.5", filterMarket) ? "market-filtered" : ""}"><span class="label">HT O1.5</span><span class="val ${pctClass(m.prob_ht_over_1_5)}">${fmtPct(m.prob_ht_over_1_5)}</span>${warnMark("uncal")}</div>
+        <div class="market uncal-market"><span class="label">HT BTTS</span><span class="val ${pctClass(m.ht_prob_btts)}">${fmtPct(m.ht_prob_btts)}</span>${warnMark("uncal")}</div>
         ${m.ht_top_score_h != null ? `<div class="market score-ht">
           <span class="label">Scor HT</span>
           <span class="val">${m.ht_top_score_h}–${m.ht_top_score_a}</span>

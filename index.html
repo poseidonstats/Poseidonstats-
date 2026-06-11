@@ -63,6 +63,8 @@
       backtest pe 65.250 meciuri jucate în ianuarie–mai 2026, cu ratings calculate strict pe 2024–2025
       (înghețate la 31 dec 2025) — zero leakage (modelul nu a văzut viitorul). Când modelul brut zice "85%" pe un anumit
       interval dar în istoric s-a întâmplat doar 67% din timp, afișăm <strong>67%</strong>, nu 85%.
+      Calibrarea empirică validată acoperă piețele <strong>Over 1.5</strong> și <strong>HT Over 0.5</strong>.
+      Celelalte piețe, marcate ⚠️, afișează probabilitatea modelului fără re-mapare validată.
       Marker <span class="warn-tag">⚠️ ligă necalibrată</span> apare pe ligile unde modelul nu a demonstrat calibrare.
       Marcaj <span class="pick-badge pick-strong" style="font-size:0.7rem;padding:2px 8px">★</span> pe alegerile cu probabilitate dominantă ≥65%.
       Vezi <a href="istoric.html">istoric</a> sau <a href="track-record.html">track record</a> pentru tabelul complet de calibrare.
@@ -110,6 +112,9 @@
     </label>
     <label class="cb">
       <input type="checkbox" id="filter-calibrated-only"> <span data-i18n="filters.calibratedonly">Doar ligi calibrate</span>
+    </label>
+    <label class="cb">
+      <input type="checkbox" id="filter-calibrated-markets"> <span data-i18n="filters.calibratedmarkets">Doar piețe calibrate</span>
     </label>
     <button type="button" id="filter-reset" class="filter-reset" data-i18n="filters.reset">Resetează filtrele</button>
   </section>

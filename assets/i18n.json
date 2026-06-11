@@ -15,7 +15,7 @@
     "index.h2": "Predicții pentru următoarele 7 zile",
     "index.intro": "Model Poisson + Dixon-Coles + ratings Bayesian cu calibrare per-ligă. Predicțiile sunt înghețate la generare (07:15 zilnic) și verificabile post-meci.",
     "index.cardinfo.title": "Probabilități calibrate empiric.",
-    "index.cardinfo.body": "Cifrele afișate sunt re-mapate pe baza unui backtest pe 65.250 meciuri jucate în ianuarie–mai 2026, cu ratings calculate strict pe 2024–2025 (înghețate la 31 dec 2025) — zero leakage (modelul nu a văzut viitorul). Când modelul brut zice „85%\" pe un anumit interval dar în istoric s-a întâmplat doar 67% din timp, afișăm <strong>67%</strong>, nu 85%. Marker <span class=\"warn-tag\">⚠️ ligă necalibrată</span> apare pe ligile unde modelul nu a demonstrat calibrare. Marcaj <span class=\"pick-badge pick-strong\" style=\"font-size:0.7rem;padding:2px 8px\">★</span> pe alegerile cu probabilitate dominantă ≥65%. Vezi <a href=\"istoric.html\">istoric</a> sau <a href=\"track-record.html\">track record</a> pentru tabelul complet de calibrare.",
+    "index.cardinfo.body": "Cifrele afișate sunt re-mapate pe baza unui backtest pe 65.250 meciuri jucate în ianuarie–mai 2026, cu ratings calculate strict pe 2024–2025 (înghețate la 31 dec 2025) — zero leakage (modelul nu a văzut viitorul). Când modelul brut zice „85%\" pe un anumit interval dar în istoric s-a întâmplat doar 67% din timp, afișăm <strong>67%</strong>, nu 85%. Calibrarea empirică validată acoperă piețele <strong>Over 1.5</strong> și <strong>HT Over 0.5</strong>. Celelalte piețe, marcate ⚠️, afișează probabilitatea modelului fără re-mapare validată. Marker <span class=\"warn-tag\">⚠️ ligă necalibrată</span> apare pe ligile unde modelul nu a demonstrat calibrare. Marcaj <span class=\"pick-badge pick-strong\" style=\"font-size:0.7rem;padding:2px 8px\">★</span> pe alegerile cu probabilitate dominantă ≥65%. Vezi <a href=\"istoric.html\">istoric</a> sau <a href=\"track-record.html\">track record</a> pentru tabelul complet de calibrare.",
     "support.h2": "Susține POSEIDON",
     "support.tagline": "Predicțiile rămân <strong>GRATIS și fără reclame</strong> pentru toată lumea.",
     "support.infra": "Infrastructură",
@@ -129,7 +129,10 @@
     "empty.fwd.static": "Jurnalul live a început pe <strong>2 iunie 2026</strong>. Tabelul se populează pe măsură ce se joacă meciurile.",
     "empty.fwd.basic": "Jurnalul live a început pe <strong>2 iunie 2026</strong> ({days} zile). Tabelul se populează pe măsură ce se joacă meciurile.",
     "empty.fwd.full": "Jurnalul live a început pe <strong>2 iunie 2026</strong>. Până acum: {days} zile, {frozen} predicții înghețate. Tabelul se populează pe măsură ce se joacă meciurile.",
-    "pick.tooltip": "Probabilitate dominantă, calibrată empiric. Informativ — nu recomandare."
+    "pick.tooltip": "Probabilitate dominantă, calibrată empiric. Informativ — nu recomandare.",
+    "filters.calibratedmarkets": "Doar piețe calibrate",
+    "market.warn.uncal": "Probabilitate fără calibrare empirică validată pe această piață. Poate supraestima șansele reale.",
+    "market.warn.raw": "Probabilitate brută a modelului, fără re-mapare empirică."
   },
   "en": {
     "lang.name": "English",
@@ -147,7 +150,7 @@
     "index.h2": "Predictions for the next 7 days",
     "index.intro": "Poisson + Dixon-Coles model with Bayesian ratings and per-league calibration. Predictions are frozen at generation (07:15 daily) and verifiable post-match.",
     "index.cardinfo.title": "Empirically calibrated probabilities.",
-    "index.cardinfo.body": "Figures shown for Over/BTTS are re-mapped using a backtest on 65,250 matches played in January–May 2026, with ratings calculated strictly on 2024–2025 (frozen on 31 Dec 2025) — zero leakage (the model never saw the future). When the raw model says „85% BTTS\" but only 67% actually happened in history at that interval, we show <strong>67%</strong>, not 85%. The <span class=\"warn-tag\">⚠️ uncalibrated league</span> marker appears on leagues where the model has not demonstrated calibration. The <span class=\"pick-badge pick-strong\" style=\"font-size:0.7rem;padding:2px 8px\">★ pick</span> badge marks selections with dominant probability ≥65%. See <a href=\"istoric.html\">history</a> or <a href=\"track-record.html\">track record</a> for the complete calibration table.",
+    "index.cardinfo.body": "Figures shown for Over/BTTS are re-mapped using a backtest on 65,250 matches played in January–May 2026, with ratings calculated strictly on 2024–2025 (frozen on 31 Dec 2025) — zero leakage (the model never saw the future). When the raw model says „85% BTTS\" but only 67% actually happened in history at that interval, we show <strong>67%</strong>, not 85%. Validated empirical calibration covers the <strong>Over 1.5</strong> and <strong>HT Over 0.5</strong> markets. The other markets, marked ⚠️, show the model probability without validated re-mapping. The <span class=\"warn-tag\">⚠️ uncalibrated league</span> marker appears on leagues where the model has not demonstrated calibration. The <span class=\"pick-badge pick-strong\" style=\"font-size:0.7rem;padding:2px 8px\">★ pick</span> badge marks selections with dominant probability ≥65%. See <a href=\"istoric.html\">history</a> or <a href=\"track-record.html\">track record</a> for the complete calibration table.",
     "support.h2": "Support POSEIDON",
     "support.tagline": "Predictions stay <strong>FREE and ad-free</strong> for everyone.",
     "support.infra": "Infrastructure",
@@ -261,7 +264,10 @@
     "empty.fwd.static": "The live journal started on <strong>June 2, 2026</strong>. The table fills in as matches are played.",
     "empty.fwd.basic": "The live journal started on <strong>June 2, 2026</strong> ({days} days). The table fills in as matches are played.",
     "empty.fwd.full": "The live journal started on <strong>June 2, 2026</strong>. So far: {days} days, {frozen} frozen predictions. The table fills in as matches are played.",
-    "pick.tooltip": "Dominant probability, empirically calibrated. Informational — not a recommendation."
+    "pick.tooltip": "Dominant probability, empirically calibrated. Informational — not a recommendation.",
+    "filters.calibratedmarkets": "Calibrated markets only",
+    "market.warn.uncal": "Probability without validated empirical calibration on this market. May overestimate the real chances.",
+    "market.warn.raw": "Raw model probability, without empirical re-mapping."
   },
   "es": {
     "lang.name": "Español",
@@ -279,7 +285,7 @@
     "index.h2": "Predicciones para los próximos 7 días",
     "index.intro": "Modelo Poisson + Dixon-Coles con ratings Bayesianos y calibración por liga. Las predicciones están congeladas al generar (07:15 diariamente) y son verificables post-partido.",
     "index.cardinfo.title": "Probabilidades calibradas empíricamente.",
-    "index.cardinfo.body": "Las cifras mostradas para Over/BTTS están re-mapeadas usando un backtest en 65.250 partidos jugados en enero–mayo 2026, con ratings calculados estrictamente en 2024–2025 (congelados el 31 dic 2025) — cero leakage (el modelo nunca vio el futuro). Cuando el modelo crudo dice „85% BTTS\" pero en el histórico solo ocurrió 67% del tiempo, mostramos <strong>67%</strong>, no 85%. El marcador <span class=\"warn-tag\">⚠️ liga no calibrada</span> aparece en ligas donde el modelo no ha demostrado calibración. La insignia <span class=\"pick-badge pick-strong\" style=\"font-size:0.7rem;padding:2px 8px\">★ pick</span> marca las selecciones con probabilidad dominante ≥65%. Ver <a href=\"istoric.html\">historial</a> o <a href=\"track-record.html\">track record</a> para la tabla completa de calibración.",
+    "index.cardinfo.body": "Las cifras mostradas para Over/BTTS están re-mapeadas usando un backtest en 65.250 partidos jugados en enero–mayo 2026, con ratings calculados estrictamente en 2024–2025 (congelados el 31 dic 2025) — cero leakage (el modelo nunca vio el futuro). Cuando el modelo crudo dice „85% BTTS\" pero en el histórico solo ocurrió 67% del tiempo, mostramos <strong>67%</strong>, no 85%. La calibración empírica validada cubre los mercados <strong>Over 1.5</strong> y <strong>HT Over 0.5</strong>. Los demás mercados, marcados ⚠️, muestran la probabilidad del modelo sin re-mapeo validado. El marcador <span class=\"warn-tag\">⚠️ liga no calibrada</span> aparece en ligas donde el modelo no ha demostrado calibración. La insignia <span class=\"pick-badge pick-strong\" style=\"font-size:0.7rem;padding:2px 8px\">★ pick</span> marca las selecciones con probabilidad dominante ≥65%. Ver <a href=\"istoric.html\">historial</a> o <a href=\"track-record.html\">track record</a> para la tabla completa de calibración.",
     "support.h2": "Apoya POSEIDON",
     "support.tagline": "Las predicciones permanecen <strong>GRATIS y sin anuncios</strong> para todos.",
     "support.infra": "Infraestructura",
@@ -393,7 +399,10 @@
     "empty.fwd.static": "El registro en vivo comenzó el <strong>2 de junio de 2026</strong>. La tabla se completa a medida que se juegan los partidos.",
     "empty.fwd.basic": "El registro en vivo comenzó el <strong>2 de junio de 2026</strong> ({days} días). La tabla se completa a medida que se juegan los partidos.",
     "empty.fwd.full": "El registro en vivo comenzó el <strong>2 de junio de 2026</strong>. Hasta ahora: {days} días, {frozen} predicciones congeladas. La tabla se completa a medida que se juegan los partidos.",
-    "pick.tooltip": "Probabilidad dominante, calibrada empíricamente. Informativo — no una recomendación."
+    "pick.tooltip": "Probabilidad dominante, calibrada empíricamente. Informativo — no una recomendación.",
+    "filters.calibratedmarkets": "Solo mercados calibrados",
+    "market.warn.uncal": "Probabilidad sin calibración empírica validada en este mercado. Puede sobrestimar las probabilidades reales.",
+    "market.warn.raw": "Probabilidad bruta del modelo, sin re-mapeo empírico."
   },
   "it": {
     "lang.name": "Italiano",
@@ -411,7 +420,7 @@
     "index.h2": "Pronostici per i prossimi 7 giorni",
     "index.intro": "Modello Poisson + Dixon-Coles con rating Bayesiani e calibrazione per campionato. I pronostici sono congelati alla generazione (07:15 ogni giorno) e verificabili post-partita.",
     "index.cardinfo.title": "Probabilità calibrate empiricamente.",
-    "index.cardinfo.body": "I numeri mostrati per Over/BTTS sono rimappati usando un backtest su 65.250 partite giocate in gennaio–maggio 2026, con rating calcolati strettamente su 2024–2025 (congelati il 31 dic 2025) — zero leakage (il modello non ha mai visto il futuro). Quando il modello grezzo dice „85% BTTS\" ma nello storico è successo solo 67% delle volte in quell'intervallo, mostriamo <strong>67%</strong>, non 85%. Il marker <span class=\"warn-tag\">⚠️ campionato non calibrato</span> appare sui campionati dove il modello non ha dimostrato calibrazione. Il badge <span class=\"pick-badge pick-strong\" style=\"font-size:0.7rem;padding:2px 8px\">★ pick</span> segna le scelte con probabilità dominante ≥65%. Vedi <a href=\"istoric.html\">storico</a> o <a href=\"track-record.html\">track record</a> per la tabella completa di calibrazione.",
+    "index.cardinfo.body": "I numeri mostrati per Over/BTTS sono rimappati usando un backtest su 65.250 partite giocate in gennaio–maggio 2026, con rating calcolati strettamente su 2024–2025 (congelati il 31 dic 2025) — zero leakage (il modello non ha mai visto il futuro). Quando il modello grezzo dice „85% BTTS\" ma nello storico è successo solo 67% delle volte in quell'intervallo, mostriamo <strong>67%</strong>, non 85%. La calibrazione empirica validata copre i mercati <strong>Over 1.5</strong> e <strong>HT Over 0.5</strong>. Gli altri mercati, contrassegnati ⚠️, mostrano la probabilità del modello senza ri-mappatura validata. Il marker <span class=\"warn-tag\">⚠️ campionato non calibrato</span> appare sui campionati dove il modello non ha dimostrato calibrazione. Il badge <span class=\"pick-badge pick-strong\" style=\"font-size:0.7rem;padding:2px 8px\">★ pick</span> segna le scelte con probabilità dominante ≥65%. Vedi <a href=\"istoric.html\">storico</a> o <a href=\"track-record.html\">track record</a> per la tabella completa di calibrazione.",
     "support.h2": "Supporta POSEIDON",
     "support.tagline": "I pronostici restano <strong>GRATIS e senza pubblicità</strong> per tutti.",
     "support.infra": "Infrastruttura",
@@ -525,6 +534,9 @@
     "empty.fwd.static": "Il registro live è iniziato il <strong>2 giugno 2026</strong>. La tabella si riempie man mano che le partite vengono giocate.",
     "empty.fwd.basic": "Il registro live è iniziato il <strong>2 giugno 2026</strong> ({days} giorni). La tabella si riempie man mano che le partite vengono giocate.",
     "empty.fwd.full": "Il registro live è iniziato il <strong>2 giugno 2026</strong>. Finora: {days} giorni, {frozen} predizioni congelate. La tabella si riempie man mano che le partite vengono giocate.",
-    "pick.tooltip": "Probabilità dominante, calibrata empiricamente. Informativo — non una raccomandazione."
+    "pick.tooltip": "Probabilità dominante, calibrata empiricamente. Informativo — non una raccomandazione.",
+    "filters.calibratedmarkets": "Solo mercati calibrati",
+    "market.warn.uncal": "Probabilità senza calibrazione empirica validata su questo mercato. Può sovrastimare le probabilità reali.",
+    "market.warn.raw": "Probabilità grezza del modello, senza ri-mappatura empirica."
   }
 }
