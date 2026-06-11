@@ -234,19 +234,20 @@ function renderMatch(m, filterMarket = "") {
   });
 
   // 🆕 10 iun 2026 — Acumulator STRICT cu DOAR cele 2 piețe brand (Over 1.5 + HT Over 0.5).
+  // 🆕 11 iun 2026 — Coerență cu filtru: badge verde apare DOAR pe piața filtrată dacă e
+  //    una din cele 2 de încredere. Filtru pe altă piață → ZERO badge verde (corect, nu o
+  //    recomandăm). Filtru gol → ambele badge-uri ca înainte.
   // Decizie pe baza calibration.json (TEST 65.250 meciuri):
   //   - Over 1.5 ≥75%: bucket 70-80% drift +1.11pp, 80-90% -2.29pp ✅
   //   - HT Over 0.5 ≥70%: bucket 70-80% drift -1.28pp, 80-90% -5.44pp ✅
-  // SCOSE: 1/X/2 (1X2 nu apare în calibration.json — drift necunoscut, nu pot apăra),
-  //        Under 2.5 (zonele 65%+ corespund Over 2.5 ≤35% care nu sunt în calibration.json),
-  //        Over 3.5 (drift -15 la -32pp pe toate bucket-urile peste prag),
-  //        BTTS Da/Nu (drift -8 la -18pp peste 70%, nu e în brandul oficial),
-  //        Over 2.5 (deși marginal-OK la 60-70%, nu e în cele 2 piețe brand).
-  // Filosofie: badge = piață APĂRABILĂ cu calibration.json în mână. Coerent cu mesajul
-  // "DOAR Over 1.5 + HT Over 0.5" din clipuri/descriere.
+  // Filosofie: badge verde = "recomand cu încredere" (doar 2 piețe). Highlight auriu pe
+  // piața filtrată = "asta ai cerut, uite cifra reală". Niciodată badge de la o piață
+  // nefiltrată când există filtru activ.
   const picks = [];
-  if (m.prob_over_1_5 >= 0.75) picks.push(["Over 1.5", m.prob_over_1_5]);
-  if (m.prob_ht_over_0_5 >= 0.70) picks.push(["HT Over 0.5", m.prob_ht_over_0_5]);
+  const showOver15 = !filterMarket || filterMarket === "over_1_5";
+  const showHtO05 = !filterMarket || filterMarket === "ht_over_0_5";
+  if (showOver15 && m.prob_over_1_5 >= 0.75) picks.push(["Over 1.5", m.prob_over_1_5]);
+  if (showHtO05 && m.prob_ht_over_0_5 >= 0.70) picks.push(["HT Over 0.5", m.prob_ht_over_0_5]);
   picks.sort((a, b) => b[1] - a[1]);
   const picksHtml = picks.map(([name, p]) => pickBadge(name, p)).join(" ");
 
