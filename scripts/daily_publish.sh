@@ -21,26 +21,36 @@ echo "[$(ts)] === POSEIDON publish cycle ===" >> "$LOG"
 # Cauza: cronul publish 07:50 + self-heal 07:15-08:01 generau 2 publicări (146 incompletă + 964 completă).
 # Soluție: skip publish dacă (a) self-heal activ (lock) SAU (b) CSV deja proaspăt <45 min (self-heal a publicat).
 # Safety net păstrat: dacă self-heal NU a rulat azi (CSV vechi de ieri), publish-ul rulează normal.
+#
+# 🆕 11 iun 2026 — Fix self-deadlock: când self-heal cheamă ACEST script (pas 4c),
+# lock-ul e ținut chiar de părintele lui → guard (a) făcea SKIP și nimeni nu publica
+# (incident 11 iun: alertă ✅ pe date de ieri, site stale în ziua de start Mondial).
+# Guard (b) ar fi blocat la fel (CSV scris de self-heal cu secunde înainte).
+# Marker POSEIDON_FROM_SELF_HEAL=1 → ambele guard-uri se sar, cu urmă explicită în log.
 LOCKDIR=/tmp/poseidon_pipeline.lock.d
 CSV=~/football_predictor/data/poisson_advanced_predictions.csv
 
-# (a) Lock activ → self-heal rulează simultan → SKIP
-if [ -d "$LOCKDIR" ]; then
-    PID_OWNER=$(cat "$LOCKDIR/pid" 2>/dev/null || echo "")
-    if [ -n "$PID_OWNER" ] && kill -0 "$PID_OWNER" 2>/dev/null; then
-        echo "[$(ts)] [SKIP] Self-heal activ (PID $PID_OWNER) — publish-ul self-heal va termina lanțul" >> "$LOG"
-        exit 0
+if [ "$POSEIDON_FROM_SELF_HEAL" = "1" ]; then
+    echo "[$(ts)] [BYPASS] guards bypassed: called from self-heal (parent PID $PPID)" >> "$LOG"
+else
+    # (a) Lock activ → self-heal rulează simultan → SKIP
+    if [ -d "$LOCKDIR" ]; then
+        PID_OWNER=$(cat "$LOCKDIR/pid" 2>/dev/null || echo "")
+        if [ -n "$PID_OWNER" ] && kill -0 "$PID_OWNER" 2>/dev/null; then
+            echo "[$(ts)] [SKIP] Self-heal activ (PID $PID_OWNER) — publish-ul self-heal va termina lanțul" >> "$LOG"
+            exit 0
+        fi
     fi
-fi
 
-# (b) CSV proaspăt <45 min → self-heal tocmai a publicat → SKIP (evită dublu commit)
-if [ -f "$CSV" ]; then
-    MTIME=$(stat -f %m "$CSV" 2>/dev/null || echo 0)
-    NOW=$(date +%s)
-    AGE_MIN=$(( (NOW - MTIME) / 60 ))
-    if [ "$AGE_MIN" -lt 45 ]; then
-        echo "[$(ts)] [SKIP] CSV publicat recent (${AGE_MIN}min < 45) — self-heal deja a finalizat lanțul" >> "$LOG"
-        exit 0
+    # (b) CSV proaspăt <45 min → self-heal tocmai a publicat → SKIP (evită dublu commit)
+    if [ -f "$CSV" ]; then
+        MTIME=$(stat -f %m "$CSV" 2>/dev/null || echo 0)
+        NOW=$(date +%s)
+        AGE_MIN=$(( (NOW - MTIME) / 60 ))
+        if [ "$AGE_MIN" -lt 45 ]; then
+            echo "[$(ts)] [SKIP] CSV publicat recent (${AGE_MIN}min < 45) — self-heal deja a finalizat lanțul" >> "$LOG"
+            exit 0
+        fi
     fi
 fi
 
