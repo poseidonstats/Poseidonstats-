@@ -64,6 +64,7 @@
 
     <h3 data-i18n="metod.h3.3">3. Calibrare per-ligă (anti-bias)</h3>
     <p data-i18n="metod.p.3">Modelul fără calibrare supra-estimează masiv ligile cu scor mare (Nordic +22%) și sub-estimează cele cu scor mic (Sud-America −22%). Soluție: un factor de scalare per ligă, derivat exclusiv pe TRAIN, cu <strong>shrinkage Bayesian</strong> spre o medie prudentă — aplicat mai puternic pe ligile cu sample mic, pentru a evita supra-fitarea.</p>
+    <p data-i18n="metod.p.3platt"><strong>Din 12 iunie 2026</strong>, probabilitățile afișate sunt în plus calibrate per piață (corecție de pantă Platt pe logit, validată pe ferestre temporale separate ian–mar / apr–mai). Efect practic: pe piețele unde modelul era supra-încrezător, probabilitățile corectate sunt mai mici decât cele brute — unele piețe nu mai ating zona de 70%+ — iar probabilitatea pe victoria gazdelor e plafonată la 80%.</p>
 
     <h3 data-i18n="metod.h3.4">4. Simulare Monte Carlo (200k–1M iterații)</h3>
     <p data-i18n="metod.p.4">Pentru fiecare meci, lambda_home și lambda_away sunt sample-uite din distribuții Normal posteriori (cu varianța din bootstrap), apoi se simulează golurile cu Poisson. Probabilitățile <em>1X2, Over/Under, BTTS, scor exact</em> se obțin din 200k+ partide simulate.</p>
