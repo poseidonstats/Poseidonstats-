@@ -8,12 +8,41 @@
 #
 # Logs: ~/poseidon-site/logs/publish.log
 
-set -e
+# 🆕 13 iun 2026 — R2: -E (errtrace) ca trap-ul ERR să se propage; orice comandă
+# care pică sub set -e trece acum prin on_err → log + alertă ❌ Telegram pe calea
+# STANDALONE (de pe calea self-heal alertează părintele, aici doar logăm).
+set -eE
 LOG=~/poseidon-site/logs/publish.log
 mkdir -p ~/poseidon-site/logs
 
 PY=~/football_predictor/.venv/bin/python3
 ts() { date '+%Y-%m-%d %H:%M:%S'; }
+
+TG_CONFIG=~/football_v7/.telegram_config.json
+tg_send_quick() {
+    local msg="$1"
+    if [ -f "$TG_CONFIG" ]; then
+        TG_TOKEN=$(python3 -c "import json; print(json.load(open('$TG_CONFIG'))['bot_token'])" 2>/dev/null)
+        TG_CHAT=$(python3 -c "import json; print(json.load(open('$TG_CONFIG'))['chat_id'])" 2>/dev/null)
+        if [ -n "$TG_TOKEN" ] && [ -n "$TG_CHAT" ]; then
+            curl -s --max-time 30 "https://api.telegram.org/bot${TG_TOKEN}/sendMessage" \
+              --data-urlencode "chat_id=$TG_CHAT" \
+              --data-urlencode "text=$msg" \
+              --data-urlencode "parse_mode=HTML" > /dev/null 2>&1 || true
+        fi
+    fi
+}
+
+on_err() {
+    local rc=$? line=$1
+    echo "[$(ts)] [ERR] daily_publish FAIL rc=$rc la linia $line" >> "$LOG"
+    if [ "$POSEIDON_FROM_SELF_HEAL" != "1" ]; then
+        tg_send_quick "❌ <b>POSEIDON daily_publish (standalone) FAIL</b>
+rc=$rc la linia $line
+Verifică ~/poseidon-site/logs/publish.log"
+    fi
+}
+trap 'on_err $LINENO' ERR
 
 echo "[$(ts)] === POSEIDON publish cycle ===" >> "$LOG"
 
@@ -43,13 +72,21 @@ else
     fi
 
     # (b) CSV proaspăt <45 min → self-heal tocmai a publicat → SKIP (evită dublu commit)
+    # 🆕 13 iun — R1: SKIP doar dacă publish-ul e CONFIRMAT (marker E2E scris de
+    # self-heal). CSV proaspăt FĂRĂ marker = self-heal a crăpat între predict și
+    # publish → acest cron devine plasa de siguranță imediată și publică.
+    # (Dacă self-heal e încă în lucru, guard-ul (a) de mai sus l-a prins deja.)
+    PUBLISH_MARKER="$HOME/.football_predictor/publish_done_$(date +%Y-%m-%d)"
     if [ -f "$CSV" ]; then
         MTIME=$(stat -f %m "$CSV" 2>/dev/null || echo 0)
         NOW=$(date +%s)
         AGE_MIN=$(( (NOW - MTIME) / 60 ))
         if [ "$AGE_MIN" -lt 45 ]; then
-            echo "[$(ts)] [SKIP] CSV publicat recent (${AGE_MIN}min < 45) — self-heal deja a finalizat lanțul" >> "$LOG"
-            exit 0
+            if [ -f "$PUBLISH_MARKER" ]; then
+                echo "[$(ts)] [SKIP] CSV publicat recent (${AGE_MIN}min < 45) + marker E2E prezent — self-heal a finalizat lanțul" >> "$LOG"
+                exit 0
+            fi
+            echo "[$(ts)] [INFO] CSV recent (${AGE_MIN}min) dar marker publish LIPSĂ — continui publish (safety net R1)" >> "$LOG"
         fi
     fi
 fi
@@ -64,13 +101,10 @@ sqlite3 ~/football_predictor/football.db \
   >> "$LOG" 2>&1
 
 # 1. Build JSON-uri
+# (13 iun — R2: verificarea RC1 de aici era COD MORT sub set -e; eșecul e
+#  gestionat acum de trap ERR → log + alertă.)
 cd ~/football_predictor
 $PY scripts/poseidon/build_public_json.py >> "$LOG" 2>&1
-RC1=$?
-if [ $RC1 -ne 0 ]; then
-    echo "[$(ts)] [ERR] build_public_json failed rc=$RC1" >> "$LOG"
-    exit $RC1
-fi
 
 # 2. Git add/commit/push
 cd ~/poseidon-site
@@ -78,14 +112,10 @@ if [ -z "$(git status --porcelain data/)" ]; then
     echo "[$(ts)] No changes to publish." >> "$LOG"
     exit 0
 fi
+# (13 iun — R2: verificarea RC2 era COD MORT sub set -e; push eșuat → trap ERR.)
 git add data/
 git commit -m "data: $(date +%Y-%m-%d) refresh predicții + jurnal" >> "$LOG" 2>&1
 git push origin main >> "$LOG" 2>&1
-RC2=$?
-if [ $RC2 -ne 0 ]; then
-    echo "[$(ts)] [ERR] git push failed rc=$RC2" >> "$LOG"
-    exit $RC2
-fi
 echo "[$(ts)] Published." >> "$LOG"
 
 # 3. Telegram notify — plasă siguranță (nu blochează publish dacă cade)
