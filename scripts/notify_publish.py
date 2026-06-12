@@ -111,6 +111,18 @@ def main() -> int:
         names = "; ".join(f"{m['home_team']} vs {m['away_team']}" for m in sample)
         flags.append(f"⚠️ {len(extreme)} meciuri cu prob ≥{int(EXTREME_PROB*100)}% pe ligă calibrată — verifică: {names}")
 
+    # Probabilitățile publicate trebuie să fie post-Platt (calibration.json meta,
+    # scris de build_public_json). Orice altceva (raw, cheie lipsă, fișier corupt)
+    # = calibrarea NU s-a aplicat la acest publish.
+    prob_mode = None
+    try:
+        prob_mode = json.load(open(SITE_DATA / "calibration.json")).get("meta", {}).get("probabilities")
+    except Exception as e:
+        flags.append(f"⚠️ calibration.json ilizibil ({e}) — nu pot verifica modul probabilităților")
+    else:
+        if prob_mode != "post-platt":
+            flags.append(f"⚠️ probabilități publicate NE-calibrate: meta.probabilities={prob_mode!r} (așteptat 'post-platt')")
+
     # Compun mesaj
     lines = [
         "🔔 <b>POSEIDON publish</b>",
