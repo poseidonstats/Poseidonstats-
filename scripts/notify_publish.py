@@ -11,12 +11,15 @@ from __future__ import annotations
 
 import json
 import sys
-from datetime import datetime, timezone, timedelta
+from datetime import datetime
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 # Singura cale de trimitere Telegram (modul comun, în repo-ul football_predictor).
 sys.path.insert(0, str(Path.home() / "football_predictor" / "scripts" / "poseidon"))
 from telegram_alert import send_telegram_alert  # noqa: E402
+
+RO_TZ = ZoneInfo("Europe/Bucharest")  # EET/EEST automat — nu offset fix
 
 SITE_DATA = Path.home() / "poseidon-site" / "data"
 PRED_HISTORY = Path.home() / "poseidon-site" / "data" / ".last_publish_count.txt"
@@ -49,12 +52,11 @@ def main() -> int:
     matches = pred.get("matches", [])
     n_total = len(matches)
 
-    # Meciuri AZI (cu timezone Europa/Bucharest = UTC+3 vara)
-    today_utc = datetime.now(timezone.utc).date()
-    today_eest = (datetime.now(timezone.utc) + timedelta(hours=3)).date()
+    # 🆕 (Val 4, #9) — Meciuri AZI în ora României (Europe/Bucharest, EET/EEST automat, nu +3h fix).
+    today_ro = datetime.now(RO_TZ).date()
     n_today = sum(1 for m in matches
-                  if (datetime.fromisoformat(m["match_date"].replace("Z", "+00:00"))
-                      + timedelta(hours=3)).date() == today_eest)
+                  if datetime.fromisoformat(m["match_date"].replace("Z", "+00:00"))
+                     .astimezone(RO_TZ).date() == today_ro)
 
     # Forward — resolved + hit recent
     n_resolved = n_pending = 0
@@ -117,7 +119,7 @@ def main() -> int:
     # Compun mesaj
     lines = [
         "🔔 <b>POSEIDON publish</b>",
-        f"📅 {today_eest.strftime('%d %b %Y')}",
+        f"📅 {today_ro.strftime('%d %b %Y')}",
         "",
         f"📊 <b>{n_total}</b> meciuri publicate (din care <b>{n_today}</b> azi)",
         f"✅ <b>{n_resolved}</b> rezolvate · {n_pending} pending",
