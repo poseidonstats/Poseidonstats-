@@ -24,6 +24,10 @@ logs/
 *.tmp
 *.bak
 *.bak_*
+# 🆕 13 iun (R6) — temp-urile scrierii atomice din build_public_json (.x.json.tmp.PID).
+# *.tmp de mai sus NU le prinde (se termină în .tmp.PID, nu .tmp). Închide fereastra
+# în care un SIGKILL între write și os.replace ar lăsa un temp pe care git add l-ar comite.
+data/.*.tmp.*
 
 # 5. Credențiale / configurări locale
 .env
