@@ -18,19 +18,12 @@ mkdir -p ~/poseidon-site/logs
 PY=~/football_predictor/.venv/bin/python3
 ts() { date '+%Y-%m-%d %H:%M:%S'; }
 
-TG_CONFIG=~/football_v7/.telegram_config.json
+# Trimiterea Telegram trece prin helper-ul comun (citește ~/football_v7/.telegram_config.json).
+TG_HELPER=~/football_predictor/scripts/poseidon/telegram_alert.py
 tg_send_quick() {
-    local msg="$1"
-    if [ -f "$TG_CONFIG" ]; then
-        TG_TOKEN=$(python3 -c "import json; print(json.load(open('$TG_CONFIG'))['bot_token'])" 2>/dev/null)
-        TG_CHAT=$(python3 -c "import json; print(json.load(open('$TG_CONFIG'))['chat_id'])" 2>/dev/null)
-        if [ -n "$TG_TOKEN" ] && [ -n "$TG_CHAT" ]; then
-            curl -s --max-time 30 "https://api.telegram.org/bot${TG_TOKEN}/sendMessage" \
-              --data-urlencode "chat_id=$TG_CHAT" \
-              --data-urlencode "text=$msg" \
-              --data-urlencode "parse_mode=HTML" > /dev/null 2>&1 || true
-        fi
-    fi
+    # Transport via helper-ul comun (singura cale). Best-effort: stdout (message_id)
+    # ignorat, doar erorile (stderr) ajung în log; `|| true` ca să nu cadă sub set -eE.
+    "$PY" "$TG_HELPER" "$1" > /dev/null 2>> "$LOG" || true
 }
 
 on_err() {
@@ -112,6 +105,26 @@ if [ -z "$(git status --porcelain data/)" ]; then
     echo "[$(ts)] No changes to publish." >> "$LOG"
     exit 0
 fi
+
+# 🆕 13 iun (Val 2, task #3) — Gate de sanitate ÎNAINTE de git add: nu publica date
+# goale/degenerate. Vechiul guard de mai sus verifica DOAR că datele s-au schimbat, nu că
+# sunt valide → un predictions.json gol/invalid (build exit 0 pe upstream gol) era împins
+# tăcut. Gate-ul ABORTEAZĂ push-ul la eșec (fără `|| true` — un eșec aici lasă date GREȘITE
+# să treacă); alerta Telegram rămâne best-effort (canal lateral). `|| GATE_RC=$?` capturează
+# RC fără ca set -eE să omoare scriptul înainte de a-l citi.
+MIN_MATCHES=20
+VALIDATOR=~/football_predictor/scripts/poseidon/validate_public_json.py
+GATE_RC=0
+GATE_OUT=$("$PY" "$VALIDATOR" ~/poseidon-site/data/predictions.json --min-matches "$MIN_MATCHES" 2>&1) || GATE_RC=$?
+if [ "$GATE_RC" -ne 0 ]; then
+    echo "[$(ts)] [GATE] BLOCAT push: $GATE_OUT" >> "$LOG"
+    tg_send_quick "❌ <b>POSEIDON publish BLOCAT — gate sanitate</b>
+$GATE_OUT
+NU s-a făcut push (date goale/invalide). Verifică build_public_json + predict_daily."
+    exit 1
+fi
+echo "[$(ts)] [GATE] OK: $GATE_OUT" >> "$LOG"
+
 # (13 iun — R2: verificarea RC2 era COD MORT sub set -e; push eșuat → trap ERR.)
 git add data/
 git commit -m "data: $(date +%Y-%m-%d) refresh predicții + jurnal" >> "$LOG" 2>&1

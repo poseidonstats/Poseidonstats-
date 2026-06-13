@@ -11,14 +11,15 @@ from __future__ import annotations
 
 import json
 import sys
-import urllib.parse
-import urllib.request
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 
+# Singura cale de trimitere Telegram (modul comun, în repo-ul football_predictor).
+sys.path.insert(0, str(Path.home() / "football_predictor" / "scripts" / "poseidon"))
+from telegram_alert import send_telegram_alert  # noqa: E402
+
 SITE_DATA = Path.home() / "poseidon-site" / "data"
 PRED_HISTORY = Path.home() / "poseidon-site" / "data" / ".last_publish_count.txt"
-TG_CONFIG = Path.home() / "football_v7" / ".telegram_config.json"
 
 # Praguri anomalii
 VOLUME_DROP_PCT = 0.50      # azi <50% din ultima publicare = suspect
@@ -28,22 +29,12 @@ EXTREME_PROB = 0.92         # prob 1X2/Over peste 92% calibrat = posibil rating 
 
 
 def telegram_send(text: str) -> bool:
+    """Transport via helper-ul comun (telegram_alert). Best-effort: logăm pe stderr."""
     try:
-        cfg = json.load(open(TG_CONFIG))
-        token, chat_id = cfg["bot_token"], cfg["chat_id"]
+        send_telegram_alert(text)
+        return True
     except Exception as e:
-        print(f"[ERR] tg cfg: {e}", file=sys.stderr)
-        return False
-    url = f"https://api.telegram.org/bot{token}/sendMessage"
-    data = urllib.parse.urlencode({
-        "chat_id": chat_id, "text": text, "parse_mode": "HTML",
-        "disable_web_page_preview": "true",
-    }).encode()
-    try:
-        with urllib.request.urlopen(url, data, timeout=10) as r:
-            return r.status == 200
-    except Exception as e:
-        print(f"[ERR] tg send: {e}", file=sys.stderr)
+        print(f"[ERR] tg: {e}", file=sys.stderr)
         return False
 
 
