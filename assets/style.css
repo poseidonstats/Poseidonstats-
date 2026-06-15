@@ -754,6 +754,7 @@ footer a { color: #93c5fd; }
 .tier-badge.tier-strong { background:#0e7a40; color:white; }
 .tier-badge.tier-good { background:#16a34a; color:white; }
 .tier-badge.tier-mid { background:#ca8a04; color:white; }
+.tier-badge.tier-drop { background:#b91c1c; color:white; }
 .tier-badge.tier-noise { background:#6b7280; color:white; }
 
 .day-card { background:white; border-radius:8px; margin:0.8em 0; padding:0; box-shadow:0 1px 3px rgba(0,0,0,0.08); }

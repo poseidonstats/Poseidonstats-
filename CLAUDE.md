@@ -22,12 +22,12 @@ The repo is **public**. `.gitignore` is the safety net — anything that could l
   data/calibration.json       — bucket calibration from backtest 65k
   data/forward.json           — live tracking from poseidon_history.csv
   assets/app.js               — renders all 3 pages, reads JSONs
-  scripts/daily_publish.sh    — regen JSON + git push (cron 07:50)
+  scripts/daily_publish.sh    — regen JSON + git push (cron 06:10)
   scripts/gen_*_clip.py       — TikTok/IG clip generators (PIL + ffmpeg)
   scripts/_v2_common.py       — shared helpers for clips
 ```
 
-Pipeline runs daily on user's MacBook via LaunchAgents in `~/Library/LaunchAgents/com.poseidonstats.*.plist` and `com.football.poseidon.*.plist`. Site is rebuilt and pushed once per day by `daily_publish.sh` at 07:50 EEST.
+Pipeline runs daily on user's MacBook via LaunchAgents in `~/Library/LaunchAgents/com.poseidonstats.*.plist` and `com.football.poseidon.*.plist`. Site is rebuilt and pushed once per day by `daily_publish.sh` at 06:10 EEST.
 
 ### Picks logic — must stay in sync with `assets/app.js`
 
@@ -47,7 +47,7 @@ Run anything Python with the pipeline venv (not system python):
 
 Common operations:
 ```bash
-# Regenerate JSONs + push to GitHub Pages (what cron does at 07:50)
+# Regenerate JSONs + push to GitHub Pages (what cron does at 06:10)
 ~/poseidon-site/scripts/daily_publish.sh
 
 # Generate verification clip for yesterday (cron at 08:05 — auto-runs)

@@ -589,6 +589,7 @@ async function renderIstoric() {
             : m.tier === "ROBUST" ? "tier-strong"
             : m.tier === "PROMISING" ? "tier-good"
             : m.tier === "PRE-PROMISING" ? "tier-mid"
+            : m.tier === "DROP" ? "tier-drop"
             : "tier-noise";
           return `<tr>
             <td><strong>${esc(m.name)}</strong></td>
