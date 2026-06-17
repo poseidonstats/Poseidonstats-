@@ -1,10 +1,43 @@
 {
- "generated_at": "2026-06-17T10:13:54+00:00",
+ "generated_at": "2026-06-17T13:02:30+00:00",
  "meta": {
   "n_total": 65250,
   "n_whitelist_inter": 0,
+  "cert_threshold_pct": 70,
   "methodology": "TRAIN 2024-2025 / TEST 2026, ratings frozen 2025-12-31, calibrare per-ligă cu shrinkage K=14, probabilități calibrate Platt per piață (slope fix, validat split temporal ian-mar/apr-mai)",
   "probabilities": "post-platt"
+ },
+ "market_cert": {
+  "over_1_5": {
+   "pct_leagues_good": 85.5,
+   "n_leagues_eval": 366,
+   "eligible": true
+  },
+  "over_2_5": {
+   "pct_leagues_good": 63.1,
+   "n_leagues_eval": 366,
+   "eligible": false
+  },
+  "over_3_5": {
+   "pct_leagues_good": 36.9,
+   "n_leagues_eval": 366,
+   "eligible": false
+  },
+  "btts": {
+   "pct_leagues_good": 61.2,
+   "n_leagues_eval": 366,
+   "eligible": false
+  },
+  "ht_over_0_5": {
+   "pct_leagues_good": 79.9,
+   "n_leagues_eval": 353,
+   "eligible": true
+  },
+  "ht_over_1_5": {
+   "pct_leagues_good": 45.9,
+   "n_leagues_eval": 353,
+   "eligible": false
+  }
  },
  "markets": [
   {
