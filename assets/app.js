@@ -492,12 +492,12 @@ async function renderTrackRecord() {
             <tr><th>Bucket prob</th><th>N</th><th>Real %</th><th>Wlo 95%</th><th>Diferență</th></tr>
           </thead>
           <tbody>
-            ${market.buckets.map(b => `<tr>
+            ${market.buckets.map(b => `<tr${b.low_sample ? ' style="opacity:.45"' : ''}>
               <td>${b.range}</td>
-              <td>${b.n}</td>
+              <td>${b.n}${b.low_sample ? ' <span class="muted" title="sub 100 meciuri">⚠ sample mic</span>' : ''}</td>
               <td>${b.hit_pct.toFixed(1)}%</td>
               <td>${b.wlo_pct.toFixed(1)}%</td>
-              <td style="color:${Math.abs(b.diff_pp) <= 3 ? '#065f46' : '#991b1b'}">${b.diff_pp >= 0 ? "+" : ""}${b.diff_pp.toFixed(1)}pp</td>
+              <td style="color:${b.low_sample ? '#6b7280' : (Math.abs(b.diff_pp) <= 3 ? '#065f46' : '#991b1b')}">${b.low_sample ? "—" : (b.diff_pp >= 0 ? "+" : "") + b.diff_pp.toFixed(1) + "pp"}</td>
             </tr>`).join("")}
           </tbody>
         </table>
@@ -545,13 +545,20 @@ async function renderTrackRecord() {
   const fwd = await fetchJSON(FORWARD_URL);
   const fwdHtml = (fwd && fwd.n_resolved > 0)
     ? `<div class="calibration-card">
+        <p class="muted" style="border-left:3px solid #b45309;padding-left:.6em">
+          <strong>Calibrare live, out-of-sample</strong> — în acumulare din 2 iunie 2026.
+          Pe fereastra curentă (iunie) modelul rulează <strong>conservator pe piețele Over (~2–3pp)</strong>:
+          evenimentele se întâmplă ceva mai des decât arată procentul calibrat
+          (Over 1.5 ≈ +2.8pp, HT Over 0.5 ≈ +2.2pp). E o sub-estimare reală a golurilor în acest
+          interval, nu un artefact de afișare — monitorizată.
+        </p>
         <p>Predicții resolved live: <strong>${fwd.n_resolved}</strong>
         (din ${fwd.n_total} totale, ${fwd.n_pending} pending, ${fwd.n_not_played} amânate).</p>
         ${(fwd.markets || []).map(m => `<div>
           <h4>${m.name}</h4>
           <table><thead><tr><th>Bucket prob</th><th>N</th><th>Real %</th></tr></thead>
-          <tbody>${m.buckets.map(b => `<tr>
-            <td>${b.range}</td><td>${b.n}</td><td>${b.hit_pct.toFixed(1)}%</td>
+          <tbody>${m.buckets.map(b => `<tr${b.low_sample ? ' style="opacity:.45"' : ''}>
+            <td>${b.range}</td><td>${b.n}${b.low_sample ? ' <span class="muted">⚠ sample mic</span>' : ''}</td><td>${b.low_sample ? "—" : b.hit_pct.toFixed(1) + "%"}</td>
           </tr>`).join("")}</tbody></table>
         </div>`).join("")}
       </div>`
