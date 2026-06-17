@@ -160,7 +160,10 @@ function honestEmptyHtml(frozen) {
 
 /* ============== INDEX (predicții) ============== */
 async function renderIndex() {
-  const data = await fetchJSON(PRED_URL);
+  // F3 — încarc și calibration.json pt eligibilitatea per piață (badge data-driven).
+  // Fallback grațios: dacă lipsește, MARKET_CERT={} → marketState cade pe PROMOTED (ca înainte).
+  const [data, calib] = await Promise.all([fetchJSON(PRED_URL), fetchJSON(CALIB_URL)]);
+  if (calib && calib.market_cert) MARKET_CERT = calib.market_cert;
   if (!data || !data.matches) {
     document.getElementById("matches").innerHTML =
       `<p class="muted">Datele se încarcă... Dacă persistă, predicțiile zilei nu sunt încă publicate.</p>`;
@@ -259,26 +262,52 @@ function rawNote(raw, cal) {
   return `<span class="raw-note">brut ${fmtPct(raw)}</span>`;
 }
 
-/* ============== Marcaj onestitate per piață ==============
-   Doar Over 1.5 și HT Over 0.5 au calibrare empirică VALIDATĂ (audit 10 iun).
-   Restul piețelor afișează probabilități fără re-mapare validată → marcaj ⚠️
-   tappabil (touch-first: popover la tap, title= bonus pe desktop).
-   TODO: leagă lista de calibration.json când pipeline-ul exportă flag `validated`
-   per piață (aceeași familie cu TODO-ul blacklist count din metodologie.html).
-   NU deriva mecanic din diff_pp: pragul de validare e decizie de brand
-   (ex. HT O0.5 are un bucket la -5.44pp dar e validat în context), nu
-   proprietate a datelor. */
-const CALIBRATED_MARKETS = ["O1.5", "HT O0.5"];
+/* ============== Marcaj onestitate per piață (F3 — eligibilitate empirică + veto editorial) ==============
+   Stratul 1 — ELIGIBILITATE (empiric, din calibration.json.market_cert): o piață e eligibilă dacă
+     ≥ pragul (70%, în calibration.json) din ligi (N≥80) au |bias_rel|≤10% pe backtest post-Platt.
+     Front-end citește flag-ul `eligible` — NU recalculează; dacă pragul se schimbă în pipeline, badge-ul
+     urmează automat (V4). Fallback la PROMOTED dacă calibration.json lipsește.
+   Stratul 2 — VETO EDITORIAL: badge ✓ DOAR dacă eligibilă ȘI în PROMOTED_MARKETS.
+   3 stări: "certified" (eligibil+promovat) / "eligible" (≥prag, nepromovat) / "below" (<prag).
+   ONEST: ⚠️ pe o piață care ARE calibrare = "sub pragul de certificare", NU "fără calibrare".
+   (i18n: textele dinamice cu % rămân RO; cheile statice pot fi traduse ulterior.) */
+const PROMOTED_MARKETS = ["O1.5", "HT O0.5"];   // veto editorial peste eligibilitate
+const LABEL_MKEY = {                             // label din card → cheie din market_cert
+  "O1.5": "over_1_5", "O2.5": "over_2_5", "O3.5": "over_3_5",
+  "BTTS": "btts", "HT O0.5": "ht_over_0_5", "HT O1.5": "ht_over_1_5",
+};
+let MARKET_CERT = {};   // populat din calibration.json în renderIndex; {} → fallback pe PROMOTED
 
-function warnTipText(kind) {
-  return kind === "raw"
-    ? tt("market.warn.raw", "Probabilitate brută a modelului, fără re-mapare empirică.")
-    : tt("market.warn.uncal", "Probabilitate fără calibrare empirică validată pe această piață. Poate supraestima șansele reale.");
+function marketState(label) {
+  const key = LABEL_MKEY[label];
+  if (!key) return "raw";                        // 1X2, 1H/XH/2H, HT BTTS — output brut (fără Platt)
+  const c = MARKET_CERT[key];
+  const eligible = c ? !!c.eligible : PROMOTED_MARKETS.includes(label);  // fallback fără calib
+  const promoted = PROMOTED_MARKETS.includes(label);
+  if (eligible && promoted) return "certified";
+  if (eligible && !promoted) return "eligible";
+  return "below";
 }
 
-function warnMark(kind) {
-  const tip = warnTipText(kind);
-  return `<button type="button" class="market-warn" data-warn="${kind}" title="${tip}" aria-label="${tip}">⚠️</button>`;
+function warnTipText(kind, pct) {
+  if (kind === "raw")
+    return "Probabilitate brută a modelului, fără re-mapare empirică.";
+  if (kind === "eligible")
+    return `Calibrare validată empiric (${pct != null ? pct + "% din " : ""}ligi în ±10%), dar nepromovată editorial.`;
+  return `Calibrată empiric, dar sub pragul de certificare per-ligă${pct != null ? ` (${pct}% din ligi în ±10%, prag 70%)` : ""}. Poate fi mai puțin fiabilă pe unele ligi.`;
+}
+
+function warnMark(kind, pct) {
+  const tip = warnTipText(kind, pct);
+  return `<button type="button" class="market-warn" data-tip="${tip}" title="${tip}" aria-label="${tip}">⚠️</button>`;
+}
+
+// Marcaj per piață calibrabilă, derivat din market_cert (3 stări). Certified → fără marcaj (curat).
+function marketCertMark(label) {
+  const st = marketState(label);
+  if (st === "certified") return "";
+  const c = MARKET_CERT[LABEL_MKEY[label]];
+  return warnMark(st, c ? c.pct_leagues_good : null);
 }
 
 /* Popover singleton — tap pe ⚠️ deschide explicația, tap în afară o închide. */
@@ -305,7 +334,7 @@ document.addEventListener("click", e => {
       _warnOpenFor = null;
       return;
     }
-    pop.textContent = warnTipText(btn.getAttribute("data-warn"));
+    pop.textContent = btn.getAttribute("data-tip") || "";
     pop.style.display = "block";
     const r = btn.getBoundingClientRect();
     const popW = Math.min(280, window.innerWidth - 24);
@@ -428,23 +457,24 @@ function renderMatch(m, filterMarket = "") {
         <div class="market ${isFilteredMarket("O1.5", filterMarket) ? "market-filtered" : ""}">
           <span class="label">O1.5</span>
           <span class="val ${pctClass(m.prob_over_1_5)}">${fmtPct(m.prob_over_1_5)}</span>
+          ${marketCertMark("O1.5")}
         </div>
         <div class="market uncal-market ${isFilteredMarket("O2.5", filterMarket) ? "market-filtered" : ""}">
           <span class="label">O2.5</span>
           <span class="val ${pctClass(m.prob_over_2_5)}">${fmtPct(m.prob_over_2_5)}</span>
           ${rawNote(m.prob_over_2_5_raw, m.prob_over_2_5)}
-          ${warnMark("uncal")}
+          ${marketCertMark("O2.5")}
         </div>
         <div class="market uncal-market ${isFilteredMarket("O3.5", filterMarket) ? "market-filtered" : ""}">
           <span class="label">O3.5</span>
           <span class="val ${pctClass(m.prob_over_3_5)}">${fmtPct(m.prob_over_3_5)}</span>
-          ${warnMark("uncal")}
+          ${marketCertMark("O3.5")}
         </div>
         <div class="market uncal-market ${isFilteredMarket("BTTS", filterMarket) ? "market-filtered" : ""}">
           <span class="label">BTTS</span>
           <span class="val ${pctClass(m.prob_btts)}">${fmtPct(m.prob_btts)}</span>
           ${rawNote(m.prob_btts_raw, m.prob_btts)}
-          ${warnMark("uncal")}
+          ${marketCertMark("BTTS")}
         </div>
       </div>
     </div>
@@ -455,9 +485,9 @@ function renderMatch(m, filterMarket = "") {
         <div class="market uncal-market"><span class="label">1H</span><span class="val ${pctClass(m.ht_prob_home)}">${fmtPct(m.ht_prob_home)}</span>${warnMark("raw")}</div>
         <div class="market uncal-market"><span class="label">XH</span><span class="val ${pctClass(m.ht_prob_draw)}">${fmtPct(m.ht_prob_draw)}</span>${warnMark("raw")}</div>
         <div class="market uncal-market"><span class="label">2H</span><span class="val ${pctClass(m.ht_prob_away)}">${fmtPct(m.ht_prob_away)}</span>${warnMark("raw")}</div>
-        <div class="market ${isFilteredMarket("HT O0.5", filterMarket) ? "market-filtered" : ""}"><span class="label">HT O0.5</span><span class="val ${pctClass(m.prob_ht_over_0_5)}">${fmtPct(m.prob_ht_over_0_5)}</span></div>
-        <div class="market uncal-market ${isFilteredMarket("HT O1.5", filterMarket) ? "market-filtered" : ""}"><span class="label">HT O1.5</span><span class="val ${pctClass(m.prob_ht_over_1_5)}">${fmtPct(m.prob_ht_over_1_5)}</span>${warnMark("uncal")}</div>
-        <div class="market uncal-market"><span class="label">HT BTTS</span><span class="val ${pctClass(m.ht_prob_btts)}">${fmtPct(m.ht_prob_btts)}</span>${warnMark("uncal")}</div>
+        <div class="market ${isFilteredMarket("HT O0.5", filterMarket) ? "market-filtered" : ""}"><span class="label">HT O0.5</span><span class="val ${pctClass(m.prob_ht_over_0_5)}">${fmtPct(m.prob_ht_over_0_5)}</span>${marketCertMark("HT O0.5")}</div>
+        <div class="market uncal-market ${isFilteredMarket("HT O1.5", filterMarket) ? "market-filtered" : ""}"><span class="label">HT O1.5</span><span class="val ${pctClass(m.prob_ht_over_1_5)}">${fmtPct(m.prob_ht_over_1_5)}</span>${marketCertMark("HT O1.5")}</div>
+        <div class="market uncal-market"><span class="label">HT BTTS</span><span class="val ${pctClass(m.ht_prob_btts)}">${fmtPct(m.ht_prob_btts)}</span>${warnMark("raw")}</div>
         ${m.ht_top_score_h != null ? `<div class="market score-ht">
           <span class="label">Scor HT</span>
           <span class="val">${m.ht_top_score_h}–${m.ht_top_score_a}</span>
