@@ -582,6 +582,8 @@ async function renderTrackRecord() {
           (Over 1.5 ≈ +2.8pp, HT Over 0.5 ≈ +2.2pp). E o sub-estimare reală a golurilor în acest
           interval, nu un artefact de afișare — monitorizată.
         </p>
+        ${fwd.calibration_note ? `<p class="muted" style="font-size:.82em">ℹ️ ${esc(fwd.calibration_note)}</p>` : ""}
+        <p class="muted" style="font-size:.82em">Notă: «tier» (robust etc.) reflectă mărimea eșantionului + Wilson 95%, NU edge-ul peste baseline. HT Over 0.5 are lift modest peste rata de bază (~+2pp); Over 1.5 / Over 2.5 au lift mai mare.</p>
         <p>Predicții resolved live: <strong>${fwd.n_resolved}</strong>
         (din ${fwd.n_total} totale, ${fwd.n_pending} pending, ${fwd.n_not_played} amânate).</p>
         ${(fwd.markets || []).map(m => `<div>
