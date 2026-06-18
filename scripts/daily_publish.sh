@@ -115,7 +115,7 @@ fi
 MIN_MATCHES=20
 VALIDATOR=~/football_predictor/scripts/poseidon/validate_public_json.py
 GATE_RC=0
-GATE_OUT=$("$PY" "$VALIDATOR" ~/poseidon-site/data/predictions.json --min-matches "$MIN_MATCHES" 2>&1) || GATE_RC=$?
+GATE_OUT=$("$PY" "$VALIDATOR" ~/poseidon-site/data/predictions.json --min-matches "$MIN_MATCHES" --max-skew 5.0 2>&1) || GATE_RC=$?
 if [ "$GATE_RC" -ne 0 ]; then
     echo "[$(ts)] [GATE] BLOCAT push: $GATE_OUT" >> "$LOG"
     tg_send_quick "❌ <b>POSEIDON publish BLOCAT — gate sanitate</b>
