@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-06-20T02:51:12+00:00",
+ "generated_at": "2026-06-21T03:20:19+00:00",
  "days": [
   {
    "date": "2026-07-03",
@@ -9775,7 +9775,7 @@
   },
   {
    "date": "2026-06-21",
-   "status": "scheduled",
+   "status": "in_progress",
    "matches": [
     {
      "fixture_id": 1544789,
@@ -15677,7 +15677,7 @@
   },
   {
    "date": "2026-06-20",
-   "status": "in_progress",
+   "status": "scheduled",
    "matches": [
     {
      "fixture_id": 1548696,
@@ -24170,26 +24170,6 @@
      "ht_a": null
     },
     {
-     "fixture_id": 1554482,
-     "time": "15:00",
-     "country": "World",
-     "league": "Friendlies Clubs",
-     "home": "CSKA Sofia",
-     "away": "Dynamo Kyiv",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Under 3.5",
-       "prob": 72,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
-    },
-    {
      "fixture_id": 1554483,
      "time": "15:00",
      "country": "World",
@@ -24546,10 +24526,10 @@
     }
    ],
    "totals": {
-    "picks": 636,
+    "picks": 635,
     "wins": 0,
     "losses": 0,
-    "pending": 636
+    "pending": 635
    }
   },
   {
@@ -24568,13 +24548,13 @@
       {
        "market": "Under 3.5",
        "prob": 79,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 0,
+     "ft_a": 0,
+     "ht_h": 0,
+     "ht_a": 0
     },
     {
      "fixture_id": 1512476,
@@ -24588,13 +24568,13 @@
       {
        "market": "Under 3.5",
        "prob": 78,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 1,
+     "ft_a": 0,
+     "ht_h": 1,
+     "ht_a": 0
     },
     {
      "fixture_id": 1512477,
@@ -24608,18 +24588,18 @@
       {
        "market": "Over 1.5",
        "prob": 77,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       },
       {
        "market": "Under 3.5",
        "prob": 68,
-       "outcome": "PENDING"
+       "outcome": "LOSS"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 3,
+     "ft_a": 2,
+     "ht_h": 0,
+     "ht_a": 1
     },
     {
      "fixture_id": 1512480,
@@ -24633,13 +24613,13 @@
       {
        "market": "Under 3.5",
        "prob": 71,
-       "outcome": "PENDING"
+       "outcome": "LOSS"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 2,
+     "ft_a": 2,
+     "ht_h": 2,
+     "ht_a": 2
     },
     {
      "fixture_id": 1512484,
@@ -24653,13 +24633,13 @@
       {
        "market": "Under 3.5",
        "prob": 76,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 2,
+     "ft_a": 1,
+     "ht_h": 1,
+     "ht_a": 1
     },
     {
      "fixture_id": 1512488,
@@ -24673,13 +24653,13 @@
       {
        "market": "Under 3.5",
        "prob": 75,
-       "outcome": "PENDING"
+       "outcome": "LOSS"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 2,
+     "ft_a": 2,
+     "ht_h": 1,
+     "ht_a": 1
     },
     {
      "fixture_id": 1505449,
@@ -25798,13 +25778,13 @@
       {
        "market": "Under 3.5",
        "prob": 80,
-       "outcome": "PENDING"
+       "outcome": "LOSS"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 2,
+     "ft_a": 2,
+     "ht_h": 2,
+     "ht_a": 2
     },
     {
      "fixture_id": 1553049,
@@ -25818,13 +25798,13 @@
       {
        "market": "Under 3.5",
        "prob": 77,
-       "outcome": "PENDING"
+       "outcome": "LOSS"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 3,
+     "ft_a": 1,
+     "ht_h": 2,
+     "ht_a": 1
     },
     {
      "fixture_id": 1492717,
@@ -25838,18 +25818,18 @@
       {
        "market": "Over 1.5",
        "prob": 75,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       },
       {
        "market": "Under 3.5",
        "prob": 70,
-       "outcome": "PENDING"
+       "outcome": "LOSS"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 2,
+     "ft_a": 2,
+     "ht_h": 2,
+     "ht_a": 1
     },
     {
      "fixture_id": 1492718,
@@ -25863,13 +25843,13 @@
       {
        "market": "Under 3.5",
        "prob": 71,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 2,
+     "ft_a": 1,
+     "ht_h": 1,
+     "ht_a": 0
     },
     {
      "fixture_id": 1492719,
@@ -25883,13 +25863,13 @@
       {
        "market": "Under 3.5",
        "prob": 71,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 2,
+     "ft_a": 0,
+     "ht_h": 0,
+     "ht_a": 0
     },
     {
      "fixture_id": 1492720,
@@ -25903,18 +25883,18 @@
       {
        "market": "Over 1.5",
        "prob": 79,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       },
       {
        "market": "Under 3.5",
        "prob": 65,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 0,
+     "ft_a": 2,
+     "ht_h": 0,
+     "ht_a": 1
     },
     {
      "fixture_id": 1492915,
@@ -25928,13 +25908,13 @@
       {
        "market": "Under 3.5",
        "prob": 80,
-       "outcome": "PENDING"
+       "outcome": "LOSS"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 2,
+     "ft_a": 2,
+     "ht_h": 1,
+     "ht_a": 1
     },
     {
      "fixture_id": 1492916,
@@ -25948,18 +25928,18 @@
       {
        "market": "Over 1.5",
        "prob": 78,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       },
       {
        "market": "Under 3.5",
        "prob": 68,
-       "outcome": "PENDING"
+       "outcome": "LOSS"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 5,
+     "ft_a": 2,
+     "ht_h": 1,
+     "ht_a": 0
     },
     {
      "fixture_id": 1492917,
@@ -25973,13 +25953,13 @@
       {
        "market": "Under 3.5",
        "prob": 72,
-       "outcome": "PENDING"
+       "outcome": "LOSS"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 3,
+     "ft_a": 1,
+     "ht_h": 0,
+     "ht_a": 1
     },
     {
      "fixture_id": 1492918,
@@ -25993,13 +25973,13 @@
       {
        "market": "Under 3.5",
        "prob": 72,
-       "outcome": "PENDING"
+       "outcome": "LOSS"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 4,
+     "ft_a": 0,
+     "ht_h": 0,
+     "ht_a": 0
     },
     {
      "fixture_id": 1492919,
@@ -26013,18 +25993,18 @@
       {
        "market": "Over 1.5",
        "prob": 76,
-       "outcome": "PENDING"
+       "outcome": "LOSS"
       },
       {
        "market": "Under 3.5",
        "prob": 70,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 0,
+     "ft_a": 1,
+     "ht_h": 0,
+     "ht_a": 1
     },
     {
      "fixture_id": 1489391,
@@ -26038,18 +26018,18 @@
       {
        "market": "Over 1.5",
        "prob": 76,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       },
       {
        "market": "Under 3.5",
        "prob": 67,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 2,
+     "ft_a": 0,
+     "ht_h": 2,
+     "ht_a": 0
     },
     {
      "fixture_id": 1492716,
@@ -26063,13 +26043,13 @@
       {
        "market": "Over 1.5",
        "prob": 80,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 1,
+     "ft_a": 2,
+     "ht_h": 1,
+     "ht_a": 1
     },
     {
      "fixture_id": 1550673,
@@ -26083,13 +26063,13 @@
       {
        "market": "Under 3.5",
        "prob": 75,
-       "outcome": "PENDING"
+       "outcome": "LOSS"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 4,
+     "ft_a": 0,
+     "ht_h": 1,
+     "ht_a": 0
     },
     {
      "fixture_id": 1514209,
@@ -26103,18 +26083,18 @@
       {
        "market": "Over 1.5",
        "prob": 76,
-       "outcome": "PENDING"
+       "outcome": "LOSS"
       },
       {
        "market": "Under 3.5",
        "prob": 69,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 1,
+     "ft_a": 0,
+     "ht_h": 1,
+     "ht_a": 0
     },
     {
      "fixture_id": 1543403,
@@ -26128,13 +26108,13 @@
       {
        "market": "Over 1.5",
        "prob": 79,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 1,
+     "ft_a": 4,
+     "ht_h": 0,
+     "ht_a": 1
     },
     {
      "fixture_id": 1543404,
@@ -26188,18 +26168,18 @@
       {
        "market": "Under 3.5",
        "prob": 86,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       },
       {
        "market": "Under 2.5",
        "prob": 67,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 2,
+     "ft_a": 0,
+     "ht_h": 0,
+     "ht_a": 0
     },
     {
      "fixture_id": 1489390,
@@ -26213,13 +26193,13 @@
       {
        "market": "Under 3.5",
        "prob": 77,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 0,
+     "ft_a": 1,
+     "ht_h": 0,
+     "ht_a": 1
     },
     {
      "fixture_id": 1493867,
@@ -26233,13 +26213,13 @@
       {
        "market": "Over 1.5",
        "prob": 82,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 5,
+     "ft_a": 1,
+     "ht_h": 2,
+     "ht_a": 0
     },
     {
      "fixture_id": 1524995,
@@ -26253,18 +26233,18 @@
       {
        "market": "Over 1.5",
        "prob": 85,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       },
       {
        "market": "Over 2.5",
        "prob": 67,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 0,
+     "ft_a": 5,
+     "ht_h": 0,
+     "ht_a": 2
     },
     {
      "fixture_id": 1544438,
@@ -26278,13 +26258,13 @@
       {
        "market": "Over 1.5",
        "prob": 81,
-       "outcome": "PENDING"
+       "outcome": "LOSS"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 0,
+     "ft_a": 1,
+     "ht_h": 0,
+     "ht_a": 0
     },
     {
      "fixture_id": 1524996,
@@ -26298,43 +26278,23 @@
       {
        "market": "Over 1.5",
        "prob": 85,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       },
       {
        "market": "1 (Home)",
        "prob": 73,
-       "outcome": "PENDING"
+       "outcome": "LOSS"
       },
       {
        "market": "Over 2.5",
        "prob": 69,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
-    },
-    {
-     "fixture_id": 1549937,
-     "time": "21:30",
-     "country": "Argentina",
-     "league": "Torneo Promocional Amateur",
-     "home": "Estrella de Berisso",
-     "away": "Defensores Glew",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Under 3.5",
-       "prob": 77,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 2,
+     "ft_a": 2,
+     "ht_h": 2,
+     "ht_a": 1
     },
     {
      "fixture_id": 1499479,
@@ -26348,18 +26308,18 @@
       {
        "market": "Under 3.5",
        "prob": 87,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       },
       {
        "market": "Under 2.5",
        "prob": 69,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 1,
+     "ft_a": 1,
+     "ht_h": 1,
+     "ht_a": 1
     },
     {
      "fixture_id": 1553716,
@@ -26373,13 +26333,13 @@
       {
        "market": "Under 3.5",
        "prob": 70,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 0,
+     "ft_a": 1,
+     "ht_h": 0,
+     "ht_a": 1
     },
     {
      "fixture_id": 1543623,
@@ -26393,13 +26353,13 @@
       {
        "market": "Under 3.5",
        "prob": 69,
-       "outcome": "PENDING"
+       "outcome": "LOSS"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 5,
+     "ft_a": 2,
+     "ht_h": 2,
+     "ht_a": 2
     },
     {
      "fixture_id": 1553786,
@@ -26413,13 +26373,13 @@
       {
        "market": "Under 3.5",
        "prob": 72,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 2,
+     "ft_a": 0,
+     "ht_h": 0,
+     "ht_a": 0
     },
     {
      "fixture_id": 1553787,
@@ -26433,13 +26393,13 @@
       {
        "market": "Over 1.5",
        "prob": 80,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 3,
+     "ft_a": 3,
+     "ht_h": 1,
+     "ht_a": 1
     },
     {
      "fixture_id": 1553788,
@@ -26558,10 +26518,10 @@
     }
    ],
    "totals": {
-    "picks": 133,
-    "wins": 71,
-    "losses": 14,
-    "pending": 48
+    "picks": 132,
+    "wins": 100,
+    "losses": 30,
+    "pending": 2
    }
   },
   {
@@ -54979,2727 +54939,25 @@
     "losses": 28,
     "pending": 2
    }
-  },
-  {
-   "date": "2026-06-10",
-   "status": "resolved",
-   "matches": [
-    {
-     "fixture_id": 1546281,
-     "time": "16:00",
-     "country": "South-Africa",
-     "league": "Premier Soccer League",
-     "home": "Cape Town City",
-     "away": "Magesi",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Under 3.5",
-       "prob": 83,
-       "outcome": "WIN"
-      }
-     ],
-     "ft_h": 1,
-     "ft_a": 1,
-     "ht_h": 1,
-     "ht_a": 0
-    },
-    {
-     "fixture_id": 1548055,
-     "time": "22:00",
-     "country": "Spain",
-     "league": "Segunda División",
-     "home": "Malaga",
-     "away": "Las Palmas",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 79,
-       "outcome": "WIN"
-      }
-     ],
-     "ft_h": 1,
-     "ft_a": 1,
-     "ht_h": 0,
-     "ht_a": 1
-    },
-    {
-     "fixture_id": 1493527,
-     "time": "02:30",
-     "country": "USA",
-     "league": "USL Championship",
-     "home": "Detroit City",
-     "away": "El Paso Locomotive",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 78,
-       "outcome": "WIN"
-      },
-      {
-       "market": "Under 3.5",
-       "prob": 66,
-       "outcome": "WIN"
-      }
-     ],
-     "ft_h": 1,
-     "ft_a": 1,
-     "ht_h": 0,
-     "ht_a": 1
-    },
-    {
-     "fixture_id": 1493530,
-     "time": "02:00",
-     "country": "USA",
-     "league": "USL Championship",
-     "home": "Tampa Bay Rowdies",
-     "away": "Charleston Battery",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 79,
-       "outcome": "WIN"
-      }
-     ],
-     "ft_h": 2,
-     "ft_a": 2,
-     "ht_h": 1,
-     "ht_a": 0
-    },
-    {
-     "fixture_id": 1493855,
-     "time": "02:30",
-     "country": "USA",
-     "league": "USL League One",
-     "home": "Charlotte Independence",
-     "away": "Union Omaha",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 85,
-       "outcome": "WIN"
-      },
-      {
-       "market": "Over 2.5",
-       "prob": 67,
-       "outcome": "LOSS"
-      }
-     ],
-     "ft_h": 2,
-     "ft_a": 0,
-     "ht_h": 1,
-     "ht_a": 0
-    },
-    {
-     "fixture_id": 1493856,
-     "time": "02:00",
-     "country": "USA",
-     "league": "USL League One",
-     "home": "Westchester SC",
-     "away": "Fort Wayne",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 79,
-       "outcome": "WIN"
-      }
-     ],
-     "ft_h": 1,
-     "ft_a": 1,
-     "ht_h": 1,
-     "ht_a": 0
-    },
-    {
-     "fixture_id": 1489868,
-     "time": "19:00",
-     "country": "Czech-Republic",
-     "league": "4. liga - Divizie A",
-     "home": "Slavoj Český Krumlov",
-     "away": "Hluboka nad Vltavou",
-     "calibrated_lg": true,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 85,
-       "outcome": "WIN"
-      },
-      {
-       "market": "Over 2.5",
-       "prob": 66,
-       "outcome": "WIN"
-      }
-     ],
-     "ft_h": 1,
-     "ft_a": 3,
-     "ht_h": 1,
-     "ht_a": 2
-    },
-    {
-     "fixture_id": 1490732,
-     "time": "14:00",
-     "country": "Czech-Republic",
-     "league": "1. Liga U19",
-     "home": "Slovácko U19",
-     "away": "Mladá Boleslav U19",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 84,
-       "outcome": "WIN"
-      },
-      {
-       "market": "Over 2.5",
-       "prob": 65,
-       "outcome": "WIN"
-      }
-     ],
-     "ft_h": 0,
-     "ft_a": 4,
-     "ht_h": 0,
-     "ht_a": 0
-    },
-    {
-     "fixture_id": 1487720,
-     "time": "18:30",
-     "country": "Czech-Republic",
-     "league": "4. liga - Divizie E",
-     "home": "Kozlovice",
-     "away": "Břeclav",
-     "calibrated_lg": true,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 78,
-       "outcome": "LOSS"
-      }
-     ],
-     "ft_h": 1,
-     "ft_a": 0,
-     "ht_h": 0,
-     "ht_a": 0
-    },
-    {
-     "fixture_id": 1543273,
-     "time": "20:45",
-     "country": "Brazil",
-     "league": "Carioca A2",
-     "home": "América RJ",
-     "away": "Cabofriense",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 78,
-       "outcome": "WIN"
-      },
-      {
-       "market": "Under 3.5",
-       "prob": 66,
-       "outcome": "WIN"
-      }
-     ],
-     "ft_h": 2,
-     "ft_a": 1,
-     "ht_h": 0,
-     "ht_a": 1
-    },
-    {
-     "fixture_id": 1543272,
-     "time": "23:00",
-     "country": "Brazil",
-     "league": "Carioca A2",
-     "home": "CFRJ / Maricá",
-     "away": "Bonsucesso",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Under 3.5",
-       "prob": 72,
-       "outcome": "WIN"
-      }
-     ],
-     "ft_h": 0,
-     "ft_a": 0,
-     "ht_h": 0,
-     "ht_a": 0
-    },
-    {
-     "fixture_id": 1542167,
-     "time": "16:30",
-     "country": "Iran",
-     "league": "Azadegan League",
-     "home": "Damash Gilanian",
-     "away": "Mes Shahr-e Babak",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Under 3.5",
-       "prob": 92,
-       "outcome": "LOSS"
-      },
-      {
-       "market": "Under 2.5",
-       "prob": 78,
-       "outcome": "LOSS"
-      },
-      {
-       "market": "BTTS Nu",
-       "prob": 73,
-       "outcome": "WIN"
-      }
-     ],
-     "ft_h": 0,
-     "ft_a": 7,
-     "ht_h": 0,
-     "ht_a": 1
-    },
-    {
-     "fixture_id": 1542173,
-     "time": "17:30",
-     "country": "Iran",
-     "league": "Azadegan League",
-     "home": "Naft Bandar Abbas",
-     "away": "Shahrdari Noshahr",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Under 3.5",
-       "prob": 96,
-       "outcome": "WIN"
-      },
-      {
-       "market": "Under 2.5",
-       "prob": 86,
-       "outcome": "WIN"
-      },
-      {
-       "market": "BTTS Nu",
-       "prob": 75,
-       "outcome": "WIN"
-      }
-     ],
-     "ft_h": 1,
-     "ft_a": 0,
-     "ht_h": 1,
-     "ht_a": 0
-    },
-    {
-     "fixture_id": 1550832,
-     "time": "02:00",
-     "country": "World",
-     "league": "Friendlies",
-     "home": "Brazil U17",
-     "away": "United States U17",
-     "calibrated_lg": true,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 78,
-       "outcome": "LOSS"
-      },
-      {
-       "market": "1 (Home)",
-       "prob": 70,
-       "outcome": "WIN"
-      }
-     ],
-     "ft_h": 1,
-     "ft_a": 0,
-     "ht_h": 0,
-     "ht_a": 0
-    },
-    {
-     "fixture_id": 1517550,
-     "time": "12:30",
-     "country": "Australia",
-     "league": "New South Wales NPL",
-     "home": "Sydney Olympic",
-     "away": "SD Raiders",
-     "calibrated_lg": true,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 83,
-       "outcome": "WIN"
-      }
-     ],
-     "ft_h": 1,
-     "ft_a": 1,
-     "ht_h": 1,
-     "ht_a": 0
-    },
-    {
-     "fixture_id": 1537468,
-     "time": "12:30",
-     "country": "Australia",
-     "league": "Capital Territory NPL",
-     "home": "Canberra FC",
-     "away": "Queanbeyan City",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 77,
-       "outcome": "WIN"
-      },
-      {
-       "market": "Under 3.5",
-       "prob": 67,
-       "outcome": "LOSS"
-      }
-     ],
-     "ft_h": 4,
-     "ft_a": 2,
-     "ht_h": 2,
-     "ht_a": 1
-    },
-    {
-     "fixture_id": 1537469,
-     "time": "12:30",
-     "country": "Australia",
-     "league": "Capital Territory NPL",
-     "home": "O'Connor Knights",
-     "away": "Cooma Tigers FC",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 87,
-       "outcome": "LOSS"
-      },
-      {
-       "market": "Over 2.5",
-       "prob": 71,
-       "outcome": "LOSS"
-      },
-      {
-       "market": "2 (Away)",
-       "prob": 66,
-       "outcome": "WIN"
-      }
-     ],
-     "ft_h": 0,
-     "ft_a": 1,
-     "ht_h": 0,
-     "ht_a": 0
-    },
-    {
-     "fixture_id": 1537470,
-     "time": "12:30",
-     "country": "Australia",
-     "league": "Capital Territory NPL",
-     "home": "Tuggeranong United",
-     "away": "Monaro Panthers",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 88,
-       "outcome": "WIN"
-      },
-      {
-       "market": "Over 2.5",
-       "prob": 73,
-       "outcome": "WIN"
-      },
-      {
-       "market": "BTTS Da",
-       "prob": 66,
-       "outcome": "WIN"
-      }
-     ],
-     "ft_h": 1,
-     "ft_a": 6,
-     "ht_h": 0,
-     "ht_a": 4
-    },
-    {
-     "fixture_id": 1537471,
-     "time": "12:30",
-     "country": "Australia",
-     "league": "Capital Territory NPL",
-     "home": "Canberra Olympic",
-     "away": "Canberra Juventus",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 89,
-       "outcome": "WIN"
-      },
-      {
-       "market": "Over 2.5",
-       "prob": 74,
-       "outcome": "WIN"
-      },
-      {
-       "market": "BTTS Da",
-       "prob": 67,
-       "outcome": "WIN"
-      }
-     ],
-     "ft_h": 2,
-     "ft_a": 3,
-     "ht_h": 0,
-     "ht_a": 2
-    },
-    {
-     "fixture_id": 1537472,
-     "time": "12:30",
-     "country": "Australia",
-     "league": "Capital Territory NPL",
-     "home": "Belconnen United",
-     "away": "Canberra White Eagles",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 86,
-       "outcome": "WIN"
-      },
-      {
-       "market": "1 (Home)",
-       "prob": 74,
-       "outcome": "LOSS"
-      },
-      {
-       "market": "Over 2.5",
-       "prob": 69,
-       "outcome": "WIN"
-      }
-     ],
-     "ft_h": 1,
-     "ft_a": 2,
-     "ht_h": 1,
-     "ht_a": 1
-    },
-    {
-     "fixture_id": 1532568,
-     "time": "13:00",
-     "country": "Australia",
-     "league": "NNSW League 1",
-     "home": "Lake Macquarie",
-     "away": "Toronto Awaba Stags",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 82,
-       "outcome": "WIN"
-      },
-      {
-       "market": "Over 2.5",
-       "prob": 65,
-       "outcome": "WIN"
-      }
-     ],
-     "ft_h": 3,
-     "ft_a": 0,
-     "ht_h": null,
-     "ht_a": null
-    },
-    {
-     "fixture_id": 1532576,
-     "time": "13:00",
-     "country": "Australia",
-     "league": "NNSW League 1",
-     "home": "Wallsend Red Devils",
-     "away": "New Lambton",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 85,
-       "outcome": "WIN"
-      },
-      {
-       "market": "Over 2.5",
-       "prob": 68,
-       "outcome": "WIN"
-      }
-     ],
-     "ft_h": 5,
-     "ft_a": 2,
-     "ht_h": null,
-     "ht_a": null
-    },
-    {
-     "fixture_id": 1490691,
-     "time": "14:00",
-     "country": "Czech-Republic",
-     "league": "1. Liga U19",
-     "home": "Baník Ostrava U19",
-     "away": "Zbrojovka Brno U19",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 86,
-       "outcome": "LOSS"
-      },
-      {
-       "market": "Over 2.5",
-       "prob": 69,
-       "outcome": "LOSS"
-      }
-     ],
-     "ft_h": 1,
-     "ft_a": 0,
-     "ht_h": 1,
-     "ht_a": 0
-    },
-    {
-     "fixture_id": 1546776,
-     "time": "15:00",
-     "country": "Congo-DR",
-     "league": "Ligue 1",
-     "home": "Céleste",
-     "away": "Simba",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Under 3.5",
-       "prob": 87,
-       "outcome": "WIN"
-      },
-      {
-       "market": "Under 2.5",
-       "prob": 69,
-       "outcome": "WIN"
-      }
-     ],
-     "ft_h": 1,
-     "ft_a": 1,
-     "ht_h": 0,
-     "ht_a": 0
-    },
-    {
-     "fixture_id": 1495292,
-     "time": "16:00",
-     "country": "Zimbabwe",
-     "league": "Premier Soccer League",
-     "home": "Chicken Inn",
-     "away": "CAPS United",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Under 3.5",
-       "prob": 91,
-       "outcome": "WIN"
-      },
-      {
-       "market": "Under 2.5",
-       "prob": 78,
-       "outcome": "WIN"
-      },
-      {
-       "market": "BTTS Nu",
-       "prob": 66,
-       "outcome": "WIN"
-      }
-     ],
-     "ft_h": 0,
-     "ft_a": 0,
-     "ht_h": 0,
-     "ht_a": 0
-    },
-    {
-     "fixture_id": 1495293,
-     "time": "16:00",
-     "country": "Zimbabwe",
-     "league": "Premier Soccer League",
-     "home": "Dynamos",
-     "away": "Hunters",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Under 3.5",
-       "prob": 83,
-       "outcome": "LOSS"
-      }
-     ],
-     "ft_h": 2,
-     "ft_a": 2,
-     "ht_h": 0,
-     "ht_a": 0
-    },
-    {
-     "fixture_id": 1495295,
-     "time": "16:00",
-     "country": "Zimbabwe",
-     "league": "Premier Soccer League",
-     "home": "MWOS",
-     "away": "Manica Diamonds",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Under 3.5",
-       "prob": 91,
-       "outcome": "LOSS"
-      },
-      {
-       "market": "Under 2.5",
-       "prob": 78,
-       "outcome": "LOSS"
-      },
-      {
-       "market": "BTTS Nu",
-       "prob": 67,
-       "outcome": "LOSS"
-      }
-     ],
-     "ft_h": 3,
-     "ft_a": 1,
-     "ht_h": 1,
-     "ht_a": 1
-    },
-    {
-     "fixture_id": 1495296,
-     "time": "16:00",
-     "country": "Zimbabwe",
-     "league": "Premier Soccer League",
-     "home": "Platinum",
-     "away": "Hardrock",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Under 3.5",
-       "prob": 91,
-       "outcome": "WIN"
-      },
-      {
-       "market": "Under 2.5",
-       "prob": 78,
-       "outcome": "WIN"
-      },
-      {
-       "market": "BTTS Nu",
-       "prob": 68,
-       "outcome": "WIN"
-      }
-     ],
-     "ft_h": 0,
-     "ft_a": 0,
-     "ht_h": 0,
-     "ht_a": 0
-    },
-    {
-     "fixture_id": 1495298,
-     "time": "16:00",
-     "country": "Zimbabwe",
-     "league": "Premier Soccer League",
-     "home": "Simba Bhora",
-     "away": "Ngezi Platinum",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Under 3.5",
-       "prob": 87,
-       "outcome": "WIN"
-      },
-      {
-       "market": "Under 2.5",
-       "prob": 70,
-       "outcome": "WIN"
-      }
-     ],
-     "ft_h": 1,
-     "ft_a": 0,
-     "ht_h": 1,
-     "ht_a": 0
-    },
-    {
-     "fixture_id": 1495299,
-     "time": "16:00",
-     "country": "Zimbabwe",
-     "league": "Premier Soccer League",
-     "home": "Kariba",
-     "away": "Herentals",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Under 3.5",
-       "prob": 89,
-       "outcome": "WIN"
-      },
-      {
-       "market": "Under 2.5",
-       "prob": 74,
-       "outcome": "WIN"
-      }
-     ],
-     "ft_h": 0,
-     "ft_a": 0,
-     "ht_h": 0,
-     "ht_a": 0
-    },
-    {
-     "fixture_id": 1550040,
-     "time": "16:00",
-     "country": "Eswatini",
-     "league": "Premier League",
-     "home": "Amawele",
-     "away": "Madlenya",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Under 3.5",
-       "prob": 80,
-       "outcome": "WIN"
-      }
-     ],
-     "ft_h": 0,
-     "ft_a": 1,
-     "ht_h": 0,
-     "ht_a": 1
-    },
-    {
-     "fixture_id": 1548695,
-     "time": "16:30",
-     "country": "World",
-     "league": "Friendlies Clubs",
-     "home": "trelleborgs FF",
-     "away": "Osters IF",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 85,
-       "outcome": "WIN"
-      },
-      {
-       "market": "Over 2.5",
-       "prob": 67,
-       "outcome": "WIN"
-      }
-     ],
-     "ft_h": 1,
-     "ft_a": 2,
-     "ht_h": 0,
-     "ht_a": 2
-    },
-    {
-     "fixture_id": 1546775,
-     "time": "17:00",
-     "country": "Congo-DR",
-     "league": "Ligue 1",
-     "home": "Vita Club",
-     "away": "Maniema Union",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Under 3.5",
-       "prob": 93,
-       "outcome": "WIN"
-      },
-      {
-       "market": "Under 2.5",
-       "prob": 79,
-       "outcome": "LOSS"
-      },
-      {
-       "market": "BTTS Nu",
-       "prob": 68,
-       "outcome": "LOSS"
-      }
-     ],
-     "ft_h": 1,
-     "ft_a": 2,
-     "ht_h": 1,
-     "ht_a": 2
-    },
-    {
-     "fixture_id": 1548301,
-     "time": "17:00",
-     "country": "Finland",
-     "league": "Suomen Cup",
-     "home": "KuPS",
-     "away": "VPS",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Under 3.5",
-       "prob": 76,
-       "outcome": "WIN"
-      }
-     ],
-     "ft_h": 0,
-     "ft_a": 0,
-     "ht_h": 0,
-     "ht_a": 0
-    },
-    {
-     "fixture_id": 1550653,
-     "time": "17:30",
-     "country": "Gabon",
-     "league": "Championnat D1",
-     "home": "Dikaki",
-     "away": "Cercle Mbéri",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 75,
-       "outcome": "WIN"
-      },
-      {
-       "market": "Under 3.5",
-       "prob": 69,
-       "outcome": "LOSS"
-      }
-     ],
-     "ft_h": 1,
-     "ft_a": 4,
-     "ht_h": 0,
-     "ht_a": 2
-    },
-    {
-     "fixture_id": 1550654,
-     "time": "17:30",
-     "country": "Gabon",
-     "league": "Championnat D1",
-     "home": "FC 105",
-     "away": "Pélican",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 76,
-       "outcome": "WIN"
-      },
-      {
-       "market": "Under 3.5",
-       "prob": 68,
-       "outcome": "LOSS"
-      }
-     ],
-     "ft_h": 1,
-     "ft_a": 4,
-     "ht_h": 0,
-     "ht_a": 2
-    },
-    {
-     "fixture_id": 1550655,
-     "time": "17:30",
-     "country": "Gabon",
-     "league": "Championnat D1",
-     "home": "Mangasport",
-     "away": "Bouenguidi",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "1 (Home)",
-       "prob": 71,
-       "outcome": "WIN"
-      },
-      {
-       "market": "Under 3.5",
-       "prob": 70,
-       "outcome": "LOSS"
-      }
-     ],
-     "ft_h": 3,
-     "ft_a": 2,
-     "ht_h": 0,
-     "ht_a": 1
-    },
-    {
-     "fixture_id": 1550656,
-     "time": "17:30",
-     "country": "Gabon",
-     "league": "Championnat D1",
-     "home": "Oyem AC",
-     "away": "Bitam",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 82,
-       "outcome": "WIN"
-      },
-      {
-       "market": "1 (Home)",
-       "prob": 66,
-       "outcome": "LOSS"
-      }
-     ],
-     "ft_h": 1,
-     "ft_a": 2,
-     "ht_h": 1,
-     "ht_a": 1
-    },
-    {
-     "fixture_id": 1550657,
-     "time": "17:30",
-     "country": "Gabon",
-     "league": "Championnat D1",
-     "home": "Stade Mandji",
-     "away": "Lozo",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Under 3.5",
-       "prob": 82,
-       "outcome": "LOSS"
-      }
-     ],
-     "ft_h": 5,
-     "ft_a": 1,
-     "ht_h": 0,
-     "ht_a": 0
-    },
-    {
-     "fixture_id": 1550658,
-     "time": "17:30",
-     "country": "Gabon",
-     "league": "Championnat D1",
-     "home": "Vautour Club",
-     "away": "US Oyem",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Under 3.5",
-       "prob": 72,
-       "outcome": "WIN"
-      }
-     ],
-     "ft_h": 2,
-     "ft_a": 1,
-     "ht_h": 1,
-     "ht_a": 1
-    },
-    {
-     "fixture_id": 1548302,
-     "time": "18:00",
-     "country": "Finland",
-     "league": "Suomen Cup",
-     "home": "Ilves",
-     "away": "Lahti",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 76,
-       "outcome": "WIN"
-      },
-      {
-       "market": "Under 3.5",
-       "prob": 69,
-       "outcome": "LOSS"
-      }
-     ],
-     "ft_h": 5,
-     "ft_a": 2,
-     "ht_h": 4,
-     "ht_a": 2
-    },
-    {
-     "fixture_id": 1548303,
-     "time": "18:00",
-     "country": "Finland",
-     "league": "Suomen Cup",
-     "home": "SJK",
-     "away": "Inter Turku",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Under 3.5",
-       "prob": 72,
-       "outcome": "WIN"
-      }
-     ],
-     "ft_h": 1,
-     "ft_a": 2,
-     "ht_h": 1,
-     "ht_a": 1
-    },
-    {
-     "fixture_id": 1550878,
-     "time": "18:30",
-     "country": "Portugal",
-     "league": "Campeonato de Portugal Prio - Promotion Round",
-     "home": "Leça",
-     "away": "Vitória de Sernache",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Under 3.5",
-       "prob": 75,
-       "outcome": "WIN"
-      }
-     ],
-     "ft_h": 1,
-     "ft_a": 1,
-     "ht_h": 1,
-     "ht_a": 0
-    },
-    {
-     "fixture_id": 1530591,
-     "time": "19:00",
-     "country": "Lithuania",
-     "league": "1 Lyga",
-     "home": "Neptūną Klaipėda",
-     "away": "Transinvest 2",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 84,
-       "outcome": "WIN"
-      },
-      {
-       "market": "1 (Home)",
-       "prob": 78,
-       "outcome": "WIN"
-      },
-      {
-       "market": "Over 2.5",
-       "prob": 68,
-       "outcome": "WIN"
-      }
-     ],
-     "ft_h": 3,
-     "ft_a": 0,
-     "ht_h": 1,
-     "ht_a": 0
-    },
-    {
-     "fixture_id": 1545634,
-     "time": "19:00",
-     "country": "Sweden",
-     "league": "Svenska Cupen",
-     "home": "Falu BS",
-     "away": "Gefle IF",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 82,
-       "outcome": "LOSS"
-      }
-     ],
-     "ft_h": 0,
-     "ft_a": 0,
-     "ht_h": 0,
-     "ht_a": 0
-    },
-    {
-     "fixture_id": 1550665,
-     "time": "19:15",
-     "country": "Mali",
-     "league": "Première Division",
-     "home": "Derby Academie",
-     "away": "Mali Coura",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Under 3.5",
-       "prob": 89,
-       "outcome": "LOSS"
-      },
-      {
-       "market": "Under 2.5",
-       "prob": 73,
-       "outcome": "LOSS"
-      }
-     ],
-     "ft_h": 2,
-     "ft_a": 2,
-     "ht_h": 1,
-     "ht_a": 1
-    },
-    {
-     "fixture_id": 1550666,
-     "time": "19:15",
-     "country": "Mali",
-     "league": "Première Division",
-     "home": "Afrique Football Élite",
-     "away": "ASKO",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Under 3.5",
-       "prob": 80,
-       "outcome": "LOSS"
-      }
-     ],
-     "ft_h": 5,
-     "ft_a": 3,
-     "ht_h": 3,
-     "ht_a": 1
-    },
-    {
-     "fixture_id": 1550667,
-     "time": "19:15",
-     "country": "Mali",
-     "league": "Première Division",
-     "home": "Onze Créateurs",
-     "away": "Bakaridjan",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Under 3.5",
-       "prob": 82,
-       "outcome": "WIN"
-      }
-     ],
-     "ft_h": 0,
-     "ft_a": 0,
-     "ht_h": 0,
-     "ht_a": 0
-    },
-    {
-     "fixture_id": 1531376,
-     "time": "19:30",
-     "country": "Gambia",
-     "league": "GFA League",
-     "home": "Hawks",
-     "away": "GPA",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Under 3.5",
-       "prob": 89,
-       "outcome": "WIN"
-      },
-      {
-       "market": "Under 2.5",
-       "prob": 74,
-       "outcome": "WIN"
-      }
-     ],
-     "ft_h": 0,
-     "ft_a": 0,
-     "ht_h": 0,
-     "ht_a": 0
-    },
-    {
-     "fixture_id": 1531377,
-     "time": "19:30",
-     "country": "Gambia",
-     "league": "GFA League",
-     "home": "Team Rhino",
-     "away": "Real de Banjul",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Under 3.5",
-       "prob": 91,
-       "outcome": "LOSS"
-      },
-      {
-       "market": "Under 2.5",
-       "prob": 77,
-       "outcome": "LOSS"
-      }
-     ],
-     "ft_h": 2,
-     "ft_a": 2,
-     "ht_h": 0,
-     "ht_a": 1
-    },
-    {
-     "fixture_id": 1497597,
-     "time": "20:00",
-     "country": "Sweden",
-     "league": "Superettan",
-     "home": "Orebro SK",
-     "away": "GIF Sundsvall",
-     "calibrated_lg": true,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 77,
-       "outcome": "LOSS"
-      },
-      {
-       "market": "Under 3.5",
-       "prob": 67,
-       "outcome": "WIN"
-      }
-     ],
-     "ft_h": 0,
-     "ft_a": 1,
-     "ht_h": 0,
-     "ht_a": 0
-    },
-    {
-     "fixture_id": 1497600,
-     "time": "20:00",
-     "country": "Sweden",
-     "league": "Superettan",
-     "home": "Varbergs BoIS FC",
-     "away": "Norrby IF",
-     "calibrated_lg": true,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 77,
-       "outcome": "WIN"
-      },
-      {
-       "market": "Under 3.5",
-       "prob": 67,
-       "outcome": "WIN"
-      }
-     ],
-     "ft_h": 2,
-     "ft_a": 0,
-     "ht_h": 1,
-     "ht_a": 0
-    },
-    {
-     "fixture_id": 1545635,
-     "time": "20:00",
-     "country": "Sweden",
-     "league": "Svenska Cupen",
-     "home": "Balkan",
-     "away": "Eskilsminne",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 86,
-       "outcome": "WIN"
-      },
-      {
-       "market": "Over 2.5",
-       "prob": 70,
-       "outcome": "WIN"
-      }
-     ],
-     "ft_h": 2,
-     "ft_a": 2,
-     "ht_h": 2,
-     "ht_a": 0
-    },
-    {
-     "fixture_id": 1545636,
-     "time": "20:00",
-     "country": "Sweden",
-     "league": "Svenska Cupen",
-     "home": "Eker Örebro",
-     "away": "IF Karlstad",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 84,
-       "outcome": "WIN"
-      },
-      {
-       "market": "Over 2.5",
-       "prob": 67,
-       "outcome": "WIN"
-      }
-     ],
-     "ft_h": 0,
-     "ft_a": 3,
-     "ht_h": 0,
-     "ht_a": 0
-    },
-    {
-     "fixture_id": 1545637,
-     "time": "20:00",
-     "country": "Sweden",
-     "league": "Svenska Cupen",
-     "home": "Lidköping",
-     "away": "Skövde AIK",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 79,
-       "outcome": "WIN"
-      }
-     ],
-     "ft_h": 2,
-     "ft_a": 3,
-     "ht_h": 2,
-     "ht_a": 1
-    },
-    {
-     "fixture_id": 1550634,
-     "time": "20:00",
-     "country": "Germany",
-     "league": "Oberliga - Promotion Round",
-     "home": "Pirmasens",
-     "away": "VfR Mannheim",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 87,
-       "outcome": "LOSS"
-      },
-      {
-       "market": "Over 2.5",
-       "prob": 70,
-       "outcome": "LOSS"
-      }
-     ],
-     "ft_h": 0,
-     "ft_a": 1,
-     "ht_h": 0,
-     "ht_a": 0
-    },
-    {
-     "fixture_id": 1512454,
-     "time": "21:00",
-     "country": "Argentina",
-     "league": "Reserve League",
-     "home": "Argentinos Juniors Res.",
-     "away": "Barracas Central Res.",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Under 3.5",
-       "prob": 77,
-       "outcome": "LOSS"
-      }
-     ],
-     "ft_h": 3,
-     "ft_a": 1,
-     "ht_h": 1,
-     "ht_a": 0
-    },
-    {
-     "fixture_id": 1512459,
-     "time": "21:00",
-     "country": "Argentina",
-     "league": "Reserve League",
-     "home": "Estudiantes Rio Cuarto 2",
-     "away": "Huracán Res.",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Under 3.5",
-       "prob": 71,
-       "outcome": "WIN"
-      }
-     ],
-     "ft_h": 1,
-     "ft_a": 0,
-     "ht_h": 1,
-     "ht_a": 0
-    },
-    {
-     "fixture_id": 1512463,
-     "time": "21:00",
-     "country": "Argentina",
-     "league": "Reserve League",
-     "home": "Newell's Old Boys Res.",
-     "away": "Boca Juniors Res.",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Under 3.5",
-       "prob": 81,
-       "outcome": "LOSS"
-      }
-     ],
-     "ft_h": 3,
-     "ft_a": 1,
-     "ht_h": 1,
-     "ht_a": 0
-    },
-    {
-     "fixture_id": 1512466,
-     "time": "21:00",
-     "country": "Argentina",
-     "league": "Reserve League",
-     "home": "San Lorenzo Res.",
-     "away": "Instituto Res.",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Under 3.5",
-       "prob": 78,
-       "outcome": "LOSS"
-      }
-     ],
-     "ft_h": 2,
-     "ft_a": 2,
-     "ht_h": 0,
-     "ht_a": 1
-    },
-    {
-     "fixture_id": 1512467,
-     "time": "21:00",
-     "country": "Argentina",
-     "league": "Reserve League",
-     "home": "San Martín San Juan Res.",
-     "away": "Estudiantes La Plata Res",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 79,
-       "outcome": "WIN"
-      }
-     ],
-     "ft_h": 0,
-     "ft_a": 4,
-     "ht_h": 0,
-     "ht_a": 2
-    },
-    {
-     "fixture_id": 1512468,
-     "time": "21:00",
-     "country": "Argentina",
-     "league": "Reserve League",
-     "home": "Sarmiento Res.",
-     "away": "Talleres Córdoba Res.",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Under 3.5",
-       "prob": 74,
-       "outcome": "WIN"
-      }
-     ],
-     "ft_h": 1,
-     "ft_a": 2,
-     "ht_h": 1,
-     "ht_a": 0
-    },
-    {
-     "fixture_id": 1512470,
-     "time": "21:00",
-     "country": "Argentina",
-     "league": "Reserve League",
-     "home": "Vélez Sársfield Res.",
-     "away": "Tigre Res.",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 76,
-       "outcome": "WIN"
-      },
-      {
-       "market": "1 (Home)",
-       "prob": 68,
-       "outcome": "WIN"
-      },
-      {
-       "market": "Under 3.5",
-       "prob": 68,
-       "outcome": "WIN"
-      }
-     ],
-     "ft_h": 2,
-     "ft_a": 0,
-     "ht_h": 2,
-     "ht_a": 0
-    },
-    {
-     "fixture_id": 1526163,
-     "time": "21:00",
-     "country": "Brazil",
-     "league": "Brasileiro U20 A",
-     "home": "Botafogo U20",
-     "away": "Criciuma U20",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Under 3.5",
-       "prob": 72,
-       "outcome": "WIN"
-      }
-     ],
-     "ft_h": 2,
-     "ft_a": 0,
-     "ht_h": 0,
-     "ht_a": 0
-    },
-    {
-     "fixture_id": 1526164,
-     "time": "21:00",
-     "country": "Brazil",
-     "league": "Brasileiro U20 A",
-     "home": "Corinthians U20",
-     "away": "Avaí U20",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 78,
-       "outcome": "WIN"
-      },
-      {
-       "market": "Under 3.5",
-       "prob": 66,
-       "outcome": "LOSS"
-      }
-     ],
-     "ft_h": 6,
-     "ft_a": 2,
-     "ht_h": 4,
-     "ht_a": 1
-    },
-    {
-     "fixture_id": 1526167,
-     "time": "21:00",
-     "country": "Brazil",
-     "league": "Brasileiro U20 A",
-     "home": "Grêmio U20",
-     "away": "Fluminense U20",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 75,
-       "outcome": "WIN"
-      },
-      {
-       "market": "Under 3.5",
-       "prob": 70,
-       "outcome": "WIN"
-      }
-     ],
-     "ft_h": 0,
-     "ft_a": 3,
-     "ht_h": 0,
-     "ht_a": 1
-    },
-    {
-     "fixture_id": 1526168,
-     "time": "21:00",
-     "country": "Brazil",
-     "league": "Brasileiro U20 A",
-     "home": "Juventude U20",
-     "away": "Bahia U20",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 85,
-       "outcome": "WIN"
-      },
-      {
-       "market": "Over 2.5",
-       "prob": 68,
-       "outcome": "WIN"
-      }
-     ],
-     "ft_h": 3,
-     "ft_a": 1,
-     "ht_h": 0,
-     "ht_a": 0
-    },
-    {
-     "fixture_id": 1526172,
-     "time": "21:00",
-     "country": "Brazil",
-     "league": "Brasileiro U20 A",
-     "home": "Vitória U20",
-     "away": "América Mineiro U20",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 81,
-       "outcome": "LOSS"
-      }
-     ],
-     "ft_h": 0,
-     "ft_a": 1,
-     "ht_h": 0,
-     "ht_a": 0
-    },
-    {
-     "fixture_id": 1539825,
-     "time": "21:00",
-     "country": "Brazil",
-     "league": "Catarinense U20",
-     "home": "Chapecoense U20",
-     "away": "Concórdia U20",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Under 3.5",
-       "prob": 75,
-       "outcome": "LOSS"
-      }
-     ],
-     "ft_h": 3,
-     "ft_a": 1,
-     "ht_h": 1,
-     "ht_a": 1
-    },
-    {
-     "fixture_id": 1542025,
-     "time": "21:00",
-     "country": "Brazil",
-     "league": "Catarinense - 2",
-     "home": "Blumenau",
-     "away": "Jaraguá",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 86,
-       "outcome": "WIN"
-      },
-      {
-       "market": "1 (Home)",
-       "prob": 80,
-       "outcome": "WIN"
-      },
-      {
-       "market": "Over 2.5",
-       "prob": 70,
-       "outcome": "WIN"
-      }
-     ],
-     "ft_h": 6,
-     "ft_a": 0,
-     "ht_h": 4,
-     "ht_a": 0
-    },
-    {
-     "fixture_id": 1543393,
-     "time": "21:00",
-     "country": "Iceland",
-     "league": "2. Deild",
-     "home": "Fjardabyggd / Leiknir",
-     "away": "Fjolnir",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 89,
-       "outcome": "WIN"
-      },
-      {
-       "market": "Over 2.5",
-       "prob": 75,
-       "outcome": "WIN"
-      },
-      {
-       "market": "BTTS Da",
-       "prob": 66,
-       "outcome": "WIN"
-      }
-     ],
-     "ft_h": 2,
-     "ft_a": 3,
-     "ht_h": 1,
-     "ht_a": 0
-    },
-    {
-     "fixture_id": 1543894,
-     "time": "21:00",
-     "country": "Brazil",
-     "league": "Brasileiro U17",
-     "home": "Fluminense U17",
-     "away": "Fortaleza U17",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Under 3.5",
-       "prob": 82,
-       "outcome": "WIN"
-      }
-     ],
-     "ft_h": 3,
-     "ft_a": 0,
-     "ht_h": null,
-     "ht_a": null
-    },
-    {
-     "fixture_id": 1543895,
-     "time": "21:00",
-     "country": "Brazil",
-     "league": "Brasileiro U17",
-     "home": "Internacional U17",
-     "away": "RB Bragantino U17",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Under 3.5",
-       "prob": 76,
-       "outcome": "LOSS"
-      }
-     ],
-     "ft_h": 1,
-     "ft_a": 5,
-     "ht_h": null,
-     "ht_a": null
-    },
-    {
-     "fixture_id": 1549395,
-     "time": "21:00",
-     "country": "Brazil",
-     "league": "Baiano U20",
-     "home": "Jacobina U20",
-     "away": "Conquista U20",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Under 3.5",
-       "prob": 83,
-       "outcome": "WIN"
-      }
-     ],
-     "ft_h": 2,
-     "ft_a": 0,
-     "ht_h": 1,
-     "ht_a": 0
-    },
-    {
-     "fixture_id": 1550668,
-     "time": "21:00",
-     "country": "Netherlands",
-     "league": "Tweede Divisie",
-     "home": "Excelsior Maassluis",
-     "away": "Ijsselmeervogels",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 76,
-       "outcome": "WIN"
-      },
-      {
-       "market": "Under 3.5",
-       "prob": 68,
-       "outcome": "WIN"
-      }
-     ],
-     "ft_h": 2,
-     "ft_a": 1,
-     "ht_h": 1,
-     "ht_a": 0
-    },
-    {
-     "fixture_id": 1550879,
-     "time": "21:00",
-     "country": "Switzerland",
-     "league": "1. Liga Classic - Play-offs",
-     "home": "YF Juventus",
-     "away": "Langenthal",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 76,
-       "outcome": "WIN"
-      },
-      {
-       "market": "Under 3.5",
-       "prob": 69,
-       "outcome": "WIN"
-      }
-     ],
-     "ft_h": 1,
-     "ft_a": 2,
-     "ht_h": 1,
-     "ht_a": 0
-    },
-    {
-     "fixture_id": 1543391,
-     "time": "22:15",
-     "country": "Iceland",
-     "league": "2. Deild",
-     "home": "Haukar",
-     "away": "Kormákur / Hvöt",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 82,
-       "outcome": "WIN"
-      }
-     ],
-     "ft_h": 2,
-     "ft_a": 2,
-     "ht_h": 0,
-     "ht_a": 2
-    },
-    {
-     "fixture_id": 1543392,
-     "time": "22:15",
-     "country": "Iceland",
-     "league": "2. Deild",
-     "home": "Kári",
-     "away": "Selfoss",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 91,
-       "outcome": "WIN"
-      },
-      {
-       "market": "Over 2.5",
-       "prob": 78,
-       "outcome": "WIN"
-      },
-      {
-       "market": "BTTS Da",
-       "prob": 69,
-       "outcome": "WIN"
-      }
-     ],
-     "ft_h": 2,
-     "ft_a": 2,
-     "ht_h": 0,
-     "ht_a": 0
-    },
-    {
-     "fixture_id": 1543394,
-     "time": "22:15",
-     "country": "Iceland",
-     "league": "2. Deild",
-     "home": "KFG",
-     "away": "Hvíti riddarinn",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 80,
-       "outcome": "LOSS"
-      }
-     ],
-     "ft_h": 1,
-     "ft_a": 0,
-     "ht_h": 0,
-     "ht_a": 0
-    },
-    {
-     "fixture_id": 1543395,
-     "time": "22:15",
-     "country": "Iceland",
-     "league": "2. Deild",
-     "home": "Magni",
-     "away": "Dalvík / Reynir",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 82,
-       "outcome": "WIN"
-      }
-     ],
-     "ft_h": 0,
-     "ft_a": 2,
-     "ht_h": 0,
-     "ht_a": 1
-    },
-    {
-     "fixture_id": 1543396,
-     "time": "22:15",
-     "country": "Iceland",
-     "league": "2. Deild",
-     "home": "Thróttur Vogar",
-     "away": "Vikingur Olafsiik",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Under 3.5",
-       "prob": 70,
-       "outcome": "WIN"
-      }
-     ],
-     "ft_h": 1,
-     "ft_a": 2,
-     "ht_h": 0,
-     "ht_a": 1
-    },
-    {
-     "fixture_id": 1545809,
-     "time": "22:30",
-     "country": "Iceland",
-     "league": "Cup",
-     "home": "Afturelding",
-     "away": "Stjarnan",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 92,
-       "outcome": "WIN"
-      },
-      {
-       "market": "Over 2.5",
-       "prob": 80,
-       "outcome": "WIN"
-      },
-      {
-       "market": "BTTS Da",
-       "prob": 71,
-       "outcome": "WIN"
-      }
-     ],
-     "ft_h": 3,
-     "ft_a": 1,
-     "ht_h": 0,
-     "ht_a": 1
-    },
-    {
-     "fixture_id": 1540358,
-     "time": "22:45",
-     "country": "World",
-     "league": "Friendlies",
-     "home": "Portugal",
-     "away": "Nigeria",
-     "calibrated_lg": true,
-     "picks": [
-      {
-       "market": "Under 3.5",
-       "prob": 70,
-       "outcome": "WIN"
-      }
-     ],
-     "ft_h": 2,
-     "ft_a": 1,
-     "ht_h": 1,
-     "ht_a": 1
-    },
-    {
-     "fixture_id": 1525494,
-     "time": "23:00",
-     "country": "World",
-     "league": "Friendlies",
-     "home": "England",
-     "away": "Costa Rica",
-     "calibrated_lg": true,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 77,
-       "outcome": "WIN"
-      },
-      {
-       "market": "1 (Home)",
-       "prob": 73,
-       "outcome": "WIN"
-      }
-     ],
-     "ft_h": 3,
-     "ft_a": 0,
-     "ht_h": 1,
-     "ht_a": 0
-    },
-    {
-     "fixture_id": 1526555,
-     "time": "23:30",
-     "country": "Ecuador",
-     "league": "Liga Pro Serie B",
-     "home": "Gualaceo SC",
-     "away": "Cumbayá",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Under 3.5",
-       "prob": 81,
-       "outcome": "WIN"
-      }
-     ],
-     "ft_h": 1,
-     "ft_a": 0,
-     "ht_h": 1,
-     "ht_a": 0
-    },
-    {
-     "fixture_id": 1526556,
-     "time": "23:30",
-     "country": "Ecuador",
-     "league": "Liga Pro Serie B",
-     "home": "Ind. Juniors",
-     "away": "Deportivo Cuenca Juniors",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Under 3.5",
-       "prob": 75,
-       "outcome": "LOSS"
-      }
-     ],
-     "ft_h": 4,
-     "ft_a": 0,
-     "ht_h": 3,
-     "ht_a": 0
-    },
-    {
-     "fixture_id": 1524827,
-     "time": "00:00",
-     "country": "USA",
-     "league": "USL League Two",
-     "home": "Charlotte Eagles",
-     "away": "Asheville City",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Under 3.5",
-       "prob": 72,
-       "outcome": "LOSS"
-      }
-     ],
-     "ft_h": 2,
-     "ft_a": 2,
-     "ht_h": 1,
-     "ht_a": 2
-    },
-    {
-     "fixture_id": 1524829,
-     "time": "00:00",
-     "country": "USA",
-     "league": "USL League Two",
-     "home": "Erie Sports Center",
-     "away": "Buffalo",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 76,
-       "outcome": "WIN"
-      },
-      {
-       "market": "2 (Away)",
-       "prob": 66,
-       "outcome": "WIN"
-      },
-      {
-       "market": "Under 3.5",
-       "prob": 65,
-       "outcome": "LOSS"
-      }
-     ],
-     "ft_h": 0,
-     "ft_a": 5,
-     "ht_h": 0,
-     "ht_a": 3
-    },
-    {
-     "fixture_id": 1524828,
-     "time": "01:00",
-     "country": "USA",
-     "league": "USL League Two",
-     "home": "Chicago Dutch Lions",
-     "away": "St. Croix",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 82,
-       "outcome": "WIN"
-      }
-     ],
-     "ft_h": 1,
-     "ft_a": 4,
-     "ht_h": 1,
-     "ht_a": 3
-    },
-    {
-     "fixture_id": 1524850,
-     "time": "01:00",
-     "country": "USA",
-     "league": "USL League Two",
-     "home": "Nona",
-     "away": "Brooke House",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Under 3.5",
-       "prob": 75,
-       "outcome": "WIN"
-      }
-     ],
-     "ft_h": 0,
-     "ft_a": 0,
-     "ht_h": 0,
-     "ht_a": 0
-    },
-    {
-     "fixture_id": 1524835,
-     "time": "01:30",
-     "country": "USA",
-     "league": "USL League Two",
-     "home": "Charlotte Independence 2",
-     "away": "Port City",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Under 3.5",
-       "prob": 76,
-       "outcome": "LOSS"
-      }
-     ],
-     "ft_h": 4,
-     "ft_a": 1,
-     "ht_h": 3,
-     "ht_a": 1
-    },
-    {
-     "fixture_id": 1544586,
-     "time": "01:30",
-     "country": "Brazil",
-     "league": "Copa Gaúcha",
-     "home": "Brasil DE Pelotas",
-     "away": "Farroupilha",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Under 3.5",
-       "prob": 90,
-       "outcome": "LOSS"
-      },
-      {
-       "market": "Under 2.5",
-       "prob": 74,
-       "outcome": "LOSS"
-      },
-      {
-       "market": "BTTS Nu",
-       "prob": 66,
-       "outcome": "WIN"
-      }
-     ],
-     "ft_h": 4,
-     "ft_a": 0,
-     "ht_h": 3,
-     "ht_a": 0
-    },
-    {
-     "fixture_id": 1517298,
-     "time": "02:00",
-     "country": "Canada",
-     "league": "Canadian Premier League",
-     "home": "Forge",
-     "away": "HFX Wanderers FC",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Under 3.5",
-       "prob": 76,
-       "outcome": "WIN"
-      }
-     ],
-     "ft_h": 1,
-     "ft_a": 0,
-     "ht_h": 0,
-     "ht_a": 0
-    },
-    {
-     "fixture_id": 1520711,
-     "time": "02:00",
-     "country": "Brazil",
-     "league": "Serie B",
-     "home": "Ceara",
-     "away": "Avai",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Under 3.5",
-       "prob": 78,
-       "outcome": "WIN"
-      }
-     ],
-     "ft_h": 2,
-     "ft_a": 1,
-     "ht_h": 2,
-     "ht_a": 0
-    },
-    {
-     "fixture_id": 1520714,
-     "time": "02:00",
-     "country": "Brazil",
-     "league": "Serie B",
-     "home": "Goias",
-     "away": "Novorizontino",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Under 3.5",
-       "prob": 85,
-       "outcome": "LOSS"
-      },
-      {
-       "market": "Under 2.5",
-       "prob": 66,
-       "outcome": "LOSS"
-      }
-     ],
-     "ft_h": 0,
-     "ft_a": 4,
-     "ht_h": 0,
-     "ht_a": 1
-    },
-    {
-     "fixture_id": 1524830,
-     "time": "02:00",
-     "country": "USA",
-     "league": "USL League Two",
-     "home": "AC Connecticut",
-     "away": "Vermont Green",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 85,
-       "outcome": "WIN"
-      },
-      {
-       "market": "2 (Away)",
-       "prob": 77,
-       "outcome": "WIN"
-      },
-      {
-       "market": "Over 2.5",
-       "prob": 68,
-       "outcome": "WIN"
-      }
-     ],
-     "ft_h": 1,
-     "ft_a": 4,
-     "ht_h": 1,
-     "ht_a": 3
-    },
-    {
-     "fixture_id": 1524837,
-     "time": "02:00",
-     "country": "USA",
-     "league": "USL League Two",
-     "home": "Appalachian",
-     "away": "North Carolina Fusion",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 83,
-       "outcome": "WIN"
-      },
-      {
-       "market": "Over 2.5",
-       "prob": 66,
-       "outcome": "WIN"
-      }
-     ],
-     "ft_h": 5,
-     "ft_a": 2,
-     "ht_h": 3,
-     "ht_a": 0
-    },
-    {
-     "fixture_id": 1524838,
-     "time": "02:00",
-     "country": "USA",
-     "league": "USL League Two",
-     "home": "Black Rock",
-     "away": "Blackwatch Rush",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 84,
-       "outcome": "WIN"
-      },
-      {
-       "market": "1 (Home)",
-       "prob": 71,
-       "outcome": "WIN"
-      },
-      {
-       "market": "Over 2.5",
-       "prob": 67,
-       "outcome": "WIN"
-      }
-     ],
-     "ft_h": 3,
-     "ft_a": 1,
-     "ht_h": 2,
-     "ht_a": 0
-    },
-    {
-     "fixture_id": 1524840,
-     "time": "02:00",
-     "country": "USA",
-     "league": "USL League Two",
-     "home": "Cedar Stars Rush",
-     "away": "Westchester Flames",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 91,
-       "outcome": "WIN"
-      },
-      {
-       "market": "Over 2.5",
-       "prob": 78,
-       "outcome": "LOSS"
-      },
-      {
-       "market": "1 (Home)",
-       "prob": 77,
-       "outcome": "WIN"
-      }
-     ],
-     "ft_h": 2,
-     "ft_a": 0,
-     "ht_h": 1,
-     "ht_a": 0
-    },
-    {
-     "fixture_id": 1524842,
-     "time": "02:00",
-     "country": "USA",
-     "league": "USL League Two",
-     "home": "Dayton Dutch Lions",
-     "away": "Kings Hammer Columbus",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Under 3.5",
-       "prob": 71,
-       "outcome": "WIN"
-      }
-     ],
-     "ft_h": 1,
-     "ft_a": 0,
-     "ht_h": 1,
-     "ht_a": 0
-    },
-    {
-     "fixture_id": 1524848,
-     "time": "02:00",
-     "country": "USA",
-     "league": "USL League Two",
-     "home": "FC Miami City",
-     "away": "Weston",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Under 3.5",
-       "prob": 67,
-       "outcome": "LOSS"
-      }
-     ],
-     "ft_h": 2,
-     "ft_a": 4,
-     "ht_h": 2,
-     "ht_a": 1
-    },
-    {
-     "fixture_id": 1524849,
-     "time": "02:00",
-     "country": "USA",
-     "league": "USL League Two",
-     "home": "New England FC",
-     "away": "Seacoast United Phantoms",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 87,
-       "outcome": "WIN"
-      },
-      {
-       "market": "1 (Home)",
-       "prob": 77,
-       "outcome": "WIN"
-      },
-      {
-       "market": "Over 2.5",
-       "prob": 71,
-       "outcome": "WIN"
-      }
-     ],
-     "ft_h": 2,
-     "ft_a": 1,
-     "ht_h": 0,
-     "ht_a": 0
-    },
-    {
-     "fixture_id": 1524852,
-     "time": "02:00",
-     "country": "USA",
-     "league": "USL League Two",
-     "home": "Northern Indiana",
-     "away": "Toledo Villa",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 77,
-       "outcome": "WIN"
-      },
-      {
-       "market": "1 (Home)",
-       "prob": 66,
-       "outcome": "WIN"
-      }
-     ],
-     "ft_h": 3,
-     "ft_a": 1,
-     "ht_h": 2,
-     "ht_a": 1
-    },
-    {
-     "fixture_id": 1524853,
-     "time": "02:00",
-     "country": "USA",
-     "league": "USL League Two",
-     "home": "Reading United",
-     "away": "Ocean City Nor'easters",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 81,
-       "outcome": "WIN"
-      },
-      {
-       "market": "2 (Away)",
-       "prob": 68,
-       "outcome": "WIN"
-      }
-     ],
-     "ft_h": 0,
-     "ft_a": 2,
-     "ht_h": 0,
-     "ht_a": 1
-    },
-    {
-     "fixture_id": 1524858,
-     "time": "02:00",
-     "country": "USA",
-     "league": "USL League Two",
-     "home": "SC United Bantams",
-     "away": "Tobacco Road",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 86,
-       "outcome": "WIN"
-      },
-      {
-       "market": "Over 2.5",
-       "prob": 70,
-       "outcome": "WIN"
-      }
-     ],
-     "ft_h": 3,
-     "ft_a": 3,
-     "ht_h": 0,
-     "ht_a": 1
-    },
-    {
-     "fixture_id": 1531188,
-     "time": "02:00",
-     "country": "USA",
-     "league": "USL League One Cup",
-     "home": "Greenville Triumph",
-     "away": "Loudoun United",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 77,
-       "outcome": "WIN"
-      },
-      {
-       "market": "Under 3.5",
-       "prob": 67,
-       "outcome": "LOSS"
-      }
-     ],
-     "ft_h": 3,
-     "ft_a": 1,
-     "ht_h": 1,
-     "ht_a": 0
-    },
-    {
-     "fixture_id": 1531211,
-     "time": "02:00",
-     "country": "USA",
-     "league": "USL League One Cup",
-     "home": "One Knoxville",
-     "away": "Chattanooga Red Wolves",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Under 3.5",
-       "prob": 72,
-       "outcome": "WIN"
-      }
-     ],
-     "ft_h": 1,
-     "ft_a": 1,
-     "ht_h": 0,
-     "ht_a": 0
-    },
-    {
-     "fixture_id": 1532159,
-     "time": "02:00",
-     "country": "USA",
-     "league": "USL W League",
-     "home": "Eagle FC",
-     "away": "Northern Virginia FC",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 86,
-       "outcome": "WIN"
-      },
-      {
-       "market": "Over 2.5",
-       "prob": 70,
-       "outcome": "WIN"
-      }
-     ],
-     "ft_h": 3,
-     "ft_a": 1,
-     "ht_h": 3,
-     "ht_a": 0
-    },
-    {
-     "fixture_id": 1541980,
-     "time": "02:00",
-     "country": "Brazil",
-     "league": "Catarinense - 2",
-     "home": "Fluminense-SC",
-     "away": "Metropolitano",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Under 3.5",
-       "prob": 86,
-       "outcome": "LOSS"
-      },
-      {
-       "market": "Under 2.5",
-       "prob": 69,
-       "outcome": "LOSS"
-      }
-     ],
-     "ft_h": 1,
-     "ft_a": 3,
-     "ht_h": 1,
-     "ht_a": 2
-    },
-    {
-     "fixture_id": 1517299,
-     "time": "02:30",
-     "country": "Canada",
-     "league": "Canadian Premier League",
-     "home": "York United",
-     "away": "Cavalry FC",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Under 3.5",
-       "prob": 74,
-       "outcome": "LOSS"
-      }
-     ],
-     "ft_h": 1,
-     "ft_a": 5,
-     "ht_h": 0,
-     "ht_a": 2
-    },
-    {
-     "fixture_id": 1524826,
-     "time": "02:30",
-     "country": "USA",
-     "league": "USL League Two",
-     "home": "Virginia Marauders",
-     "away": "Patuxent",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Under 3.5",
-       "prob": 76,
-       "outcome": "WIN"
-      }
-     ],
-     "ft_h": 1,
-     "ft_a": 0,
-     "ht_h": 0,
-     "ht_a": 0
-    },
-    {
-     "fixture_id": 1524864,
-     "time": "02:30",
-     "country": "USA",
-     "league": "USL League Two",
-     "home": "Ironbound",
-     "away": "New Jersey Copa",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 87,
-       "outcome": "WIN"
-      },
-      {
-       "market": "Over 2.5",
-       "prob": 72,
-       "outcome": "WIN"
-      }
-     ],
-     "ft_h": 4,
-     "ft_a": 1,
-     "ht_h": 2,
-     "ht_a": 1
-    },
-    {
-     "fixture_id": 1527609,
-     "time": "18:00",
-     "country": "Kyrgyzstan",
-     "league": "Premier League",
-     "home": "Toktogul",
-     "away": "Asiagoal",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Under 3.5",
-       "prob": 71,
-       "outcome": "WIN"
-      }
-     ],
-     "ft_h": 2,
-     "ft_a": 0,
-     "ht_h": 1,
-     "ht_a": 0
-    }
-   ],
-   "totals": {
-    "picks": 199,
-    "wins": 145,
-    "losses": 54,
-    "pending": 0
-   }
   }
  ],
  "cumulated_markets": [
   {
    "name": "Over 1.5",
-   "n": 1237,
-   "wins": 1055,
-   "losses": 182,
-   "hit_pct": 85.3,
-   "wlo_pct": 83.2,
+   "n": 1251,
+   "wins": 1066,
+   "losses": 185,
+   "hit_pct": 85.2,
+   "wlo_pct": 83.1,
    "tier": "STRONG ROBUST"
   },
   {
    "name": "Over 2.5",
-   "n": 405,
-   "wins": 303,
+   "n": 407,
+   "wins": 305,
    "losses": 102,
-   "hit_pct": 74.8,
-   "wlo_pct": 70.4,
+   "hit_pct": 74.9,
+   "wlo_pct": 70.5,
    "tier": "ROBUST"
   },
   {
@@ -57722,12 +54980,12 @@
   },
   {
    "name": "HT Over 0.5",
-   "n": 1755,
-   "wins": 1314,
-   "losses": 441,
-   "hit_pct": 74.9,
-   "wlo_pct": 72.8,
-   "tier": "ROBUST"
+   "n": 1780,
+   "wins": 1336,
+   "losses": 444,
+   "hit_pct": 75.1,
+   "wlo_pct": 73.0,
+   "tier": "STRONG ROBUST"
   },
   {
    "name": "HT Over 1.5",
