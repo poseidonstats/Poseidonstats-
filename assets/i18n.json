@@ -134,7 +134,7 @@
     "filters.calibratedmarkets": "Doar piețe calibrate",
     "market.warn.uncal": "Probabilitate fără calibrare empirică validată pe această piață. Poate supraestima șansele reale.",
     "market.warn.raw": "Probabilitate brută a modelului, fără re-mapare empirică.",
-    "index.legend_stars": "⭐ <strong>Stelele = skill-ul modelului pe acea piață</strong> — cât de mult bate predicția media statistică (lift), măsurat pe backtest out-of-sample: ⭐ bun · ⭐⭐ foarte bun · ⭐⭐⭐ excelent. Badge-ul verde ★ marchează piețele recomandate (calibrate + skill dovedit): 1, 1X, X2, Over 1.5, Over 2.5, Under 3.5. Informativ, nu garanție."
+    "index.howto": "<h3>⚽ Cum folosești POSEIDON (în 30 de secunde)</h3><p><strong>1. Caută eticheta verde ★</strong> de pe fiecare meci — acolo e ce-ți recomandăm cu cea mai mare încredere (ex. „Over 1.5 85%\" = șanse mari să fie minim 2 goluri). Stelele ⭐ arată cât de bun e modelul pe acea piață: ⭐ bun · ⭐⭐ foarte bun · ⭐⭐⭐ excelent.</p><p><strong>2. 🎯 Recomandarea noastră pentru cele mai sigure alegeri:</strong> sus, bifează <em>„Doar ligi calibrate\"</em> și pune <em>Probabilitatea minimă la ≥80%</em>. La aceste setări, în istoricul nostru (65.000 meciuri reale): Over 1.5 a ieșit <strong>83%</strong>, dublă șansă 1X <strong>82%</strong>, Over 2.5 <strong>79%</strong>.</p><p><strong>3. Vrei altă piață sau zi?</strong> Folosește filtrele de sus (zi, piață, ligă) ca să vezi doar meciurile care te interesează.</p><p class=\"howto-foot\">Probabilități calibrate pe meciuri reale — informativ, nu garanție. 18+</p>"
   },
   "en": {
     "lang.name": "English",
@@ -271,7 +271,7 @@
     "filters.calibratedmarkets": "Calibrated markets only",
     "market.warn.uncal": "Probability without validated empirical calibration on this market. May overestimate the real chances.",
     "market.warn.raw": "Raw model probability, without empirical re-mapping.",
-    "index.legend_stars": "⭐ <strong>Stars = the model's skill on that market</strong> — how much the prediction beats the statistical base-rate (lift), measured on out-of-sample backtest: ⭐ good · ⭐⭐ very good · ⭐⭐⭐ excellent. The green ★ badge marks recommended markets (calibrated + proven skill): 1, 1X, X2, Over 1.5, Over 2.5, Under 3.5. Informational, not a guarantee."
+    "index.howto": "<h3>⚽ How to use POSEIDON (in 30 seconds)</h3><p><strong>1. Look for the green ★ tag</strong> on each match — that's what we recommend with the highest confidence (e.g. „Over 1.5 85%\" = good chance of at least 2 goals). The ⭐ stars show how good the model is on that market: ⭐ good · ⭐⭐ very good · ⭐⭐⭐ excellent.</p><p><strong>2. 🎯 Our recommendation for the safest picks:</strong> at the top, tick <em>„Calibrated leagues only\"</em> and set <em>Minimum probability to ≥80%</em>. With these settings, in our history (65,000 real matches): Over 1.5 hit <strong>83%</strong>, double chance 1X <strong>82%</strong>, Over 2.5 <strong>79%</strong>.</p><p><strong>3. Want another market or day?</strong> Use the filters at the top (day, market, league) to see only the matches you care about.</p><p class=\"howto-foot\">Probabilities calibrated on real matches — informational, not a guarantee. 18+</p>"
   },
   "es": {
     "lang.name": "Español",
@@ -408,7 +408,7 @@
     "filters.calibratedmarkets": "Solo mercados calibrados",
     "market.warn.uncal": "Probabilidad sin calibración empírica validada en este mercado. Puede sobrestimar las probabilidades reales.",
     "market.warn.raw": "Probabilidad bruta del modelo, sin re-mapeo empírico.",
-    "index.legend_stars": "⭐ <strong>Las estrellas = la habilidad del modelo en ese mercado</strong> — cuánto supera la predicción la tasa base estadística (lift), medido en backtest fuera de muestra: ⭐ bueno · ⭐⭐ muy bueno · ⭐⭐⭐ excelente. La insignia verde ★ marca los mercados recomendados (calibrados + habilidad probada): 1, 1X, X2, Over 1.5, Over 2.5, Under 3.5. Informativo, no una garantía."
+    "index.howto": "<h3>⚽ Cómo usar POSEIDON (en 30 segundos)</h3><p><strong>1. Busca la etiqueta verde ★</strong> en cada partido — es lo que recomendamos con mayor confianza (ej. „Over 1.5 85%\" = alta probabilidad de al menos 2 goles). Las estrellas ⭐ muestran qué tan bueno es el modelo en ese mercado: ⭐ bueno · ⭐⭐ muy bueno · ⭐⭐⭐ excelente.</p><p><strong>2. 🎯 Nuestra recomendación para las apuestas más seguras:</strong> arriba, marca <em>„Solo ligas calibradas\"</em> y pon <em>Probabilidad mínima en ≥80%</em>. Con estos ajustes, en nuestro historial (65.000 partidos reales): Over 1.5 acertó <strong>83%</strong>, doble oportunidad 1X <strong>82%</strong>, Over 2.5 <strong>79%</strong>.</p><p><strong>3. ¿Quieres otro mercado o día?</strong> Usa los filtros de arriba (día, mercado, liga) para ver solo los partidos que te interesan.</p><p class=\"howto-foot\">Probabilidades calibradas en partidos reales — informativo, no una garantía. 18+</p>"
   },
   "it": {
     "lang.name": "Italiano",
@@ -545,6 +545,6 @@
     "filters.calibratedmarkets": "Solo mercati calibrati",
     "market.warn.uncal": "Probabilità senza calibrazione empirica validata su questo mercato. Può sovrastimare le probabilità reali.",
     "market.warn.raw": "Probabilità grezza del modello, senza ri-mappatura empirica.",
-    "index.legend_stars": "⭐ <strong>Le stelle = l'abilità del modello su quel mercato</strong> — quanto la previsione supera il tasso base statistico (lift), misurato su backtest fuori campione: ⭐ buono · ⭐⭐ molto buono · ⭐⭐⭐ eccellente. Il badge verde ★ indica i mercati consigliati (calibrati + abilità dimostrata): 1, 1X, X2, Over 1.5, Over 2.5, Under 3.5. Informativo, non una garanzia."
+    "index.howto": "<h3>⚽ Come usare POSEIDON (in 30 secondi)</h3><p><strong>1. Cerca l'etichetta verde ★</strong> su ogni partita — è ciò che consigliamo con la massima fiducia (es. „Over 1.5 85%\" = buona probabilità di almeno 2 gol). Le stelle ⭐ mostrano quanto è bravo il modello su quel mercato: ⭐ buono · ⭐⭐ molto buono · ⭐⭐⭐ eccellente.</p><p><strong>2. 🎯 Il nostro consiglio per le scelte più sicure:</strong> in alto, spunta <em>„Solo campionati calibrati\"</em> e imposta <em>Probabilità minima a ≥80%</em>. Con queste impostazioni, nel nostro storico (65.000 partite reali): Over 1.5 ha fatto <strong>83%</strong>, doppia chance 1X <strong>82%</strong>, Over 2.5 <strong>79%</strong>.</p><p><strong>3. Vuoi un altro mercato o giorno?</strong> Usa i filtri in alto (giorno, mercato, campionato) per vedere solo le partite che ti interessano.</p><p class=\"howto-foot\">Probabilità calibrate su partite reali — informativo, non una garanzia. 18+</p>"
   }
 }
