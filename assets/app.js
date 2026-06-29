@@ -4,7 +4,33 @@ const PRED_URL = "data/predictions.json";
 const CALIB_URL = "data/calibration.json";
 const FORWARD_URL = "data/forward.json";
 const HISTORY_URL = "data/history.json";
+const SCORECARD_URL = "data/scorecard.json";
 const I18N_URL = "assets/i18n.json";
+
+// 🆕 29 iun — scorecard skill per piață (din backtest OOS). Picks-urile (badge verde) se
+// extind data-driven la TOATE piețele cu tier=PICK, fiecare cu pragul + stelele ei de skill.
+// Fallback grațios: dacă scorecard.json lipsește → SCORECARD {} → picks cad pe cele 2 brand.
+let SCORECARD = {};                       // key -> card (label, tier, threshold, skill_stars, lift_pp, hit)
+const PICK_PROB = {                       // cheie scorecard -> probabilitatea din match
+  "1x2_home":    m => m.prob_home,
+  "1x2_away":    m => m.prob_away,
+  "dc_1x":       m => m.prob_1x,
+  "dc_x2":       m => m.prob_x2,
+  "dc_12":       m => m.prob_12,
+  "over_1_5":    m => m.prob_over_1_5,
+  "over_2_5":    m => m.prob_over_2_5,
+  "under_3_5":   m => (m.prob_over_3_5 != null ? 1 - m.prob_over_3_5 : null),
+  "ht_over_0_5": m => m.prob_ht_over_0_5,
+};
+const PICK_LABEL = {                       // label scurt pt badge
+  "1x2_home": "1", "1x2_away": "2", "dc_1x": "1X", "dc_x2": "X2", "dc_12": "12",
+  "over_1_5": "Over 1.5", "over_2_5": "Over 2.5", "under_3_5": "Under 3.5", "ht_over_0_5": "HT O0.5",
+};
+const PICK_FILTER = {                       // cheie scorecard -> filterMarket compat
+  "over_1_5": "over_1_5", "over_2_5": "over_2_5", "under_3_5": "over_3_5",
+  "ht_over_0_5": "ht_over_0_5", "1x2_home": "1x2", "1x2_away": "1x2",
+  "dc_1x": "1x2", "dc_x2": "1x2", "dc_12": "1x2",
+};
 
 /* ============== i18n ============== */
 let I18N = null;
@@ -164,6 +190,8 @@ async function renderIndex() {
   // Fallback grațios: dacă lipsește, MARKET_CERT={} → marketState cade pe PROMOTED (ca înainte).
   const [data, calib] = await Promise.all([fetchJSON(PRED_URL), fetchJSON(CALIB_URL)]);
   if (calib && calib.market_cert) MARKET_CERT = calib.market_cert;
+  const scData = await fetchJSON(SCORECARD_URL);
+  if (scData && scData.markets) scData.markets.forEach(c => { SCORECARD[c.key] = c; });
   if (!data || !data.matches) {
     document.getElementById("matches").innerHTML =
       `<p class="muted">Datele se încarcă... Dacă persistă, predicțiile zilei nu sunt încă publicate.</p>`;
@@ -250,11 +278,12 @@ async function renderIndex() {
   update();
 }
 
-function pickBadge(name, prob, minThreshold = 0.65) {
-  if (prob == null || prob < minThreshold) return "";
+function pickBadge(name, prob, stars = 0) {
+  if (prob == null) return "";
   const cls = prob >= 0.80 ? "pick-elite" : prob >= 0.70 ? "pick-strong" : "pick-good";
-  const tip = tt("pick.tooltip", "Probabilitate dominantă, calibrată empiric. Informativ — nu recomandare.");
-  return `<span class="pick-badge ${cls}" title="${tip}">★ ${name}</span>`;
+  const st = stars > 0 ? " " + "⭐".repeat(stars) : "";
+  const tip = `${name}: ${fmtPct(prob)} · skill ${stars}/3 (lift peste base-rate, backtest OOS). Informativ — nu recomandare.`;
+  return `<span class="pick-badge ${cls}" title="${tip}">★ ${name} ${fmtPct(prob)}${st}</span>`;
 }
 
 function rawNote(raw, cal) {
@@ -308,6 +337,17 @@ function marketCertMark(label) {
   if (st === "certified") return "";
   const c = MARKET_CERT[LABEL_MKEY[label]];
   return warnMark(st, c ? c.pct_leagues_good : null);
+}
+
+// 🆕 29 iun — marcaj de SKILL per piață din scorecard (stele = lift OOS peste base-rate).
+// PICK → stele + hit; restul → nimic (afișat calibrat, dar fără pretenție de pick).
+function skillMark(key, prob) {
+  const c = SCORECARD[key];
+  if (!c || c.tier !== "PICK" || !c.skill_stars) return "";
+  if (prob == null || prob < c.threshold) return "";   // stele DOAR când piața e pick pe ACEST meci
+  const hit = c.hit_at_threshold != null ? fmtPct(c.hit_at_threshold) : "—";
+  const tip = `Skill ${c.skill_stars}/3 (lift +${c.lift_pp}pp peste base-rate). Hit istoric OOS: ${hit}.`;
+  return `<span class="skill-stars" title="${tip}" aria-label="${tip}">${"⭐".repeat(c.skill_stars)}</span>`;
 }
 
 /* Popover singleton — tap pe ⚠️ deschide explicația, tap în afară o închide. */
@@ -401,13 +441,24 @@ function renderMatch(m, filterMarket = "") {
   // Filosofie: badge verde = "recomand cu încredere" (doar 2 piețe). Highlight auriu pe
   // piața filtrată = "asta ai cerut, uite cifra reală". Niciodată badge de la o piață
   // nefiltrată când există filtru activ.
+  // 🆕 29 iun — picks DATA-DRIVEN din scorecard: TOATE piețele tier=PICK, fiecare cu pragul
+  // + stelele ei de skill (lift OOS). Fallback grațios: SCORECARD gol → cele 2 brand (ca înainte).
   const picks = [];
-  const showOver15 = !filterMarket || filterMarket === "over_1_5";
-  const showHtO05 = !filterMarket || filterMarket === "ht_over_0_5";
-  if (showOver15 && m.prob_over_1_5 >= 0.75) picks.push(["Over 1.5", m.prob_over_1_5]);
-  if (showHtO05 && m.prob_ht_over_0_5 >= 0.70) picks.push(["HT Over 0.5", m.prob_ht_over_0_5]);
+  const pickKeys = Object.keys(SCORECARD).length
+    ? Object.values(SCORECARD).filter(c => c.tier === "PICK").map(c => c.key)
+    : ["over_1_5", "ht_over_0_5"];
+  for (const key of pickKeys) {
+    const c = SCORECARD[key];
+    const thr = c ? c.threshold : (key === "over_1_5" ? 0.75 : 0.70);
+    const fn = PICK_PROB[key];
+    if (!fn) continue;
+    if (filterMarket && PICK_FILTER[key] !== filterMarket) continue;  // coerență cu filtrul
+    const p = fn(m);
+    if (p == null || p < thr) continue;
+    picks.push([PICK_LABEL[key] || key, p, c ? c.skill_stars : 0]);
+  }
   picks.sort((a, b) => b[1] - a[1]);
-  const picksHtml = picks.map(([name, p]) => pickBadge(name, p)).join(" ");
+  const picksHtml = picks.map(([name, p, stars]) => pickBadge(name, p, stars)).join(" ");
 
   // Pick 1X2 (cel mai probabil)
   const pick1x2 = m.prob_home >= m.prob_draw && m.prob_home >= m.prob_away ? "1"
@@ -478,6 +529,17 @@ function renderMatch(m, filterMarket = "") {
         </div>
       </div>
     </div>
+
+    ${m.prob_1x != null ? `<div class="phase-row extra">
+      <div class="phase-label">🎯 Dublă șansă & Under</div>
+      <div class="markets-grid">
+        <div class="market"><span class="label">1X</span><span class="val ${pctClass(m.prob_1x)}">${fmtPct(m.prob_1x)}</span>${skillMark("dc_1x", m.prob_1x)}</div>
+        <div class="market"><span class="label">X2</span><span class="val ${pctClass(m.prob_x2)}">${fmtPct(m.prob_x2)}</span>${skillMark("dc_x2", m.prob_x2)}</div>
+        <div class="market"><span class="label">12</span><span class="val ${pctClass(m.prob_12)}">${fmtPct(m.prob_12)}</span>${skillMark("dc_12", m.prob_12)}</div>
+        <div class="market uncal-market"><span class="label">U2.5</span><span class="val ${pctClass(1 - m.prob_over_2_5)}">${fmtPct(1 - m.prob_over_2_5)}</span>${skillMark("under_2_5", 1 - m.prob_over_2_5)}</div>
+        <div class="market"><span class="label">U3.5</span><span class="val ${pctClass(1 - m.prob_over_3_5)}">${fmtPct(1 - m.prob_over_3_5)}</span>${skillMark("under_3_5", 1 - m.prob_over_3_5)}</div>
+      </div>
+    </div>` : ""}
 
     ${m.ht_prob_home != null ? `<div class="phase-row ht">
       <div class="phase-label">⌛ HT · prima repriză ${m.xg_home_ht ? `<span class="muted-xs">(xG ${m.xg_home_ht}–${m.xg_away_ht})</span>` : ""}</div>

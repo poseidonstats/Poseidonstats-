@@ -492,6 +492,9 @@ p { margin-bottom: 10px; }
 .pick-badge.pick-elite { background: linear-gradient(135deg, #065f46, #047857); color: #fff; }
 .pick-badge.pick-strong { background: linear-gradient(135deg, #047857, #10b981); color: #fff; }
 .pick-badge.pick-good { background: #d1fae5; color: #065f46; }
+/* 🆕 29 iun — stele de skill (lift OOS) lângă piețele PICK + rândul de piețe extinse */
+.skill-stars { font-size: 0.72em; margin-left: 4px; letter-spacing: -1px; vertical-align: middle; }
+.phase-row.extra .phase-label { color: #047857; }
 
 /* xG section */
 .xg-section {

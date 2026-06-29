@@ -133,7 +133,8 @@
     "pick.tooltip": "Probabilitate dominantă, calibrată empiric. Informativ — nu recomandare.",
     "filters.calibratedmarkets": "Doar piețe calibrate",
     "market.warn.uncal": "Probabilitate fără calibrare empirică validată pe această piață. Poate supraestima șansele reale.",
-    "market.warn.raw": "Probabilitate brută a modelului, fără re-mapare empirică."
+    "market.warn.raw": "Probabilitate brută a modelului, fără re-mapare empirică.",
+    "index.legend_stars": "⭐ <strong>Stelele = skill-ul modelului pe acea piață</strong> — cât de mult bate predicția media statistică (lift), măsurat pe backtest out-of-sample: ⭐ bun · ⭐⭐ foarte bun · ⭐⭐⭐ excelent. Badge-ul verde ★ marchează piețele recomandate (calibrate + skill dovedit): 1, 1X, X2, Over 1.5, Over 2.5, Under 3.5. Informativ, nu garanție."
   },
   "en": {
     "lang.name": "English",
@@ -269,7 +270,8 @@
     "pick.tooltip": "Dominant probability, empirically calibrated. Informational — not a recommendation.",
     "filters.calibratedmarkets": "Calibrated markets only",
     "market.warn.uncal": "Probability without validated empirical calibration on this market. May overestimate the real chances.",
-    "market.warn.raw": "Raw model probability, without empirical re-mapping."
+    "market.warn.raw": "Raw model probability, without empirical re-mapping.",
+    "index.legend_stars": "⭐ <strong>Stars = the model's skill on that market</strong> — how much the prediction beats the statistical base-rate (lift), measured on out-of-sample backtest: ⭐ good · ⭐⭐ very good · ⭐⭐⭐ excellent. The green ★ badge marks recommended markets (calibrated + proven skill): 1, 1X, X2, Over 1.5, Over 2.5, Under 3.5. Informational, not a guarantee."
   },
   "es": {
     "lang.name": "Español",
@@ -405,7 +407,8 @@
     "pick.tooltip": "Probabilidad dominante, calibrada empíricamente. Informativo — no una recomendación.",
     "filters.calibratedmarkets": "Solo mercados calibrados",
     "market.warn.uncal": "Probabilidad sin calibración empírica validada en este mercado. Puede sobrestimar las probabilidades reales.",
-    "market.warn.raw": "Probabilidad bruta del modelo, sin re-mapeo empírico."
+    "market.warn.raw": "Probabilidad bruta del modelo, sin re-mapeo empírico.",
+    "index.legend_stars": "⭐ <strong>Las estrellas = la habilidad del modelo en ese mercado</strong> — cuánto supera la predicción la tasa base estadística (lift), medido en backtest fuera de muestra: ⭐ bueno · ⭐⭐ muy bueno · ⭐⭐⭐ excelente. La insignia verde ★ marca los mercados recomendados (calibrados + habilidad probada): 1, 1X, X2, Over 1.5, Over 2.5, Under 3.5. Informativo, no una garantía."
   },
   "it": {
     "lang.name": "Italiano",
@@ -541,6 +544,7 @@
     "pick.tooltip": "Probabilità dominante, calibrata empiricamente. Informativo — non una raccomandazione.",
     "filters.calibratedmarkets": "Solo mercati calibrati",
     "market.warn.uncal": "Probabilità senza calibrazione empirica validata su questo mercato. Può sovrastimare le probabilità reali.",
-    "market.warn.raw": "Probabilità grezza del modello, senza ri-mappatura empirica."
+    "market.warn.raw": "Probabilità grezza del modello, senza ri-mappatura empirica.",
+    "index.legend_stars": "⭐ <strong>Le stelle = l'abilità del modello su quel mercato</strong> — quanto la previsione supera il tasso base statistico (lift), misurato su backtest fuori campione: ⭐ buono · ⭐⭐ molto buono · ⭐⭐⭐ eccellente. Il badge verde ★ indica i mercati consigliati (calibrati + abilità dimostrata): 1, 1X, X2, Over 1.5, Over 2.5, Under 3.5. Informativo, non una garanzia."
   }
 }
