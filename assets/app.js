@@ -26,10 +26,10 @@ const PICK_LABEL = {                       // label scurt pt badge
   "1x2_home": "1", "1x2_away": "2", "dc_1x": "1X", "dc_x2": "X2", "dc_12": "12",
   "over_1_5": "Over 1.5", "over_2_5": "Over 2.5", "under_3_5": "Under 3.5", "ht_over_0_5": "HT O0.5",
 };
-const PICK_FILTER = {                       // cheie scorecard -> filterMarket compat
-  "over_1_5": "over_1_5", "over_2_5": "over_2_5", "under_3_5": "over_3_5",
+const PICK_FILTER = {                       // cheie scorecard -> valoarea filtrului „Piață"
+  "over_1_5": "over_1_5", "over_2_5": "over_2_5", "under_3_5": "under_3_5",
   "ht_over_0_5": "ht_over_0_5", "1x2_home": "1x2", "1x2_away": "1x2",
-  "dc_1x": "1x2", "dc_x2": "1x2", "dc_12": "1x2",
+  "dc_1x": "dc_1x", "dc_x2": "dc_x2", "dc_12": "dc_12",
 };
 
 /* ============== i18n ============== */
@@ -224,6 +224,11 @@ async function renderIndex() {
     if (mk === "ht_over_0_5") return m.prob_ht_over_0_5;
     if (mk === "ht_over_1_5") return m.prob_ht_over_1_5;
     if (mk === "1x2")         return Math.max(m.prob_home || 0, m.prob_away || 0);
+    if (mk === "dc_1x")       return m.prob_1x;
+    if (mk === "dc_x2")       return m.prob_x2;
+    if (mk === "dc_12")       return m.prob_12;
+    if (mk === "under_2_5")   return m.prob_over_2_5 != null ? 1 - m.prob_over_2_5 : null;
+    if (mk === "under_3_5")   return m.prob_over_3_5 != null ? 1 - m.prob_over_3_5 : null;
     // Toate piețele: cea mai mare prob găsită
     return Math.max(
       m.prob_over_1_5 || 0, m.prob_over_2_5 || 0, m.prob_over_3_5 || 0,
@@ -409,10 +414,15 @@ const MARKET_FILTER_TO_LABEL = {
   over_1_5: ["O1.5"],
   over_2_5: ["O2.5"],
   over_3_5: ["O3.5"],
+  under_2_5: ["U2.5"],
+  under_3_5: ["U3.5"],
   btts: ["BTTS"],
   ht_over_0_5: ["HT O0.5"],
   ht_over_1_5: ["HT O1.5"],
   "1x2": ["1", "X", "2"],
+  dc_1x: ["1X"],
+  dc_x2: ["X2"],
+  dc_12: ["12"],
 };
 function isFilteredMarket(label, filterMarket) {
   const targets = MARKET_FILTER_TO_LABEL[filterMarket];
@@ -533,11 +543,11 @@ function renderMatch(m, filterMarket = "") {
     ${m.prob_1x != null ? `<div class="phase-row extra">
       <div class="phase-label">🎯 Dublă șansă & Under</div>
       <div class="markets-grid">
-        <div class="market"><span class="label">1X</span><span class="val ${pctClass(m.prob_1x)}">${fmtPct(m.prob_1x)}</span>${skillMark("dc_1x", m.prob_1x)}</div>
-        <div class="market"><span class="label">X2</span><span class="val ${pctClass(m.prob_x2)}">${fmtPct(m.prob_x2)}</span>${skillMark("dc_x2", m.prob_x2)}</div>
-        <div class="market"><span class="label">12</span><span class="val ${pctClass(m.prob_12)}">${fmtPct(m.prob_12)}</span>${skillMark("dc_12", m.prob_12)}</div>
-        <div class="market uncal-market"><span class="label">U2.5</span><span class="val ${pctClass(1 - m.prob_over_2_5)}">${fmtPct(1 - m.prob_over_2_5)}</span>${skillMark("under_2_5", 1 - m.prob_over_2_5)}</div>
-        <div class="market"><span class="label">U3.5</span><span class="val ${pctClass(1 - m.prob_over_3_5)}">${fmtPct(1 - m.prob_over_3_5)}</span>${skillMark("under_3_5", 1 - m.prob_over_3_5)}</div>
+        <div class="market ${isFilteredMarket("1X", filterMarket) ? "market-filtered" : ""}"><span class="label">1X</span><span class="val ${pctClass(m.prob_1x)}">${fmtPct(m.prob_1x)}</span>${skillMark("dc_1x", m.prob_1x)}</div>
+        <div class="market ${isFilteredMarket("X2", filterMarket) ? "market-filtered" : ""}"><span class="label">X2</span><span class="val ${pctClass(m.prob_x2)}">${fmtPct(m.prob_x2)}</span>${skillMark("dc_x2", m.prob_x2)}</div>
+        <div class="market ${isFilteredMarket("12", filterMarket) ? "market-filtered" : ""}"><span class="label">12</span><span class="val ${pctClass(m.prob_12)}">${fmtPct(m.prob_12)}</span>${skillMark("dc_12", m.prob_12)}</div>
+        <div class="market uncal-market ${isFilteredMarket("U2.5", filterMarket) ? "market-filtered" : ""}"><span class="label">U2.5</span><span class="val ${pctClass(1 - m.prob_over_2_5)}">${fmtPct(1 - m.prob_over_2_5)}</span>${skillMark("under_2_5", 1 - m.prob_over_2_5)}</div>
+        <div class="market ${isFilteredMarket("U3.5", filterMarket) ? "market-filtered" : ""}"><span class="label">U3.5</span><span class="val ${pctClass(1 - m.prob_over_3_5)}">${fmtPct(1 - m.prob_over_3_5)}</span>${skillMark("under_3_5", 1 - m.prob_over_3_5)}</div>
       </div>
     </div>` : ""}
 
