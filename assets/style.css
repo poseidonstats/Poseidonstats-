@@ -502,6 +502,34 @@ p { margin-bottom: 10px; }
 .howto em { background: #fef9c3; padding: 1px 6px; border-radius: 4px; font-style: normal; font-weight: 600; }
 .howto-foot { font-size: 0.82rem; color: #6b7280; margin-top: 10px; }
 
+/* Exemplu analiză Pro — teaser conversie (29 iun) */
+.pro-sample { margin: 34px 0 24px; }
+.pro-sample h2 { margin-bottom: 6px; }
+.pro-sample-intro { color: #475569; margin-bottom: 14px; line-height: 1.55; }
+.pro-card { border: 1px solid #c7d2fe; border-radius: 14px; overflow: hidden; background: #fff; box-shadow: 0 2px 12px rgba(30,58,138,0.07); }
+.pro-card-head { background: linear-gradient(135deg, #1e3a8a, #2563eb); color: #fff; font-weight: 700; padding: 12px 18px; font-size: 1.02rem; }
+.pro-visible { padding: 16px 18px 10px; }
+.pro-visible p { margin: 8px 0; line-height: 1.55; }
+.pro-label { margin-top: 12px !important; }
+.pro-visible ul { margin: 6px 0 4px; padding-left: 20px; }
+.pro-visible li { margin: 5px 0; line-height: 1.5; }
+.pro-locked { position: relative; padding: 16px 18px; min-height: 120px; }
+.pro-locked-content { filter: blur(5px); user-select: none; pointer-events: none; opacity: 0.5; }
+.pro-locked-content p { margin: 7px 0; }
+.pro-lock-overlay { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; text-align: center; padding: 14px; background: linear-gradient(180deg, rgba(255,255,255,0.35), rgba(255,255,255,0.9)); color: #1e3a8a; font-weight: 600; line-height: 1.5; }
+.pro-lock-icon { font-size: 1.7rem; }
+.pro-cta { display: flex; gap: 12px; justify-content: center; margin: 18px 0 8px; flex-wrap: wrap; }
+.pro-btn { display: inline-block; padding: 14px 26px; border-radius: 10px; font-weight: 700; font-size: 1.02rem; transition: transform 0.15s, box-shadow 0.15s; }
+.pro-btn-basic { background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #78350f; }
+.pro-btn-pro { background: linear-gradient(135deg, #2563eb, #1e3a8a); color: #fff; }
+.pro-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(30,58,138,0.3); }
+.pro-disclaimer { text-align: center; color: #94a3b8; font-size: 0.8rem; margin-top: 10px; }
+@media (max-width: 600px) {
+  .pro-cta { flex-direction: column; }
+  .pro-btn { width: 100%; text-align: center; }
+  .pro-card-head { font-size: 0.95rem; }
+}
+
 /* xG section */
 .xg-section {
   background: linear-gradient(135deg, #eff6ff, #f8fafc);
