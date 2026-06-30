@@ -18,6 +18,38 @@
 <link rel="apple-touch-icon" href="assets/icon-192.png">
 <script>if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js");</script>
 <script data-goatcounter="https://poseidonstats.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://poseidonstats.com/#organization",
+      "name": "POSEIDON",
+      "alternateName": "POSEIDON Stats",
+      "url": "https://poseidonstats.com/",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://poseidonstats.com/assets/icon-512.png",
+        "width": 512,
+        "height": 512
+      },
+      "description": "Predicții fotbal generate de un model statistic Poisson + Dixon-Coles cu ratings Bayesian, calibrat empiric pe peste 65.000 de meciuri reale. Date informative, transparente, verificabile.",
+      "email": "contact@poseidonstats.com",
+      "sameAs": ["https://patreon.com/PoseidonPredictions"]
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://poseidonstats.com/#website",
+      "url": "https://poseidonstats.com/",
+      "name": "POSEIDON — Predicții fotbal pe model statistic",
+      "description": "Predicții fotbal generate de un model statistic Poisson + Dixon-Coles. Date informative, transparente, verificabile.",
+      "inLanguage": ["ro", "en", "es", "it"],
+      "publisher": { "@id": "https://poseidonstats.com/#organization" }
+    }
+  ]
+}
+</script>
 </head>
 <body>
 
