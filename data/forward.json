@@ -1,9 +1,9 @@
 {
- "generated_at": "2026-06-30T02:54:30+00:00",
- "n_total": 6412,
- "n_resolved": 4756,
- "n_pending": 1512,
- "n_not_played": 133,
+ "generated_at": "2026-07-01T02:56:41+00:00",
+ "n_total": 6531,
+ "n_resolved": 4821,
+ "n_pending": 1563,
+ "n_not_played": 136,
  "n_replayed_far": 11,
  "calibration_note": "Buckets calibrate Platt; calibratorul include și jurnalul forward rezolvat (ușor in-sample, bias măsurat ~0.1pp). Hit-rate la prag = numărători brute pe rezultate reale, out-of-sample.",
  "markets": [
@@ -12,34 +12,34 @@
    "buckets": [
     {
      "range": "50–60%",
-     "n": 324,
-     "hit_pct": 63.58,
-     "wlo_pct": 58.21,
-     "diff_pp": 8.2,
+     "n": 325,
+     "hit_pct": 63.38,
+     "wlo_pct": 58.02,
+     "diff_pp": 8.02,
      "low_sample": false
     },
     {
      "range": "60–70%",
-     "n": 769,
-     "hit_pct": 69.18,
-     "wlo_pct": 65.83,
-     "diff_pp": 3.23,
+     "n": 784,
+     "hit_pct": 69.39,
+     "wlo_pct": 66.07,
+     "diff_pp": 3.44,
      "low_sample": false
     },
     {
      "range": "70–80%",
-     "n": 1850,
-     "hit_pct": 78.38,
-     "wlo_pct": 76.44,
-     "diff_pp": 2.81,
+     "n": 1876,
+     "hit_pct": 78.3,
+     "wlo_pct": 76.38,
+     "diff_pp": 2.76,
      "low_sample": false
     },
     {
      "range": "80–90%",
-     "n": 1537,
+     "n": 1560,
      "hit_pct": 86.6,
-     "wlo_pct": 84.8,
-     "diff_pp": 2.44,
+     "wlo_pct": 84.82,
+     "diff_pp": 2.45,
      "low_sample": false
     },
     {
@@ -57,26 +57,26 @@
    "buckets": [
     {
      "range": "50–60%",
-     "n": 1468,
-     "hit_pct": 59.06,
-     "wlo_pct": 56.52,
-     "diff_pp": 4.03,
+     "n": 1484,
+     "hit_pct": 59.23,
+     "wlo_pct": 56.71,
+     "diff_pp": 4.2,
      "low_sample": false
     },
     {
      "range": "60–70%",
-     "n": 1092,
-     "hit_pct": 67.86,
-     "wlo_pct": 65.03,
-     "diff_pp": 3.29,
+     "n": 1107,
+     "hit_pct": 68.02,
+     "wlo_pct": 65.22,
+     "diff_pp": 3.46,
      "low_sample": false
     },
     {
      "range": "70–80%",
-     "n": 446,
+     "n": 451,
      "hit_pct": 79.82,
-     "wlo_pct": 75.85,
-     "diff_pp": 6.15,
+     "wlo_pct": 75.87,
+     "diff_pp": 6.18,
      "low_sample": false
     },
     {
@@ -102,10 +102,10 @@
    "buckets": [
     {
      "range": "50–60%",
-     "n": 341,
-     "hit_pct": 60.12,
-     "wlo_pct": 54.84,
-     "diff_pp": 6.26,
+     "n": 343,
+     "hit_pct": 60.35,
+     "wlo_pct": 55.09,
+     "diff_pp": 6.51,
      "low_sample": false
     },
     {
@@ -147,18 +147,18 @@
    "buckets": [
     {
      "range": "50–60%",
-     "n": 2216,
-     "hit_pct": 58.35,
-     "wlo_pct": 56.28,
-     "diff_pp": 3.48,
+     "n": 2243,
+     "hit_pct": 58.23,
+     "wlo_pct": 56.17,
+     "diff_pp": 3.36,
      "low_sample": false
     },
     {
      "range": "60–70%",
-     "n": 732,
-     "hit_pct": 65.85,
-     "wlo_pct": 62.34,
-     "diff_pp": 2.64,
+     "n": 744,
+     "hit_pct": 65.73,
+     "wlo_pct": 62.24,
+     "diff_pp": 2.52,
      "low_sample": false
     },
     {
@@ -200,26 +200,26 @@
     },
     {
      "range": "60–70%",
-     "n": 1584,
-     "hit_pct": 68.12,
-     "wlo_pct": 65.78,
-     "diff_pp": 1.94,
+     "n": 1612,
+     "hit_pct": 68.18,
+     "wlo_pct": 65.86,
+     "diff_pp": 1.98,
      "low_sample": false
     },
     {
      "range": "70–80%",
-     "n": 2298,
-     "hit_pct": 77.11,
-     "wlo_pct": 75.35,
-     "diff_pp": 2.95,
+     "n": 2334,
+     "hit_pct": 77.21,
+     "wlo_pct": 75.46,
+     "diff_pp": 3.05,
      "low_sample": false
     },
     {
      "range": "80–90%",
-     "n": 252,
-     "hit_pct": 83.73,
-     "wlo_pct": 78.67,
-     "diff_pp": 1.44,
+     "n": 253,
+     "hit_pct": 83.79,
+     "wlo_pct": 78.75,
+     "diff_pp": 1.5,
      "low_sample": false
     },
     {
@@ -237,10 +237,10 @@
    "buckets": [
     {
      "range": "50–60%",
-     "n": 151,
-     "hit_pct": 58.28,
-     "wlo_pct": 50.3,
-     "diff_pp": 5.31,
+     "n": 152,
+     "hit_pct": 58.55,
+     "wlo_pct": 50.6,
+     "diff_pp": 5.59,
      "low_sample": false
     },
     {
