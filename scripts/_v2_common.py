@@ -78,6 +78,24 @@ def add_brand_top(d):
     d.line([(W / 2 - 80, 245), (W / 2 + 80, 245)], fill=GOLD, width=2)
 
 
+def cadru_loop_P():
+    """Cadru PRIM + ULTIM — LITERA P mare (NU trident).
+
+    Regula brand 6 iun 2026 (feedback-no-trident-logo): datele IG arată că
+    P mare + cifră performează ~10× mai bine decât tridentul. Folosește ASTA
+    în orice script nou, NU cadru_loop().
+    """
+    img = gradient_bg(); d = ImageDraw.Draw(img)
+    f_p = ImageFont.truetype(FONT_SERIF, 700)
+    draw_centered(d, "P", 250, f_p, GOLD)
+    f_brand = ImageFont.truetype(FONT_BOLD, 120)
+    draw_centered(d, "POSEIDON STATS", 1250, f_brand, WHITE)
+    f_sub = ImageFont.truetype(FONT, 50)
+    draw_centered(d, "predicții calibrate, verificate public", 1430, f_sub, GOLD)
+    add_disclaimer(d)
+    return img
+
+
 def cadru_loop():
     """Cadru PRIM + ULTIM identic — pentru loop perfect TikTok."""
     img = gradient_bg(); d = ImageDraw.Draw(img)
