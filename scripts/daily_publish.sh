@@ -99,9 +99,15 @@ sqlite3 ~/football_predictor/football.db \
 cd ~/football_predictor
 $PY scripts/poseidon/build_public_json.py >> "$LOG" 2>&1
 
+# 1b. 🆕 3 aug 2026 — conținut static zilnic (SEO): secțiunea „repere azi" în
+# index.html + lastmod la zi în sitemap.xml. Best-effort: un eșec aici nu
+# blochează publicarea datelor (secțiunea veche rămâne, datele merg).
+$PY ~/poseidon-site/scripts/gen_static_daily.py >> "$LOG" 2>&1 || \
+    echo "[$(ts)] [WARN] gen_static_daily failed (publish continuă fără refresh static)" >> "$LOG"
+
 # 2. Git add/commit/push
 cd ~/poseidon-site
-if [ -z "$(git status --porcelain data/)" ]; then
+if [ -z "$(git status --porcelain data/ index.html sitemap.xml)" ]; then
     echo "[$(ts)] No changes to publish." >> "$LOG"
     exit 0
 fi
@@ -126,7 +132,7 @@ fi
 echo "[$(ts)] [GATE] OK: $GATE_OUT" >> "$LOG"
 
 # (13 iun — R2: verificarea RC2 era COD MORT sub set -e; push eșuat → trap ERR.)
-git add data/
+git add data/ index.html sitemap.xml
 git commit -m "data: $(date +%Y-%m-%d) refresh predicții + jurnal" >> "$LOG" 2>&1
 git push origin main >> "$LOG" 2>&1
 echo "[$(ts)] Published." >> "$LOG"
