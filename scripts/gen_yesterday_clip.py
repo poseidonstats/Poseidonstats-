@@ -79,7 +79,7 @@ def cadru_hook(yest, n_total, n_wins):
     # Provocare → curiozitate
     f_big = ImageFont.truetype(FONT_BOLD, 70)
     draw_centered(d, "Recunosc și", 1130, f_big, MUTED)
-    draw_centered(d, "unde GREȘESC →", 1220, f_big, GOLD)
+    draw_centered(d, "unde GREȘESC.", 1220, f_big, GOLD)
     f_d = ImageFont.truetype(FONT, 36)
     draw_centered(d, yest.strftime("%d %b %Y"), 1340, f_d, MUTED)
     add_disclaimer(d)

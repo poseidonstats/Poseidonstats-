@@ -138,12 +138,16 @@ def select_top3(hours_ahead: int, verbose: bool = False) -> list[dict]:
             continue
         stats["non_minor"] += 1
         # DOAR piețele permise public (regula 9 iun): Over 1.5 + HT Over 0.5.
-        # Over 2.5 SCOS (v2.1, 29 aug) — nu e pe lista piețelor validate public.
+        # Over 2.5 SCOS (v2.1, 29 aug). .get() cu gardă None: în fallback-ul pe
+        # JSON-ul public (freemium) meciurile locked au calibrated dar ZERO
+        # probabilități — fără gardă, fallback-ul crăpa cu KeyError (FUNNEL 29 aug).
         picks = []
-        if MIN_PROB <= m["prob_over_1_5"] < MAX_PROB:
-            picks.append(("Over 1.5", m["prob_over_1_5"]))
-        if 0.60 <= m["prob_ht_over_0_5"] < 0.80:
-            picks.append(("HT Over 0.5", m["prob_ht_over_0_5"]))
+        p_o15 = m.get("prob_over_1_5")
+        p_ht = m.get("prob_ht_over_0_5")
+        if p_o15 is not None and MIN_PROB <= p_o15 < MAX_PROB:
+            picks.append(("Over 1.5", p_o15))
+        if p_ht is not None and 0.60 <= p_ht < 0.80:
+            picks.append(("HT Over 0.5", p_ht))
         if not picks:
             continue
         stats["in_bucket"] += 1

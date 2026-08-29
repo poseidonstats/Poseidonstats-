@@ -59,7 +59,7 @@ EXCLUDE_SUBSTR = (
     "reserve", "women", "frauen", "femenin",
 )
 
-INCLUDE_EXTENDED = False  # ← D1: Andreea comută aici
+INCLUDE_EXTENDED = True  # D1 = DA (Andreea, 29 aug 2026): extensia activă
 
 
 def _extended_on() -> bool:
@@ -76,6 +76,10 @@ def is_public_league(country: str, league: str) -> bool:
     if any(x in lg for x in EXCLUDE_SUBSTR):
         return False
     if c == "world":
+        # „Friendlies Clubs" = amicale de CLUB cu loturi rotite (2.905 în pool!),
+        # NU fotbal de națiuni — găsit de executorul FUNNEL 29 aug. Exclus.
+        if "friendl" in lg and "club" in lg:
+            return False
         return any(x in lg for x in CORE_WORLD_SUBSTR)
     if (c, lg) in CORE_EXACT:
         return True

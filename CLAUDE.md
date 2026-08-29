@@ -141,4 +141,6 @@ top_score_h, top_score_a, top_score_prob,
 calibrated                                # bool — was empirically calibrated for this league
 ```
 
-The HT market lives under `ht_prob_over_0_5`, **not** `prob_ht_over_0_5` — these names are easy to confuse.
+The HT market lives under `prob_ht_over_0_5` — that's the field with real values; `ht_prob_over_0_5` does NOT exist as a market key (verified on live data 29 aug 2026; this line previously documented it backwards and nearly sent a script into the wall).
+
+**FREEMIUM (29 aug 2026)**: the public `predictions.json` is REDUCED — 5 matches/day carry full fields (`free: true`); the rest carry identity only (`locked: true`, no probabilities). Internal consumers (Discord delivery, pro_cron, clips) read the complete file at `~/football_predictor/data/predictions_full.json`, written by `scripts/make_public_predictions.py` during daily publish. The public track record (history/forward) stays complete — brand rule: **the track record is never paywalled**.
