@@ -21,6 +21,16 @@ REGULI RESPECTATE (CLAUDE.md + gardurile de brand):
   - zero limbaj de tipster: fără „garantat", „sigur", „valoare", „bilet";
   - liga necalibrată → marker ⚠️ vizibil, nu ascuns.
 
+CATALOG ≠ PROMOVARE (29 aug 2026). `scripts/_leagues_public.py::is_public_league` e
+filtrul pentru conținutul care ne REPREZINTĂ: clipuri, captions, „Repere azi" de pe
+homepage — acolo, un pick din Czech 4. liga ne strică mesajul. Paginile de aici sunt
+CATALOG: o pagină „Predicții League Two (Anglia)" nu e o laudă, e o intrare de index
+pentru cine caută exact asta. Gate-ul de promovare aplicat catalogului ar șterge 27 din
+36 de pagini, între care chiar Liga 1 — adică fix cuvântul-cheie cu cea mai mare căutare
+în România. Listele rămân deci separate, DAR generatorul raportează la fiecare rulare
+care pagini de catalog sunt în afara filtrului de promovare, ca nimeni să nu le scoată
+din greșeală într-un clip.
+
 Rulare manuală:
     ~/football_predictor/.venv/bin/python3 ~/poseidon-site/scripts/gen_seo_pages.py
 
@@ -35,6 +45,9 @@ import sys
 from collections import defaultdict
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from _leagues_public import is_public_league
 
 try:
     from zoneinfo import ZoneInfo
@@ -759,6 +772,14 @@ def main() -> int:
     scrie_sitemap(pagini)
     print(f"[gen_seo_pages] OK — {len(LEAGUES)} pagini de ligă, {len(zile_scrise)} zile de "
           f"arhivă, sitemap cu {len(pagini)} URL-uri")
+
+    # Auditul catalog vs. promovare: paginile de mai jos există legitim ca intrări de
+    # index, dar NU au voie în clipuri/captions. Tipărit la fiecare rulare ca divergența
+    # dintre cele două liste să fie vizibilă, nu descoperită într-un clip publicat.
+    doar_catalog = [nume for tara, liga, _, nume in LEAGUES if not is_public_league(tara, liga)]
+    if doar_catalog:
+        print(f"[gen_seo_pages] catalog-only ({len(doar_catalog)}/{len(LEAGUES)}) — pagini "
+              f"legitime, dar NU pentru clipuri/captions: {', '.join(doar_catalog)}")
     return 0
 
 
