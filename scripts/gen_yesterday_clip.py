@@ -176,6 +176,23 @@ def main():
     render(out_dir, output, hold=2.6, xfade=0.4)
     sz = output.stat().st_size // 1024
     print(f"✓ {output}  {sz} KB")
+
+    # Script de VOCE (decizia Andreei 29 aug) — ~40 cuvinte ≈ durata clipului
+    # (~18s). Reality-check obligatoriu, fără „sigur/garantat".
+    loss_part = ""
+    if top_loss:
+        loss_part = (f" Am greșit la {top_loss['home']} cu {top_loss['away']} — "
+                     "o arăt, că așa e corect.")
+    win_w = "una câștigată" if n_win == 1 else f"{n_win} câștigate"
+    loss_w = "una pierdută" if n_loss == 1 else f"{n_loss} pierdute"
+    voice = (
+        f"Ieri, {n_total} predicții publice pe minim un gol: {win_w}, "
+        f"{loss_w}.{loss_part} Media pe termen lung e {int(calib)} la sută "
+        "— mâine poate fi și mai puțin. Totul înghețat public, verificabil pe site."
+    )
+    voice_path = output.with_name(output.stem + "-VOCE.txt")
+    voice_path.write_text(voice + "\n")
+    print(f"✓ Script voce: {voice_path}")
     print()
     print(f"=== Ieri ({yest}): Over 1.5 ≥65% ===")
     print(f"  N={n_total}  WIN={n_win}  LOSS={n_loss}  hit={hit:.0f}% (vs istoric {calib}%)")

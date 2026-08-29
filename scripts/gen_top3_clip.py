@@ -316,6 +316,23 @@ def main():
     render_video(out_dir, output)
     size = output.stat().st_size // 1024
     print(f"✓ {output}  {size} KB")
+
+    # Script de VOCE (decizia Andreei 29 aug: vocea ei peste clipuri) —
+    # ~40 cuvinte ≈ durata clipului (~15s). Limbaj conform regulilor publice:
+    # fără „sigur/garantat", cu reality-check. Piețele traduse natural:
+    # Over 1.5 = „minim două goluri", HT Over 0.5 = „gol până la pauză".
+    def _mk(p):
+        piata = "minim două goluri" if p["market"] == "Over 1.5" else "gol până la pauză"
+        return f"{p['home']} cu {p['away']} — {piata}, {int(p['prob']*100)} la sută"
+    voice = (
+        "Top 3 meciuri azi, unde modelul are cea mai multă informație. "
+        f"{_mk(picks[0])}. {_mk(picks[1])}. {_mk(picks[2])}. "
+        "Astea sunt probabilități calibrate, nu promisiuni — istoricul complet, "
+        "cu tot cu greșeli, e public pe site."
+    )
+    voice_path = output.with_name(output.stem + "-VOCE.txt")
+    voice_path.write_text(voice + "\n")
+    print(f"✓ Script voce: {voice_path}")
     print()
     print("=== TOP 3 selectat (verificare onestă cifre) ===")
     for i, p in enumerate(picks, 1):
