@@ -484,7 +484,7 @@ def pagina_liga(tara: str, liga: str, slug: str, nume: str, *,
 
   <section>
     <h2>Meciurile următoare din {e(nume)}</h2>
-{continut if continut else '    <p class="muted">Niciun meci programat în fereastra curentă. Vezi <a href="../index.html">toate predicțiile zilei</a>.</p>'}
+{continut if continut else '    <p class="muted">Niciun meci programat în fereastra curentă. Vezi <a href="../index.html">predicțiile gratuite ale zilei</a>.</p>'}
   </section>
 
   <section>
