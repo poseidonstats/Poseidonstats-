@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
 """Conținut static zilnic pentru SEO — rulat de daily_publish.sh la fiecare publish.
 
-Face două lucruri:
+Face trei lucruri:
   1. Rescrie secțiunea dintre markerii DAILY_STATIC din index.html cu top 3
      picks calibrate ale zilei (text static în HTML — Google primește conținut
      proaspăt zilnic, nu doar JSON încărcat din JS).
-  2. Actualizează <lastmod> în sitemap.xml pentru paginile cu changefreq daily
+  2. Rescrie secțiunea dintre markerii PROOF_STATIC din index.html cu tabelul
+     „ce s-a adeverit" din data/history.json (cumulated_markets) — dovada de
+     conversie de pe homepage, statică pentru crawler și niciodată inventată.
+  3. Actualizează <lastmod> în sitemap.xml pentru paginile cu changefreq daily
      (era înghețat la 2026-06-11 — semnal de site mort pentru crawler).
 
 Regulile de onestitate (CLAUDE.md): probabilități CALIBRATE, round(p*100),
@@ -22,11 +25,23 @@ from pathlib import Path
 
 SITE = Path.home() / "poseidon-site"
 PRED = SITE / "data" / "predictions.json"
+HIST = SITE / "data" / "history.json"
 INDEX = SITE / "index.html"
 SITEMAP = SITE / "sitemap.xml"
 
 START = "<!-- DAILY_STATIC_START -->"
 END = "<!-- DAILY_STATIC_END -->"
+PROOF_START = "<!-- PROOF_STATIC_START -->"
+PROOF_END = "<!-- PROOF_STATIC_END -->"
+
+# tier → clasă badge; identic cu maparea din assets/app.js (renderIstoric)
+TIER_CLASS = {
+    "STRONG ROBUST": "tier-elite",
+    "ROBUST": "tier-strong",
+    "PROMISING": "tier-good",
+    "PRE-PROMISING": "tier-mid",
+    "DROP": "tier-drop",
+}
 
 MAX_PROB_DISPLAY = 0.88
 EXCLUDE_TEAM = re.compile(
@@ -116,6 +131,89 @@ def build_section() -> str:
     return "\n".join(lines)
 
 
+def build_proof_section() -> str | None:
+    """Tabelul „ce s-a adeverit" din jurnalul forward (history.json).
+
+    Cifrele NU se ating: hit_pct / wlo_pct / tier vin exact așa cum le-a scris
+    pipeline-ul. Rândul DROP se afișează deliberat — e diferențiatorul de brand
+    (arătăm și piața pe care modelul NU prezice bine). Fără history.json valid →
+    None, iar update_proof() lasă secțiunea existentă neatinsă.
+    """
+    try:
+        data = json.loads(HIST.read_text())
+    except (OSError, ValueError):
+        return None
+    markets = data.get("cumulated_markets") or []
+    if not markets:
+        return None
+
+    d = bucharest_today()
+    date_ro = f"{d.day} {RO_MONTHS[d.month]} {d.year}"
+    rows = []
+    for m in markets:
+        tier = str(m.get("tier", ""))
+        cls = TIER_CLASS.get(tier, "tier-noise")
+        tr_cls = ' class="is-drop"' if tier == "DROP" else ""
+        n_ro = f'{m["n"]:,}'.replace(",", ".")   # separator de mii românesc
+        rows.append(
+            f'          <tr{tr_cls}>'
+            f'<td><strong>{m["name"]}</strong></td>'
+            f'<td>{n_ro}</td>'
+            f'<td class="hit">{m["hit_pct"]:.1f}%</td>'
+            f'<td>{m["wlo_pct"]:.1f}%</td>'
+            f'<td><span class="tier-badge {cls}">{tier}</span></td>'
+            f'</tr>'
+        )
+
+    return "\n".join([
+        PROOF_START,
+        '  <section class="proof" id="dovada">',
+        '    <h2 data-i18n="proof.h2">Ce s-a adeverit, din predicții înghețate</h2>',
+        '    <p class="proof-lead" data-i18n="proof.lead">Jurnal deschis din 2 iunie 2026. '
+        'Fiecare predicție e înghețată la generare (07:15), publicată înainte de meci și '
+        'comparată apoi cu rezultatul real. Nu ștergem nimic retroactiv.</p>',
+        '    <div class="proof-table-wrap">',
+        '      <table class="proof-table">',
+        '        <thead><tr>',
+        '          <th data-i18n="proof.th.market">Piață</th>',
+        '          <th data-i18n="proof.th.n">Predicții rezolvate</th>',
+        '          <th data-i18n="proof.th.hit">S-au adeverit</th>',
+        '          <th data-i18n="proof.th.wlo">Minim statistic (Wilson 95%)</th>',
+        '          <th data-i18n="proof.th.tier">Verdict propriu</th>',
+        '        </tr></thead>',
+        '        <tbody>',
+        *rows,
+        '        </tbody>',
+        '      </table>',
+        '    </div>',
+        '    <p class="proof-note" data-i18n="proof.note">Rândul roșu e aici intenționat: acolo '
+        'modelul <strong>nu</strong> prezice suficient de bine, iar noi îl marcăm <strong>DROP</strong> '
+        'în propriul nostru tabel. Un site care îți arată doar ce a mers nu-ți arată nimic.</p>',
+        '    <p class="proof-note">„Verdict propriu\" ține de mărimea eșantionului și de limita '
+        'Wilson, <strong>nu</strong> de avantajul peste rata naturală a pieței. Tabelul complet, '
+        'bucket cu bucket: <a href="track-record.html">track record</a> · '
+        '<a href="istoric.html">istoric zi cu zi</a>.</p>',
+        f'    <p class="proof-asof">Cifre din jurnalul forward, actualizate {date_ro} · '
+        'informativ · nu sfat de pariere · 18+</p>',
+        '  </section>',
+        "  " + PROOF_END,
+    ])
+
+
+def update_proof() -> None:
+    html = INDEX.read_text()
+    if PROOF_START not in html or PROOF_END not in html:
+        print(f"[gen_static_daily] markerii {PROOF_START} lipsesc — sar peste dovadă")
+        return
+    section = build_proof_section()
+    if section is None:
+        print("[gen_static_daily] history.json indisponibil/gol — dovada rămâne neatinsă")
+        return
+    new = re.sub(re.escape(PROOF_START) + r".*?" + re.escape(PROOF_END), lambda _: section,
+                 html, flags=re.S)
+    INDEX.write_text(new)
+
+
 def update_index() -> None:
     html = INDEX.read_text()
     if START not in html or END not in html:
@@ -138,5 +236,6 @@ def update_sitemap() -> None:
 
 if __name__ == "__main__":
     update_index()
+    update_proof()
     update_sitemap()
     print(f"[gen_static_daily] OK — index.html + sitemap.xml la {bucharest_today().date().isoformat()}")
