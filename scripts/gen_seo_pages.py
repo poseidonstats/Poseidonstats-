@@ -79,6 +79,9 @@ MARKETS = [
     ("Victorie oaspeți", "prob_away", 0.65),
     ("Ambele marchează", "prob_btts", 0.65),
 ]
+# Păstrat pentru paritate cu gen_static_daily.py, dar NEfolosit aici: pragul acela
+# ferește VITRINA de super-favoriți umflați. Coloana din tabel e descriptivă, iar a
+# ascunde maximul real ar face-o mincinoasă („cea mai probabilă piață", dar nu chiar).
 MAX_PROB_DISPLAY = 0.88
 
 EXCLUDE_TEAM = re.compile(
@@ -283,18 +286,17 @@ def tabel_meciuri(meciuri: list[dict]) -> str:
     randuri = []
     for m in meciuri:
         dt = datetime.fromisoformat(m["match_date"].replace("Z", "+00:00")).astimezone(TZ)
-        pick = ""
+        # DESCRIERE, nu recomandare. Paginile astea sunt catalog de căutare: fără steluțe,
+        # fără trepte de „elite/strong/good", fără cuvântul „reper" — doar care piață are
+        # cea mai mare probabilitate calibrată. Badge-ul cu ★ rămâne pe homepage, unde e
+        # produsul și unde înțelesul lui e explicat.
         best = None
-        for eticheta, cheie, prag in MARKETS:
+        for eticheta, cheie, _prag in MARKETS:
             p = m.get(cheie)
-            if p is not None and p >= prag and p <= MAX_PROB_DISPLAY:
-                if best is None or p > best[0]:
-                    best = (p, eticheta)
-        if best:
-            cls = ("pick-elite" if best[0] >= 0.80
-                   else "pick-strong" if best[0] >= 0.70 else "pick-good")
-            pick = (f'<span class="pick-badge {cls}">★ {e(best[1])} '
-                    f'{round(best[0] * 100)}%</span>')
+            if p is not None and (best is None or p > best[0]):
+                best = (p, eticheta)
+        maxima = (f'<span class="piata-max">{e(best[1])} · {round(best[0] * 100)}%</span>'
+                  if best else '<span class="muted">—</span>')
         necal = "" if m.get("calibrated") else ' <span class="warn-tag">⚠️ necalibrată</span>'
         randuri.append(f"""        <tr>
           <td>{dt.strftime('%d.%m')} <span class="muted">{dt.strftime('%H:%M')}</span></td>
@@ -303,19 +305,19 @@ def tabel_meciuri(meciuri: list[dict]) -> str:
           <td>{round(m['prob_over_1_5'] * 100)}%</td>
           <td>{round(m['prob_over_2_5'] * 100)}%</td>
           <td>{round(m['prob_btts'] * 100)}%</td>
-          <td>{pick}</td>
+          <td>{maxima}</td>
         </tr>""")
     return f"""    <div class="calibration-card">
       <table>
         <thead><tr>
           <th>Când</th><th>Meci</th><th>1 · X · 2</th>
-          <th>Peste 1.5</th><th>Peste 2.5</th><th>Ambele</th><th>Reper</th>
+          <th>Peste 1.5</th><th>Peste 2.5</th><th>Ambele</th><th>Cea mai probabilă piață</th>
         </tr></thead>
         <tbody>
 {chr(10).join(randuri)}
         </tbody>
       </table>
-      <p class="muted" style="font-size:.82rem">Ora e cea a României. Probabilitățile sunt cele calibrate empiric, nu ieșirea brută a modelului. „Reper" = piața cu cea mai mare probabilitate care trece pragul de afișare al site-ului.</p>
+      <p class="muted" style="font-size:.82rem">Ora e cea a României. Probabilitățile sunt cele calibrate empiric, nu ieșirea brută a modelului. Ultima coloană arată doar care dintre piețele urmărite are cea mai mare probabilitate calculată — e o descriere a ieșirii modelului, nu o recomandare, iar un procent mare rămâne o probabilitate, nu o certitudine.</p>
     </div>"""
 
 
