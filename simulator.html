@@ -65,16 +65,27 @@
     </div>
   </section>
 
-  <section>
-    <h2 data-i18n="sim.h2.pick">Alege selecțiile — maximum una din fiecare meci</h2>
+  <section class="sim-gen">
+    <h2 data-i18n="sim.gen.h2">Biletul generat</h2>
+    <p data-i18n="sim.gen.lead">Alege câte selecții vrei și îl compunem noi, din meciurile publicate gratuit azi. Primul lucru pe care îl vezi e șansa ca tot biletul să iasă — pentru că ăla e numărul care contează, nu lista.</p>
+    <div class="sim-gen-controls">
+      <span class="sim-gen-lbl" data-i18n="sim.gen.count">Câte selecții vrei?</span>
+      <div id="sim-gen-count" class="sim-n-row"></div>
+      <button type="button" id="sim-gen-btn" class="sim-gen-btn" data-i18n="sim.gen.btn">🎲 Altă variantă</button>
+    </div>
+    <label class="sim-odds-label" for="sim-gen-odds" data-i18n="sim.odds.label">Ai deja o cotă totală pentru combinația asta? Scrie-o aici (opțional):</label>
+    <input type="text" inputmode="decimal" id="sim-gen-odds" class="sim-odds"
+           placeholder="4.50" data-i18n-attr="placeholder:sim.odds.ph" autocomplete="off">
+    <div id="sim-gen-result"></div>
+  </section>
+
+  <section class="sim-manual">
+    <h2 data-i18n="sim.manual.h2">Sau construiește-l singur</h2>
+    <p data-i18n="sim.manual.lead">Dacă vrei alte piețe decât cele alese automat, bifează tu — maximum una din fiecare meci.</p>
     <div id="sim-matches" class="sim-grid"></div>
     <label class="sim-odds-label" for="sim-odds" data-i18n="sim.odds.label">Ai deja o cotă totală pentru combinația asta? Scrie-o aici (opțional):</label>
     <input type="text" inputmode="decimal" id="sim-odds" class="sim-odds"
            placeholder="4.50" data-i18n-attr="placeholder:sim.odds.ph" autocomplete="off">
-  </section>
-
-  <section>
-    <h2 data-i18n="sim.h2.result">Rezultatul</h2>
     <div id="sim-result"></div>
   </section>
 

@@ -93,7 +93,7 @@ function mountLangSwitcher() {
     if (document.getElementById("matches")) renderIndex();
     if (document.getElementById("days-list")) renderIstoric();
     if (document.getElementById("calibration-tables")) renderTrackRecord();
-    if (document.getElementById("sim-matches")) renderSimulator();
+    if (document.getElementById("sim-gen-result")) renderSimulator();
   });
 }
 
@@ -239,12 +239,17 @@ function renderUnlockCta(nLocked) {
    Rulează DOAR pe cele 5 meciuri publicate gratuit — pe site nu putem calcula
    pe setul complet fără să republicăm exact datele pe care le-am încuiat.
 
-   Scopul paginii nu e să ajute pe cineva să joace mai bine. E să arate aritmetica
-   pe care biletele n-o afișează niciodată: fiecare selecție adăugată SCADE șansa
-   totală, și o scade repede. De aceea afișăm produsul pas cu pas, nu doar rezultatul.
+   Două moduri: biletul GENERAT (principal) și construitul manual (secundar).
 
-   Ipoteza de independență e reală și e declarată pe pagină: înmulțim probabilitățile
-   ca și cum meciurile ar fi independente. Sunt aproape independente, nu perfect. */
+   Regula de afișare, deliberată: biletul generat începe ÎNTOTDEAUNA cu șansa
+   compusă, nu cu lista selecțiilor. Un bilet generat automat e cel mai aproape
+   de „pont" din tot ce are site-ul; singurul lucru care îl ține de partea bună
+   a liniei e că primul număr pe care îl vezi e cât de mică e șansa, nu cât de
+   frumos arată combinația.
+
+   Ipoteza de independență e reală și declarată pe pagină: înmulțim
+   probabilitățile ca și cum meciurile ar fi independente. Sunt aproape
+   independente, nu perfect. */
 
 const SIM_MARKETS = [
   ["1", "prob_home", "Victorie gazde"],
@@ -257,7 +262,7 @@ const SIM_MARKETS = [
   ["Ambele", "prob_btts", "Ambele echipe marchează"],
 ];
 
-const SIM = { sel: new Map() };   // fixture_id → {eticheta, prob, meci}
+const SIM = { sel: new Map(), free: [], nTotal: 0, varianta: 0, nGen: 3 };
 
 function simFmtOdds(p) {
   if (!p || p <= 0) return "—";
@@ -265,35 +270,45 @@ function simFmtOdds(p) {
   return c >= 100 ? c.toFixed(0) : c.toFixed(2);
 }
 
-function simCard(m) {
-  const chips = SIM_MARKETS
-    .filter(([, k]) => m[k] != null)
-    .map(([et, k, titlu]) =>
-      `<button type="button" class="sim-chip" data-fix="${m.fixture_id}" data-key="${k}"
-         data-et="${esc(et)}" data-p="${m[k]}" title="${esc(titlu)}">
-         ${esc(et)} <span class="sim-chip-p">${fmtPct(m[k])}</span>
-       </button>`).join("");
-  return `<div class="sim-card" data-card="${m.fixture_id}">
-    <div class="sim-card-head">
-      <strong>${esc(m.home_team)}</strong> – <strong>${esc(m.away_team)}</strong>
-      <span class="muted-xs">${esc(m.country)} · ${esc(m.league)} · ${matchWhen(m)}</span>
-    </div>
-    <div class="sim-chips">${chips}</div>
-  </div>`;
+// renderSimulator() se reapelează la schimbarea limbii; fără garda asta, „Altă variantă"
+// ar sări două variante la un click, iar input-ul de cotă ar recalcula de două ori.
+function simBind(el, ev, fn) {
+  if (!el || el.dataset.simBound === ev) return;
+  el.dataset.simBound = ev;
+  el.addEventListener(ev, fn);
 }
 
-function simUpdate(nTotal) {
-  const sel = [...SIM.sel.values()];
-  const out = document.getElementById("sim-result");
-  if (!out) return;
+function simNume(m) {
+  return `${m.home_team} – ${m.away_team}`;
+}
 
-  if (sel.length < 2) {
-    out.innerHTML = `<p class="muted">${tt("sim.empty",
-      "Alege cel puțin două selecții, din meciuri diferite, ca să vezi cum se compune șansa.")}</p>`;
-    return;
+// Piața cu cea mai mare probabilitate calibrată din meci. E o descriere a ieșirii
+// modelului, nu o alegere editorială: nu „recomandăm" piața, e pur și simplu maximul.
+function simBest(m) {
+  let best = null;
+  for (const [et, k] of SIM_MARKETS) {
+    const p = m[k];
+    if (p != null && (best === null || p > best.prob)) best = { eticheta: et, prob: p, meci: simNume(m), fix: String(m.fixture_id) };
   }
+  return best;
+}
 
-  // Produsul pas cu pas — asta e demonstrația, nu rezultatul final singur.
+// Toate combinațiile de n meciuri din cele disponibile, ordonate DESCRESCĂTOR după
+// șansa compusă. Nimic aleatoriu: „altă variantă" înseamnă următoarea ca probabilitate,
+// nu o altă tragere la sorți.
+function simCombinatii(lista, n) {
+  const out = [];
+  (function rec(start, acc) {
+    if (acc.length === n) { out.push(acc.slice()); return; }
+    for (let i = start; i < lista.length; i++) rec(i + 1, acc.concat([lista[i]]));
+  })(0, []);
+  return out
+    .map(sel => ({ sel, p: sel.reduce((a, s) => a * s.prob, 1) }))
+    .sort((a, b) => b.p - a.p);
+}
+
+/* Randarea unui bilet — folosită de ambele moduri, ca să nu existe două adevăruri. */
+function simTicketHtml(sel, cotaIn) {
   let p = 1;
   const pasi = sel.map((s, i) => {
     p *= s.prob;
@@ -301,24 +316,21 @@ function simUpdate(nTotal) {
       <span class="muted">(${fmtPct(s.prob)})</span></td>
       <td class="sim-run">${(p * 100).toFixed(1)}%</td></tr>`;
   }).join("");
-
   const unuDin = 1 / p;
-  const cotaIn = parseFloat((document.getElementById("sim-odds") || {}).value);
+
   let comparatie = "";
   if (cotaIn && cotaIn > 1) {
-    const pCasa = 1 / cotaIn;
     comparatie = `<div class="sim-compare">
       <p>${tt("sim.compare",
         "La cota <strong>{cota}</strong>, casa te plătește ca și cum șansa ar fi <strong>1 din {casa}</strong>. Calibrarea noastră spune <strong>~1 din {noi}</strong>.")
         .replace("{cota}", cotaIn.toFixed(2))
-        .replace("{casa}", (1 / pCasa).toFixed(1))
+        .replace("{casa}", cotaIn.toFixed(1))
         .replace("{noi}", unuDin.toFixed(1))}</p>
-      <p class="sim-warn">${tt("sim.compare.warn",
-        "Diferența dintre cele două numere <strong>nu este un câștig</strong>. Cota casei include marja ei, iar modelul nostru greșește regulat — vezi <a href=\"track-record.html\">track record-ul</a>, unde publicăm și piețele pe care nu prezicem destul de bine. Comparația e aici ca să înțelegi ce plătește casa, nu ca să-ți spună ce să faci.")}</p>
+      <p class="sim-warn">${tt("sim.compare.warn", "Diferența dintre cele două numere <strong>nu este un câștig</strong>. Cota casei include marja ei, iar modelul nostru greșește regulat — vezi <a href=\"track-record.html\">track record-ul</a>, unde publicăm și piețele pe care nu prezicem destul de bine. Comparația e aici ca să înțelegi ce plătește casa, nu ca să-ți spună ce să faci.")}</p>
     </div>`;
   }
 
-  out.innerHTML = `
+  return `
     <div class="sim-total">
       <div class="sim-total-p">${(p * 100).toFixed(1)}%</div>
       <div class="sim-total-lbl">${tt("sim.total",
@@ -337,61 +349,153 @@ function simUpdate(nTotal) {
       .replace("{prima}", fmtPct(sel[0].prob))
       .replace("{ultima}", (p * 100).toFixed(1) + "%")
       .replace("{n}", sel.length)}</p>
-    ${comparatie}
-    <div class="unlock-cta">
-      <div class="unlock-txt"><span class="unlock-icon">💎</span> ${tt("sim.cta",
-        "Aici calculezi pe cele 5 meciuri publicate gratuit. Combinațiile zilei, calculate din toate cele {n} meciuri analizate, ajung zilnic la abonați, pe Discord.")
-        .replace("{n}", nUnits(nTotal))}</div>
-      <a href="index.html#abonament" class="unlock-btn">${tt("freemium.cta.btn", "Vezi abonamentele")}</a>
-    </div>`;
+    ${comparatie}`;
+}
+
+function simCtaPro() {
+  return `<div class="unlock-cta">
+    <div class="unlock-txt"><span class="unlock-icon">💎</span> ${tt("sim.cta", "Vrei biletul din 10+ meciuri, ales din toate cele {n} meciuri ale zilei? Abonații Pro îl primesc zilnic pe Discord.")
+      .replace("{n}", nUnits(SIM.nTotal))}</div>
+    <a href="index.html#abonament" class="unlock-btn">${tt("freemium.cta.btn", "Vezi abonamentele")}</a>
+  </div>`;
+}
+
+/* ---------- Modul principal: biletul generat ---------- */
+
+function simGenereaza() {
+  const out = document.getElementById("sim-gen-result");
+  if (!out) return;
+  const cand = SIM.free.map(simBest).filter(Boolean);
+  const n = Math.min(SIM.nGen, cand.length);
+  if (n < 2) {
+    out.innerHTML = `<p class="muted">${tt("sim.few", "Azi sunt sub două meciuri publicate gratuit, deci n-avem ce combina — se întâmplă în pauzele competiționale. Explicația de mai jos rămâne valabilă, iar meciurile revin odată cu etapele.")}</p>`;
+    return;
+  }
+  const variante = simCombinatii(cand, n);
+  SIM.varianta = ((SIM.varianta % variante.length) + variante.length) % variante.length;
+  const v = variante[SIM.varianta];
+  const cota = parseFloat((document.getElementById("sim-gen-odds") || {}).value);
+
+  out.innerHTML = simTicketHtml(v.sel, cota)
+    + `<p class="sim-varianta">${tt("sim.gen.variant",
+        "Varianta {k} din {total}, ordonate descrescător după șansa compusă. Selecțiile sunt piețele cu cea mai mare probabilitate calibrată din fiecare meci — o alegere mecanică, nu o recomandare.")
+        .replace("{k}", SIM.varianta + 1).replace("{total}", variante.length)}</p>`
+    + simCtaPro();
+}
+
+/* ---------- Modul secundar: construit manual ---------- */
+
+function simCard(m) {
+  const chips = SIM_MARKETS
+    .filter(([, k]) => m[k] != null)
+    .map(([et, k, titlu]) =>
+      `<button type="button" class="sim-chip" data-fix="${m.fixture_id}" data-key="${k}"
+         data-et="${esc(et)}" data-p="${m[k]}" title="${esc(titlu)}">
+         ${esc(et)} <span class="sim-chip-p">${fmtPct(m[k])}</span>
+       </button>`).join("");
+  return `<div class="sim-card" data-card="${m.fixture_id}">
+    <div class="sim-card-head">
+      <strong>${esc(m.home_team)}</strong> – <strong>${esc(m.away_team)}</strong>
+      <span class="muted-xs">${esc(m.country)} · ${esc(m.league)} · ${matchWhen(m)}</span>
+    </div>
+    <div class="sim-chips">${chips}</div>
+  </div>`;
+}
+
+function simUpdate() {
+  const out = document.getElementById("sim-result");
+  if (!out) return;
+  const sel = [...SIM.sel.values()];
+  if (sel.length < 2) {
+    out.innerHTML = `<p class="muted">${tt("sim.empty",
+      "Alege cel puțin două selecții, din meciuri diferite, ca să vezi cum se compune șansa.")}</p>`;
+    return;
+  }
+  const cota = parseFloat((document.getElementById("sim-odds") || {}).value);
+  out.innerHTML = simTicketHtml(sel, cota);
 }
 
 async function renderSimulator() {
+  const genEl = document.getElementById("sim-gen-result");
   const el = document.getElementById("sim-matches");
-  if (!el) return;
+  if (!genEl && !el) return;
+
   const data = await fetchJSON(PRED_URL);
   if (!data || !data.matches) {
-    el.innerHTML = `<p class="muted">${tt("sim.nodata",
+    const msg = `<p class="muted">${tt("sim.nodata",
       "Datele zilei nu sunt încă publicate. Revino după actualizarea de dimineață.")}</p>`;
+    if (genEl) genEl.innerHTML = msg;
+    if (el) el.innerHTML = "";
     return;
   }
+
   const azi = new Date().toISOString().slice(0, 10);
   let free = data.matches.filter(m => m.free && m.match_date.slice(0, 10) >= azi);
   if (free.length < 2) free = data.matches.filter(m => m.free);   // pauze: iau tot ce e liber
-  const nTotal = data.matches.length;
+  SIM.free = free;
+  SIM.nTotal = data.matches.length;
+  SIM.sel.clear();
 
   if (free.length < 2) {
-    el.innerHTML = `<p class="muted">${tt("sim.few",
-      "Azi sunt sub două meciuri publicate gratuit, deci n-avem ce combina — se întâmplă în pauzele competiționale. Explicația de mai jos rămâne valabilă, iar meciurile revin odată cu etapele.")}</p>`;
-    document.getElementById("sim-result").innerHTML = "";
+    const msg = `<p class="muted">${tt("sim.few", "Azi sunt sub două meciuri publicate gratuit, deci n-avem ce combina — se întâmplă în pauzele competiționale. Explicația de mai jos rămâne valabilă, iar meciurile revin odată cu etapele.")}</p>`;
+    if (genEl) genEl.innerHTML = msg + simCtaPro();
+    if (el) el.innerHTML = "";
+    const r = document.getElementById("sim-result");
+    if (r) r.innerHTML = "";
     return;
   }
 
-  el.innerHTML = free.map(simCard).join("");
-  el.addEventListener("click", e => {
-    const chip = e.target.closest(".sim-chip");
-    if (!chip) return;
-    const fix = chip.dataset.fix;
-    const activ = chip.classList.contains("on");
-    // Max o selecție per meci: aceleași două rezultate din același meci nu se pot
-    // combina — s-ar exclude reciproc, iar produsul ar fi o cifră fără sens.
-    el.querySelectorAll(`.sim-chip[data-fix="${fix}"]`).forEach(c => c.classList.remove("on"));
-    if (activ) {
-      SIM.sel.delete(fix);
-    } else {
-      chip.classList.add("on");
-      const card = chip.closest(".sim-card").querySelector(".sim-card-head");
-      SIM.sel.set(fix, {
-        eticheta: chip.dataset.et,
-        prob: parseFloat(chip.dataset.p),
-        meci: card.textContent.trim().split("\n")[0].trim(),
-      });
-    }
-    simUpdate(nTotal);
-  });
-  const odds = document.getElementById("sim-odds");
-  if (odds) odds.addEventListener("input", () => simUpdate(nTotal));
-  simUpdate(nTotal);
+  // Butoanele „câte selecții" — doar valorile posibile cu meciurile de azi.
+  const pick = document.getElementById("sim-gen-count");
+  if (pick) {
+    const maxN = free.length;
+    SIM.nGen = Math.min(SIM.nGen, maxN);
+    pick.innerHTML = Array.from({ length: maxN - 1 }, (_, i) => i + 2)
+      .map(n => `<button type="button" class="sim-n ${n === SIM.nGen ? "on" : ""}" data-n="${n}">${n}</button>`)
+      .join("");
+    simBind(pick, "click", e => {
+      const b = e.target.closest(".sim-n");
+      if (!b) return;
+      SIM.nGen = parseInt(b.dataset.n, 10);
+      SIM.varianta = 0;
+      pick.querySelectorAll(".sim-n").forEach(x => x.classList.toggle("on", x === b));
+      simGenereaza();
+    });
+  }
+  const btn = document.getElementById("sim-gen-btn");
+  simBind(btn, "click", () => { SIM.varianta += 1; simGenereaza(); });
+  const gOdds = document.getElementById("sim-gen-odds");
+  simBind(gOdds, "input", simGenereaza);
+  simGenereaza();
+
+  // Modul manual
+  if (el) {
+    el.innerHTML = free.map(simCard).join("");
+    simBind(el, "click", e => {
+      const chip = e.target.closest(".sim-chip");
+      if (!chip) return;
+      const fix = chip.dataset.fix;
+      const activ = chip.classList.contains("on");
+      // Max o selecție per meci: două rezultate din același meci s-ar exclude
+      // reciproc, iar produsul lor ar fi o cifră fără sens.
+      el.querySelectorAll(`.sim-chip[data-fix="${fix}"]`).forEach(c => c.classList.remove("on"));
+      if (activ) {
+        SIM.sel.delete(fix);
+      } else {
+        chip.classList.add("on");
+        const card = chip.closest(".sim-card").querySelector(".sim-card-head");
+        SIM.sel.set(fix, {
+          eticheta: chip.dataset.et,
+          prob: parseFloat(chip.dataset.p),
+          meci: card.textContent.trim().split("\n")[0].trim(),
+        });
+      }
+      simUpdate();
+    });
+    const odds = document.getElementById("sim-odds");
+    simBind(odds, "input", simUpdate);
+    simUpdate();
+  }
 }
 
 /* ============== INDEX (predicții) ============== */
