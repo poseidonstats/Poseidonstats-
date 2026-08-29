@@ -203,7 +203,8 @@
     "faq.q7": "Pot anula oricând?",
     "faq.a7": "Da, direct din contul tău Patreon. Accesul rămâne activ până la finalul perioadei deja plătite, apoi rolul de Discord se retrage automat. Nu stocăm date de card — plata e procesată integral de Patreon.",
     "faq.q8": "Pe ce ligi funcționează cel mai bine?",
-    "faq.a8": "Pe ligile unde calibrarea per-ligă e validată — marcate <span class=\"ok-tag\">✓ calibrat</span> pe site și listate în track record. Pe restul, probabilitățile rămân calibrate global, dar marcăm explicit <span class=\"warn-tag\">⚠️ ligă necalibrată</span>. Tabelul complet, cu bias per ligă, e public."
+    "faq.a8": "Pe ligile unde calibrarea per-ligă e validată — marcate <span class=\"ok-tag\">✓ calibrat</span> pe site și listate în track record. Pe restul, probabilitățile rămân calibrate global, dar marcăm explicit <span class=\"warn-tag\">⚠️ ligă necalibrată</span>. Tabelul complet, cu bias per ligă, e public.",
+    "nav.ligi": "Pe ligi"
   },
   "en": {
     "lang.name": "English",
@@ -409,7 +410,8 @@
     "faq.q7": "Can I cancel any time?",
     "faq.a7": "Yes, straight from your Patreon account. Access stays active until the end of the period you already paid for, then the Discord role is withdrawn automatically. We store no card data — payment is handled entirely by Patreon.",
     "faq.q8": "Which leagues does it work best on?",
-    "faq.a8": "On leagues where per-league calibration is validated — marked <span class=\"ok-tag\">✓ calibrat</span> on the site and listed in the track record. Elsewhere the probabilities stay globally calibrated, but we flag <span class=\"warn-tag\">⚠️ ligă necalibrată</span> explicitly. The full table, with per-league bias, is public."
+    "faq.a8": "On leagues where per-league calibration is validated — marked <span class=\"ok-tag\">✓ calibrat</span> on the site and listed in the track record. Elsewhere the probabilities stay globally calibrated, but we flag <span class=\"warn-tag\">⚠️ ligă necalibrată</span> explicitly. The full table, with per-league bias, is public.",
+    "nav.ligi": "By league"
   },
   "es": {
     "lang.name": "Español",
@@ -615,7 +617,8 @@
     "faq.q7": "¿Puedo cancelar cuando quiera?",
     "faq.a7": "Sí, directamente desde tu cuenta de Patreon. El acceso sigue activo hasta el final del periodo ya pagado, y después el rol de Discord se retira automáticamente. No guardamos datos de tarjeta — el pago lo gestiona íntegramente Patreon.",
     "faq.q8": "¿En qué ligas funciona mejor?",
-    "faq.a8": "En las ligas donde la calibración por liga está validada — marcadas <span class=\"ok-tag\">✓ calibrat</span> en la web y listadas en el track record. En el resto las probabilidades siguen calibradas globalmente, pero marcamos explícitamente <span class=\"warn-tag\">⚠️ ligă necalibrată</span>. La tabla completa, con el sesgo por liga, es pública."
+    "faq.a8": "En las ligas donde la calibración por liga está validada — marcadas <span class=\"ok-tag\">✓ calibrat</span> en la web y listadas en el track record. En el resto las probabilidades siguen calibradas globalmente, pero marcamos explícitamente <span class=\"warn-tag\">⚠️ ligă necalibrată</span>. La tabla completa, con el sesgo por liga, es pública.",
+    "nav.ligi": "Por liga"
   },
   "it": {
     "lang.name": "Italiano",
@@ -821,6 +824,7 @@
     "faq.q7": "Posso disdire quando voglio?",
     "faq.a7": "Sì, direttamente dal tuo account Patreon. L'accesso resta attivo fino alla fine del periodo già pagato, poi il ruolo Discord viene ritirato automaticamente. Non conserviamo dati della carta — il pagamento è gestito interamente da Patreon.",
     "faq.q8": "Su quali campionati funziona meglio?",
-    "faq.a8": "Sui campionati dove la calibrazione per lega è validata — segnati <span class=\"ok-tag\">✓ calibrat</span> sul sito ed elencati nel track record. Altrove le probabilità restano calibrate globalmente, ma segnaliamo esplicitamente <span class=\"warn-tag\">⚠️ ligă necalibrată</span>. La tabella completa, con il bias per lega, è pubblica."
+    "faq.a8": "Sui campionati dove la calibrazione per lega è validata — segnati <span class=\"ok-tag\">✓ calibrat</span> sul sito ed elencati nel track record. Altrove le probabilità restano calibrate globalmente, ma segnaliamo esplicitamente <span class=\"warn-tag\">⚠️ ligă necalibrată</span>. La tabella completa, con il bias per lega, è pubblica.",
+    "nav.ligi": "Per campionato"
   }
 }

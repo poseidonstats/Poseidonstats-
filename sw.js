@@ -1,5 +1,5 @@
 /* POSEIDON Service Worker — cache-first pentru shell, network-first pentru date. */
-const CACHE = "poseidon-v35";
+const CACHE = "poseidon-v36";
 const SHELL = [
   "./index.html",
   "./istoric.html",
@@ -25,8 +25,10 @@ self.addEventListener("activate", e => {
 
 self.addEventListener("fetch", e => {
   const url = new URL(e.request.url);
-  // Date JSON: network-first (date proaspete; cache fallback)
-  if (url.pathname.includes("/data/")) {
+  // Date JSON + pagini generate zilnic (/predictii/): network-first.
+  // Paginile de ligă se rescriu la fiecare publicare; cache-first le-ar îngheța
+  // pe versiunea de ieri pentru vizitatorii care revin.
+  if (url.pathname.includes("/data/") || url.pathname.includes("/predictii/")) {
     e.respondWith(
       fetch(e.request)
         .then(r => {

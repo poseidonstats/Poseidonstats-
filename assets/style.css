@@ -955,3 +955,20 @@ footer a { color: #93c5fd; }
 .daily-static h2 { margin-bottom: 6px; }
 .daily-static ul { margin: 8px 0 4px; padding-left: 20px; }
 .daily-static li { margin: 6px 0; line-height: 1.5; }
+
+/* Legături către paginile de ligă (bloc generat în index de gen_seo_pages.py) */
+.ligi-links { margin: 30px 0 10px; }
+.ligi-grid {
+  list-style: none; padding: 0; margin: 14px 0 10px;
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 8px;
+}
+.ligi-grid li {
+  background: #fff; border: 1px solid #e2e8f0; border-radius: 8px;
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+}
+.ligi-grid li:hover { border-color: #c7d2fe; }
+.ligi-grid a { flex: 1; padding: 9px 12px; font-size: 0.9rem; color: #1e3a8a; font-weight: 500; }
+.liga-n {
+  background: #eff6ff; color: #1e3a8a; font-size: 0.75rem; font-weight: 700;
+  padding: 2px 9px; border-radius: 999px; margin-right: 10px;
+}
