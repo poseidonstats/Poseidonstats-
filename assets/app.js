@@ -354,7 +354,7 @@ function simTicketHtml(sel, cotaIn) {
 
 function simCtaPro() {
   return `<div class="unlock-cta">
-    <div class="unlock-txt"><span class="unlock-icon">💎</span> ${tt("sim.cta", "Vrei biletul din 10+ meciuri, ales din toate cele {n} meciuri ale zilei? Abonații Pro îl primesc zilnic pe Discord.")
+    <div class="unlock-txt"><span class="unlock-icon">💎</span> ${tt("sim.cta", "Vrei biletul din 10+ meciuri, ales din toate cele {n} meciuri ale zilei — sau unul construit către o cotă anume, până la 200? Abonații Pro le primesc zilnic pe Discord, fiecare cu șansa reală scrisă alături. La ținte mari de cotă, aceea e de ordinul unu la zeci sau sute, și scrie acolo.")
       .replace("{n}", nUnits(SIM.nTotal))}</div>
     <a href="index.html#abonament" class="unlock-btn">${tt("freemium.cta.btn", "Vezi abonamentele")}</a>
   </div>`;
