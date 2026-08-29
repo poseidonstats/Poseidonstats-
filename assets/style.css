@@ -1023,3 +1023,42 @@ footer a { color: #93c5fd; }
 .blocat-link { font-size: 0.84rem; color: #2563eb; font-weight: 600; white-space: nowrap; }
 .rand-liber { background: #f0fdf4; }
 .rand-liber td { border-bottom-color: #bbf7d0; }
+
+/* ===== SIMULATOR DE COMBINATE (29 aug 2026) ===== */
+.sim-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 12px; margin: 14px 0 18px; }
+.sim-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 13px 15px; }
+.sim-card-head { font-size: 0.95rem; color: #1e293b; margin-bottom: 9px; line-height: 1.4; }
+.sim-card-head .muted-xs { display: block; margin-top: 2px; }
+.sim-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.sim-chip {
+  background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px;
+  padding: 6px 10px; font-size: 0.84rem; font-weight: 600; color: #334155;
+  cursor: pointer; font-family: inherit; transition: all 0.12s;
+}
+.sim-chip:hover { border-color: #2563eb; background: #eff6ff; }
+.sim-chip.on { background: linear-gradient(135deg, #2563eb, #1e3a8a); border-color: #1e3a8a; color: #fff; }
+.sim-chip-p { opacity: 0.7; font-weight: 500; margin-left: 3px; }
+.sim-chip.on .sim-chip-p { opacity: 0.85; }
+
+.sim-odds-label { display: block; font-size: 0.9rem; color: #475569; margin-bottom: 6px; }
+.sim-odds {
+  width: 140px; padding: 9px 12px; border: 1px solid #cbd5e1; border-radius: 8px;
+  font-size: 1rem; font-family: inherit; font-weight: 600; color: #1e293b;
+}
+.sim-odds:focus { outline: 2px solid #2563eb; outline-offset: 1px; border-color: #2563eb; }
+
+.sim-total {
+  background: linear-gradient(135deg, #1e3a8a, #2563eb); color: #fff;
+  border-radius: 12px; padding: 20px; text-align: center; margin-bottom: 14px;
+}
+.sim-total-p { font-size: 2.6rem; font-weight: 800; line-height: 1; }
+.sim-total-lbl { font-size: 0.95rem; margin-top: 8px; opacity: 0.95; line-height: 1.5; }
+.sim-total-odds { font-size: 0.86rem; margin-top: 8px; opacity: 0.8; }
+.sim-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; background: #fff; border-radius: 8px; overflow: hidden; }
+.sim-table th { background: #f1f5f9; }
+.sim-run { font-weight: 700; color: #1e3a8a; }
+.sim-drop { background: #fffbeb; border-left: 3px solid #f59e0b; padding: 12px 15px; border-radius: 6px; margin: 14px 0; font-size: 0.92rem; line-height: 1.6; }
+.sim-compare { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px 16px; margin: 14px 0; }
+.sim-compare p { font-size: 0.93rem; line-height: 1.6; }
+.sim-warn { color: #7c2d12; background: #fff7ed; border-left: 3px solid #ea580c; padding: 10px 13px; border-radius: 6px; font-size: 0.88rem !important; margin-top: 10px !important; }
+@media (max-width: 600px) { .sim-total-p { font-size: 2.1rem; } }

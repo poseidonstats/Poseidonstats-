@@ -249,6 +249,7 @@ def shell(*, titlu: str, descriere: str, canonical: str, corp: str,
     <nav>
       <a href="{sus}index.html">Predicții</a>
       <a href="{sus}predictii/index.html">Pe ligi</a>
+      <a href="{sus}simulator.html">Simulator</a>
       <a href="{sus}istoric.html">Istoric</a>
       <a href="{sus}track-record.html">Track record</a>
       <a href="{sus}metodologie.html">Metodologie</a>
@@ -765,6 +766,7 @@ def main() -> int:
     pagini = [(f"{BASE}/", "daily", "1.0"),
               (f"{BASE}/istoric.html", "daily", "0.8"),
               (f"{BASE}/track-record.html", "daily", "0.8"),
+              (f"{BASE}/simulator.html", "weekly", "0.8"),
               (f"{BASE}/metodologie.html", "monthly", "0.6"),
               (f"{BASE}/terms.html", "yearly", "0.3"),
               (f"{BASE}/predictii/index.html", "daily", "0.9")]

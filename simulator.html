@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://gc.zgo.at; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://poseidonstats.goatcounter.com; font-src 'self'; base-uri 'self'; form-action 'none';">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>Simulator combinate fotbal — calculator de bilet | POSEIDON</title>
+<meta name="description" content="Simulator de combinate fotbal: alegi selecțiile și vezi cât scade șansa cu fiecare meci adăugat. Probabilități calibrate, fără recomandări.">
+<meta property="og:title" content="Simulator combinate fotbal — calculator de bilet | POSEIDON">
+<meta property="og:description" content="Vezi, pas cu pas, cât scade șansa unui bilet cu fiecare selecție adăugată. Aritmetica pe care biletele n-o afișează.">
+<meta property="og:image" content="https://poseidonstats.com/assets/icon-512.png">
+<meta property="og:url" content="https://poseidonstats.com/simulator.html">
+<meta property="og:type" content="website">
+<link rel="canonical" href="https://poseidonstats.com/simulator.html">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#1e3a8a">
+<link rel="apple-touch-icon" href="assets/icon-192.png">
+<script>if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js");</script>
+<script data-goatcounter="https://poseidonstats.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "POSEIDON", "item": "https://poseidonstats.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Simulator de combinate", "item": "https://poseidonstats.com/simulator.html" }
+  ]
+}
+</script>
+</head>
+<body>
+
+<div class="legal-banner" data-i18n="banner.legal">
+⚠️ Statistici informative. Modelul poate greși. Verifică sursa. 18+.
+</div>
+
+<header>
+  <div class="container">
+    <a href="index.html" class="brand">
+      <span class="brand-icon">🔱</span>
+      <span class="brand-name">POSEIDON</span>
+      <span class="brand-pulse"></span>
+    </a>
+    <p class="tagline" data-i18n="tagline">Predicții fotbal calibrate pe <strong>65.250 meciuri reale</strong> · zero leakage</p>
+    <nav>
+      <a href="index.html" data-i18n="nav.predictii">Predicții</a>
+      <a href="predictii/index.html" data-i18n="nav.ligi">Pe ligi</a>
+      <a href="simulator.html" class="active" data-i18n="nav.simulator">Simulator</a>
+      <a href="istoric.html" data-i18n="nav.istoric">Istoric</a>
+      <a href="track-record.html" data-i18n="nav.trackrecord">Track record</a>
+      <a href="metodologie.html" data-i18n="nav.metodologie">Metodologie</a>
+      <a href="index.html#abonament" data-i18n="nav.abonamente">💎 Abonamente</a>
+    </nav>
+  </div>
+</header>
+
+<main class="container">
+
+  <section class="intro">
+    <div class="hero">
+      <h1 class="hero-title" data-i18n="sim.h1">Simulator de combinate — cât scade șansa cu fiecare meci adăugat</h1>
+      <p class="hero-sub" data-i18n="sim.lead">Alege 2–5 selecții din meciurile publicate gratuit azi și vezi, pas cu pas, ce se întâmplă cu șansa totală. Nu-ți spunem ce să joci; îți arătăm aritmetica pe care biletele n-o afișează.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2 data-i18n="sim.h2.pick">Alege selecțiile — maximum una din fiecare meci</h2>
+    <div id="sim-matches" class="sim-grid"></div>
+    <label class="sim-odds-label" for="sim-odds" data-i18n="sim.odds.label">Ai deja o cotă totală pentru combinația asta? Scrie-o aici (opțional):</label>
+    <input type="text" inputmode="decimal" id="sim-odds" class="sim-odds"
+           placeholder="4.50" data-i18n-attr="placeholder:sim.odds.ph" autocomplete="off">
+  </section>
+
+  <section>
+    <h2 data-i18n="sim.h2.result">Rezultatul</h2>
+    <div id="sim-result"></div>
+  </section>
+
+  <section>
+    <h2 data-i18n="sim.h2.math">Cum se calculează, de fapt, o combinată</h2>
+    <p data-i18n="sim.math">Probabilitățile se <strong>înmulțesc</strong>, nu se adună. Două selecții de câte 80% nu dau 80%, ci 0,80 × 0,80 = <strong>64%</strong>. A treia o duce la 51%, a patra la 41%. Nu e o părere — e singura operație matematică posibilă, iar rezultatul e mereu mai mic decât cea mai slabă selecție din bilet.</p>
+  </section>
+
+  <section>
+    <h2 data-i18n="sim.h2.drop">De ce scade atât de repede</h2>
+    <p data-i18n="sim.drop.intro">Tabelul de mai jos e valabil oricând, indiferent de meciuri: arată ce rămâne dintr-un bilet în care fiecare selecție are aceeași șansă.</p>
+    <div class="calibration-card">
+      <table>
+        <thead><tr>
+          <th data-i18n="sim.th.count">Selecții pe bilet</th>
+          <th>90%</th><th>80%</th><th>70%</th><th>60%</th>
+        </tr></thead>
+        <tbody>
+        <tr><td><strong>1</strong></td><td>90.0%</td><td>80.0%</td><td>70.0%</td><td>60.0%</td></tr>
+        <tr><td><strong>2</strong></td><td>81.0%</td><td>64.0%</td><td>49.0%</td><td>36.0%</td></tr>
+        <tr><td><strong>3</strong></td><td>72.9%</td><td>51.2%</td><td>34.3%</td><td>21.6%</td></tr>
+        <tr><td><strong>4</strong></td><td>65.6%</td><td>41.0%</td><td>24.0%</td><td>13.0%</td></tr>
+        <tr><td><strong>5</strong></td><td>59.0%</td><td>32.8%</td><td>16.8%</td><td>7.8%</td></tr>
+        <tr><td><strong>6</strong></td><td>53.1%</td><td>26.2%</td><td>11.8%</td><td>4.7%</td></tr>
+        </tbody>
+      </table>
+      <p class="muted" style="font-size:.82rem">Fiecare coloană = șansa fiecărei selecții luate separat. Fiecare celulă = ce rămâne din bilet la numărul de selecții din stânga.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2 data-i18n="sim.h2.limits">Ce NU face acest simulator</h2>
+    <p data-i18n="sim.limits">Nu îți recomandă nimic și nu îți spune că un bilet e bun. Nu afișează cote de la case de pariuri — singura cotă pe care o arătăm este inversul propriei noastre probabilități. Nu conține link-uri către case de pariuri și nu primim comisioane. Iar probabilitățile pe care le înmulțește sunt estimările noastre calibrate, care <strong>pot fi greșite</strong>: exact de asta publicăm gratuit și integral track record-ul, cu tot cu piețele pe care nu ne descurcăm.</p>
+  </section>
+
+  <section>
+    <h2 data-i18n="sim.h2.indep">O precizare de metodă: independența</h2>
+    <p data-i18n="sim.indep">Înmulțind probabilitățile, presupunem că meciurile sunt <strong>independente</strong> — că rezultatul unuia nu spune nimic despre celălalt. Pentru meciuri din competiții diferite, ipoteza e aproape adevărată. Nu e perfect adevărată niciodată. Preferăm s-o scriem decât s-o ascundem.</p>
+  </section>
+
+  <p class="pro-disclaimer">Probabilități calibrate empiric · informativ · nu sfat de pariere · 18+</p>
+
+</main>
+
+<footer>
+  <div class="container">
+    <p data-i18n="footer.title"><strong>POSEIDON</strong> — model statistic propriu, ratings Bayesian cu calibrare per-ligă.</p>
+    <p data-i18n="footer.disclaimer">⚠️ <strong>Informativ.</strong> NU sfat de pariere. <strong>NU garanție.</strong> Folosește responsabil. <strong>18+</strong>.</p>
+    <p class="muted"><span data-i18n="footer.contact">Contact:</span> <a href="mailto:contact@poseidonstats.com">contact@poseidonstats.com</a> · <span data-i18n="footer.problem">Joc responsabil:</span> <a href="https://www.jocresponsabil.ro" target="_blank" rel="noopener">jocresponsabil.ro</a> · <a href="terms.html" data-i18n="footer.terms">Termeni și Condiții</a></p>
+  </div>
+</footer>
+
+<script src="assets/app.js"></script>
+<script>renderSimulator();</script>
+</body>
+</html>

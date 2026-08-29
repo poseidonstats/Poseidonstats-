@@ -93,6 +93,7 @@ function mountLangSwitcher() {
     if (document.getElementById("matches")) renderIndex();
     if (document.getElementById("days-list")) renderIstoric();
     if (document.getElementById("calibration-tables")) renderTrackRecord();
+    if (document.getElementById("sim-matches")) renderSimulator();
   });
 }
 
@@ -232,6 +233,165 @@ function renderUnlockCta(nLocked) {
     <div class="unlock-txt"><span class="unlock-icon">🔒</span> ${txt}</div>
     <a href="#abonament" class="unlock-btn">${tt("freemium.cta.btn", "Vezi abonamentele")}</a>
   </div>`;
+}
+
+/* ============== SIMULATOR COMBINATE (29 aug 2026) ==============
+   Rulează DOAR pe cele 5 meciuri publicate gratuit — pe site nu putem calcula
+   pe setul complet fără să republicăm exact datele pe care le-am încuiat.
+
+   Scopul paginii nu e să ajute pe cineva să joace mai bine. E să arate aritmetica
+   pe care biletele n-o afișează niciodată: fiecare selecție adăugată SCADE șansa
+   totală, și o scade repede. De aceea afișăm produsul pas cu pas, nu doar rezultatul.
+
+   Ipoteza de independență e reală și e declarată pe pagină: înmulțim probabilitățile
+   ca și cum meciurile ar fi independente. Sunt aproape independente, nu perfect. */
+
+const SIM_MARKETS = [
+  ["1", "prob_home", "Victorie gazde"],
+  ["X", "prob_draw", "Egal"],
+  ["2", "prob_away", "Victorie oaspeți"],
+  ["1X", "prob_1x", "Gazdele nu pierd"],
+  ["X2", "prob_x2", "Oaspeții nu pierd"],
+  ["Peste 1.5", "prob_over_1_5", "Minim 2 goluri"],
+  ["Peste 2.5", "prob_over_2_5", "Minim 3 goluri"],
+  ["Ambele", "prob_btts", "Ambele echipe marchează"],
+];
+
+const SIM = { sel: new Map() };   // fixture_id → {eticheta, prob, meci}
+
+function simFmtOdds(p) {
+  if (!p || p <= 0) return "—";
+  const c = 1 / p;
+  return c >= 100 ? c.toFixed(0) : c.toFixed(2);
+}
+
+function simCard(m) {
+  const chips = SIM_MARKETS
+    .filter(([, k]) => m[k] != null)
+    .map(([et, k, titlu]) =>
+      `<button type="button" class="sim-chip" data-fix="${m.fixture_id}" data-key="${k}"
+         data-et="${esc(et)}" data-p="${m[k]}" title="${esc(titlu)}">
+         ${esc(et)} <span class="sim-chip-p">${fmtPct(m[k])}</span>
+       </button>`).join("");
+  return `<div class="sim-card" data-card="${m.fixture_id}">
+    <div class="sim-card-head">
+      <strong>${esc(m.home_team)}</strong> – <strong>${esc(m.away_team)}</strong>
+      <span class="muted-xs">${esc(m.country)} · ${esc(m.league)} · ${matchWhen(m)}</span>
+    </div>
+    <div class="sim-chips">${chips}</div>
+  </div>`;
+}
+
+function simUpdate(nTotal) {
+  const sel = [...SIM.sel.values()];
+  const out = document.getElementById("sim-result");
+  if (!out) return;
+
+  if (sel.length < 2) {
+    out.innerHTML = `<p class="muted">${tt("sim.empty",
+      "Alege cel puțin două selecții, din meciuri diferite, ca să vezi cum se compune șansa.")}</p>`;
+    return;
+  }
+
+  // Produsul pas cu pas — asta e demonstrația, nu rezultatul final singur.
+  let p = 1;
+  const pasi = sel.map((s, i) => {
+    p *= s.prob;
+    return `<tr><td>${i + 1}</td><td><strong>${esc(s.meci)}</strong> — ${esc(s.eticheta)}
+      <span class="muted">(${fmtPct(s.prob)})</span></td>
+      <td class="sim-run">${(p * 100).toFixed(1)}%</td></tr>`;
+  }).join("");
+
+  const unuDin = 1 / p;
+  const cotaIn = parseFloat((document.getElementById("sim-odds") || {}).value);
+  let comparatie = "";
+  if (cotaIn && cotaIn > 1) {
+    const pCasa = 1 / cotaIn;
+    comparatie = `<div class="sim-compare">
+      <p>${tt("sim.compare",
+        "La cota <strong>{cota}</strong>, casa te plătește ca și cum șansa ar fi <strong>1 din {casa}</strong>. Calibrarea noastră spune <strong>~1 din {noi}</strong>.")
+        .replace("{cota}", cotaIn.toFixed(2))
+        .replace("{casa}", (1 / pCasa).toFixed(1))
+        .replace("{noi}", unuDin.toFixed(1))}</p>
+      <p class="sim-warn">${tt("sim.compare.warn",
+        "Diferența dintre cele două numere <strong>nu este un câștig</strong>. Cota casei include marja ei, iar modelul nostru greșește regulat — vezi <a href=\"track-record.html\">track record-ul</a>, unde publicăm și piețele pe care nu prezicem destul de bine. Comparația e aici ca să înțelegi ce plătește casa, nu ca să-ți spună ce să faci.")}</p>
+    </div>`;
+  }
+
+  out.innerHTML = `
+    <div class="sim-total">
+      <div class="sim-total-p">${(p * 100).toFixed(1)}%</div>
+      <div class="sim-total-lbl">${tt("sim.total",
+        "șansa ca <strong>toate cele {n} selecții</strong> să iasă — adică <strong>~1 din {x}</strong>")
+        .replace("{n}", sel.length).replace("{x}", unuDin.toFixed(1))}</div>
+      <div class="sim-total-odds">${tt("sim.fair",
+        "Cota care ar corespunde exact acestei probabilități: <strong>{c}</strong>")
+        .replace("{c}", simFmtOdds(p))}</div>
+    </div>
+    <table class="sim-table">
+      <thead><tr><th>#</th><th>${tt("sim.th.sel", "Selecție")}</th><th>${tt("sim.th.run", "Șansa cumulată")}</th></tr></thead>
+      <tbody>${pasi}</tbody>
+    </table>
+    <p class="sim-drop">${tt("sim.drop",
+      "Fiecare selecție adăugată <strong>scade</strong> șansa totală — de la {prima} cu una singură, la {ultima} cu toate {n}. Asta e aritmetica pe care biletele nu ți-o arată.")
+      .replace("{prima}", fmtPct(sel[0].prob))
+      .replace("{ultima}", (p * 100).toFixed(1) + "%")
+      .replace("{n}", sel.length)}</p>
+    ${comparatie}
+    <div class="unlock-cta">
+      <div class="unlock-txt"><span class="unlock-icon">💎</span> ${tt("sim.cta",
+        "Aici calculezi pe cele 5 meciuri publicate gratuit. Combinațiile zilei, calculate din toate cele {n} meciuri analizate, ajung zilnic la abonați, pe Discord.")
+        .replace("{n}", nUnits(nTotal))}</div>
+      <a href="index.html#abonament" class="unlock-btn">${tt("freemium.cta.btn", "Vezi abonamentele")}</a>
+    </div>`;
+}
+
+async function renderSimulator() {
+  const el = document.getElementById("sim-matches");
+  if (!el) return;
+  const data = await fetchJSON(PRED_URL);
+  if (!data || !data.matches) {
+    el.innerHTML = `<p class="muted">${tt("sim.nodata",
+      "Datele zilei nu sunt încă publicate. Revino după actualizarea de dimineață.")}</p>`;
+    return;
+  }
+  const azi = new Date().toISOString().slice(0, 10);
+  let free = data.matches.filter(m => m.free && m.match_date.slice(0, 10) >= azi);
+  if (free.length < 2) free = data.matches.filter(m => m.free);   // pauze: iau tot ce e liber
+  const nTotal = data.matches.length;
+
+  if (free.length < 2) {
+    el.innerHTML = `<p class="muted">${tt("sim.few",
+      "Azi sunt sub două meciuri publicate gratuit, deci n-avem ce combina — se întâmplă în pauzele competiționale. Explicația de mai jos rămâne valabilă, iar meciurile revin odată cu etapele.")}</p>`;
+    document.getElementById("sim-result").innerHTML = "";
+    return;
+  }
+
+  el.innerHTML = free.map(simCard).join("");
+  el.addEventListener("click", e => {
+    const chip = e.target.closest(".sim-chip");
+    if (!chip) return;
+    const fix = chip.dataset.fix;
+    const activ = chip.classList.contains("on");
+    // Max o selecție per meci: aceleași două rezultate din același meci nu se pot
+    // combina — s-ar exclude reciproc, iar produsul ar fi o cifră fără sens.
+    el.querySelectorAll(`.sim-chip[data-fix="${fix}"]`).forEach(c => c.classList.remove("on"));
+    if (activ) {
+      SIM.sel.delete(fix);
+    } else {
+      chip.classList.add("on");
+      const card = chip.closest(".sim-card").querySelector(".sim-card-head");
+      SIM.sel.set(fix, {
+        eticheta: chip.dataset.et,
+        prob: parseFloat(chip.dataset.p),
+        meci: card.textContent.trim().split("\n")[0].trim(),
+      });
+    }
+    simUpdate(nTotal);
+  });
+  const odds = document.getElementById("sim-odds");
+  if (odds) odds.addEventListener("input", () => simUpdate(nTotal));
+  simUpdate(nTotal);
 }
 
 /* ============== INDEX (predicții) ============== */
