@@ -23,6 +23,13 @@ import sys
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
+# Filtrul de ligi pentru AFIȘAJ PUBLIC vine din modulul UNIC — un singur loc, ca să
+# nu existe două liste care se depărtează (29 aug 2026). „Repere azi" e vitrina de pe
+# homepage: până acum scotea în față Hungary NB III / Czech 4. liga, adică exact
+# opusul a ce vrea să demonstreze blocul.
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from _leagues_public import is_public_league
+
 SITE = Path.home() / "poseidon-site"
 PRED = SITE / "data" / "predictions.json"
 HIST = SITE / "data" / "history.json"
@@ -70,12 +77,18 @@ def bucharest_today() -> datetime:
     return datetime.now(timezone(timedelta(hours=3)))
 
 
-def todays_picks(limit: int = 3) -> tuple[list[str], int]:
+def todays_picks(limit: int = 3) -> tuple[list[str], int, int]:
+    """Returnează (repere, meciuri_azi, repere_respinse_de_filtrul_public).
+
+    Al treilea număr contează pentru onestitatea mesajului de rezervă: „niciun reper
+    peste praguri" ar fi FALS în zilele în care există repere, dar toate în ligi mici.
+    """
     data = json.loads(PRED.read_text())
     matches = data["matches"] if isinstance(data, dict) and "matches" in data else data
     today = bucharest_today().date().isoformat()
     picks = []
     n_today = 0
+    n_respinse = 0
     for m in matches:
         if not str(m.get("match_date", "")).startswith(today):
             continue
@@ -85,6 +98,11 @@ def todays_picks(limit: int = 3) -> tuple[list[str], int]:
         home, away = str(m.get("home_team", "")), str(m.get("away_team", ""))
         league = f"{m.get('country', '')} · {m.get('league', '')}"
         if EXCLUDE_TEAM.search(home) or EXCLUDE_TEAM.search(away) or EXCLUDE_LEAGUE.search(league):
+            continue
+        if not is_public_league(m.get("country", ""), m.get("league", "")):
+            if any((m.get(k) is not None and prag <= m[k] <= MAX_PROB_DISPLAY)
+                   for _, k, prag in MARKETS):
+                n_respinse += 1
             continue
         for label, key, prag in MARKETS:
             p = m.get(key)
@@ -103,13 +121,13 @@ def todays_picks(limit: int = 3) -> tuple[list[str], int]:
         out.append(html)
         if len(out) >= limit:
             break
-    return out, n_today
+    return out, n_today, n_respinse
 
 
 def build_section() -> str:
     d = bucharest_today()
     date_ro = f"{d.day} {RO_MONTHS[d.month]} {d.year}"
-    picks, n_today = todays_picks()
+    picks, n_today, n_respinse = todays_picks()
     lines = [
         START,
         '  <section class="daily-static" id="repere-azi">',
@@ -121,6 +139,13 @@ def build_section() -> str:
         lines.append("    <ul>")
         lines += ["      " + p for p in picks]
         lines.append("    </ul>")
+    elif n_respinse:
+        # Există repere, dar toate în competiții pe care nu le punem în vitrină.
+        # A scrie „niciun reper peste praguri" ar fi minciună prin omisiune.
+        lines.append(f"    <p>Modelul a analizat azi {n_today} meciuri. În campionatele mari nu "
+                     f"e azi niciun reper peste pragurile de afișare; cele "
+                     f"{n_respinse} care trec pragul sunt în competiții mici, pe care nu le "
+                     "scoatem în față. Lista completă, cu filtre, e mai jos.</p>")
     else:
         lines.append(f"    <p>Modelul a analizat azi {n_today} meciuri; niciun reper calibrat "
                      "peste pragurile de afișare — lista completă mai jos.</p>")
