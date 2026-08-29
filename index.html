@@ -47,6 +47,76 @@
       "description": "Predicții fotbal azi, generate de un model statistic Poisson + Dixon-Coles, calibrate pe 65.000+ meciuri și verificate public zilnic.",
       "inLanguage": ["ro", "en", "es", "it"],
       "publisher": { "@id": "https://poseidonstats.com/#organization" }
+    },
+    {
+          "@type": "FAQPage",
+          "@id": "https://poseidonstats.com/#faq",
+          "mainEntity": [
+                {
+                      "@type": "Question",
+                      "name": "Predicțiile sunt cu adevărat gratuite?",
+                      "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "Da. Toate predicțiile de pe site sunt gratuite, fără cont și fără reclame, iar acest lucru e scris ca angajament în Termeni și Condiții. Abonamentul plătit acoperă livrarea pe Discord și analiza scrisă, nu accesul la predicții."
+                      }
+                },
+                {
+                      "@type": "Question",
+                      "name": "De unde vin probabilitățile?",
+                      "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "Dintr-un model Poisson cu corecție Dixon-Coles și ratings Bayesian, rulat pe 200.000 de simulări Monte Carlo per meci. Cifra afișată e cea calibrată empiric: dacă modelul brut spune 85% pentru un interval, dar în istoric acolo s-a întâmplat 67%, afișăm 67%, nu 85%."
+                      }
+                },
+                {
+                      "@type": "Question",
+                      "name": "Vindeți ponturi sau bilete?",
+                      "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "Nu. POSEIDON e un site informativ-statistic. Nu combinăm meciuri, nu recomandăm mize, nu avem niciun link către case de pariuri și nu promitem profit. Modelul greșește regulat, iar meciurile ratate rămân publicate."
+                      }
+                },
+                {
+                      "@type": "Question",
+                      "name": "Cum știu că nu ajustați predicțiile după meci?",
+                      "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "Pentru că sunt înghețate înainte. Predicția zilei se generează la 07:15 și se publică înainte de meciuri; jurnalul păstrează apoi fiecare predicție lângă rezultatul real, WIN sau LOSS. Poți verifica rând cu rând în istoric și în track record."
+                      }
+                },
+                {
+                      "@type": "Question",
+                      "name": "Ce primesc, concret, dacă plătesc?",
+                      "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "La ⭐ Basic ($5/lună): alerta zilnică pe Discord, cu selecția calibrată a zilei. La 💎 Pro ($20/lună): tot ce e la Basic, plus analiza scrisă per meci — clasament, formă, H2H, absențe, reconciliate cu cifrele modelului și cu capcanele marcate."
+                      }
+                },
+                {
+                      "@type": "Question",
+                      "name": "Cum intru pe Discord după ce plătesc?",
+                      "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "Alegi tier-ul pe Patreon, apoi conectezi contul de Discord din Patreon (Settings → Apps → Connect Discord). Rolul se acordă automat și îți deschide canalele tier-ului. Detaliat, în cei 4 pași de mai sus."
+                      }
+                },
+                {
+                      "@type": "Question",
+                      "name": "Pot anula oricând?",
+                      "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "Da, direct din contul tău Patreon. Accesul rămâne activ până la finalul perioadei deja plătite, apoi rolul de Discord se retrage automat. Nu stocăm date de card — plata e procesată integral de Patreon."
+                      }
+                },
+                {
+                      "@type": "Question",
+                      "name": "Pe ce ligi funcționează cel mai bine?",
+                      "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "Pe ligile unde calibrarea per-ligă e validată — marcate ✓ calibrat pe site și listate în track record. Pe restul, probabilitățile rămân calibrate global, dar marcăm explicit ⚠️ ligă necalibrată. Tabelul complet, cu bias per ligă, e public."
+                      }
+                }
+          ]
     }
   ]
 }
@@ -71,6 +141,7 @@
       <a href="istoric.html" data-i18n="nav.istoric">Istoric</a>
       <a href="track-record.html" data-i18n="nav.trackrecord">Track record</a>
       <a href="metodologie.html" data-i18n="nav.metodologie">Metodologie</a>
+      <a href="#abonament" data-i18n="nav.abonamente">💎 Abonamente</a>
       <a class="patreon" href="https://patreon.com/PoseidonPredictions" target="_blank" rel="noopener" data-i18n="nav.sustine">☕ Susține</a>
     </nav>
   </div>
@@ -80,8 +151,13 @@
 
   <section class="intro">
     <div class="hero">
-      <h1 class="hero-title" data-i18n="hero.title">Ce șanse reale are meciul de azi? Cifre, nu păreri.</h1>
-      <p class="hero-sub" data-i18n="hero.sub">Un model statistic, calibrat pe zeci de mii de meciuri. Gratis, fără reclame, fără promisiuni.</p>
+      <h1 class="hero-title" data-i18n="hero.title">Predicții fotbal azi — calculate de un model, verificate public</h1>
+      <p class="hero-sub" data-i18n="hero.sub">Un model statistic (Poisson + Dixon-Coles) calculează probabilitățile meciurilor zilei și le calibrează pe rezultate reale. Predicția e înghețată înainte de meci și rămâne publicată exact așa cum a fost — inclusiv când greșește.</p>
+      <p class="hero-free" data-i18n="hero.free">Gratuit · fără cont · fără reclame · zero link-uri către case de pariuri</p>
+      <div class="hero-cta">
+        <a href="#repere-azi" class="hero-btn hero-btn-primary" data-i18n="hero.cta.primary">⚽ Vezi predicțiile de azi</a>
+        <a href="track-record.html" class="hero-btn hero-btn-ghost" data-i18n="hero.cta.secondary">📈 Vezi ce s-a adeverit</a>
+      </div>
     </div>
     <div class="trust-line">
       <span class="trust-item"><strong>200.000</strong> <span data-i18n="trust.simulari">simulări Monte Carlo / meci</span></span>
@@ -89,6 +165,36 @@
       <span class="trust-item"><strong data-stat="leagues">270/366</strong> <span data-i18n="trust.ligi">ligi validate ±10%</span></span>
       <span class="trust-item"><strong>0</strong> <span data-i18n="trust.leakage">leakage temporal</span></span>
     </div>
+
+  <!-- PROOF_STATIC_START -->
+  <section class="proof" id="dovada">
+    <h2 data-i18n="proof.h2">Ce s-a adeverit, din predicții înghețate</h2>
+    <p class="proof-lead" data-i18n="proof.lead">Jurnal deschis din 2 iunie 2026. Fiecare predicție e înghețată la generare (07:15), publicată înainte de meci și comparată apoi cu rezultatul real. Nu ștergem nimic retroactiv.</p>
+    <div class="proof-table-wrap">
+      <table class="proof-table">
+        <thead><tr>
+          <th data-i18n="proof.th.market">Piață</th>
+          <th data-i18n="proof.th.n">Predicții rezolvate</th>
+          <th data-i18n="proof.th.hit">S-au adeverit</th>
+          <th data-i18n="proof.th.wlo">Minim statistic (Wilson 95%)</th>
+          <th data-i18n="proof.th.tier">Verdict propriu</th>
+        </tr></thead>
+        <tbody>
+          <tr><td><strong>Over 1.5</strong></td><td>9.914</td><td class="hit">83.0%</td><td>82.2%</td><td><span class="tier-badge tier-elite">STRONG ROBUST</span></td></tr>
+          <tr><td><strong>Over 2.5</strong></td><td>3.451</td><td class="hit">71.2%</td><td>69.6%</td><td><span class="tier-badge tier-strong">ROBUST</span></td></tr>
+          <tr><td><strong>Over 3.5</strong></td><td>220</td><td class="hit">65.0%</td><td>58.5%</td><td><span class="tier-badge tier-mid">PRE-PROMISING</span></td></tr>
+          <tr><td><strong>BTTS Da</strong></td><td>569</td><td class="hit">69.1%</td><td>65.2%</td><td><span class="tier-badge tier-mid">PRE-PROMISING</span></td></tr>
+          <tr><td><strong>HT Over 0.5</strong></td><td>12.550</td><td class="hit">74.5%</td><td>73.8%</td><td><span class="tier-badge tier-strong">ROBUST</span></td></tr>
+          <tr class="is-drop"><td><strong>HT Over 1.5</strong></td><td>131</td><td class="hit">59.5%</td><td>51.0%</td><td><span class="tier-badge tier-drop">DROP</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="proof-note" data-i18n="proof.note">Rândul roșu e aici intenționat: acolo modelul <strong>nu</strong> prezice suficient de bine, iar noi îl marcăm <strong>DROP</strong> în propriul nostru tabel. Un site care îți arată doar ce a mers nu-ți arată nimic.</p>
+    <p class="proof-note">„Verdict propriu" ține de mărimea eșantionului și de limita Wilson, <strong>nu</strong> de avantajul peste rata naturală a pieței. Tabelul complet, bucket cu bucket: <a href="track-record.html">track record</a> · <a href="istoric.html">istoric zi cu zi</a>.</p>
+    <p class="proof-asof">Cifre din jurnalul forward, actualizate 29 august 2026 · informativ · nu sfat de pariere · 18+</p>
+  </section>
+  <!-- PROOF_STATIC_END -->
+
     <h2 data-i18n="index.h2">Predicții pentru următoarele 7 zile</h2>
     <div class="howto" data-i18n="index.howto">
       <h3>⚽ Cum folosești POSEIDON (în 30 de secunde)</h3>
@@ -168,42 +274,6 @@
     Fiecare predicție e individuală — site-ul nu combină meciuri și nu face recomandări de joc.
   </p>
 
-  <!-- Exemplu analiză Pro — teaser conversie (mutat SUS pt vizibilitate, 29 iun) -->
-  <section class="pro-sample">
-    <h2 data-i18n="pro.h2">🔱 Exemplu de analiză Pro</h2>
-    <p class="pro-sample-intro" data-i18n="pro.intro">Pe site vezi <strong>cifrele</strong>. Pe Discord, abonații Pro văd <strong>de ce</strong> — analiză completă, cu context și capcane, pentru fiecare meci. Iată jumătate dintr-o analiză reală:</p>
-
-    <div class="pro-card">
-      <div class="pro-card-head">💎 Zalaegerszegi TE – Paks · NB I (Ungaria)</div>
-      <div class="pro-visible">
-        <p><strong>Verdict:</strong> Meci de goluri pe hârtie, dar cu un istoric direct surprinzător de închis — H2H-ul spune „strâns", modelul spune „deschis". Valoarea stă în zona golurilor mici și în refuzul favoritului de acasă.</p>
-        <p class="pro-label"><strong>Ce spune contextul:</strong></p>
-        <ul>
-          <li><strong>Clasament:</strong> ZTE ultima, 0 puncte, 0:3 golaveraj; Paks locul 4 cu 3p — și totuși modelul dă gazdele ușor favorite. Semnal de <strong>capcană de favorit</strong>.</li>
-          <li><strong>Formă:</strong> Paks alternant, cu multe goluri: 2-2, 4-2, 1-2, 1-4, 5-3. H2H ultimele 5: un singur meci peste 2.5, dar 4 din 5 cu ambele echipe marcând.</li>
-          <li><strong>Dovezi proprii:</strong> banda O1.5 78–85% a livrat istoric <strong>81,0%</strong> pe 16.115 meciuri (backtest OOS) — cifrele noastre, măsurate, nu impresii.</li>
-        </ul>
-      </div>
-      <div class="pro-locked">
-        <div class="pro-locked-content" aria-hidden="true">
-          <p><strong>Modelul vs realitate:</strong> Modelul dă gazdele favorite (40%), dar clasamentul și piața îl contrazic frontal — capcană de favorit, nu pariem ZTE solo. Pe goluri, banda BTTS 60–65% a livrat doar…</p>
-          <p><strong>Unde stă valoarea:</strong> 🔒 Over 1.5 — 83%, forward propriu 84% pe 7.521 rezolvate… 🎯 X2 (Paks nu pierde)… 💎 pick de cotă, cu probabilitatea onestă…</p>
-          <p><strong>De urmărit:</strong> dacă Paks marchează primul, ZTE se deschide și O2.5 devine scenariul…</p>
-        </div>
-        <div class="pro-lock-overlay">
-          <span class="pro-lock-icon">🔒</span>
-          <span data-i18n="pro.locked">Reconcilierea, <strong>unde e valoarea reală</strong> și riscul — exclusiv pe Discord Pro.</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="pro-cta">
-      <a href="https://patreon.com/PoseidonPredictions" target="_blank" rel="noopener" class="pro-btn pro-btn-basic" data-i18n="pro.btn.basic">⭐ Basic — $5/lună</a>
-      <a href="https://patreon.com/PoseidonPredictions" target="_blank" rel="noopener" class="pro-btn pro-btn-pro" data-i18n="pro.btn.pro">💎 Pro — $20/lună</a>
-    </div>
-    <p class="pro-disclaimer" data-i18n="pro.disclaimer">Exemplu real, pe date înghețate. Statistic · informativ · nu sfat de pariere · 18+</p>
-  </section>
-
   <!-- DAILY_STATIC_START -->
   <section class="daily-static" id="repere-azi">
     <h2>⭐ Predicții fotbal azi — 29 august 2026</h2>
@@ -220,6 +290,153 @@
   <div id="match-count" class="match-count"></div>
 
   <div id="matches"></div>
+
+  <!-- ====== OFERTĂ — după ce vizitatorul a primit gratuit predicțiile (29 aug 2026) ====== -->
+
+  <!-- Exemplu analiză Pro — analiză REALĂ din arhiva #analize-pro (17 aug 2026), format v2 -->
+  <section class="pro-sample">
+    <h2 data-i18n="pro.h2">🔱 Exemplu de analiză Pro</h2>
+    <p class="pro-sample-intro" data-i18n="pro.intro">Pe site vezi <strong>cifrele</strong>. Pe Discord, abonații Pro primesc și <strong>de ce</strong> — context real (clasament, formă, H2H, absențe) reconciliat cu modelul, cu capcanele marcate. Mai jos, o analiză reală, publicată la data ei:</p>
+
+    <div class="pro-card">
+      <div class="pro-card-head">💎 Cardiff – Wrexham · Championship (Anglia) · 17 august 2026</div>
+      <div class="pro-visible">
+        <p><strong>⚡ Verdict:</strong> Modelul vede Cardiff clar favorit (55%), dar clasamentul și forma reală nu susțin acea marjă — meciul e mai echilibrat decât pare pe hârtie. Zona solidă rămâne golurile, nu rezultatul.</p>
+        <p class="pro-label"><strong>📊 Context:</strong></p>
+        <ul>
+          <li><strong>Clasament:</strong> ambele pe 0 puncte după prima etapă — Cardiff 15, Wrexham 16, despărțite doar de alfabetul clasamentului.</li>
+          <li><strong>Formă:</strong> Cardiff vine cu 4 victorii în ultimele 5 (5-1, 6-1, 4-1) și o egalitate 1-1; Wrexham are 3 înfrângeri 0-1 în ultimele 5 și un singur gol marcat în ele. H2H recent: Wrexham 1-2 Cardiff (28 oct. 2025).</li>
+          <li><strong>Absențe:</strong> grele la oaspeți — Windass, Cacace, Sheaf, Revan (hamstring); la gazde lipsesc Fish, Colwill, Lawlor.</li>
+        </ul>
+      </div>
+      <div class="pro-locked">
+        <div class="pro-locked-content" aria-hidden="true">
+          <p><strong>🧮 Modelul vs realitate:</strong> Cardiff a marcat 15 goluri la xG 10.8 în ultimele 5 meciuri cu xG — supraperformanță de finalizare, statistic nesustenabilă, iar scorurile mari umflă percepția de favorit…</p>
+          <p><strong>🎯 Piețele alese:</strong> 🔒 Peste 1.5 goluri — 80%, banda 78-85% a livrat 80.9% în backtest OOS (N=16.029)… 🎯 Peste 2.5 goluri — 58%… 💎 Ambele înscriu — 55%…</p>
+          <p><strong>👁️ De urmărit:</strong> dacă Wrexham deschide scorul, Cardiff se dezechilibrează și meciul curge spre goluri; dacă gazdele marchează primele…</p>
+        </div>
+        <div class="pro-lock-overlay">
+          <span class="pro-lock-icon">🔒</span>
+          <span data-i18n="pro.locked">Reconcilierea model–realitate, piețele alese și riscul asumat — pe Discord Pro.</span>
+        </div>
+      </div>
+    </div>
+    <p class="pro-disclaimer" data-i18n="pro.disclaimer">Exemplu real, pe date înghețate. Statistic · informativ · nu sfat de pariere · 18+</p>
+  </section>
+
+  <!-- Abonamente — ce primești concret pe fiecare tier -->
+  <section class="plans" id="abonament">
+    <h2 data-i18n="plans.h2">💎 Abonamente — ce primești, concret</h2>
+    <p class="plans-lead" data-i18n="plans.lead">Predicțiile de pe site nu se plătesc și nu ajung niciodată după paywall. Abonamentul plătește <strong>livrarea</strong> (pe Discord, fără să intri pe site) și <strong>analiza scrisă</strong> — nu acces la informație „secretă”.</p>
+    <p class="plans-free" data-i18n="plans.free">🆓 <strong>Gratuit, pentru toată lumea:</strong> toate predicțiile zilei, filtrele, istoricul zi cu zi și track record-ul complet. Fără cont, fără reclame. Angajamentul e scris în Termeni și rămâne valabil.</p>
+
+    <div class="plan-grid">
+      <div class="plan">
+        <div class="plan-name" data-i18n="plans.coffee.name">☕ Cafeaua POSEIDON</div>
+        <div class="plan-price">$3 <span>/ lună</span></div>
+        <p class="plan-for" data-i18n="plans.coffee.for">Pentru cine vrea doar ca proiectul să meargă mai departe.</p>
+        <ul>
+          <li data-i18n="plans.coffee.f1">Susținere directă a infrastructurii și a cercetării</li>
+          <li class="no" data-i18n="plans.coffee.f2">Fără beneficii suplimentare — exact așa scrie și în Termeni</li>
+          <li data-i18n="plans.coffee.f3">Predicțiile le ai gratuit oricum</li>
+        </ul>
+        <a href="https://patreon.com/PoseidonPredictions" target="_blank" rel="noopener" class="plan-btn plan-btn-coffee" data-i18n="plans.coffee.btn">☕ Susține cu $3</a>
+      </div>
+
+      <div class="plan">
+        <div class="plan-name" data-i18n="plans.basic.name">⭐ Basic</div>
+        <div class="plan-price">$5 <span>/ lună</span></div>
+        <p class="plan-for" data-i18n="plans.basic.for">Pentru cine vrea selecția zilei fără să intre pe site.</p>
+        <ul>
+          <li data-i18n="plans.basic.f1">Alertă zilnică pe Discord, în <strong>#alerte-zilnice</strong></li>
+          <li data-i18n="plans.basic.f2">Selecția calibrată a zilei, curată — nu lista de 1.000 de meciuri</li>
+          <li data-i18n="plans.basic.f3">Acces la comunitate (#anunturi, #discutii)</li>
+          <li class="no" data-i18n="plans.basic.f4">Fără analiza scrisă per meci</li>
+        </ul>
+        <a href="https://patreon.com/PoseidonPredictions" target="_blank" rel="noopener" class="plan-btn plan-btn-basic" data-i18n="plans.basic.btn">⭐ Alege Basic — $5/lună</a>
+      </div>
+
+      <div class="plan plan-featured">
+        <span class="plan-tag">ANALIZA COMPLETĂ</span>
+        <div class="plan-name" data-i18n="plans.pro.name">💎 Pro</div>
+        <div class="plan-price">$20 <span>/ lună</span></div>
+        <p class="plan-for" data-i18n="plans.pro.for">Pentru cine vrea și raționamentul din spatele cifrei.</p>
+        <ul>
+          <li data-i18n="plans.pro.f1">Tot ce e la Basic, inclusiv alerta zilnică</li>
+          <li data-i18n="plans.pro.f2">Analiză scrisă per meci în <strong>#analize-pro</strong></li>
+          <li data-i18n="plans.pro.f3">Context real verificat: clasament, formă, H2H, absențe</li>
+          <li data-i18n="plans.pro.f4">Reconcilierea model–realitate, cu capcanele marcate explicit</li>
+        </ul>
+        <a href="https://patreon.com/PoseidonPredictions" target="_blank" rel="noopener" class="plan-btn plan-btn-pro" data-i18n="plans.pro.btn">💎 Alege Pro — $20/lună</a>
+      </div>
+    </div>
+    <p class="plans-foot" data-i18n="plans.foot">Plata e procesată de Patreon; pe pagina lor alegi tier-ul cu numele de mai sus. Anulezi oricând, din contul tău Patreon. Nu stocăm date de card. 18+.</p>
+  </section>
+
+  <!-- Pași de acces Discord -->
+  <section class="steps" id="acces">
+    <h2 data-i18n="steps.h2">🔑 Cum ajungi pe Discord, în 4 pași</h2>
+    <div class="steps-grid">
+      <div class="step">
+        <span class="step-num">1</span>
+        <strong data-i18n="steps.1.t">Alegi tier-ul pe Patreon</strong>
+        <span data-i18n="steps.1.d">Pe patreon.com/PoseidonPredictions selectezi ⭐ Basic sau 💎 Pro și finalizezi plata.</span>
+      </div>
+      <div class="step">
+        <span class="step-num">2</span>
+        <strong data-i18n="steps.2.t">Conectezi Discord</strong>
+        <span data-i18n="steps.2.d">În Patreon: Settings → Apps → Connect Discord. Fără pasul ăsta, rolul nu se poate acorda.</span>
+      </div>
+      <div class="step">
+        <span class="step-num">3</span>
+        <strong data-i18n="steps.3.t">Primești rolul automat</strong>
+        <span data-i18n="steps.3.d">Patreon te trimite pe serverul POSEIDON și îți atribuie singur rolul potrivit tier-ului.</span>
+      </div>
+      <div class="step">
+        <span class="step-num">4</span>
+        <strong data-i18n="steps.4.t">Se deschid canalele</strong>
+        <span data-i18n="steps.4.d">Basic vede #alerte-zilnice. Pro vede și #analize-pro. Alerta vine dimineața, după publicare.</span>
+      </div>
+    </div>
+    <p class="steps-foot" data-i18n="steps.foot">Rolul se pierde automat dacă abonamentul expiră sau îl anulezi — nimic de dezinstalat. Dacă rolul nu apare în câteva minute, scrie la <a href="mailto:contact@poseidonstats.com">contact@poseidonstats.com</a>.</p>
+  </section>
+
+  <!-- FAQ (sincron cu JSON-LD FAQPage din <head>) -->
+  <section class="faq" id="intrebari">
+    <h2 data-i18n="faq.h2">Întrebări frecvente</h2>
+    <details class="faq-item">
+      <summary data-i18n="faq.q1">Predicțiile sunt cu adevărat gratuite?</summary>
+      <div class="faq-answer" data-i18n="faq.a1">Da. Toate predicțiile de pe site sunt gratuite, fără cont și fără reclame, iar acest lucru e scris ca angajament în Termeni și Condiții. Abonamentul plătit acoperă livrarea pe Discord și analiza scrisă, nu accesul la predicții.</div>
+    </details>
+    <details class="faq-item">
+      <summary data-i18n="faq.q2">De unde vin probabilitățile?</summary>
+      <div class="faq-answer" data-i18n="faq.a2">Dintr-un model Poisson cu corecție Dixon-Coles și ratings Bayesian, rulat pe 200.000 de simulări Monte Carlo per meci. Cifra afișată e cea <strong>calibrată empiric</strong>: dacă modelul brut spune 85% pentru un interval, dar în istoric acolo s-a întâmplat 67%, afișăm 67%, nu 85%.</div>
+    </details>
+    <details class="faq-item">
+      <summary data-i18n="faq.q3">Vindeți ponturi sau bilete?</summary>
+      <div class="faq-answer" data-i18n="faq.a3">Nu. POSEIDON e un site informativ-statistic. Nu combinăm meciuri, nu recomandăm mize, nu avem niciun link către case de pariuri și nu promitem profit. Modelul greșește regulat, iar meciurile ratate rămân publicate.</div>
+    </details>
+    <details class="faq-item">
+      <summary data-i18n="faq.q4">Cum știu că nu ajustați predicțiile după meci?</summary>
+      <div class="faq-answer" data-i18n="faq.a4">Pentru că sunt înghețate înainte. Predicția zilei se generează la 07:15 și se publică înainte de meciuri; jurnalul păstrează apoi fiecare predicție lângă rezultatul real, WIN sau LOSS. Poți verifica rând cu rând în istoric și în track record.</div>
+    </details>
+    <details class="faq-item">
+      <summary data-i18n="faq.q5">Ce primesc, concret, dacă plătesc?</summary>
+      <div class="faq-answer" data-i18n="faq.a5">La ⭐ Basic ($5/lună): alerta zilnică pe Discord, cu selecția calibrată a zilei. La 💎 Pro ($20/lună): tot ce e la Basic, plus analiza scrisă per meci — clasament, formă, H2H, absențe, reconciliate cu cifrele modelului și cu capcanele marcate.</div>
+    </details>
+    <details class="faq-item">
+      <summary data-i18n="faq.q6">Cum intru pe Discord după ce plătesc?</summary>
+      <div class="faq-answer" data-i18n="faq.a6">Alegi tier-ul pe Patreon, apoi conectezi contul de Discord din Patreon (Settings → Apps → Connect Discord). Rolul se acordă automat și îți deschide canalele tier-ului. Detaliat, în cei 4 pași de mai sus.</div>
+    </details>
+    <details class="faq-item">
+      <summary data-i18n="faq.q7">Pot anula oricând?</summary>
+      <div class="faq-answer" data-i18n="faq.a7">Da, direct din contul tău Patreon. Accesul rămâne activ până la finalul perioadei deja plătite, apoi rolul de Discord se retrage automat. Nu stocăm date de card — plata e procesată integral de Patreon.</div>
+    </details>
+    <details class="faq-item">
+      <summary data-i18n="faq.q8">Pe ce ligi funcționează cel mai bine?</summary>
+      <div class="faq-answer" data-i18n="faq.a8">Pe ligile unde calibrarea per-ligă e validată — marcate <span class="ok-tag">✓ calibrat</span> pe site și listate în track record. Pe restul, probabilitățile rămân calibrate global, dar marcăm explicit <span class="warn-tag">⚠️ ligă necalibrată</span>. Tabelul complet, cu bias per ligă, e public.</div>
+    </details>
+  </section>
 
   <!-- Suport section — JOS, după ce vizitatorul a văzut valoarea (mutat 11 iun) -->
   <section class="support-cta">
