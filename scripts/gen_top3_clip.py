@@ -44,6 +44,9 @@ FONT = "/System/Library/Fonts/Helvetica.ttc"
 FONT_BOLD = "/System/Library/Fonts/HelveticaNeue.ttc"
 
 PRED_URL = "https://poseidonstats.com/data/predictions.json"
+# FREEMIUM 29 aug 2026: site-ul public e redus la 5 meciuri/zi. Clipul selectează
+# din POOL-ul complet => citește FULL-ul intern; URL-ul public rămâne doar fallback.
+PRED_FULL = Path.home() / "football_predictor" / "data" / "predictions_full.json"
 
 # Filtre de calibrare ONESTE (conform calibration.json)
 MAX_PROB = 0.88   # exclude super-favoriți (lecția 3 iun)
@@ -105,7 +108,12 @@ def team_excluded(name: str) -> bool:
 
 
 def select_top3(hours_ahead: int, verbose: bool = False) -> list[dict]:
-    data = json.loads(urllib.request.urlopen(PRED_URL, timeout=15).read())
+    if PRED_FULL.exists():
+        data = json.loads(PRED_FULL.read_text())
+    else:
+        print("[WARN] predictions_full.json lipsă — fallback pe URL public "
+              "(REDUS la 5 meciuri în freemium; top3 poate fi degradat).")
+        data = json.loads(urllib.request.urlopen(PRED_URL, timeout=15).read())
     matches = data.get("matches", [])
     now = datetime.now(timezone.utc)
     end = now + timedelta(hours=hours_ahead)

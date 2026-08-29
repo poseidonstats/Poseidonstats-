@@ -99,6 +99,12 @@ sqlite3 ~/football_predictor/football.db \
 cd ~/football_predictor
 $PY scripts/poseidon/build_public_json.py >> "$LOG" 2>&1
 
+# 1a. 🆕 29 aug 2026 — FREEMIUM (decizia Andreei): copiază FULL-ul intern
+# (predictions_full.json, sursa Discord/pro_cron/clipuri) și REDUCE fișierul
+# public la 5 meciuri gratuite + restul locked. FĂRĂ || true: dacă reducerea
+# crapă, set -e + trap ERR opresc publish-ul — NU publicăm fullul din greșeală.
+$PY ~/poseidon-site/scripts/make_public_predictions.py >> "$LOG" 2>&1
+
 # 1b. 🆕 3 aug 2026 — conținut static zilnic (SEO): secțiunea „repere azi" în
 # index.html + lastmod la zi în sitemap.xml. Best-effort: un eșec aici nu
 # blochează publicarea datelor (secțiunea veche rămâne, datele merg).
