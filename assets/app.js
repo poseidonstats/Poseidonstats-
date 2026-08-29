@@ -184,6 +184,56 @@ function honestEmptyHtml(frozen) {
   return `<div class="calibration-card"><p>${txt}</p></div>`;
 }
 
+/* ============== FREEMIUM (29 aug 2026) ==============
+   Fișierul public conține 5 meciuri complete pe zi (`free: true`) și restul doar cu
+   identitatea (`locked: true`): echipe, oră, ligă. Regula de aur aici e că un meci fără
+   cifre NU trece niciodată prin renderMatch() — acela citește zeci de câmpuri și ar
+   scrie „NaN%" peste tot. isLocked() e deliberat mai larg decât flagul: dacă lipsesc
+   probabilitățile, tratăm meciul ca blocat, nu îl randăm gol. */
+const LOCKED_PREVIEW = 40;   // câte rânduri blocate desenăm (2775 de noduri ar îneca pagina)
+
+// Numeralul românesc cere „de" când ultimele două cifre sunt 0 sau ≥20:
+// „2775 de meciuri", dar „5 meciuri". Fără asta, textele generate ies agramate.
+// Celelalte limbi nu au regula, deci primesc numărul simplu.
+function nUnits(n) {
+  if (LANG !== "ro") return String(n);
+  const r = n % 100;
+  return (r === 0 || r >= 20) ? `${n} de` : String(n);
+}
+
+function isLocked(m) {
+  return m.locked === true || (m.prob_over_1_5 == null && m.prob_home == null);
+}
+
+function matchWhen(m) {
+  return new Date(m.match_date).toLocaleString("ro-RO", {
+    weekday: "short", day: "2-digit", month: "short",
+    hour: "2-digit", minute: "2-digit", timeZone: "Europe/Bucharest"
+  });
+}
+
+function renderLockedMatch(m) {
+  return `<div class="match match-locked">
+    <div class="match-title">
+      <div class="match-teams">${esc(m.home_team)} <span class="vs">vs</span> ${esc(m.away_team)}</div>
+      <div class="match-meta">
+        <span class="liga">${esc(m.country)} · ${esc(m.league)}</span>
+        <span class="when">${matchWhen(m)}</span>
+      </div>
+    </div>
+    <span class="lock-tag" aria-label="predicție disponibilă pentru abonați">🔒</span>
+  </div>`;
+}
+
+function renderUnlockCta(nLocked) {
+  const txt = tt("freemium.cta", "Modelul a calculat probabilitățile și pentru cele {n} meciuri de mai jos. Pe site publicăm zilnic 5 gratuit; restul ajung la abonați, pe Discord.")
+    .replace("{n}", nUnits(nLocked));
+  return `<div class="unlock-cta">
+    <div class="unlock-txt"><span class="unlock-icon">🔒</span> ${txt}</div>
+    <a href="#abonament" class="unlock-btn">${tt("freemium.cta.btn", "Vezi abonamentele")}</a>
+  </div>`;
+}
+
 /* ============== INDEX (predicții) ============== */
 async function renderIndex() {
   // F3 — încarc și calibration.json pt eligibilitatea per piață (badge data-driven).
@@ -249,25 +299,45 @@ async function renderIndex() {
       if (fl && m.league !== fl) return false;
       if (fc && m.country !== fc) return false;
       if (calibOnly && !m.calibrated) return false;
-      if (fmin > 0) {
+      // Meciul blocat nu are cifre, deci nu poate fi filtrat pe piață sau pe prag.
+      // Îl lăsăm să treacă: e catalogul a ceea ce modelul a calculat, nu o afirmație.
+      if (fmin > 0 && !isLocked(m)) {
         const p = probForMarket(m, fmk);
         if (p == null || p < fmin) return false;
       }
       return true;
     });
+    const deschise = filtered.filter(m => !isLocked(m));
+    const blocate = filtered.filter(isLocked);
+
     const sortMode = selSort.value;
     if (sortMode === "prob_desc") {
-      filtered.sort((a, b) => probForMarket(b, fmk) - probForMarket(a, fmk));
+      deschise.sort((a, b) => probForMarket(b, fmk) - probForMarket(a, fmk));
     } else if (sortMode === "league") {
-      filtered.sort((a, b) => (a.league || "").localeCompare(b.league || "") || a.match_date.localeCompare(b.match_date));
+      deschise.sort((a, b) => (a.league || "").localeCompare(b.league || "") || a.match_date.localeCompare(b.match_date));
     } else {
-      filtered.sort((a, b) => a.match_date.localeCompare(b.match_date));
+      deschise.sort((a, b) => a.match_date.localeCompare(b.match_date));
     }
-    document.getElementById("match-count").textContent =
-      `${filtered.length} meciuri afișate (din ${matches.length} totale).`;
+    // Blocatele merg mereu cronologic: n-avem după ce altceva să le ordonăm onest.
+    blocate.sort((a, b) => a.match_date.localeCompare(b.match_date));
+
+    document.getElementById("match-count").textContent = blocate.length
+      ? tt("freemium.count", "{free} predicții complete, gratuite. Alte {locked} meciuri analizate azi de model sunt disponibile abonaților.")
+          .replace("{free}", deschise.length).replace("{locked}", nUnits(blocate.length))
+      : `${deschise.length} meciuri afișate (din ${matches.length} totale).`;
+
     const matchesEl = document.getElementById("matches");
     matchesEl.classList.toggle("only-calibrated-markets", !!(chkCalibMk && chkCalibMk.checked));
-    matchesEl.innerHTML = filtered.map(m => renderMatch(m, fmk)).join("");
+
+    let html = deschise.map(m => renderMatch(m, fmk)).join("");
+    if (blocate.length) {
+      html += renderUnlockCta(blocate.length);
+      html += blocate.slice(0, LOCKED_PREVIEW).map(renderLockedMatch).join("");
+      if (blocate.length > LOCKED_PREVIEW) {
+        html += `<p class="locked-more muted">` + tt("freemium.more", "… și încă {n} meciuri analizate, nelistate aici.").replace("{n}", nUnits(blocate.length - LOCKED_PREVIEW)) + `</p>`;
+      }
+    }
+    matchesEl.innerHTML = html;
   }
 
   [selDay, selLeague, selCountry, selMarket, selMinProb, selSort].forEach(s => s.addEventListener("change", update));
@@ -474,14 +544,17 @@ function renderMatch(m, filterMarket = "") {
   const pick1x2 = m.prob_home >= m.prob_draw && m.prob_home >= m.prob_away ? "1"
                 : m.prob_away >= m.prob_draw ? "2" : "X";
 
-  return `<div class="match ${m.calibrated ? "" : "uncalibrated"}">
+  const freeTag = m.free
+    ? `<span class="free-tag">${tt("freemium.tag", "✓ GRATUIT AZI")}</span>` : "";
+
+  return `<div class="match ${m.calibrated ? "" : "uncalibrated"} ${m.free ? "match-free" : ""}">
     <div class="match-header">
       <div class="match-title">
         <div class="match-teams">${esc(m.home_team)} <span class="vs">vs</span> ${esc(m.away_team)}</div>
         <div class="match-meta">
           <span class="liga">${esc(m.country)} · ${esc(m.league)}</span>
           <span class="when">${dateStr}</span>
-          ${calibTag}
+          ${calibTag}${freeTag}
         </div>
       </div>
       ${picksHtml ? `<div class="picks-row">${picksHtml}</div>` : ""}

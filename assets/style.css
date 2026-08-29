@@ -979,3 +979,47 @@ footer a { color: #93c5fd; }
   border: 1px solid #e2e8f0; border-radius: 6px;
   padding: 2px 8px; font-size: 0.84rem; font-weight: 600; white-space: nowrap;
 }
+
+/* ===== FREEMIUM (29 aug 2026) — meciuri blocate + marcaj gratuit ===== */
+.free-tag {
+  background: #065f46; color: #fff; padding: 2px 9px; border-radius: 10px;
+  font-size: 0.72rem; font-weight: 700; letter-spacing: 0.3px;
+}
+.match-free { border-left-color: #047857; }
+
+.unlock-cta {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  flex-wrap: wrap; margin: 22px 0 12px; padding: 16px 20px;
+  background: linear-gradient(135deg, #eff6ff, #e0e7ff);
+  border: 1px solid #c7d2fe; border-radius: 12px;
+}
+.unlock-txt { flex: 1; min-width: 240px; font-size: 0.95rem; line-height: 1.55; color: #1e3a8a; }
+.unlock-icon { font-size: 1.1rem; margin-right: 4px; }
+.unlock-btn {
+  background: linear-gradient(135deg, #2563eb, #1e3a8a); color: #fff;
+  padding: 11px 22px; border-radius: 10px; font-weight: 700; font-size: 0.95rem;
+  white-space: nowrap; transition: transform 0.15s, box-shadow 0.15s;
+}
+.unlock-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(30,58,138,0.3); }
+
+.match-locked {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  background: #fff; border-left: 3px solid #cbd5e1; border-radius: 8px;
+  padding: 11px 16px; margin-bottom: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+}
+.match-locked .match-teams { font-size: 0.95rem; font-weight: 600; color: #475569; }
+.match-locked .match-meta { margin-top: 2px; }
+.lock-tag { font-size: 1.1rem; opacity: 0.45; flex-shrink: 0; }
+.locked-more { text-align: center; padding: 14px 0 4px; font-size: 0.88rem; }
+@media (max-width: 600px) {
+  .unlock-cta { flex-direction: column; align-items: stretch; }
+  .unlock-btn { text-align: center; }
+}
+
+/* Paginile de ligă — rânduri blocate (freemium) */
+.rand-blocat td { color: #94a3b8; }
+.rand-blocat td:nth-child(2) strong { color: #64748b; font-weight: 600; }
+.blocat-note { font-size: 0.84rem; color: #94a3b8; font-style: italic; text-align: left !important; }
+.blocat-link { font-size: 0.84rem; color: #2563eb; font-weight: 600; white-space: nowrap; }
+.rand-liber { background: #f0fdf4; }
+.rand-liber td { border-bottom-color: #bbf7d0; }

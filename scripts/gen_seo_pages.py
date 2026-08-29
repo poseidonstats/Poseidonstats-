@@ -170,6 +170,13 @@ def plural(n: int, unu: str, multi: str) -> str:
     return unu if n == 1 else multi
 
 
+def blocat(m: dict) -> bool:
+    """Freemium (29 aug 2026): fișierul public are 5 meciuri complete pe zi, restul doar
+    cu identitatea. Verificăm câmpurile, nu doar flagul — un meci fără probabilități NU
+    trece niciodată prin randarea cu cifre, altfel scriem „None%" în pagină."""
+    return m.get("locked") is True or m.get("prob_over_1_5") is None or m.get("xg_home") is None
+
+
 def echipa_exclusa(m: dict) -> bool:
     liga = f"{m.get('country', '')} · {m.get('league', '')}"
     return bool(EXCLUDE_TEAM.search(str(m.get("home_team", "")))
@@ -291,16 +298,27 @@ def tabel_meciuri(meciuri: list[dict]) -> str:
         # cea mai mare probabilitate calibrată. Badge-ul cu ★ rămâne pe homepage, unde e
         # produsul și unde înțelesul lui e explicat.
         best = None
-        for eticheta, cheie, _prag in MARKETS:
-            p = m.get(cheie)
-            if p is not None and (best is None or p > best[0]):
-                best = (p, eticheta)
+        if not blocat(m):
+            for eticheta, cheie, _prag in MARKETS:
+                p = m.get(cheie)
+                if p is not None and (best is None or p > best[0]):
+                    best = (p, eticheta)
         maxima = (f'<span class="piata-max">{e(best[1])} · {round(best[0] * 100)}%</span>'
                   if best else '<span class="muted">—</span>')
         necal = "" if m.get("calibrated") else ' <span class="warn-tag">⚠️ necalibrată</span>'
-        randuri.append(f"""        <tr>
-          <td>{dt.strftime('%d.%m')} <span class="muted">{dt.strftime('%H:%M')}</span></td>
-          <td><strong>{e(m['home_team'])}</strong> – <strong>{e(m['away_team'])}</strong>{necal}</td>
+        cand = f"{dt.strftime('%d.%m')} <span class=\"muted\">{dt.strftime('%H:%M')}</span>"
+        meci = f"<strong>{e(m['home_team'])}</strong> – <strong>{e(m['away_team'])}</strong>{necal}"
+        if blocat(m):
+            randuri.append(f"""        <tr class="rand-blocat">
+          <td>{cand}</td>
+          <td>{meci}</td>
+          <td colspan="4" class="blocat-note">🔒 probabilitățile acestui meci sunt pentru abonați</td>
+          <td><a href="../index.html#abonament" class="blocat-link">abonamente</a></td>
+        </tr>""")
+        else:
+            randuri.append(f"""        <tr class="rand-liber">
+          <td>{cand}</td>
+          <td>{meci} <span class="free-tag">✓ GRATUIT AZI</span></td>
           <td>{round(m['prob_home'] * 100)}% · {round(m['prob_draw'] * 100)}% · {round(m['prob_away'] * 100)}%</td>
           <td>{round(m['prob_over_1_5'] * 100)}%</td>
           <td>{round(m['prob_over_2_5'] * 100)}%</td>
@@ -317,7 +335,7 @@ def tabel_meciuri(meciuri: list[dict]) -> str:
 {chr(10).join(randuri)}
         </tbody>
       </table>
-      <p class="muted" style="font-size:.82rem">Ora e cea a României. Probabilitățile sunt cele calibrate empiric, nu ieșirea brută a modelului. Ultima coloană arată doar care dintre piețele urmărite are cea mai mare probabilitate calculată — e o descriere a ieșirii modelului, nu o recomandare, iar un procent mare rămâne o probabilitate, nu o certitudine.</p>
+      <p class="muted" style="font-size:.82rem">Ora e cea a României. Probabilitățile sunt cele calibrate empiric, nu ieșirea brută a modelului. Ultima coloană arată doar care dintre piețele urmărite are cea mai mare probabilitate calculată — e o descriere a ieșirii modelului, nu o recomandare, iar un procent mare rămâne o probabilitate, nu o certitudine. Modelul calculează toate meciurile din listă; pe site publicăm gratuit 5 pe zi, iar restul probabilităților ajung la <a href="../index.html#abonament">abonați</a>.</p>
     </div>"""
 
 
@@ -418,26 +436,34 @@ def pagina_liga(tara: str, liga: str, slug: str, nume: str, *,
     canonical = f"{BASE}/predictii/{slug}.html"
     n_meci = len(meciuri)
 
+    libere = [m for m in meciuri if not blocat(m)]
     if meciuri:
-        xg_mediu = sum(m["xg_home"] + m["xg_away"] for m in meciuri) / n_meci
-        peste15 = sum(1 for m in meciuri if m["prob_over_1_5"] >= 0.75)
         prima = min(datetime.fromisoformat(m["match_date"].replace("Z", "+00:00")) for m in meciuri)
-        prag15 = (
-            f"<strong>{peste15}</strong> dintre ele trec pragul de afișare la „peste 1.5 goluri”"
-            if peste15 else
-            "niciunul nu trece pragul de afișare la „peste 1.5 goluri”"
-        )
         rezumat = (
             f"Modelul a analizat <strong>{cu_de(n_meci)} "
             f"{plural(n_meci, 'meci', 'meciuri')}</strong> din {e(nume)} în următoarele "
-            f"{FEREASTRA_ZILE} zile, primul pe "
-            f"{data_ro(prima.astimezone(TZ))}. Media golurilor așteptate de model pe aceste "
-            f"meciuri este <strong>{xg_mediu:.2f}</strong> pe partidă, iar {prag15}."
+            f"{FEREASTRA_ZILE} zile, primul pe {data_ro(prima.astimezone(TZ))}."
         )
+        # Mediile se calculează DOAR pe meciurile cu cifre publice. A le calcula pe tot
+        # setul ar fi imposibil (blocatele n-au xG), iar a le prezenta ca „media ligii"
+        # dintr-un singur meci ar fi o cifră fără acoperire.
+        if libere:
+            xg_mediu = sum(m["xg_home"] + m["xg_away"] for m in libere) / len(libere)
+            cate = ("Unul dintre ele este publicat integral și gratuit mai jos, cu"
+                    if len(libere) == 1 else
+                    f"Dintre ele, {len(libere)} sunt publicate integral și gratuit mai jos, cu media")
+            rezumat += (f" {cate} golurilor așteptate de model la "
+                        f"<strong>{xg_mediu:.2f}</strong> pe partidă.")
+        else:
+            rezumat += (
+                " Cele 5 predicții publicate gratuit azi sunt pe alte competiții; probabilitățile "
+                "pentru meciurile de aici sunt disponibile abonaților. Programul, profilul de "
+                "calibrare al ligii și jurnalul predicțiilor deja verificate rămân publice, mai jos."
+            )
         continut = tabel_meciuri(meciuri)
-        descriere = (f"{n_meci} {plural(n_meci, 'meci', 'meciuri')} din {nume}, cu probabilități "
-                     f"calibrate empiric pentru 1X2, peste 1.5, peste 2.5 și ambele marchează. "
-                     f"Gratuit, informativ.")
+        descriere = (f"{n_meci} {plural(n_meci, 'meci', 'meciuri')} din {nume}: program, profil de "
+                     f"calibrare și jurnalul predicțiilor verificate. 5 predicții complete "
+                     f"gratuit zilnic.")
     else:
         rezumat = (f"În următoarele {FEREASTRA_ZILE} zile nu e programat niciun meci din "
                    f"{e(nume)} în datele noastre — probabil pauză competițională sau "
@@ -445,13 +471,13 @@ def pagina_liga(tara: str, liga: str, slug: str, nume: str, *,
                    f"valabil oricum, iar meciurile reapar automat la reluare.")
         continut = ""
         descriere = (f"Predicții {nume} de la modelul POSEIDON: profilul de calibrare al ligii "
-                     f"și jurnalul predicțiilor verificate. Gratuit, informativ.")
+                     f"și jurnalul predicțiilor verificate. Acces gratuit.")
 
     corp = f"""  <section class="intro">
     <div class="hero">
       <h1 class="hero-title">Predicții {e(nume)}</h1>
       <p class="hero-sub">Probabilități calculate de un model Poisson + Dixon-Coles și calibrate pe rezultate reale. Predicțiile se publică înainte de meci și rămân verificabile după.</p>
-      <p class="hero-free">Gratuit · fără cont · fără reclame · zero link-uri către case de pariuri</p>
+      <p class="hero-free">5 predicții complete gratuit în fiecare zi · fără cont · fără reclame · zero link-uri către case de pariuri</p>
     </div>
     <p>{rezumat}</p>
   </section>
@@ -473,8 +499,9 @@ def pagina_liga(tara: str, liga: str, slug: str, nume: str, *,
   </section>
 
   <section class="plans-free" style="margin-top:26px">
-    Predicțiile de pe această pagină sunt gratuite și rămân gratuite. Dacă vrei selecția zilei
-    livrată pe Discord sau analiza scrisă per meci, sunt la <a href="../index.html#abonament">abonamente</a>.
+    În fiecare zi publicăm gratuit 5 predicții complete, plus track record-ul integral — inclusiv
+    meciurile pe care le-am ratat. Restul predicțiilor zilei, livrarea pe Discord și analiza scrisă
+    per meci sunt la <a href="../index.html#abonament">abonamente</a>.
     Restul ligilor: <a href="index.html">toate paginile pe ligi</a>.
   </section>
 
@@ -501,7 +528,7 @@ def pagina_hub(randuri: list[dict]) -> str:
     <div class="hero">
       <h1 class="hero-title">Predicții fotbal pe ligi</h1>
       <p class="hero-sub">Câte o pagină pentru fiecare campionat urmărit îndeaproape: meciurile următoare cu probabilități calibrate, profilul de calibrare al ligii și ce a ieșit din predicțiile deja rezolvate.</p>
-      <p class="hero-free">Gratuit · fără cont · fără reclame · zero link-uri către case de pariuri</p>
+      <p class="hero-free">5 predicții complete gratuit în fiecare zi · fără cont · fără reclame · zero link-uri către case de pariuri</p>
     </div>
     <p>În acest moment sunt <strong>{total}</strong> meciuri programate în următoarele {FEREASTRA_ZILE} zile pe cele <strong>{len(cu_meci)}</strong> ligi cu program activ, din {len(randuri)} urmărite. Modelul analizează zilnic mult mai multe competiții — lista completă, cu filtre, e pe <a href="../index.html">pagina principală</a>.</p>
   </section>
@@ -589,8 +616,8 @@ def pagina_zi(zi: dict) -> str:
   </section>
 
   <section class="plans-free" style="margin-top:26px">
-    Toate predicțiile zilei curente sunt pe <a href="../../index.html">pagina principală</a>,
-    gratuit. Restul arhivei: <a href="index.html">zi cu zi</a>. Pe ligi:
+    Predicțiile gratuite ale zilei curente sunt pe <a href="../../index.html">pagina principală</a>.
+    Arhiva rămâne publică integral, cu tot cu ratări. Restul arhivei: <a href="index.html">zi cu zi</a>. Pe ligi:
     <a href="../index.html">paginile de campionat</a>.
   </section>
 
