@@ -105,9 +105,13 @@ $PY scripts/poseidon/build_public_json.py >> "$LOG" 2>&1
 $PY ~/poseidon-site/scripts/gen_static_daily.py >> "$LOG" 2>&1 || \
     echo "[$(ts)] [WARN] gen_static_daily failed (publish continuă fără refresh static)" >> "$LOG"
 
+# Pagini SEO long-tail per-ligă (predictii/) — best-effort, ca gen_static_daily.
+$PY ~/poseidon-site/scripts/gen_seo_pages.py >> "$LOG" 2>&1 || \
+    echo "[$(ts)] [WARN] gen_seo_pages failed (publish continuă)" >> "$LOG"
+
 # 2. Git add/commit/push
 cd ~/poseidon-site
-if [ -z "$(git status --porcelain data/ index.html sitemap.xml)" ]; then
+if [ -z "$(git status --porcelain data/ index.html sitemap.xml predictii/)" ]; then
     echo "[$(ts)] No changes to publish." >> "$LOG"
     exit 0
 fi
@@ -132,7 +136,7 @@ fi
 echo "[$(ts)] [GATE] OK: $GATE_OUT" >> "$LOG"
 
 # (13 iun — R2: verificarea RC2 era COD MORT sub set -e; push eșuat → trap ERR.)
-git add data/ index.html sitemap.xml
+git add data/ index.html sitemap.xml predictii/
 git commit -m "data: $(date +%Y-%m-%d) refresh predicții + jurnal" >> "$LOG" 2>&1
 git push origin main >> "$LOG" 2>&1
 echo "[$(ts)] Published." >> "$LOG"

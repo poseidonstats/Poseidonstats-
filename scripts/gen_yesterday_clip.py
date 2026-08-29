@@ -18,11 +18,12 @@ from PIL import ImageDraw, ImageFont
 
 sys.path.insert(0, str(Path(__file__).parent))
 from _v2_common import (
-    W, H, GOLD, WHITE, MUTED, GREEN_BRIGHT, RED_SOFT, ORANGE_WARN,
+    W, GOLD, WHITE, MUTED, GREEN_BRIGHT, RED_SOFT,
     FONT_SERIF, FONT_BOLD, FONT,
     gradient_bg, draw_centered, add_brand_top, add_disclaimer,
-    cadru_loop, cadru_intrebare, truncate, render,
+    cadru_loop_P, cadru_intrebare, truncate, render,
 )
+from _leagues_public import is_public_league
 
 HIST_CSV = Path.home() / "football_predictor/data/poseidon_history.csv"
 MIN_PROB = 0.65
@@ -34,23 +35,36 @@ EXCLUDE_LEAGUE_KEY = ("women", "femenil", "femenino", "feminin", "ladies", "w-le
 
 
 def load_yesterday():
+    """Rândurile de IERI + calibrarea istorică, ambele pe ACELEAȘI filtre.
+
+    v2.1 (29 aug): (1) filtrul de ligi publice se aplică AICI, deci și
+    numărătoarea din titlu e curată (nu doar cardurile afișate) — înainte
+    89% din cifra din titlu venea din ligi interzise public; (2) calibrarea
+    istorică e CALCULATĂ din jurnal la fiecare rulare (era hardcodată 78,
+    realul era ~81) — pe tot jurnalul RESOLVED, aceleași filtre ca titlul.
+    """
     yest = (datetime.now() - timedelta(days=1)).date()
     rows = []
+    hist_n = hist_win = 0
     with open(HIST_CSV) as f:
         for r in csv.DictReader(f):
             if r["status"] != "RESOLVED": continue
-            if not r["match_date"].startswith(yest.isoformat()): continue
             try: p = float(r["prob_over_1_5"])
             except: continue
             if p < MIN_PROB: continue
             if r["outcome_over_1_5"] not in ("0", "1"): continue
+            if not is_public_league(r["country"], r["league"]): continue
+            hist_n += 1
+            hist_win += int(r["outcome_over_1_5"])
+            if not r["match_date"].startswith(yest.isoformat()): continue
             rows.append({
                 "home": r["home_team"], "away": r["away_team"],
                 "country": r["country"], "league": r["league"],
                 "prob": p, "outcome": int(r["outcome_over_1_5"]),
                 "ft_h": r["ft_home"], "ft_a": r["ft_away"],
             })
-    return rows, yest
+    calib = round(hist_win / hist_n * 100) if hist_n else 0
+    return rows, yest, calib
 
 
 def cadru_hook(yest, n_total, n_wins):
@@ -116,7 +130,7 @@ def cadru_pick(label, pick, color):
 
 
 def main():
-    rows, yest = load_yesterday()
+    rows, yest, calib = load_yesterday()
     if not rows:
         print(f"❌ Niciun pick RESOLVED ieri ({yest}). Output anulat.")
         return 1
@@ -138,7 +152,6 @@ def main():
     n_win = len(wins)
     n_loss = len(losses)
     hit = n_win / n_total * 100
-    calib = 78
 
     wins_disp = sorted([w for w in wins if displayable(w)] or wins, key=lambda x: -x["prob"])[:2]
     losses_disp = [l for l in losses if displayable(l)] or losses
@@ -149,7 +162,7 @@ def main():
     for f in out_dir.glob("*.png"): f.unlink()
 
     # CADRE: 1=loop, 2=hook, 3=score, 4=win1, 5=win2(opt), 6=loss(opt), 7=întrebare, 8=loop
-    cadru_loop().save(out_dir / "01_loop.png")
+    cadru_loop_P().save(out_dir / "01_loop.png")
     cadru_hook(yest, n_total, n_win).save(out_dir / "02_hook.png")
     cadru_score(n_win, n_loss, hit, calib).save(out_dir / "03_score.png")
     if wins_disp:
@@ -157,7 +170,7 @@ def main():
     if top_loss:
         cadru_pick(f"LOSS — {int(top_loss['prob']*100)}%", top_loss, RED_SOFT).save(out_dir / "05_loss.png")
     cadru_intrebare("Tu ce-ai", "pune", "mâine?").save(out_dir / "06_intrebare.png")
-    cadru_loop().save(out_dir / "07_loop.png")
+    cadru_loop_P().save(out_dir / "07_loop.png")
 
     output = Path.home() / f"Desktop/POSEIDON-ieri-{yest.isoformat()}.mp4"
     render(out_dir, output, hold=2.6, xfade=0.4)

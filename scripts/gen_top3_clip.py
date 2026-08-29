@@ -29,6 +29,9 @@ from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFont
 
+# Filtrul de ligi permise public = modulul UNIC _leagues_public (v2.1, 29 aug 2026)
+from _leagues_public import is_public_league
+
 W, H = 1080, 1920
 NAVY1 = (15, 30, 74)
 NAVY2 = (30, 58, 138)
@@ -41,78 +44,10 @@ FONT = "/System/Library/Fonts/Helvetica.ttc"
 FONT_BOLD = "/System/Library/Fonts/HelveticaNeue.ttc"
 
 PRED_URL = "https://poseidonstats.com/data/predictions.json"
-WHITELIST_CSV = Path.home() / "football_predictor/data/poseidon_whitelist_leagues.csv"
-
-# ALLOW-LIST EXPLICIT (anti-contradicție): doar ligi tier 1-2 + competiții majore.
-# Tot whitelist-ul POSEIDON conține și non-league/regional — astea ies AFARĂ.
-# Format: (country, league_substring) — match case-insensitive pe substring.
-ALLOW_LEAGUES = [
-    # Top 5 Europa
-    ("England", "Premier League"),
-    ("Spain", "La Liga"),
-    ("Germany", "Bundesliga"),         # tier 1 + 2.Bundesliga
-    ("Italy", "Serie A"),
-    ("Italy", "Serie B"),
-    ("France", "Ligue 1"),
-    ("France", "Ligue 2"),
-    # Tier 2 majore
-    ("England", "Championship"),
-    ("Spain", "Segunda"),
-    ("Germany", "2. Bundesliga"),
-    # Top alte ligi mari
-    ("Netherlands", "Eredivisie"),
-    ("Portugal", "Primeira Liga"),
-    ("Belgium", "Jupiler Pro League"),
-    ("Turkey", "Süper Lig"),
-    ("Scotland", "Premiership"),
-    ("Greece", "Super League"),
-    ("Russia", "Premier League"),
-    ("Ukraine", "Premier League"),
-    ("Austria", "Bundesliga"),         # NU Landesliga
-    ("Switzerland", "Super League"),
-    ("Denmark", "Superliga"),
-    ("Sweden", "Allsvenskan"),
-    ("Norway", "Eliteserien"),
-    ("Croatia", "HNL"),
-    ("Czech-Republic", "Czech Liga"),  # tier 1 NU 3/4. liga
-    ("Poland", "Ekstraklasa"),
-    # Tier 1 extra-EU
-    ("USA", "MLS"),
-    ("Mexico", "Liga MX"),
-    ("Brazil", "Serie A"),
-    ("Argentina", "Liga Profesional"),
-    ("Saudi-Arabia", "Pro League"),
-    ("Japan", "J1 League"),
-    ("South-Korea", "K League 1"),
-    ("Australia", "A-League"),
-    # Competiții internaționale
-    ("World", "UEFA Champions League"),
-    ("World", "UEFA Europa League"),
-    ("World", "UEFA Conference League"),
-    ("World", "FIFA World Cup"),
-    ("Europe", "Euro Championship"),
-]
 
 # Filtre de calibrare ONESTE (conform calibration.json)
 MAX_PROB = 0.88   # exclude super-favoriți (lecția 3 iun)
-MIN_PROB = 0.70   # bucket 70-90% Over 1.5/2.5 calibrat optim
-
-# Filtru ANTI-CONTRADICȚIE STRICT (lecția 3 iun): doar tier 1-2 majore.
-# Patterns oneste: clipul 5 spune "pe ligi mici e slab" → TOP 3 EXCLUDE TOATE alea.
-EXCLUDE_LEAGUE_PATTERNS = [
-    "Friendly", "Friendlies",
-    "U23", "U21", "U20", "U19", "U18", "U17",
-    "Youth", "Primavera", "Junior",
-    "Reserve",
-    "Women", "W ", "Wom.",
-    # Anti-tier mic (chiar dacă sunt în whitelist):
-    "Non League", "Amateur", "Regionalliga",
-    "3. liga", "4. liga", "5. liga",
-    "II Liga", "III Liga",
-    "Div One", "Div Two", "Division 4", "Division 5",
-    "Reserves", "Réservas",
-]
-EXCLUDE_COUNTRY = {"World"}  # amicale internaționale
+MIN_PROB = 0.70   # bucket 70-90% Over 1.5 calibrat optim
 
 # Reserve teams pattern în NUMELE echipei (Teplice II, Bayern II, etc.)
 EXCLUDE_TEAM_SUFFIX = (" II", " III", " B", " C", " Reserve", " Reserves", " U21", " U19", " U18", " U23", " U20")
@@ -138,22 +73,12 @@ def draw_centered(draw, text, y, font, color=WHITE):
     return bbox[3] - bbox[1]
 
 
-def draw_trident(draw, cx, cy, size=70):
-    s = size
-    draw.rectangle([cx-4, cy-s*0.3, cx+4, cy+s*0.8], fill=GOLD)
-    for dx in (-s*0.55, 0, s*0.55):
-        x = cx + dx
-        draw.polygon([(x-12, cy-s*0.2), (x+12, cy-s*0.2), (x, cy-s*0.85)], fill=GOLD)
-        draw.rectangle([x-4, cy-s*0.3, x+4, cy+s*0.1], fill=GOLD)
-    draw.arc([cx-s*0.6, cy-s*0.4, cx+s*0.6, cy+s*0.3], 0, 180, fill=GOLD, width=8)
-    draw.line([(cx, cy+s*0.3), (cx, cy+s*0.95)], fill=GOLD, width=8)
-    draw.ellipse([cx-12, cy+s*0.85, cx+12, cy+s*1.1], fill=GOLD)
-
-
-def add_trident_top(draw):
-    draw_trident(draw, W // 2, 165, size=90)
+def add_brand_top(draw):
+    """Brand discret: text + linie, FĂRĂ trident (regula brand 6 iun 2026 —
+    feedback-no-trident-logo: P mare/text performează ~10× mai bine)."""
     f2 = ImageFont.truetype(FONT_BOLD, 44)
-    draw_centered(draw, "POSEIDON", 280, f2, WHITE)
+    draw_centered(draw, "POSEIDON", 200, f2, WHITE)
+    draw.line([(W / 2 - 80, 268), (W / 2 + 80, 268)], fill=GOLD, width=2)
 
 
 def add_disclaimer(draw):
@@ -165,28 +90,13 @@ def truncate(s: str, n: int) -> str:
     return s if len(s) <= n else s[: n - 1] + "…"
 
 
-def load_whitelist_ids() -> set[int]:
-    """Citește league_id-urile din whitelist-ul POSEIDON (114 ligi bine calibrate)."""
-    import csv
-    ids = set()
-    with open(WHITELIST_CSV) as f:
-        for row in csv.DictReader(f):
-            try:
-                ids.add(int(row["league_id"]))
-            except (ValueError, KeyError):
-                continue
-    return ids
 
 
 def league_allowed(league: str, country: str) -> bool:
-    """True DOAR dacă (country, league) e în ALLOW_LEAGUES.
+    """True DOAR dacă liga e permisă public — deleagă filtrului unic.
     Allow-list explicit > deny-list nesfârșit (lecția 3 iun).
     """
-    league_l = league.lower()
-    for allow_country, allow_substr in ALLOW_LEAGUES:
-        if country == allow_country and allow_substr.lower() in league_l:
-            return True
-    return False
+    return is_public_league(country, league)
 
 
 def team_excluded(name: str) -> bool:
@@ -197,7 +107,6 @@ def team_excluded(name: str) -> bool:
 def select_top3(hours_ahead: int, verbose: bool = False) -> list[dict]:
     data = json.loads(urllib.request.urlopen(PRED_URL, timeout=15).read())
     matches = data.get("matches", [])
-    whitelist = load_whitelist_ids()
     now = datetime.now(timezone.utc)
     end = now + timedelta(hours=hours_ahead)
     candidates = []
@@ -214,21 +123,17 @@ def select_top3(hours_ahead: int, verbose: bool = False) -> list[dict]:
         if not m.get("calibrated", False):
             continue
         stats["calibrated"] += 1
-        # FILTRU NOU: doar ligi din whitelist
-        lid = m.get("league_id") or m.get("fixture_id")  # fallback dacă lipsește
-        # league_id NU e în predictions.json — caut prin league name în whitelist
-        # → folosesc filtrul după nume + țară (mai robust)
+        # Filtru ligi publice (modulul unic _leagues_public, după nume + țară)
         if not league_allowed(m["league"], m["country"]):
             continue
         if team_excluded(m["home_team"]) or team_excluded(m["away_team"]):
             continue
         stats["non_minor"] += 1
-        # markets calibrate bine (Over 1.5 70-90%, Over 2.5 50-70%, HT Over 0.5 60-80%)
+        # DOAR piețele permise public (regula 9 iun): Over 1.5 + HT Over 0.5.
+        # Over 2.5 SCOS (v2.1, 29 aug) — nu e pe lista piețelor validate public.
         picks = []
         if MIN_PROB <= m["prob_over_1_5"] < MAX_PROB:
             picks.append(("Over 1.5", m["prob_over_1_5"]))
-        if 0.50 <= m["prob_over_2_5"] < 0.70:
-            picks.append(("Over 2.5", m["prob_over_2_5"]))
         if 0.60 <= m["prob_ht_over_0_5"] < 0.80:
             picks.append(("HT Over 0.5", m["prob_ht_over_0_5"]))
         if not picks:
@@ -254,7 +159,6 @@ def select_top3(hours_ahead: int, verbose: bool = False) -> list[dict]:
 
 def make_match_card(d: ImageDraw.ImageDraw, y_top: int, idx: int, pick: dict):
     """Renderează card meci compact pe MP4."""
-    cy = y_top + 110
     # Box
     box_top = y_top
     box_bottom = y_top + 360
@@ -290,16 +194,16 @@ def cadru1(pick_count: int, ts_label: str) -> Image.Image:
     """Cadru hook."""
     img = gradient_bg()
     d = ImageDraw.Draw(img)
-    add_trident_top(d)
+    add_brand_top(d)
     huge = ImageFont.truetype(FONT_BOLD, 130)
     draw_centered(d, "TOP 3", 580, huge, GOLD)
     big = ImageFont.truetype(FONT_BOLD, 88)
     draw_centered(d, "meciuri azi", 740, big, WHITE)
     med = ImageFont.truetype(FONT_BOLD, 58)
-    draw_centered(d, "unde modelul e", 940, med, WHITE)
-    draw_centered(d, "cel mai sigur.", 1010, med, WHITE)
+    draw_centered(d, "unde modelul are", 940, med, WHITE)
+    draw_centered(d, "cea mai multă informație.", 1010, med, WHITE)
     small = ImageFont.truetype(FONT, 44)
-    draw_centered(d, f"calibrat pe 65.250 meciuri", 1180, small, MUTED)
+    draw_centered(d, "calibrat pe 65.250 meciuri", 1180, small, MUTED)
     draw_centered(d, ts_label, 1240, small, MUTED)
     add_disclaimer(d)
     return img
@@ -309,7 +213,7 @@ def cadru_pick(idx: int, pick: dict) -> Image.Image:
     """Cadru meci individual."""
     img = gradient_bg()
     d = ImageDraw.Draw(img)
-    add_trident_top(d)
+    add_brand_top(d)
     # Header
     f_h = ImageFont.truetype(FONT_BOLD, 70)
     draw_centered(d, f"#{idx} din 3", 440, f_h, GOLD)
@@ -331,9 +235,9 @@ def cadru_pick(idx: int, pick: dict) -> Image.Image:
 def cadru_outro() -> Image.Image:
     img = gradient_bg()
     d = ImageDraw.Draw(img)
-    add_trident_top(d)
+    add_brand_top(d)
     big = ImageFont.truetype(FONT_BOLD, 80)
-    parts = ["NU pariază pe astea.", "", "Astea sunt meciurile", "unde modelul e", "cel mai sigur azi."]
+    parts = ["NU pariază pe astea.", "", "Astea sunt meciurile", "unde modelul are", "cea mai multă informație azi."]
     y = 540
     for line in parts:
         h = draw_centered(d, line, y, big, WHITE)
