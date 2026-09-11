@@ -1,10 +1,10 @@
 {
- "generated_at": "2026-09-10T02:34:26+00:00",
- "n_total": 31583,
- "n_resolved": 24648,
- "n_pending": 6252,
- "n_not_played": 543,
- "n_replayed_far": 140,
+ "generated_at": "2026-09-11T05:40:35+00:00",
+ "n_total": 31724,
+ "n_resolved": 24915,
+ "n_pending": 6120,
+ "n_not_played": 532,
+ "n_replayed_far": 157,
  "calibration_note": "Buckets calibrate Platt; calibratorul include și jurnalul forward rezolvat (ușor in-sample, bias măsurat ~0.1pp). Hit-rate la prag = numărători brute pe rezultate reale, out-of-sample.",
  "markets": [
   {
@@ -12,42 +12,42 @@
    "buckets": [
     {
      "range": "50–60%",
-     "n": 1004,
-     "hit_pct": 62.85,
-     "wlo_pct": 59.82,
-     "diff_pp": 6.73,
+     "n": 806,
+     "hit_pct": 63.03,
+     "wlo_pct": 59.64,
+     "diff_pp": 6.77,
      "low_sample": false
     },
     {
      "range": "60–70%",
-     "n": 3985,
-     "hit_pct": 68.33,
-     "wlo_pct": 66.87,
-     "diff_pp": 2.34,
+     "n": 3476,
+     "hit_pct": 67.0,
+     "wlo_pct": 65.42,
+     "diff_pp": 0.9,
      "low_sample": false
     },
     {
      "range": "70–80%",
-     "n": 9561,
-     "hit_pct": 77.57,
-     "wlo_pct": 76.72,
-     "diff_pp": 2.13,
+     "n": 9577,
+     "hit_pct": 76.68,
+     "wlo_pct": 75.83,
+     "diff_pp": 1.17,
      "low_sample": false
     },
     {
      "range": "80–90%",
-     "n": 8314,
-     "hit_pct": 84.58,
-     "wlo_pct": 83.79,
-     "diff_pp": 0.44,
+     "n": 9229,
+     "hit_pct": 84.4,
+     "wlo_pct": 83.64,
+     "diff_pp": 0.21,
      "low_sample": false
     },
     {
      "range": "90–100%",
-     "n": 1191,
-     "hit_pct": 92.53,
-     "wlo_pct": 90.89,
-     "diff_pp": 0.05,
+     "n": 1308,
+     "hit_pct": 92.2,
+     "wlo_pct": 90.62,
+     "diff_pp": -0.23,
      "low_sample": false
     }
    ]
@@ -57,42 +57,42 @@
    "buckets": [
     {
      "range": "50–60%",
-     "n": 7420,
-     "hit_pct": 57.67,
-     "wlo_pct": 56.54,
-     "diff_pp": 2.56,
+     "n": 8187,
+     "hit_pct": 55.94,
+     "wlo_pct": 54.86,
+     "diff_pp": 0.74,
      "low_sample": false
     },
     {
      "range": "60–70%",
-     "n": 5932,
-     "hit_pct": 65.05,
-     "wlo_pct": 63.83,
-     "diff_pp": 0.59,
+     "n": 6820,
+     "hit_pct": 64.82,
+     "wlo_pct": 63.68,
+     "diff_pp": 0.38,
      "low_sample": false
     },
     {
      "range": "70–80%",
-     "n": 2352,
-     "hit_pct": 73.72,
-     "wlo_pct": 71.91,
-     "diff_pp": -0.32,
+     "n": 2399,
+     "hit_pct": 74.32,
+     "wlo_pct": 72.54,
+     "diff_pp": 0.44,
      "low_sample": false
     },
     {
      "range": "80–90%",
-     "n": 505,
-     "hit_pct": 81.58,
-     "wlo_pct": 77.97,
-     "diff_pp": -1.91,
+     "n": 434,
+     "hit_pct": 81.34,
+     "wlo_pct": 77.4,
+     "diff_pp": -2.03,
      "low_sample": false
     },
     {
      "range": "90–100%",
-     "n": 81,
-     "hit_pct": 86.42,
-     "wlo_pct": 77.3,
-     "diff_pp": -7.2,
+     "n": 54,
+     "hit_pct": 90.74,
+     "wlo_pct": 80.09,
+     "diff_pp": -3.3,
      "low_sample": true
     }
    ]
@@ -102,42 +102,42 @@
    "buckets": [
     {
      "range": "50–60%",
-     "n": 1894,
-     "hit_pct": 54.01,
-     "wlo_pct": 51.76,
-     "diff_pp": -0.22,
+     "n": 2123,
+     "hit_pct": 53.51,
+     "wlo_pct": 51.38,
+     "diff_pp": -0.59,
      "low_sample": false
     },
     {
      "range": "60–70%",
-     "n": 617,
-     "hit_pct": 63.37,
-     "wlo_pct": 59.5,
-     "diff_pp": -0.55,
+     "n": 635,
+     "hit_pct": 63.15,
+     "wlo_pct": 59.33,
+     "diff_pp": -0.72,
      "low_sample": false
     },
     {
      "range": "70–80%",
-     "n": 168,
-     "hit_pct": 63.69,
-     "wlo_pct": 56.19,
-     "diff_pp": -9.99,
+     "n": 150,
+     "hit_pct": 68.67,
+     "wlo_pct": 60.86,
+     "diff_pp": -5.33,
      "low_sample": false
     },
     {
      "range": "80–90%",
-     "n": 47,
-     "hit_pct": 80.85,
-     "wlo_pct": 67.46,
-     "diff_pp": -2.65,
+     "n": 39,
+     "hit_pct": 79.49,
+     "wlo_pct": 64.47,
+     "diff_pp": -5.06,
      "low_sample": true
     },
     {
      "range": "90–100%",
-     "n": 24,
-     "hit_pct": 87.5,
-     "wlo_pct": 69.0,
-     "diff_pp": -6.24,
+     "n": 17,
+     "hit_pct": 94.12,
+     "wlo_pct": 73.02,
+     "diff_pp": 0.1,
      "low_sample": true
     }
    ]
@@ -147,34 +147,34 @@
    "buckets": [
     {
      "range": "50–60%",
-     "n": 11779,
-     "hit_pct": 56.12,
-     "wlo_pct": 55.22,
-     "diff_pp": 1.26,
+     "n": 13677,
+     "hit_pct": 56.04,
+     "wlo_pct": 55.2,
+     "diff_pp": 1.13,
      "low_sample": false
     },
     {
      "range": "60–70%",
-     "n": 4364,
-     "hit_pct": 63.47,
-     "wlo_pct": 62.03,
-     "diff_pp": 0.17,
+     "n": 4168,
+     "hit_pct": 63.72,
+     "wlo_pct": 62.25,
+     "diff_pp": 0.77,
      "low_sample": false
     },
     {
      "range": "70–80%",
-     "n": 277,
-     "hit_pct": 70.76,
-     "wlo_pct": 65.15,
-     "diff_pp": -1.68,
+     "n": 139,
+     "hit_pct": 70.5,
+     "wlo_pct": 62.45,
+     "diff_pp": -1.46,
      "low_sample": false
     },
     {
      "range": "80–90%",
-     "n": 3,
-     "hit_pct": 33.33,
-     "wlo_pct": 6.15,
-     "diff_pp": -48.92,
+     "n": 2,
+     "hit_pct": 50.0,
+     "wlo_pct": 9.45,
+     "diff_pp": -30.34,
      "low_sample": true
     },
     {
@@ -192,42 +192,42 @@
    "buckets": [
     {
      "range": "50–60%",
-     "n": 1443,
-     "hit_pct": 62.44,
-     "wlo_pct": 59.91,
-     "diff_pp": 6.13,
+     "n": 1224,
+     "hit_pct": 63.32,
+     "wlo_pct": 60.58,
+     "diff_pp": 7.08,
      "low_sample": false
     },
     {
      "range": "60–70%",
-     "n": 7406,
-     "hit_pct": 67.55,
-     "wlo_pct": 66.48,
-     "diff_pp": 1.45,
+     "n": 6771,
+     "hit_pct": 66.61,
+     "wlo_pct": 65.48,
+     "diff_pp": 0.4,
      "low_sample": false
     },
     {
      "range": "70–80%",
-     "n": 11420,
-     "hit_pct": 75.88,
-     "wlo_pct": 75.08,
-     "diff_pp": 1.2,
+     "n": 12083,
+     "hit_pct": 75.37,
+     "wlo_pct": 74.59,
+     "diff_pp": 0.58,
      "low_sample": false
     },
     {
      "range": "80–90%",
-     "n": 2619,
-     "hit_pct": 82.86,
-     "wlo_pct": 81.36,
-     "diff_pp": -0.21,
+     "n": 3115,
+     "hit_pct": 82.18,
+     "wlo_pct": 80.8,
+     "diff_pp": -0.84,
      "low_sample": false
     },
     {
      "range": "90–100%",
-     "n": 140,
-     "hit_pct": 86.43,
-     "wlo_pct": 79.77,
-     "diff_pp": -5.83,
+     "n": 160,
+     "hit_pct": 86.88,
+     "wlo_pct": 80.77,
+     "diff_pp": -5.34,
      "low_sample": false
     }
    ]
@@ -237,34 +237,34 @@
    "buckets": [
     {
      "range": "50–60%",
-     "n": 1782,
-     "hit_pct": 54.1,
-     "wlo_pct": 51.78,
-     "diff_pp": 0.31,
+     "n": 2128,
+     "hit_pct": 53.05,
+     "wlo_pct": 50.93,
+     "diff_pp": -0.7,
      "low_sample": false
     },
     {
      "range": "60–70%",
-     "n": 387,
-     "hit_pct": 56.33,
-     "wlo_pct": 51.35,
-     "diff_pp": -7.54,
+     "n": 427,
+     "hit_pct": 56.91,
+     "wlo_pct": 52.17,
+     "diff_pp": -6.9,
      "low_sample": false
     },
     {
      "range": "70–80%",
-     "n": 90,
-     "hit_pct": 57.78,
-     "wlo_pct": 47.46,
-     "diff_pp": -15.52,
+     "n": 95,
+     "hit_pct": 58.95,
+     "wlo_pct": 48.9,
+     "diff_pp": -14.3,
      "low_sample": true
     },
     {
      "range": "80–90%",
-     "n": 19,
-     "hit_pct": 78.95,
-     "wlo_pct": 56.67,
-     "diff_pp": -4.63,
+     "n": 18,
+     "hit_pct": 77.78,
+     "wlo_pct": 54.78,
+     "diff_pp": -5.68,
      "low_sample": true
     },
     {
@@ -272,7 +272,7 @@
      "n": 1,
      "hit_pct": 100.0,
      "wlo_pct": 20.65,
-     "diff_pp": 9.13,
+     "diff_pp": 9.53,
      "low_sample": true
     }
    ]
