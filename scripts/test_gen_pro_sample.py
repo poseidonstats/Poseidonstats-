@@ -1,0 +1,71 @@
+"""Teste (înaintea codului) pentru gen_pro_sample: exemplul de analiză Pro de pe site, reîmprospătat zilnic cu analiza de ieri + rezultatul real."""
+import pytest
+
+import gen_pro_sample as G
+
+TEXT = """## 💎 ESMTK – Dabas · NB III - Southeast · 2026-09-27
+
+⚡ **Verdict:** ESMTK (locul 4, 15p) primește o Dabas în cădere liberă. Modelul dă 78% gazdelor.
+
+📊 **Context:** ESMTK 4 (17:9) vs Dabas 10 (12:18). Forma gazdelor: 3 victorii. H2H: ESMTK a luat 4 din 5. Fără absențe.
+
+🧮 **Modelul vs realitate:** Datele verificate confirmă modelul, nu îl contrazic.
+
+🎯 **Picks:**
+🔒 **Bază:** 1X (ESMTK nu pierde) — **91%**. Cea mai mare probabilitate din meci.
+🎯 **Principal:** Peste 1.5 goluri — **86%**. Banda 85-100% a livrat 87.1%.
+💎 **Curajos:** Peste 2.5 goluri — **68%** *(pick de cotă, cu risc asumat)*.
+*(Informativ: modelul indică 2-0 ca scor cel mai probabil.)*
+
+👁️ **De urmărit:** Dacă Dabas înscrie prima, ESMTK se deschide.
+
+*informativ · nu sfat de pariere · 18+* """
+
+
+def test_parseaza_sectiunile():
+    p = G.parseaza(TEXT)
+    assert p["verdict"].startswith("ESMTK (locul 4, 15p)") and "78%" in p["verdict"]
+    assert p["context"].startswith("ESMTK 4 (17:9)") and p["model"].startswith("Datele verificate")
+    assert p["picks"][0].startswith("🔒") and len(p["picks"]) == 3 and p["urmarit"].startswith("Dacă Dabas")
+    assert G.piata_baza(p["picks"]) == "1X (ESMTK nu pierde)"
+
+
+@pytest.mark.parametrize("piata,scor,ok", [
+    ("1X (ESMTK nu pierde)", (6, 0), True), ("1X", (0, 1), False), ("X2", (1, 1), True), ("12", (2, 2), False),
+    ("Peste 1.5 goluri", (1, 0), False), ("Peste 1.5 goluri", (2, 0), True), ("Sub 2.5 goluri", (1, 1), True), ("Sub 2,5 goluri", (2, 1), False),
+    ("Ambele înscriu", (1, 1), True), ("GG", (1, 0), False), ("Victorie gazde", (2, 1), True), ("2 (Dabas câștigă)", (0, 3), True),
+    ("ESMTK peste 0.5 goluri", (1, 0), None), ("Egal", (1, 1), True),
+])
+def test_evalueaza_piata(piata, scor, ok):
+    assert G.evalueaza(piata, *scor) is ok
+
+
+def test_alege_prefera_analiza_cu_baza_iesita_si_rezultat_cunoscut():
+    items = [{"match": {"fixture_id": 1, "home": "A", "away": "B"}, "analysis": TEXT.replace("1X (ESMTK nu pierde)", "2 (B câștigă)")},
+             {"match": {"fixture_id": 2, "home": "C", "away": "D"}, "analysis": TEXT},
+             {"match": {"fixture_id": 3, "home": "E", "away": "F"}, "analysis": TEXT}]
+    rez = {1: (3, 0), 3: (2, 0)}                                     # fid 2 fără rezultat; fid 1 baza a picat; fid 3 baza a ieșit
+    it, scor, baza, ok = G.alege(items, rez)
+    assert it["match"]["fixture_id"] == 3 and scor == (2, 0) and baza == "1X (ESMTK nu pierde)" and ok is True
+    it, scor, baza, ok = G.alege(items[:1], rez)                     # doar una cu rezultat, chiar dacă baza a picat
+    assert it["match"]["fixture_id"] == 1 and ok is False
+    assert G.alege([items[1]], rez) is None                           # fără rezultat → nimic de publicat
+
+
+def test_html_card_are_scorul_verdictul_si_partea_blocata():
+    it = {"match": {"fixture_id": 3, "home": "ESMTK", "away": "Dabas", "league": "NB III - Southeast", "country": "Hungary", "date": "2026-09-27"}, "analysis": TEXT}
+    h = G.html_card(it, (6, 0), "1X (ESMTK nu pierde)", True)
+    assert "ESMTK – Dabas" in h and "27 septembrie 2026" in h and "rezultat final 6-0" in h
+    assert "⚡ Verdict" in h and "ESMTK (locul 4, 15p)" in h and 'class="pro-locked"' in h and 'class="pro-lock-overlay"' in h
+    assert "a ieșit" in h and "**" not in h and "<strong>91%</strong>" in h
+    assert "<script" not in h and "&lt;" not in G.html_card(it, (6, 0), "1X", None)
+
+
+def test_injecteaza_prima_data_si_apoi_idempotent():
+    vechi = ('  <section class="pro-sample">\n    <h2 data-i18n="pro.h2">🔱 Exemplu de analiză Pro</h2>\n    <p class="pro-sample-intro" data-i18n="pro.intro">x</p>\n\n'
+             '    <div class="pro-card">\n      <div class="pro-card-head">💎 Cardiff – Wrexham</div>\n      <div class="pro-locked">\n        <div class="pro-lock-overlay">🔒</div>\n      </div>\n    </div>\n'
+             '    <p class="pro-disclaimer" data-i18n="pro.disclaimer">d</p>\n  </section>\n')
+    nou = G.injecteaza(vechi, '<div class="pro-card">NOU</div>')
+    assert "Cardiff" not in nou and "NOU" in nou and G.START in nou and G.END in nou and 'data-i18n="pro.intro"' in nou and 'data-i18n="pro.disclaimer"' in nou
+    nou2 = G.injecteaza(nou, '<div class="pro-card">NOU2</div>')
+    assert "NOU2" in nou2 and "NOU<" not in nou2 and nou2.count(G.START) == 1 and nou2.count(G.END) == 1

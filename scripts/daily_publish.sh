@@ -84,6 +84,31 @@ else
     fi
 fi
 
+# (c) 🆕 8 sept 2026 (audit) — un CSV generat în ALTĂ zi NU se publică drept „predicțiile de azi".
+# Incident 8 sept: predict blocat dimineața (flag sync stale după somn pe baterie), înghețul a
+# refuzat corect CSV-ul din 7 sept („stale cross-day"), dar acest script l-a împins pe site cu
+# generated_at de azi → site + Discord cu predicții vechi de o zi, datate azi. Aceeași regulă ca
+# în freeze_predictions.py: ziua din coloana generated_at a CSV-ului vs ziua de azi (UTC).
+# Pe calea self-heal (POSEIDON_FROM_SELF_HEAL=1) CSV-ul e scris cu secunde înainte → nu se verifică.
+if [ "$POSEIDON_FROM_SELF_HEAL" != "1" ] && [ -f "$CSV" ]; then
+    CSV_DAY=$("$PY" - "$CSV" <<'PYEOF' 2>>"$LOG" || true
+import sys
+import pandas as pd
+df = pd.read_csv(sys.argv[1], usecols=["generated_at"], nrows=5)
+ts = pd.to_datetime(df["generated_at"].dropna().iloc[0], utc=True, errors="coerce")
+print("" if pd.isna(ts) else ts.strftime("%Y-%m-%d"))
+PYEOF
+)
+    TODAY_UTC=$(date -u +%Y-%m-%d)
+    if [ -n "$CSV_DAY" ] && [ "$CSV_DAY" != "$TODAY_UTC" ]; then
+        echo "[$(ts)] [BLOCK] CSV generat în $CSV_DAY, azi e $TODAY_UTC (UTC) — NU public predicții vechi ca fiind de azi; site-ul rămâne la ultima publicare corectă" >> "$LOG"
+        tg_send_quick "⚠️ <b>POSEIDON publish SĂRIT</b>
+CSV-ul de predicții e din <code>$CSV_DAY</code>, azi e <code>$TODAY_UTC</code> (predict blocat dimineața).
+Site-ul rămâne la ultima publicare corectă; self-heal reîncearcă la următorul slot."
+        exit 0
+    fi
+fi
+
 # Cazul normal (safety net): self-heal nu a rulat sau a eșuat → continue publish pe CSV existent
 
 # 0. Curăță fixturi cu microsecunde (.000000) — pas defensiv.
@@ -114,6 +139,11 @@ $PY ~/poseidon-site/scripts/gen_static_daily.py >> "$LOG" 2>&1 || \
 # Pagini SEO long-tail per-ligă (predictii/) — best-effort, ca gen_static_daily.
 $PY ~/poseidon-site/scripts/gen_seo_pages.py >> "$LOG" 2>&1 || \
     echo "[$(ts)] [WARN] gen_seo_pages failed (publish continuă)" >> "$LOG"
+
+# 🆕 28 sept 2026 (cerința Andreei: „o analiză Pro pe site în fiecare zi, ca exemplu") — cardul „Exemplu de analiză Pro"
+# din index.html = analiza de IERI din arhiva #analize-pro, cu rezultatul real; best-effort (cardul vechi rămâne la eșec).
+$PY ~/poseidon-site/scripts/gen_pro_sample.py >> "$LOG" 2>&1 || \
+    echo "[$(ts)] [WARN] gen_pro_sample failed (cardul Pro rămâne cel de ieri)" >> "$LOG"
 
 # 2. Git add/commit/push
 cd ~/poseidon-site
