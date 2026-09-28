@@ -102,6 +102,19 @@ if (typeof window !== "undefined") {
   document.addEventListener("DOMContentLoaded", () => { initI18n(); });
 }
 
+// 28 sept 2026 — zona de membri: membrii (Basic/Pro, login Patreon) primesc setul complet de la worker;
+// fără token sau fără API configurat → fișierul public (5 gratuite + restul cu lacăt), exact ca înainte.
+let PRED_SURSA = "public";
+async function loadPredictions() {
+  const M = (typeof window !== "undefined") ? window.PoseidonMembers : null;
+  if (M && M.MEMBERS_API) {
+    const r = await M.incarca(PRED_URL);
+    PRED_SURSA = r.sursa;
+    return r.data;
+  }
+  return fetchJSON(PRED_URL);
+}
+
 async function fetchJSON(url) {
   try {
     const r = await fetch(url, { cache: "no-cache" });
@@ -420,7 +433,7 @@ async function renderSimulator() {
   const el = document.getElementById("sim-matches");
   if (!genEl && !el) return;
 
-  const data = await fetchJSON(PRED_URL);
+  const data = await loadPredictions();
   if (!data || !data.matches) {
     const msg = `<p class="muted">${tt("sim.nodata",
       "Datele zilei nu sunt încă publicate. Revino după actualizarea de dimineață.")}</p>`;
@@ -502,7 +515,7 @@ async function renderSimulator() {
 async function renderIndex() {
   // F3 — încarc și calibration.json pt eligibilitatea per piață (badge data-driven).
   // Fallback grațios: dacă lipsește, MARKET_CERT={} → marketState cade pe PROMOTED (ca înainte).
-  const [data, calib] = await Promise.all([fetchJSON(PRED_URL), fetchJSON(CALIB_URL)]);
+  const [data, calib] = await Promise.all([loadPredictions(), fetchJSON(CALIB_URL)]);
   if (calib && calib.market_cert) MARKET_CERT = calib.market_cert;
   const scData = await fetchJSON(SCORECARD_URL);
   if (scData && scData.markets) scData.markets.forEach(c => { SCORECARD[c.key] = c; });
@@ -595,7 +608,7 @@ async function renderIndex() {
 
     let html = deschise.map(m => renderMatch(m, fmk)).join("");
     if (blocate.length) {
-      html += renderUnlockCta(blocate.length);
+      if (blocate.length) html += renderUnlockCta(blocate.length);
       html += blocate.slice(0, LOCKED_PREVIEW).map(renderLockedMatch).join("");
       if (blocate.length > LOCKED_PREVIEW) {
         html += `<p class="locked-more muted">` + tt("freemium.more", "… și încă {n} meciuri analizate, nelistate aici.").replace("{n}", nUnits(blocate.length - LOCKED_PREVIEW)) + `</p>`;
@@ -1007,7 +1020,7 @@ async function renderTrackRecord() {
   document.getElementById("forward-stats").innerHTML = fwdHtml;
 }
 
-if (document.getElementById("matches")) renderIndex();
+if (document.getElementById("matches")) renderIndex().then(renderProAnalize);
 
 
 /* ============== ISTORIC (pagina istoric.html) ============== */
@@ -1157,4 +1170,22 @@ function renderHistMatch(m) {
     </div>
     <div class="hist-match-picks">${picksHtml}</div>
   </div>`;
+}
+
+
+/* 28 sept 2026 — membrii Pro văd pe site analizele scrise ale zilei (aceleași ca în #analize-pro). */
+function _md(s) {
+  return String(s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>").replace(/\n/g, "<br>");
+}
+async function renderProAnalize() {
+  const M = (typeof window !== "undefined") ? window.PoseidonMembers : null;
+  const el = document.getElementById("pro-analize");
+  if (!M || !M.MEMBERS_API || !el || M.tier() !== "pro") return;
+  const azi = new Date().toLocaleDateString("sv-SE", { timeZone: "Europe/Bucharest" });
+  try {
+    const r = await fetch(`${M.MEMBERS_API}/api/analize/${azi}`, { headers: { authorization: "Bearer " + localStorage.getItem("poseidon_members_token") }, cache: "no-store" });
+    if (!r.ok) { el.innerHTML = `<p class="muted">Analizele Pro de azi apar după 07:30. Până atunci: #analize-pro pe Discord.</p>`; return; }
+    const d = await r.json();
+    el.innerHTML = `<h2>💎 Analizele tale Pro de azi</h2>` + (d.items || []).map(it => `<article class="pro-card pro-card-full"><div class="pro-card-head">💎 ${_md(it.match?.home)} – ${_md(it.match?.away)} · ${_md(it.match?.league)}</div><div class="pro-visible">${_md(it.analysis)}</div></article>`).join("");
+  } catch (e) { console.warn("[membri] analize", e); }
 }
