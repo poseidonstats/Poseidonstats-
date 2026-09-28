@@ -26,6 +26,9 @@ ARHIVA = Path.home() / "football_predictor" / "data" / "pro_analyses"
 DB = "file:" + str(Path.home() / "football_predictor" / "football.db") + "?mode=ro"
 RO = ZoneInfo("Europe/Bucharest")
 START, END = "<!-- PRO_SAMPLE_CARD_START -->", "<!-- PRO_SAMPLE_CARD_END -->"
+LISTA_START, LISTA_END = "<!-- PRO_TODAY_LIST_START -->", "<!-- PRO_TODAY_LIST_END -->"
+POSEIDON_SCRIPTS = Path.home() / "football_predictor" / "scripts" / "poseidon"
+PRED_FULL = Path.home() / "football_predictor" / "data" / "predictions_full.json"
 LUNI = ["ianuarie", "februarie", "martie", "aprilie", "mai", "iunie", "iulie", "august", "septembrie", "octombrie", "noiembrie", "decembrie"]
 
 
@@ -179,6 +182,60 @@ def injecteaza(html: str, card: str) -> str:
     return re.sub(r"<!-- Exemplu analiză Pro — [^\n]*-->", "<!-- Exemplu analiză Pro — analiza de IERI din arhiva #analize-pro, cu rezultatul real; rescris zilnic de scripts/gen_pro_sample.py -->", html)
 
 
+# ----------------------------------------------------------------- lista Pro de azi (cu lacăt)
+def _ora_ro_iso(iso: str) -> str:
+    try:
+        from datetime import timezone
+        d = datetime.strptime(iso[:19], "%Y-%m-%dT%H:%M:%S").replace(tzinfo=timezone.utc)
+        return d.astimezone(RO).strftime("%H:%M")
+    except (ValueError, TypeError):
+        return ""
+
+
+def html_lista_pro(rows: list[dict]) -> str:
+    """Meciurile analizate azi în Pro, doar nume/ligă/oră, cu lacăt — vizitatorul vede ce ar primi, nu primește."""
+    if not rows:
+        return ""
+    li = []
+    for r in rows:
+        ora = _ora_ro_iso(r.get("match_date", "")); tara = f" ({H.escape(r['country'])})" if r.get("country") else ""
+        li.append(f"        <li>🔒 <strong>{H.escape(r['home'])} – {H.escape(r['away'])}</strong> · {H.escape(r.get('league', ''))}{tara}" + (f" · {ora}" if ora else "") + "</li>")
+    n = len(rows)
+    return "\n".join(['<div class="pro-today">',
+                      f'      <p class="pro-today-head">🔒 <strong>Azi în Pro: {n} analize scrise</strong>, cu context verificat (clasament, formă, H2H, absențe) — pe Discord, dimineața.</p>',
+                      '      <ul class="pro-today-list">', *li, '      </ul>', '    </div>'])
+
+
+def injecteaza_lista(html: str, lista: str) -> str:
+    if not lista:
+        return html
+    bloc = f"{LISTA_START}\n    {lista}\n    {LISTA_END}"
+    if LISTA_START in html and LISTA_END in html:
+        return re.sub(re.escape(LISTA_START) + r".*?" + re.escape(LISTA_END), lambda _: bloc, html, flags=re.S)
+    i = html.find(END)
+    if i < 0:
+        raise SystemExit("[gen_pro_sample] lipsește markerul cardului; rulează întâi cardul")
+    i += len(END)
+    return html[:i] + "\n    " + bloc + html[i:]
+
+
+def lista_pro_azi(zi: str, limit: int = 12) -> list[dict]:
+    """Aceeași selecție pe care o analizează cronul Pro la 07:20 (emit_matches), cu ora din predictions_full."""
+    sys.path.insert(0, str(POSEIDON_SCRIPTS))
+    try:
+        from discord_premium_daily import emit_matches
+    except Exception as e:
+        print(f"[gen_pro_sample] nu pot importa emit_matches: {e}"); return []
+    rows = emit_matches(limit=limit, target_date=zi)
+    try:
+        ore = {m.get("fixture_id"): m.get("match_date") for m in json.loads(PRED_FULL.read_text()).get("matches", [])}
+    except Exception:
+        ore = {}
+    for r in rows:
+        r["match_date"] = ore.get(r.get("fixture_id"), "") or ""
+    return rows
+
+
 # ----------------------------------------------------------------- CLI
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -194,9 +251,13 @@ def main() -> None:
     it, scor, baza, ok = ales
     card = html_card(it, scor, baza, ok)
     print(f"[gen_pro_sample] {a.date}: {it['match']['home']} – {it['match']['away']} ({it['match'].get('league')}) {scor[0]}-{scor[1]} · bază «{baza}» → {'a ieșit' if ok else ('nu a ieșit' if ok is False else 'neevaluat')}")
+    azi = datetime.now(RO).strftime("%Y-%m-%d"); rows = lista_pro_azi(azi)
+    print(f"[gen_pro_sample] lista Pro de azi ({azi}): {len(rows)} meciuri")
     if a.dry_run:
-        print(card); return
-    INDEX.write_text(injecteaza(INDEX.read_text(encoding="utf-8"), card), encoding="utf-8")
+        print(card); print(html_lista_pro(rows)); return
+    html = injecteaza(INDEX.read_text(encoding="utf-8"), card)
+    html = injecteaza_lista(html, html_lista_pro(rows))
+    INDEX.write_text(html, encoding="utf-8")
     print(f"[gen_pro_sample] scris {INDEX}")
 
 

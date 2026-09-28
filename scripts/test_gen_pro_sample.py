@@ -69,3 +69,17 @@ def test_injecteaza_prima_data_si_apoi_idempotent():
     assert "Cardiff" not in nou and "NOU" in nou and G.START in nou and G.END in nou and 'data-i18n="pro.intro"' in nou and 'data-i18n="pro.disclaimer"' in nou
     nou2 = G.injecteaza(nou, '<div class="pro-card">NOU2</div>')
     assert "NOU2" in nou2 and "NOU<" not in nou2 and nou2.count(G.START) == 1 and nou2.count(G.END) == 1
+
+
+def test_lista_pro_azi_cu_lacat_si_injectare_idempotenta():
+    rows = [{"home": "ESMTK", "away": "Dabas", "league": "NB III - Southeast", "country": "Hungary", "date": "2026-09-28", "match_date": "2026-09-28T13:00:00Z"},
+            {"home": "Kassel", "away": "Hanau", "league": "Oberliga - Hessen", "country": "Germany", "date": "2026-09-28", "match_date": "2026-09-28T16:00:00Z"}]
+    h = G.html_lista_pro(rows)
+    assert "2 analize" in h and "ESMTK – Dabas" in h and "Kassel – Hanau" in h and "16:00" in h and "19:00" in h and h.count("🔒") >= 2 and "<script" not in h
+    assert G.html_lista_pro([]) == ""
+    pagina = "<section class=\"pro-sample\">\n    " + G.START + "\n    card\n    " + G.END + "\n    <p class=\"pro-disclaimer\" data-i18n=\"pro.disclaimer\">d</p>\n  </section>"
+    p1 = G.injecteaza_lista(pagina, "<div class='pro-today'>L1</div>")
+    assert "L1" in p1 and G.LISTA_START in p1 and p1.index(G.END) < p1.index(G.LISTA_START) < p1.index("pro-disclaimer")
+    p2 = G.injecteaza_lista(p1, "<div class='pro-today'>L2</div>")
+    assert "L2" in p2 and "L1" not in p2 and p2.count(G.LISTA_START) == 1
+    assert G.injecteaza_lista(p2, "") == p2                                                  # fără listă → pagina rămâne

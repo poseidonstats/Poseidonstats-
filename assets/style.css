@@ -1086,3 +1086,10 @@ footer a { color: #93c5fd; }
   .sim-gen-controls { gap: 10px; }
   .sim-gen-btn { width: 100%; }
 }
+
+/* 28 sept 2026 — lista meciurilor analizate azi în Pro, cu lacăt (sub exemplul de analiză) */
+.pro-today { margin: 12px 0 6px; padding: 12px 14px; border: 1px dashed #c7d2fe; border-radius: 12px; background: #f8faff; }
+.pro-today-head { margin: 0 0 8px; color: #1e293b; line-height: 1.5; }
+.pro-today-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; font-size: 0.93rem; color: #475569; }
+.pro-verificat { margin-top: 8px; color: #166534; }
+@media (min-width: 720px) { .pro-today-list { grid-template-columns: 1fr 1fr; } }
