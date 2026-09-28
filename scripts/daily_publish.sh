@@ -145,6 +145,11 @@ $PY ~/poseidon-site/scripts/gen_seo_pages.py >> "$LOG" 2>&1 || \
 $PY ~/poseidon-site/scripts/gen_pro_sample.py >> "$LOG" 2>&1 || \
     echo "[$(ts)] [WARN] gen_pro_sample failed (cardul Pro rămâne cel de ieri)" >> "$LOG"
 
+# 🆕 28 sept 2026 — zona de membri: datele plătite (toate meciurile + analizele Pro de ieri) în KV-ul worker-ului.
+# Best-effort: fără wrangler/token iese 0 cu mesaj; nu blochează publicarea site-ului.
+~/poseidon-members/scripts/upload_members_data.sh "$(TZ=Europe/Bucharest date -v-1d +%Y-%m-%d)" >> "$LOG" 2>&1 || true
+~/poseidon-members/scripts/upload_members_data.sh >> "$LOG" 2>&1 || true
+
 # 2. Git add/commit/push
 cd ~/poseidon-site
 if [ -z "$(git status --porcelain data/ index.html sitemap.xml predictii/)" ]; then
