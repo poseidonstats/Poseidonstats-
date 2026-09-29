@@ -8,7 +8,8 @@ peste piață?” (logistică y ~ logit(model) + logit(piață), învățată pe
 Fără mapare → cade pe cota de la ora predicției (peste 2,5: mkt_p_o25). Sursa: ~/football_predictor/data/poseidon_history.csv
 (predicții înghețate la 07:15, status RESOLVED). Scrie data/audit.json și blocul static din track-record.html (markeri AUDIT_STATIC),
 citibil de Google și de asistenții AI. Spus pe șleau: calibrat față de rata de bază; nu bate piața.
-Uz: gen_audit.py [--dry-run]   (chemat din daily_publish.sh)"""
+Uz: gen_audit.py [--dry-run]                (chemat din daily_publish.sh)
+    gen_audit.py --public data/dataset      (oricine: aceleași cifre, doar din fișierele descărcabile)"""
 from __future__ import annotations
 
 import argparse
@@ -192,6 +193,27 @@ def svg_fiabilitate(iv: list[dict], w: int = 240) -> str:
     L.append('</svg>'); return "".join(L)
 
 
+def _inchidere_din_rand(r: dict) -> dict | None:
+    """Datasetul PUBLIC poartă cota de închidere în coloanele close_p_<piață> + close_hours_before_ko — același benchmark, fără fișiere private."""
+    d = {k: float(r[f"close_p_{k}"]) for k in PLATT_KEY if r.get(f"close_p_{k}") not in (None, "")}
+    if not d:
+        return None
+    d["ore"] = float(r["close_hours_before_ko"]) if r.get("close_hours_before_ko") not in (None, "") else None
+    return d
+
+
+def citeste_public(director: Path) -> tuple[list[dict], dict]:
+    """Rândurile din toate jurnal_*.csv (ordinea fișierelor) + parametrii Platt publicați lângă ele. Așa reface oricine cifrele auditului."""
+    rows = []
+    for f in sorted(Path(director).glob("jurnal_*.csv")):
+        rows.extend(csv.DictReader(open(f, newline="", encoding="utf-8")))
+    try:
+        pl = json.loads((Path(director) / "platt_calibration.json").read_text(encoding="utf-8"))["markets"]
+    except (OSError, ValueError, KeyError):
+        pl = {}
+    return rows, pl
+
+
 def _y(oc: str, val: str, cheie: str) -> int | None:
     if val in (None, ""):
         return None
@@ -213,7 +235,7 @@ def audit(rows: list[dict], platt: dict | None = None, inchidere: dict[int, dict
                 continue
             pm = aplica_platt(float(p), mp); pairs.append((pm, y)); brute.append((float(p), y))
             try:
-                c = inchidere.get(int(r.get("fixture_id") or -1))
+                c = inchidere.get(int(r.get("fixture_id") or -1)) if inchidere else _inchidere_din_rand(r)
             except ValueError:
                 c = None
             if c and c.get(cheie) is not None:
@@ -316,7 +338,12 @@ def injecteaza(html: str, bloc: str) -> str:
 
 
 def main() -> None:
-    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter); ap.add_argument("--dry-run", action="store_true"); a = ap.parse_args()
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter); ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--public", metavar="DIR", help="reface auditul STRICT din fișierele publice (jurnal_*.csv + platt_calibration.json din DIR) și scrie JSON-ul la stdout; nu atinge site-ul")
+    a = ap.parse_args()
+    if a.public:
+        rows, pl = citeste_public(Path(a.public)); au = audit(rows, pl, None)
+        print(json.dumps(au, ensure_ascii=False, indent=1)); return
     rows = list(csv.DictReader(open(JURNAL, newline="", encoding="utf-8")))
     pl = platt_params(); inc = incarca_inchidere(); au = audit(rows, pl, inc); h = html_audit(au)
     print(f"[gen_audit] cote de închidere mapate: {len(inc)} meciuri (mapare {MAPARE.name}, master {MASTER.name})")

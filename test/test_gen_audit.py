@@ -110,3 +110,21 @@ def test_vs_piata_pe_cota_de_inchidere_cu_test_de_informatie():
 def test_html_fara_nume_de_site():
     rows, inc = _rows_cu_inchidere(); h = G.html_audit(G.audit(rows, None, inc))
     assert not any(s in h for s in ("Superbet", "superbet", "Betfair", "Pinnacle", "API-Football", "FBref", "Understat")) and "pantă" in h and "<svg" in h
+
+
+# ---- reproductibil din fișierele PUBLICE: coloanele close_p_* țin loc de mapare + master ----
+def test_benchmarkul_se_reface_din_coloanele_publice_close_p():
+    rows, inc = _rows_cu_inchidere()
+    pub = [dict(r, close_p_over_2_5=str(inc[int(r["fixture_id"])]["over_2_5"]), close_p_home=str(inc[int(r["fixture_id"])]["home"]), close_hours_before_ko="3.0") for r in rows]
+    a1 = G.audit(rows, None, inc); a2 = G.audit(pub, None, None)
+    v1, v2 = a1["vs_piata"]["over_2_5"], a2["vs_piata"]["over_2_5"]
+    assert v2["n"] == v1["n"] and math.isclose(v2["bss_piata"], v1["bss_piata"]) and math.isclose(v2["informatie"]["ll_piata_model"], v1["informatie"]["ll_piata_model"]) and a2["ore_inchidere_mediana"] == 3.0
+    assert "home" in a2["vs_piata"] and a2["vs_piata"]["home"]["sursa"] == "inchidere"
+
+
+def test_citeste_dataset_public(tmp_path):
+    for luna, fid in (("2026-06", "1"), ("2026-07", "2")):
+        (tmp_path / f"jurnal_{luna}.csv").write_text(f"fixture_id,status,prob_over_2_5,outcome_over_2_5,match_date\n{fid},RESOLVED,0.6,1,{luna}-10 18:00:00\n")
+    (tmp_path / "platt_calibration.json").write_text(json.dumps({"markets": {"over_2_5": {"a": 0.9, "b": 0.1}}}))
+    rows, pl = G.citeste_public(tmp_path)
+    assert [r["fixture_id"] for r in rows] == ["1", "2"] and pl == {"over_2_5": {"a": 0.9, "b": 0.1}}
