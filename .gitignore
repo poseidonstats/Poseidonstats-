@@ -67,3 +67,6 @@ node_modules/
 
 # 10. Workspace clipuri TikTok — repo public, clipurile se postează MANUAL
 tiktok/
+
+# 29 sept 2026 — datasetul public (jurnalul rezolvat, pe luni) SE publică, deși *.csv e ignorat mai sus
+!data/dataset/*.csv
