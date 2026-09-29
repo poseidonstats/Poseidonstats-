@@ -115,6 +115,114 @@
     </div>
   </section>
 
+  <!-- AUDIT_STATIC_START -->
+  <section id="audit-section" class="audit">
+  <h3>Audit statistic — jurnalul forward, cifrele complete</h3>
+  <p>Calculat automat în fiecare dimineață din predicțiile înghețate la 07:15 (jurnal din 2026-06-02 până la 2026-09-29, 33,381 predicții rezolvate). Brier și log loss = cât de aproape sunt probabilitățile de realitate (mai mic = mai bine); BSS = câștigul față de „rata de bază" a evenimentului (0 = nimic peste a spune mereu media); ECE = eroarea medie de calibrare pe intervale de 10 pp. Cifrele sunt pe probabilitățile <strong>publicate</strong> (după calibrarea Platt per piață, refăcută săptămânal pe jurnal — deci ușor in-sample; cu parametrii fitați înainte de 16 august, testul pe meciurile de după dă la peste 2,5 BSS +4,5 față de +4,1 brut). Coloana „BSS brut" = modelul fără calibrare. Pe scurt: modelul este calibrat față de rata de bază, dar <strong>nu bate piața</strong> — vezi ultimul tabel.</p>
+  <div class="table-wrap"><table class="audit-table"><thead><tr><th>Piață</th><th>N</th><th>Rata reală</th><th>Brier</th><th>BSS</th><th>BSS brut</th><th>log loss</th><th>ECE</th></tr></thead><tbody>
+    <tr><td>Peste 1,5 goluri</td><td>33381</td><td>78,4 %</td><td>0,1645</td><td>+2,9 %</td><td>+2,0 %</td><td>0,5065</td><td>1,1 pp</td></tr>
+    <tr><td>Peste 2,5 goluri</td><td>33381</td><td>57,3 %</td><td>0,2330</td><td>+4,8 %</td><td>+3,9 %</td><td>0,6583</td><td>0,8 pp</td></tr>
+    <tr><td>Peste 3,5 goluri</td><td>33381</td><td>36,2 %</td><td>0,2178</td><td>+5,7 %</td><td>+5,2 %</td><td>0,6259</td><td>0,5 pp</td></tr>
+    <tr><td>Ambele echipe marchează</td><td>33381</td><td>55,0 %</td><td>0,2435</td><td>+1,6 %</td><td>+0,6 %</td><td>0,6801</td><td>1,1 pp</td></tr>
+    <tr><td>Gol în prima repriză</td><td>32122</td><td>73,0 %</td><td>0,1941</td><td>+1,6 %</td><td>+1,0 %</td><td>0,5751</td><td>0,8 pp</td></tr>
+    <tr><td>Peste 1,5 în prima repriză</td><td>32122</td><td>39,3 %</td><td>0,2318</td><td>+2,8 %</td><td>+2,4 %</td><td>0,6566</td><td>0,7 pp</td></tr>
+    <tr><td>Gazdele câștigă</td><td>33381</td><td>44,0 %</td><td>0,2297</td><td>+6,8 %</td><td>+6,6 %</td><td>0,6501</td><td>0,7 pp</td></tr>
+    <tr><td>Egal</td><td>33381</td><td>23,1 %</td><td>0,1754</td><td>+1,2 %</td><td>+1,1 %</td><td>0,5337</td><td>0,4 pp</td></tr>
+    <tr><td>Oaspeții câștigă</td><td>33381</td><td>32,9 %</td><td>0,2050</td><td>+7,2 %</td><td>+7,1 %</td><td>0,5973</td><td>0,7 pp</td></tr>
+  </tbody></table></div>
+  <h4>Calibrarea pe intervale — când modelul spune X %, în câte cazuri s-a întâmplat (toate intervalele cu cel puțin 100 de predicții)</h4>
+  <details><summary>Peste 1,5 goluri — 33381 predicții</summary><div class="table-wrap"><table class="audit-table"><thead><tr><th>interval</th><th>N</th><th>modelul spunea</th><th>s-a întâmplat</th><th>Wilson 95 % jos</th><th>diferență</th></tr></thead><tbody>
+    <tr><td>30–40 %</td><td>176</td><td>35,8 %</td><td>58,0 %</td><td>50,6 %</td><td>+22,1 pp</td></tr>
+    <tr><td>40–50 %</td><td>291</td><td>45,3 %</td><td>65,6 %</td><td>60,0 %</td><td>+20,3 pp</td></tr>
+    <tr><td>50–60 %</td><td>873</td><td>56,3 %</td><td>62,2 %</td><td>58,9 %</td><td>+5,9 pp</td></tr>
+    <tr><td>60–70 %</td><td>4479</td><td>66,3 %</td><td>66,7 %</td><td>65,3 %</td><td>+0,4 pp</td></tr>
+    <tr><td>70–80 %</td><td>13365</td><td>75,5 %</td><td>76,5 %</td><td>75,8 %</td><td>+1,0 pp</td></tr>
+    <tr><td>80–90 %</td><td>12551</td><td>84,1 %</td><td>84,5 %</td><td>83,9 %</td><td>+0,4 pp</td></tr>
+    <tr><td>90–100 %</td><td>1603</td><td>92,4 %</td><td>92,2 %</td><td>90,8 %</td><td>-0,2 pp</td></tr>
+  </tbody></table></div></details>
+  <details><summary>Peste 2,5 goluri — 33381 predicții</summary><div class="table-wrap"><table class="audit-table"><thead><tr><th>interval</th><th>N</th><th>modelul spunea</th><th>s-a întâmplat</th><th>Wilson 95 % jos</th><th>diferență</th></tr></thead><tbody>
+    <tr><td>10–20 %</td><td>217</td><td>16,5 %</td><td>35,5 %</td><td>29,4 %</td><td>+19,0 pp</td></tr>
+    <tr><td>20–30 %</td><td>429</td><td>25,6 %</td><td>36,8 %</td><td>32,4 %</td><td>+11,2 pp</td></tr>
+    <tr><td>30–40 %</td><td>1719</td><td>36,2 %</td><td>37,4 %</td><td>35,1 %</td><td>+1,2 pp</td></tr>
+    <tr><td>40–50 %</td><td>6490</td><td>45,8 %</td><td>46,3 %</td><td>45,0 %</td><td>+0,5 pp</td></tr>
+    <tr><td>50–60 %</td><td>11391</td><td>55,2 %</td><td>55,3 %</td><td>54,4 %</td><td>+0,1 pp</td></tr>
+    <tr><td>60–70 %</td><td>9390</td><td>64,4 %</td><td>65,3 %</td><td>64,3 %</td><td>+0,9 pp</td></tr>
+    <tr><td>70–80 %</td><td>3138</td><td>73,8 %</td><td>74,3 %</td><td>72,8 %</td><td>+0,5 pp</td></tr>
+    <tr><td>80–90 %</td><td>523</td><td>83,3 %</td><td>82,0 %</td><td>78,5 %</td><td>-1,3 pp</td></tr>
+  </tbody></table></div></details>
+  <details><summary>Peste 3,5 goluri — 33381 predicții</summary><div class="table-wrap"><table class="audit-table"><thead><tr><th>interval</th><th>N</th><th>modelul spunea</th><th>s-a întâmplat</th><th>Wilson 95 % jos</th><th>diferență</th></tr></thead><tbody>
+    <tr><td>0–10 %</td><td>430</td><td>6,5 %</td><td>14,2 %</td><td>11,2 %</td><td>+7,7 pp</td></tr>
+    <tr><td>10–20 %</td><td>2101</td><td>16,5 %</td><td>17,5 %</td><td>15,9 %</td><td>+1,0 pp</td></tr>
+    <tr><td>20–30 %</td><td>8256</td><td>25,7 %</td><td>26,1 %</td><td>25,2 %</td><td>+0,5 pp</td></tr>
+    <tr><td>30–40 %</td><td>11448</td><td>35,0 %</td><td>35,4 %</td><td>34,5 %</td><td>+0,4 pp</td></tr>
+    <tr><td>40–50 %</td><td>7489</td><td>44,3 %</td><td>44,8 %</td><td>43,7 %</td><td>+0,5 pp</td></tr>
+    <tr><td>50–60 %</td><td>2698</td><td>54,0 %</td><td>53,9 %</td><td>52,0 %</td><td>-0,1 pp</td></tr>
+    <tr><td>60–70 %</td><td>746</td><td>63,8 %</td><td>63,5 %</td><td>60,0 %</td><td>-0,3 pp</td></tr>
+    <tr><td>70–80 %</td><td>157</td><td>73,9 %</td><td>70,7 %</td><td>63,2 %</td><td>-3,2 pp</td></tr>
+  </tbody></table></div></details>
+  <details><summary>Ambele echipe marchează — 33381 predicții</summary><div class="table-wrap"><table class="audit-table"><thead><tr><th>interval</th><th>N</th><th>modelul spunea</th><th>s-a întâmplat</th><th>Wilson 95 % jos</th><th>diferență</th></tr></thead><tbody>
+    <tr><td>20–30 %</td><td>176</td><td>26,8 %</td><td>34,1 %</td><td>27,5 %</td><td>+7,3 pp</td></tr>
+    <tr><td>30–40 %</td><td>934</td><td>36,1 %</td><td>41,3 %</td><td>38,2 %</td><td>+5,2 pp</td></tr>
+    <tr><td>40–50 %</td><td>7369</td><td>46,6 %</td><td>47,4 %</td><td>46,2 %</td><td>+0,8 pp</td></tr>
+    <tr><td>50–60 %</td><td>19050</td><td>54,9 %</td><td>55,9 %</td><td>55,2 %</td><td>+1,0 pp</td></tr>
+    <tr><td>60–70 %</td><td>5654</td><td>63,0 %</td><td>64,0 %</td><td>62,7 %</td><td>+1,1 pp</td></tr>
+    <tr><td>70–80 %</td><td>175</td><td>71,9 %</td><td>71,4 %</td><td>64,3 %</td><td>-0,5 pp</td></tr>
+  </tbody></table></div></details>
+  <details><summary>Gol în prima repriză — 32122 predicții</summary><div class="table-wrap"><table class="audit-table"><thead><tr><th>interval</th><th>N</th><th>modelul spunea</th><th>s-a întâmplat</th><th>Wilson 95 % jos</th><th>diferență</th></tr></thead><tbody>
+    <tr><td>30–40 %</td><td>124</td><td>36,4 %</td><td>64,5 %</td><td>55,8 %</td><td>+28,1 pp</td></tr>
+    <tr><td>40–50 %</td><td>300</td><td>45,7 %</td><td>61,7 %</td><td>56,1 %</td><td>+15,9 pp</td></tr>
+    <tr><td>50–60 %</td><td>1318</td><td>56,5 %</td><td>62,7 %</td><td>60,0 %</td><td>+6,2 pp</td></tr>
+    <tr><td>60–70 %</td><td>9026</td><td>66,4 %</td><td>66,6 %</td><td>65,6 %</td><td>+0,2 pp</td></tr>
+    <tr><td>70–80 %</td><td>17063</td><td>74,7 %</td><td>75,0 %</td><td>74,4 %</td><td>+0,3 pp</td></tr>
+    <tr><td>80–90 %</td><td>4095</td><td>82,9 %</td><td>82,5 %</td><td>81,3 %</td><td>-0,4 pp</td></tr>
+    <tr><td>90–100 %</td><td>173</td><td>92,2 %</td><td>87,9 %</td><td>82,2 %</td><td>-4,3 pp</td></tr>
+  </tbody></table></div></details>
+  <details><summary>Peste 1,5 în prima repriză — 32122 predicții</summary><div class="table-wrap"><table class="audit-table"><thead><tr><th>interval</th><th>N</th><th>modelul spunea</th><th>s-a întâmplat</th><th>Wilson 95 % jos</th><th>diferență</th></tr></thead><tbody>
+    <tr><td>0–10 %</td><td>108</td><td>7,5 %</td><td>31,5 %</td><td>23,5 %</td><td>+24,0 pp</td></tr>
+    <tr><td>10–20 %</td><td>629</td><td>16,3 %</td><td>25,9 %</td><td>22,6 %</td><td>+9,6 pp</td></tr>
+    <tr><td>20–30 %</td><td>4195</td><td>26,5 %</td><td>26,5 %</td><td>25,2 %</td><td>+0,0 pp</td></tr>
+    <tr><td>30–40 %</td><td>13151</td><td>35,3 %</td><td>35,6 %</td><td>34,8 %</td><td>+0,3 pp</td></tr>
+    <tr><td>40–50 %</td><td>10564</td><td>44,3 %</td><td>44,7 %</td><td>43,7 %</td><td>+0,4 pp</td></tr>
+    <tr><td>50–60 %</td><td>2837</td><td>53,7 %</td><td>53,9 %</td><td>52,0 %</td><td>+0,1 pp</td></tr>
+    <tr><td>60–70 %</td><td>513</td><td>63,8 %</td><td>57,1 %</td><td>52,8 %</td><td>-6,7 pp</td></tr>
+    <tr><td>70–80 %</td><td>105</td><td>73,4 %</td><td>60,0 %</td><td>50,4 %</td><td>-13,4 pp</td></tr>
+  </tbody></table></div></details>
+  <details><summary>Gazdele câștigă — 33381 predicții</summary><div class="table-wrap"><table class="audit-table"><thead><tr><th>interval</th><th>N</th><th>modelul spunea</th><th>s-a întâmplat</th><th>Wilson 95 % jos</th><th>diferență</th></tr></thead><tbody>
+    <tr><td>0–10 %</td><td>220</td><td>6,7 %</td><td>7,7 %</td><td>4,9 %</td><td>+1,0 pp</td></tr>
+    <tr><td>10–20 %</td><td>822</td><td>16,3 %</td><td>16,3 %</td><td>13,9 %</td><td>+-0,0 pp</td></tr>
+    <tr><td>20–30 %</td><td>3400</td><td>26,0 %</td><td>26,7 %</td><td>25,2 %</td><td>+0,7 pp</td></tr>
+    <tr><td>30–40 %</td><td>8267</td><td>35,5 %</td><td>36,1 %</td><td>35,1 %</td><td>+0,6 pp</td></tr>
+    <tr><td>40–50 %</td><td>10476</td><td>44,9 %</td><td>44,6 %</td><td>43,7 %</td><td>-0,3 pp</td></tr>
+    <tr><td>50–60 %</td><td>6577</td><td>54,4 %</td><td>53,6 %</td><td>52,4 %</td><td>-0,8 pp</td></tr>
+    <tr><td>60–70 %</td><td>2536</td><td>64,1 %</td><td>61,9 %</td><td>60,0 %</td><td>-2,2 pp</td></tr>
+    <tr><td>70–80 %</td><td>749</td><td>74,0 %</td><td>76,6 %</td><td>73,5 %</td><td>+2,6 pp</td></tr>
+    <tr><td>80–90 %</td><td>249</td><td>84,0 %</td><td>87,6 %</td><td>82,9 %</td><td>+3,5 pp</td></tr>
+  </tbody></table></div></details>
+  <details><summary>Egal — 33381 predicții</summary><div class="table-wrap"><table class="audit-table"><thead><tr><th>interval</th><th>N</th><th>modelul spunea</th><th>s-a întâmplat</th><th>Wilson 95 % jos</th><th>diferență</th></tr></thead><tbody>
+    <tr><td>0–10 %</td><td>442</td><td>6,6 %</td><td>5,2 %</td><td>3,5 %</td><td>-1,4 pp</td></tr>
+    <tr><td>10–20 %</td><td>6501</td><td>17,3 %</td><td>18,1 %</td><td>17,1 %</td><td>+0,8 pp</td></tr>
+    <tr><td>20–30 %</td><td>24428</td><td>24,1 %</td><td>24,0 %</td><td>23,5 %</td><td>-0,1 pp</td></tr>
+    <tr><td>30–40 %</td><td>1623</td><td>32,7 %</td><td>32,1 %</td><td>29,9 %</td><td>-0,6 pp</td></tr>
+    <tr><td>40–50 %</td><td>283</td><td>44,3 %</td><td>30,4 %</td><td>25,3 %</td><td>-13,9 pp</td></tr>
+  </tbody></table></div></details>
+  <details><summary>Oaspeții câștigă — 33381 predicții</summary><div class="table-wrap"><table class="audit-table"><thead><tr><th>interval</th><th>N</th><th>modelul spunea</th><th>s-a întâmplat</th><th>Wilson 95 % jos</th><th>diferență</th></tr></thead><tbody>
+    <tr><td>0–10 %</td><td>639</td><td>6,5 %</td><td>6,1 %</td><td>4,5 %</td><td>-0,4 pp</td></tr>
+    <tr><td>10–20 %</td><td>3892</td><td>16,2 %</td><td>17,4 %</td><td>16,3 %</td><td>+1,2 pp</td></tr>
+    <tr><td>20–30 %</td><td>10423</td><td>25,4 %</td><td>26,1 %</td><td>25,3 %</td><td>+0,7 pp</td></tr>
+    <tr><td>30–40 %</td><td>10267</td><td>34,6 %</td><td>33,9 %</td><td>33,0 %</td><td>-0,8 pp</td></tr>
+    <tr><td>40–50 %</td><td>5283</td><td>44,3 %</td><td>44,2 %</td><td>42,8 %</td><td>-0,1 pp</td></tr>
+    <tr><td>50–60 %</td><td>1939</td><td>54,2 %</td><td>54,7 %</td><td>52,5 %</td><td>+0,5 pp</td></tr>
+    <tr><td>60–70 %</td><td>583</td><td>64,1 %</td><td>66,4 %</td><td>62,4 %</td><td>+2,2 pp</td></tr>
+    <tr><td>70–80 %</td><td>229</td><td>74,5 %</td><td>81,2 %</td><td>75,7 %</td><td>+6,7 pp</td></tr>
+  </tbody></table></div></details>
+  <h4>Modelul față de piață — pe meciurile la care avem cota casei la ora predicției</h4>
+  <div class="table-wrap"><table class="audit-table"><thead><tr><th>Piață</th><th>N</th><th>BSS model</th><th>BSS piață</th><th>Brier model</th><th>Brier piață</th><th>ECE model</th><th>ECE piață</th></tr></thead><tbody>
+    <tr><td>Peste 2,5 goluri</td><td>1094</td><td>+1,8 %</td><td>+2,6 %</td><td>0,2408</td><td>0,2390</td><td>3,6 pp</td><td>4,1 pp</td></tr>
+  </tbody></table></div>
+  <p class="muted">Piața (cota casei fără marjă) are un BSS mai mare decât modelul: modelul nu aduce informație peste cotă. Îl publicăm exact așa. Predicțiile rămân informative, fără garanție.</p>
+</section>
+  <!-- AUDIT_STATIC_END -->
+
   <section>
     <h3 data-i18n="tr.h3.source">Sursă & metodologie</h3>
     <ul>

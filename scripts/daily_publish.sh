@@ -145,6 +145,9 @@ $PY ~/poseidon-site/scripts/gen_seo_pages.py >> "$LOG" 2>&1 || \
 $PY ~/poseidon-site/scripts/gen_pro_sample.py >> "$LOG" 2>&1 || \
     echo "[$(ts)] [WARN] gen_pro_sample failed (cardul Pro rămâne cel de ieri)" >> "$LOG"
 
+# 🆕 29 sept 2026 — AUDIT public (Brier / log loss / ECE / intervale / vs piață) pe track-record.html, din jurnalul înghețat; best-effort.
+$PY ~/poseidon-site/scripts/gen_audit.py >> "$LOG" 2>&1 || echo "[$(ts)] [WARN] gen_audit failed (auditul de ieri rămâne)" >> "$LOG"
+
 # 🆕 28 sept 2026 — zona de membri: datele plătite (toate meciurile + analizele Pro de ieri) în KV-ul worker-ului.
 # Best-effort: fără wrangler/token iese 0 cu mesaj; nu blochează publicarea site-ului.
 ~/poseidon-members/scripts/upload_members_data.sh "$(TZ=Europe/Bucharest date -v-1d +%Y-%m-%d)" >> "$LOG" 2>&1 || true
@@ -177,7 +180,7 @@ fi
 echo "[$(ts)] [GATE] OK: $GATE_OUT" >> "$LOG"
 
 # (13 iun — R2: verificarea RC2 era COD MORT sub set -e; push eșuat → trap ERR.)
-git add data/ index.html sitemap.xml predictii/
+git add data/ index.html sitemap.xml predictii/ track-record.html
 git commit -m "data: $(date +%Y-%m-%d) refresh predicții + jurnal" >> "$LOG" 2>&1
 git push origin main >> "$LOG" 2>&1
 echo "[$(ts)] Published." >> "$LOG"
