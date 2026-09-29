@@ -186,23 +186,23 @@
       <table class="proof-table">
         <thead><tr>
           <th data-i18n="proof.th.market">Piață</th>
-          <th data-i18n="proof.th.n">Predicții rezolvate</th>
+          <th data-i18n="proof.th.n">Selecții peste prag, rezolvate</th>
           <th data-i18n="proof.th.hit">S-au adeverit</th>
           <th data-i18n="proof.th.wlo">Minim statistic (Wilson 95%)</th>
           <th data-i18n="proof.th.tier">Verdict propriu</th>
         </tr></thead>
         <tbody>
-          <tr><td><strong>Over 1.5</strong></td><td>18.397</td><td class="hit">82.7%</td><td>82.1%</td><td><span class="tier-badge tier-elite">STRONG ROBUST</span></td></tr>
-          <tr><td><strong>Over 2.5</strong></td><td>6.000</td><td class="hit">71.0%</td><td>69.9%</td><td><span class="tier-badge tier-strong">ROBUST</span></td></tr>
-          <tr><td><strong>Over 3.5</strong></td><td>304</td><td class="hit">65.8%</td><td>60.3%</td><td><span class="tier-badge tier-mid">PRE-PROMISING</span></td></tr>
-          <tr><td><strong>BTTS Da</strong></td><td>906</td><td class="hit">67.7%</td><td>64.5%</td><td><span class="tier-badge tier-mid">PRE-PROMISING</span></td></tr>
-          <tr><td><strong>HT Over 0.5</strong></td><td>23.947</td><td class="hit">74.3%</td><td>73.7%</td><td><span class="tier-badge tier-strong">ROBUST</span></td></tr>
-          <tr class="is-drop"><td><strong>HT Over 1.5</strong></td><td>207</td><td class="hit">58.0%</td><td>51.2%</td><td><span class="tier-badge tier-drop">DROP</span></td></tr>
+          <tr><td><strong>Over 1.5</strong> <small class="proof-prag">≥ 75 %</small></td><td>18.397</td><td class="hit">82.7%</td><td>82.1%</td><td><span class="tier-badge tier-elite">STRONG ROBUST</span></td></tr>
+          <tr><td><strong>Over 2.5</strong> <small class="proof-prag">≥ 65 %</small></td><td>6.000</td><td class="hit">71.0%</td><td>69.9%</td><td><span class="tier-badge tier-strong">ROBUST</span></td></tr>
+          <tr><td><strong>Over 3.5</strong> <small class="proof-prag">≥ 65 %</small></td><td>304</td><td class="hit">65.8%</td><td>60.3%</td><td><span class="tier-badge tier-mid">PRE-PROMISING</span></td></tr>
+          <tr><td><strong>BTTS Da</strong> <small class="proof-prag">≥ 65 %</small></td><td>906</td><td class="hit">67.7%</td><td>64.5%</td><td><span class="tier-badge tier-mid">PRE-PROMISING</span></td></tr>
+          <tr><td><strong>HT Over 0.5</strong> <small class="proof-prag">≥ 65 %</small></td><td>23.947</td><td class="hit">74.3%</td><td>73.7%</td><td><span class="tier-badge tier-strong">ROBUST</span></td></tr>
+          <tr class="is-drop"><td><strong>HT Over 1.5</strong> <small class="proof-prag">≥ 65 %</small></td><td>207</td><td class="hit">58.0%</td><td>51.2%</td><td><span class="tier-badge tier-drop">DROP</span></td></tr>
         </tbody>
       </table>
     </div>
     <p class="proof-note" data-i18n="proof.note">Rândul roșu e aici intenționat: acolo modelul <strong>nu</strong> prezice suficient de bine, iar noi îl marcăm <strong>DROP</strong> în propriul nostru tabel. Un site care îți arată doar ce a mers nu-ți arată nimic.</p>
-    <p class="proof-note">„Verdict propriu" ține de mărimea eșantionului și de limita Wilson, <strong>nu</strong> de avantajul peste rata naturală a pieței. Tabelul complet, bucket cu bucket: <a href="track-record.html">track record</a> · <a href="istoric.html">istoric zi cu zi</a>.</p>
+    <p class="proof-note">N = doar selecțiile la care probabilitatea a trecut pragul din dreptul pieței, nu toate predicțiile; cifrele pe toate predicțiile, piață cu piață, sunt în auditul de pe track record. „Verdict propriu" ține de mărimea eșantionului și de limita Wilson, <strong>nu</strong> de avantajul peste rata naturală a pieței. Tabelul complet, bucket cu bucket: <a href="track-record.html">track record</a> · <a href="istoric.html">istoric zi cu zi</a>.</p>
     <p class="proof-asof">Cifre din jurnalul forward, actualizate 29 septembrie 2026 · informativ · nu sfat de pariere · 18+</p>
   </section>
   <!-- PROOF_STATIC_END -->

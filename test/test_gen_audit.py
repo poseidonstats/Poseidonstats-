@@ -54,3 +54,59 @@ def test_platt_se_aplica_peste_brut_si_se_raporteaza_ambele():
 def test_intervalul_de_zile_ignora_datele_din_viitor():
     rows = _rows(); rows[0]["match_date"] = "2099-01-01 00:00:00"
     a = G.audit(rows); assert a["pana_la"] < "2099-01-01"
+
+
+# ---- 29 sept, OK Andreea: pantă/intercept, diagramă de fiabilitate, benchmark pe cota de închidere (fără nume de site) ----
+import random
+
+
+def _pairs_calibrate(n=3000, k=1.0, seed=1):
+    """y ~ Bernoulli(p_adevarat); p raportat = sigmoid(logit(p_adevarat)/k): k=1 calibrat, k=0.5 supra-încrezător."""
+    rnd = random.Random(seed); out = []
+    for _ in range(n):
+        pa = rnd.uniform(0.15, 0.9); y = 1 if rnd.random() < pa else 0
+        z = math.log(pa / (1 - pa)) / k; out.append((1 / (1 + math.exp(-z)), y))
+    return out
+
+
+def test_panta_si_intercept_de_calibrare():
+    a, b = G.panta_intercept(_pairs_calibrate(k=1.0)); assert abs(a - 1.0) < 0.15 and abs(b) < 0.15
+    a2, _ = G.panta_intercept(_pairs_calibrate(k=0.5)); assert abs(a2 - 0.5) < 0.12
+
+
+def test_diagrama_de_fiabilitate_svg():
+    iv = G.intervale(_pairs_calibrate(n=2000)); s = G.svg_fiabilitate(iv)
+    assert s.startswith("<svg") and s.count("<circle") == len(iv) and "<line" in s and "<script" not in s and len(s) < 6000
+
+
+def test_incarca_inchidere_din_mapare_si_master(tmp_path):
+    m = tmp_path / "map.csv"; m.write_text("fixture_id,sb_event_id,kickoff_utc,scrape_ts_utc\n11,901,2026-08-01T10:00:00,2026-08-01T07:00:00\n12,902,2026-08-01T10:00:00,2026-08-01T07:00:00\n")
+    ms = tmp_path / "master.jsonl"
+    ms.write_text(json.dumps({"eid": 901, "ore_close": 2.5, "close": {"1x2": {"p1": 0.5, "px": 0.3, "p2": 0.2}, "ft_o25": {"p": 0.61}, "ht_o05": {"p": 0.7}}}) + "\n" + json.dumps({"eid": 999, "close": {"gg": {"p": 0.5}}}) + "\n")
+    inc = G.incarca_inchidere(m, ms)
+    assert inc[11]["home"] == 0.5 and inc[11]["away"] == 0.2 and inc[11]["over_2_5"] == 0.61 and inc[11]["ht_over_0_5"] == 0.7 and inc[11]["ore"] == 2.5
+    assert "btts" not in inc[11] and 12 not in inc and G.incarca_inchidere(tmp_path / "nu.csv", ms) == {}
+
+
+def _rows_cu_inchidere(n=1200):
+    rnd = random.Random(3); rows = []; inc = {}
+    for i in range(n):
+        pa = rnd.uniform(0.2, 0.9); y = 1 if rnd.random() < pa else 0; zi = "2026-07-01" if i < 800 else "2026-09-01"
+        zm = 0.6 * math.log(pa / (1 - pa)) + rnd.gauss(0, 0.7); pmod = 1 / (1 + math.exp(-zm))      # modelul: atenuat + zgomot; piața: adevărul
+        rows.append({"status": "RESOLVED", "fixture_id": str(i), "match_date": zi, "prob_over_2_5": f"{pmod:.3f}", "outcome_over_2_5": str(y),
+                     "prob_home": f"{pa:.3f}", "outcome_1x2": "1" if y else "2"})
+        inc[i] = {"over_2_5": pa, "home": pa, "ore": 3.0}
+    return rows, inc
+
+
+def test_vs_piata_pe_cota_de_inchidere_cu_test_de_informatie():
+    rows, inc = _rows_cu_inchidere(); a = G.audit(rows, None, inc)
+    v = a["vs_piata"]["over_2_5"]; assert v["n"] == 1200 and v["bss_piata"] > v["bss_model"] and v["sursa"] == "inchidere"
+    t = v["informatie"]; assert t["n_test"] == 400 and t["ll_piata"] > 0 and "ll_piata_model" in t and abs(t["coef_model"]) < 0.35 and t["coef_piata"] > 0.6 and t["castig_ll"] < 0.01
+    assert "home" in a["vs_piata"] and a["ore_inchidere_mediana"] == 3.0 and v["de_la"] == "2026-07-01" and v["pana_la"] == "2026-09-01"
+    h = G.html_audit(a); assert "casă de pariuri" in h and "informație" in h.lower()
+
+
+def test_html_fara_nume_de_site():
+    rows, inc = _rows_cu_inchidere(); h = G.html_audit(G.audit(rows, None, inc))
+    assert not any(s in h for s in ("Superbet", "superbet", "Betfair", "Pinnacle", "API-Football", "FBref", "Understat")) and "pantă" in h and "<svg" in h

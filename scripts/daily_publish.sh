@@ -145,8 +145,16 @@ $PY ~/poseidon-site/scripts/gen_seo_pages.py >> "$LOG" 2>&1 || \
 $PY ~/poseidon-site/scripts/gen_pro_sample.py >> "$LOG" 2>&1 || \
     echo "[$(ts)] [WARN] gen_pro_sample failed (cardul Pro rămâne cel de ieri)" >> "$LOG"
 
+# 🆕 29 sept 2026 — lunea: reîmprospătez maparea meci ↔ eveniment la casă (validată prin scor), folosită de audit (cota de închidere) și de dataset; ~3 min, best-effort.
+if [ "$(TZ=Europe/Bucharest date +%u)" = "1" ]; then
+    $PY ~/odds_decoder/scripts/build_sb_matched_ext.py >> "$LOG" 2>&1 || echo "[$(ts)] [WARN] build_sb_matched_ext failed (maparea veche rămâne)" >> "$LOG"
+fi
+
 # 🆕 29 sept 2026 — AUDIT public (Brier / log loss / ECE / intervale / vs piață) pe track-record.html, din jurnalul înghețat; best-effort.
 $PY ~/poseidon-site/scripts/gen_audit.py >> "$LOG" 2>&1 || echo "[$(ts)] [WARN] gen_audit failed (auditul de ieri rămâne)" >> "$LOG"
+
+# 🆕 29 sept 2026 — DATASET public (data/dataset/jurnal_YYYY-MM.csv + index.json + platt_calibration.json + blocul „Date deschise" de pe track-record); best-effort.
+$PY ~/poseidon-site/scripts/gen_dataset.py >> "$LOG" 2>&1 || echo "[$(ts)] [WARN] gen_dataset failed (datasetul de ieri rămâne)" >> "$LOG"
 
 # 🆕 28 sept 2026 — zona de membri: datele plătite (toate meciurile + analizele Pro de ieri) în KV-ul worker-ului.
 # Best-effort: fără wrangler/token iese 0 cu mesaj; nu blochează publicarea site-ului.

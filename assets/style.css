@@ -1112,3 +1112,8 @@ footer a { color: #93c5fd; }
 .audit-table th, .audit-table td { padding: 5px 8px; border-bottom: 1px solid #e2e8f0; text-align: right; white-space: nowrap; }
 .audit-table th:first-child, .audit-table td:first-child { text-align: left; }
 .audit details { margin: 6px 0; } .audit summary { cursor: pointer; color: #1e3a8a; }
+
+/* 29 sept 2026 — diagramă de fiabilitate + prag în tabelul dovadă + dataset */
+.fiab-wrap { margin: 8px 0; } .fiab { max-width: 100%; height: auto; }
+.proof-prag { color: #64748b; font-weight: 400; font-size: 0.8em; white-space: nowrap; }
+.dataset-files { padding-left: 18px; } .dataset-files li { margin: 3px 0; }

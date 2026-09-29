@@ -156,6 +156,10 @@ def build_section() -> str:
     return "\n".join(lines)
 
 
+# Pragurile de afișare (build_public_json.market_def): N din tabel = predicțiile cu probabilitate ≥ prag, NU toate predicțiile (29 sept 2026).
+PRAG_AFISARE = {"Over 1.5": 75, "Over 2.5": 65, "Over 3.5": 65, "BTTS Da": 65, "HT Over 0.5": 65, "HT Over 1.5": 65}
+
+
 def build_proof_section() -> str | None:
     """Tabelul „ce s-a adeverit" din jurnalul forward (history.json).
 
@@ -182,7 +186,7 @@ def build_proof_section() -> str | None:
         n_ro = f'{m["n"]:,}'.replace(",", ".")   # separator de mii românesc
         rows.append(
             f'          <tr{tr_cls}>'
-            f'<td><strong>{m["name"]}</strong></td>'
+            f'<td><strong>{m["name"]}</strong>' + (f' <small class="proof-prag">≥ {PRAG_AFISARE[m["name"]]} %</small>' if m["name"] in PRAG_AFISARE else '') + '</td>'
             f'<td>{n_ro}</td>'
             f'<td class="hit">{m["hit_pct"]:.1f}%</td>'
             f'<td>{m["wlo_pct"]:.1f}%</td>'
@@ -201,7 +205,7 @@ def build_proof_section() -> str | None:
         '      <table class="proof-table">',
         '        <thead><tr>',
         '          <th data-i18n="proof.th.market">Piață</th>',
-        '          <th data-i18n="proof.th.n">Predicții rezolvate</th>',
+        '          <th data-i18n="proof.th.n">Selecții peste prag, rezolvate</th>',
         '          <th data-i18n="proof.th.hit">S-au adeverit</th>',
         '          <th data-i18n="proof.th.wlo">Minim statistic (Wilson 95%)</th>',
         '          <th data-i18n="proof.th.tier">Verdict propriu</th>',
@@ -214,7 +218,8 @@ def build_proof_section() -> str | None:
         '    <p class="proof-note" data-i18n="proof.note">Rândul roșu e aici intenționat: acolo '
         'modelul <strong>nu</strong> prezice suficient de bine, iar noi îl marcăm <strong>DROP</strong> '
         'în propriul nostru tabel. Un site care îți arată doar ce a mers nu-ți arată nimic.</p>',
-        '    <p class="proof-note">„Verdict propriu\" ține de mărimea eșantionului și de limita '
+        '    <p class="proof-note">N = doar selecțiile la care probabilitatea a trecut pragul din dreptul pieței, nu toate predicțiile; '
+        'cifrele pe toate predicțiile, piață cu piață, sunt în auditul de pe track record. „Verdict propriu\" ține de mărimea eșantionului și de limita '
         'Wilson, <strong>nu</strong> de avantajul peste rata naturală a pieței. Tabelul complet, '
         'bucket cu bucket: <a href="track-record.html">track record</a> · '
         '<a href="istoric.html">istoric zi cu zi</a>.</p>',
