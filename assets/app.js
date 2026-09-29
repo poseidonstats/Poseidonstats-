@@ -110,9 +110,20 @@ async function loadPredictions() {
   if (M && M.MEMBERS_API) {
     const r = await M.incarca(PRED_URL);
     PRED_SURSA = r.sursa;
+    // 29 sept — diagnostic: browserul spune worker-ului ce sursă a afișat (apare în `wrangler tail`); fără header, fără preflight
+    try { fetch(`${M.MEMBERS_API}/api/ping?sursa=${r.sursa}&tier=${M.tier() || "none"}&v=${SCRIPT_V}`, { mode: "no-cors", cache: "no-store" }).catch(() => {}); } catch {}
     return r.data;
   }
   return fetchJSON(PRED_URL);
+}
+const SCRIPT_V = "20260929c";
+// 29 sept — plasă de siguranță: dacă la DOMContentLoaded există token valid, dar lista a fost desenată din fișierul public
+// (tokenul a ajuns târziu, script vechi din cache etc.), desenăm din nou cu datele de membru.
+if (typeof window !== "undefined") {
+  document.addEventListener("DOMContentLoaded", () => {
+    const M = window.PoseidonMembers;
+    if (M && M.MEMBERS_API && M.tier() && PRED_SURSA === "public" && document.getElementById("matches")) renderIndex().then(renderProAnalize);
+  });
 }
 
 async function fetchJSON(url) {
