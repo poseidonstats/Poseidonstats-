@@ -66,7 +66,7 @@ def _mii(n: int) -> str:
 
 
 def _num(v) -> str:
-    return "" if v is None else str(round(float(v), 4))
+    return "" if v is None else repr(float(v))     # precizie completă: auditul refăcut din CSV dă EXACT cifrele publicate (rotunjirea la 4 zecimale le mișca în a 4-a zecimală)
 
 
 def randuri_publice(rows: list[dict], inchidere: dict[int, dict]) -> list[dict]:
