@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>POSEIDON — te conectez</title>
+<style>body{font-family:system-ui,-apple-system,sans-serif;background:#1e3a8a;color:#fff;display:flex;min-height:100vh;align-items:center;justify-content:center;margin:0}p{font-size:1.1rem;padding:24px;text-align:center}</style>
+</head>
+<body>
+<p>🔱 Te conectez la zona de membri…</p>
+<script>
+/* 29 sept 2026 — pagina de aterizare după login-ul Patreon. Face trei lucruri, în ordine, și abia apoi deschide site-ul:
+   1) salvează tokenul de membru în browser; 2) scoate service worker-ul vechi și cache-urile lui (telefoanele rămâneau pe
+   scripturile de la prima vizită); 3) deschide pagina principală cu un parametru unic, ca să vină proaspătă de la server. */
+(async function () {
+  try { var t = new URLSearchParams(location.search).get("members_token"); if (t) localStorage.setItem("poseidon_members_token", t); } catch (e) {}
+  try { if ("serviceWorker" in navigator) { var regs = await navigator.serviceWorker.getRegistrations(); await Promise.all(regs.map(function (r) { return r.unregister(); })); } } catch (e) {}
+  try { if (window.caches) { var ks = await caches.keys(); await Promise.all(ks.map(function (k) { return caches.delete(k); })); } } catch (e) {}
+  location.replace("/?v=" + Date.now());
+})();
+</script>
+<noscript><p>Activează JavaScript, apoi deschide <a href="/" style="color:#fff">poseidonstats.com</a>.</p></noscript>
+</body>
+</html>
