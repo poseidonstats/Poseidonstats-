@@ -62,3 +62,12 @@ test("bara de membri e traductibilă: chei data-i18n prezente în toate cele 4 l
   for (const lang of ["ro", "en", "es", "it"]) for (const k of ["members.hint", "members.sub", "members.login", "members.badge.basic", "members.badge.pro", "members.logout"]) assert.ok(i18n[lang][k], `${lang} ${k}`);
   assert.match(i18n.en["members.login"], /Sign in with Patreon/);
 });
+
+test("tokenul din URL se salvează SINCRON, la încărcarea scriptului, nu la DOMContentLoaded (cursa cu renderIndex)", async () => {
+  const { captureaza } = await import("../assets/members.js");
+  const st = new Map(); const storage = { setItem: (k, v) => st.set(k, v), getItem: (k) => st.get(k) ?? null, removeItem: (k) => st.delete(k) };
+  assert.equal(captureaza("?members_token=" + tokBasic + "&x=1", storage), tokBasic);
+  assert.equal(storage.getItem("poseidon_members_token"), tokBasic);
+  assert.equal(captureaza("?x=1", storage), null);
+  assert.equal(storage.getItem("poseidon_members_token"), tokBasic);     // fără token în URL nu ștergem ce era
+});

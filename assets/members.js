@@ -9,6 +9,13 @@
   function tokenDinUrl(search) {
     try { return new URLSearchParams(search || "").get("members_token") || null; } catch { return null; }
   }
+  // 29 sept 2026 — FIX cursă: app.js pornește renderIndex() la încărcarea scriptului (nu la DOMContentLoaded), deci tokenul din
+  // URL trebuie salvat SINCRON, aici, înainte să se execute app.js; altfel prima pagină după login vine cu lacăte.
+  function captureaza(search, storage) {
+    const t = tokenDinUrl(search);
+    if (t) { try { storage.setItem(CHEIE, t); } catch {} }
+    return t;
+  }
   function _unb64u(s) {
     s = s.replace(/-/g, "+").replace(/_/g, "/"); s += "=".repeat((4 - s.length % 4) % 4);
     return (typeof atob === "function") ? atob(s) : Buffer.from(s, "base64").toString("binary");
@@ -47,10 +54,13 @@
   // ---- doar în browser
   function token() { try { return localStorage.getItem(CHEIE); } catch { return null; } }
   function sterge() { try { localStorage.removeItem(CHEIE); } catch {} }
+  if (typeof window !== "undefined") {
+    try {
+      if (captureaza(window.location.search, localStorage)) history.replaceState({}, "", window.location.pathname + window.location.hash);
+    } catch {}
+  }
   function init() {
     if (typeof window === "undefined") return;
-    const t = tokenDinUrl(window.location.search);
-    if (t) { try { localStorage.setItem(CHEIE, t); } catch {} ; history.replaceState({}, "", window.location.pathname + window.location.hash); }
     const bara = document.getElementById("members-bar");
     if (bara && MEMBERS_API) {
       const tier = tierDinToken(token());
@@ -62,10 +72,10 @@
     }
   }
   const api = {
-    MEMBERS_API, tokenDinUrl, tierDinToken, incarcaPredictii, textBara,
+    MEMBERS_API, tokenDinUrl, captureaza, tierDinToken, incarcaPredictii, textBara,
     tier: () => tierDinToken(token()),
     incarca: (publicUrl) => incarcaPredictii({ api: MEMBERS_API, token: token(), publicUrl, sterge }),
   };
   if (typeof window !== "undefined") { root.PoseidonMembers = api; document.addEventListener("DOMContentLoaded", init); }
-  if (typeof module !== "undefined" && module.exports) module.exports = { tokenDinUrl, tierDinToken, incarcaPredictii, textBara };
+  if (typeof module !== "undefined" && module.exports) module.exports = { tokenDinUrl, captureaza, tierDinToken, incarcaPredictii, textBara };
 })(typeof window !== "undefined" ? window : globalThis);
