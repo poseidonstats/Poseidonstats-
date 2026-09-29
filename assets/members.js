@@ -36,11 +36,12 @@
     } catch { return { sursa: "public", data: null }; }
   }
   function textBara(tier, api) {
-    if (!tier) return `<span class="members-hint">Vrei să deblochezi toate meciurile zilei? <strong>5 $/lună</strong>. Vrei și analizele Pro? <strong>20 $/lună</strong>.</span>`
-      + `<a class="members-sub" href="#abonament">Abonează-te</a>`
-      + `<a class="members-login" href="${api}/login">🔑 Ai deja abonament? Intră cu Patreon</a>`;
-    const et = tier === "pro" ? "💎 Membru Pro" : "⭐ Membru Basic";
-    return `<span class="members-badge">${et}</span><a class="members-logout" href="#" data-members-logout>Ieși</a>`;
+    // textele implicite sunt în română; app.js (applyI18n) le rescrie după limba aleasă, prin data-i18n
+    if (!tier) return `<span class="members-hint" data-i18n="members.hint">Vrei să deblochezi toate meciurile zilei? <strong>5 $/lună</strong>. Vrei și analizele Pro? <strong>20 $/lună</strong>.</span>`
+      + `<a class="members-sub" href="#abonament" data-i18n="members.sub">Abonează-te</a>`
+      + `<a class="members-login" href="${api}/login" data-i18n="members.login">🔑 Ai deja abonament? Intră cu Patreon</a>`;
+    const et = tier === "pro" ? `<span class="members-badge" data-i18n="members.badge.pro">💎 Membru Pro</span>` : `<span class="members-badge" data-i18n="members.badge.basic">⭐ Membru Basic</span>`;
+    return et + `<a class="members-logout" href="#" data-members-logout data-i18n="members.logout">Ieși</a>`;
   }
 
   // ---- doar în browser

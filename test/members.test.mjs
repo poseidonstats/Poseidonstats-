@@ -52,3 +52,13 @@ test("textul din bară: neautentificat → buton de login; basic/pro → etichet
   assert.match(textBara("pro", "https://m.example"), /Pro/);
   assert.match(textBara("basic", "https://m.example"), /Ieși/);
 });
+
+
+test("bara de membri e traductibilă: chei data-i18n prezente în toate cele 4 limbi", async () => {
+  const fs = await import("node:fs"); const i18n = JSON.parse(fs.readFileSync(new URL("../assets/i18n.json", import.meta.url), "utf8"));
+  const h0 = textBara(null, "https://m.example"), hb = textBara("basic", "https://m.example"), hp = textBara("pro", "https://m.example");
+  for (const k of ["members.hint", "members.sub", "members.login"]) assert.match(h0, new RegExp(`data-i18n="${k}"`));
+  assert.match(hb, /data-i18n="members.badge.basic"/); assert.match(hp, /data-i18n="members.badge.pro"/); assert.match(hb, /data-i18n="members.logout"/);
+  for (const lang of ["ro", "en", "es", "it"]) for (const k of ["members.hint", "members.sub", "members.login", "members.badge.basic", "members.badge.pro", "members.logout"]) assert.ok(i18n[lang][k], `${lang} ${k}`);
+  assert.match(i18n.en["members.login"], /Sign in with Patreon/);
+});

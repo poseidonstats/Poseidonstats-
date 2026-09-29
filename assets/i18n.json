@@ -244,7 +244,13 @@
     "sim.gen.btn": "🎲 Altă variantă",
     "sim.gen.variant": "Varianta {k} din {total}, ordonate descrescător după șansa compusă. Selecțiile sunt piețele cu cea mai mare probabilitate calibrată din fiecare meci — o alegere mecanică, nu o recomandare.",
     "sim.manual.h2": "Sau construiește-l singur",
-    "sim.manual.lead": "Dacă vrei alte piețe decât cele alese automat, bifează tu — maximum una din fiecare meci."
+    "sim.manual.lead": "Dacă vrei alte piețe decât cele alese automat, bifează tu — maximum una din fiecare meci.",
+    "members.hint": "Vrei să deblochezi toate meciurile zilei? <strong>5 $/lună</strong>. Vrei și analizele Pro? <strong>20 $/lună</strong>.",
+    "members.sub": "Abonează-te",
+    "members.login": "🔑 Ai deja abonament? Intră cu Patreon",
+    "members.badge.basic": "⭐ Membru Basic",
+    "members.badge.pro": "💎 Membru Pro",
+    "members.logout": "Ieși"
   },
   "en": {
     "lang.name": "English",
@@ -491,7 +497,13 @@
     "sim.gen.btn": "🎲 Another variant",
     "sim.gen.variant": "Variant {k} of {total}, ordered by compound chance, highest first. The selections are the highest calibrated-probability markets in each match — a mechanical choice, not a recommendation.",
     "sim.manual.h2": "Or build it yourself",
-    "sim.manual.lead": "If you want markets other than the ones picked automatically, tick them yourself — at most one per match."
+    "sim.manual.lead": "If you want markets other than the ones picked automatically, tick them yourself — at most one per match.",
+    "members.hint": "Want to unlock every match of the day? <strong>$5/month</strong>. Want the Pro analyses too? <strong>$20/month</strong>.",
+    "members.sub": "Subscribe",
+    "members.login": "🔑 Already a member? Sign in with Patreon",
+    "members.badge.basic": "⭐ Basic member",
+    "members.badge.pro": "💎 Pro member",
+    "members.logout": "Sign out"
   },
   "es": {
     "lang.name": "Español",
@@ -738,7 +750,13 @@
     "sim.gen.btn": "🎲 Otra variante",
     "sim.gen.variant": "Variante {k} de {total}, ordenadas de mayor a menor probabilidad compuesta. Las selecciones son los mercados con mayor probabilidad calibrada de cada partido — una elección mecánica, no una recomendación.",
     "sim.manual.h2": "O constrúyelo tú",
-    "sim.manual.lead": "Si quieres mercados distintos de los elegidos automáticamente, márcalos tú — como máximo uno por partido."
+    "sim.manual.lead": "Si quieres mercados distintos de los elegidos automáticamente, márcalos tú — como máximo uno por partido.",
+    "members.hint": "¿Quieres desbloquear todos los partidos del día? <strong>5 $/mes</strong>. ¿Quieres también los análisis Pro? <strong>20 $/mes</strong>.",
+    "members.sub": "Suscríbete",
+    "members.login": "🔑 ¿Ya eres miembro? Entrar con Patreon",
+    "members.badge.basic": "⭐ Miembro Basic",
+    "members.badge.pro": "💎 Miembro Pro",
+    "members.logout": "Salir"
   },
   "it": {
     "lang.name": "Italiano",
@@ -985,6 +1003,12 @@
     "sim.gen.btn": "🎲 Un'altra variante",
     "sim.gen.variant": "Variante {k} di {total}, ordinate per probabilità composta decrescente. Le selezioni sono i mercati con la probabilità calibrata più alta di ogni partita — una scelta meccanica, non un consiglio.",
     "sim.manual.h2": "Oppure costruiscila tu",
-    "sim.manual.lead": "Se vuoi mercati diversi da quelli scelti automaticamente, selezionali tu — al massimo uno per partita."
+    "sim.manual.lead": "Se vuoi mercati diversi da quelli scelti automaticamente, selezionali tu — al massimo uno per partita.",
+    "members.hint": "Vuoi sbloccare tutte le partite del giorno? <strong>5 $/mese</strong>. Vuoi anche le analisi Pro? <strong>20 $/mese</strong>.",
+    "members.sub": "Abbonati",
+    "members.login": "🔑 Sei già membro? Accedi con Patreon",
+    "members.badge.basic": "⭐ Membro Basic",
+    "members.badge.pro": "💎 Membro Pro",
+    "members.logout": "Esci"
   }
 }
