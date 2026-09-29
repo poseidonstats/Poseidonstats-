@@ -36,7 +36,9 @@
     } catch { return { sursa: "public", data: null }; }
   }
   function textBara(tier, api) {
-    if (!tier) return `<a class="members-login" href="${api}/login">🔑 Intră cu Patreon</a><span class="members-hint">5 $/lună: tot site-ul · 20 $/lună: și analizele Pro</span>`;
+    if (!tier) return `<span class="members-hint">Vrei să deblochezi toate meciurile zilei? <strong>5 $/lună</strong>. Vrei și analizele Pro? <strong>20 $/lună</strong>.</span>`
+      + `<a class="members-sub" href="#abonament">Abonează-te</a>`
+      + `<a class="members-login" href="${api}/login">🔑 Ai deja abonament? Intră cu Patreon</a>`;
     const et = tier === "pro" ? "💎 Membru Pro" : "⭐ Membru Basic";
     return `<span class="members-badge">${et}</span><a class="members-logout" href="#" data-members-logout>Ieși</a>`;
   }

@@ -1100,7 +1100,8 @@ footer a { color: #93c5fd; }
 .members-login { padding: 6px 12px; border-radius: 999px; background: #1e3a8a; color: #fff; text-decoration: none; font-weight: 600; }
 .members-badge { padding: 4px 10px; border-radius: 999px; background: #dcfce7; color: #166534; font-weight: 600; }
 .members-logout { color: #64748b; text-decoration: underline; }
-.members-hint { color: #64748b; }
+.members-hint { color: rgba(255,255,255,0.92); flex-basis: 100%; }
+.members-sub { padding: 6px 12px; border-radius: 999px; background: #facc15; color: #1e293b; text-decoration: none; font-weight: 700; }
 .pro-analize:empty { display: none; }
 .pro-card-full { margin: 12px 0; }
 

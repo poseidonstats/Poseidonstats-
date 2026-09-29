@@ -42,8 +42,12 @@ test("membru → datele complete de la API; 401/403 → token șters și date pu
 });
 
 test("textul din bară: neautentificat → buton de login; basic/pro → etichetă + ieșire", () => {
-  assert.match(textBara(null, "https://m.example"), /Intră cu Patreon/);
-  assert.match(textBara(null, "https://m.example"), /https:\/\/m\.example\/login/);
+  const h = textBara(null, "https://m.example");
+  assert.match(h, /Vrei să deblochezi toate meciurile zilei\? .*5 \$\/lună/);
+  assert.match(h, /Vrei și analizele Pro\? .*20 \$\/lună/);
+  assert.match(h, /href="#abonament"[^>]*>[^<]*Abonează-te/);
+  assert.match(h, /Ai deja abonament\? Intră cu Patreon/);
+  assert.match(h, /https:\/\/m\.example\/login/);
   assert.match(textBara("basic", "https://m.example"), /Basic/);
   assert.match(textBara("pro", "https://m.example"), /Pro/);
   assert.match(textBara("basic", "https://m.example"), /Ieși/);
