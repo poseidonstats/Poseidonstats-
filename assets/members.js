@@ -3,7 +3,7 @@
    până când o ține PATREON: la login worker-ul întreabă Patreon și dă un token semnat pe 7 zile; când expiră, un click
    „Intră cu Patreon” îl reînnoiește (Patreon ține sesiunea). Un abonament oprit se stinge deci în cel mult 7 zile. */
 (function (root) {
-  const MEMBERS_API = "";                       // se completează după `wrangler deploy`: https://poseidon-members.<cont>.workers.dev
+  const MEMBERS_API = "https://poseidon-members.poseidonstats.workers.dev";                       // se completează după `wrangler deploy`: https://poseidon-members.<cont>.workers.dev
   const CHEIE = "poseidon_members_token";
 
   function tokenDinUrl(search) {
@@ -36,7 +36,7 @@
     } catch { return { sursa: "public", data: null }; }
   }
   function textBara(tier, api) {
-    if (!tier) return `<a class="members-login" href="${api}/login">🔑 Intră cu Patreon</a><span class="members-hint">Basic: tot site-ul · Pro: și analizele</span>`;
+    if (!tier) return `<a class="members-login" href="${api}/login">🔑 Intră cu Patreon</a><span class="members-hint">5 $/lună: tot site-ul · 20 $/lună: și analizele Pro</span>`;
     const et = tier === "pro" ? "💎 Membru Pro" : "⭐ Membru Basic";
     return `<span class="members-badge">${et}</span><a class="members-logout" href="#" data-members-logout>Ieși</a>`;
   }
