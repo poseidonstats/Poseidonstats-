@@ -105,9 +105,11 @@ if (typeof window !== "undefined") {
 // 28 sept 2026 — zona de membri: membrii (Basic/Pro, login Patreon) primesc setul complet de la worker;
 // fără token sau fără API configurat → fișierul public (5 gratuite + restul cu lacăt), exact ca înainte.
 let PRED_SURSA = "public";
+let PRED_CU_TOKEN = false;   // prima încărcare a pornit deja cu token → plasa de siguranță de la DOMContentLoaded nu mai redesenează (evita 2× 2 MB)
 async function loadPredictions() {
   const M = (typeof window !== "undefined") ? window.PoseidonMembers : null;
   if (M && M.MEMBERS_API) {
+    if (M.tier()) PRED_CU_TOKEN = true;
     const r = await M.incarca(PRED_URL);
     PRED_SURSA = r.sursa;
     // 29 sept — diagnostic: browserul spune worker-ului ce sursă a afișat (apare în `wrangler tail`); fără header, fără preflight
@@ -122,7 +124,7 @@ const SCRIPT_V = "20260929c";
 if (typeof window !== "undefined") {
   document.addEventListener("DOMContentLoaded", () => {
     const M = window.PoseidonMembers;
-    if (M && M.MEMBERS_API && M.tier() && PRED_SURSA === "public" && document.getElementById("matches")) renderIndex().then(renderProAnalize);
+    if (M && M.MEMBERS_API && M.tier() && !PRED_CU_TOKEN && PRED_SURSA === "public" && document.getElementById("matches")) renderIndex().then(renderProAnalize);
   });
 }
 
