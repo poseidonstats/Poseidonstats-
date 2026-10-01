@@ -1125,3 +1125,6 @@ footer a { color: #93c5fd; }
 .unlock-steps { margin: 8px 0 12px; font-size: 0.95em; } .unlock-steps .muted { display: block; margin-top: 4px; }
 .unlock-pro { display: block; margin-top: 8px; font-size: 0.9em; }
 .plan-coffee { opacity: 0.85; border-style: dashed; }
+
+.plans-proof { background: #f1f5f9; border-left: 4px solid #1e3a8a; padding: 10px 14px; border-radius: 6px; margin: 12px 0 18px; }
+.plans-steps { margin: 16px 0 6px; }
