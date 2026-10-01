@@ -99,6 +99,7 @@ def shell_en(*, title: str, description: str, canonical: str, body: str, jsonld:
       <a href="{up}index.html">Predictions</a>
       <a href="index.html">By league</a>
       <a href="{up}simulator.html">Simulator</a>
+      <a href="{up}analize/index.html">Analyses</a>
       <a href="{up}istoric.html">History</a>
       <a href="{up}track-record.html">Track record</a>
       <a href="{up}metodologie.html">Methodology</a>

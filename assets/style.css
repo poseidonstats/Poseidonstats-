@@ -1128,3 +1128,19 @@ footer a { color: #93c5fd; }
 
 .plans-proof { background: #f1f5f9; border-left: 4px solid #1e3a8a; padding: 10px 14px; border-radius: 6px; margin: 12px 0 18px; }
 .plans-steps { margin: 16px 0 6px; }
+
+/* 1 oct 2026 — Pro în față: blocul „ce primești / o zi în Pro” + arhiva analizelor cu verificarea de a doua zi */
+.plans-pro-detail { margin: 18px 0 6px; padding: 16px 18px; border: 1px solid #c7d2fe; border-radius: 14px; background: #f8fafc; line-height: 1.55; }
+.plans-pro-detail h3 { margin: 6px 0 8px; }
+.plans-pro-detail ul, .plans-pro-detail ol { margin: 6px 0 12px; padding-left: 22px; }
+.plans-pro-detail li { margin: 4px 0; }
+.pro-arhiva { margin: 10px 0 4px; }
+.pro-verificare { margin-top: 14px; padding: 12px 14px; border-radius: 10px; background: #f1f5f9; border-left: 4px solid #1e3a8a; }
+.pro-verificare h4 { margin: 0 0 8px; font-size: 1rem; }
+.pro-verificare .table-wrap { overflow-x: auto; }
+.pro-verificare table { border-collapse: collapse; width: 100%; font-size: 0.9rem; }
+.pro-verificare th, .pro-verificare td { padding: 5px 8px; border-bottom: 1px solid #e2e8f0; text-align: left; }
+.pro-lectie { margin: 8px 0 0; }
+.pro-zile { columns: 2; column-gap: 24px; padding-left: 20px; }
+.pro-zile li { break-inside: avoid; margin: 3px 0; }
+@media (max-width: 640px) { .pro-zile { columns: 1; } }

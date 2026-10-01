@@ -145,6 +145,10 @@ $PY ~/poseidon-site/scripts/gen_seo_pages.py >> "$LOG" 2>&1 || \
 $PY ~/poseidon-site/scripts/gen_pro_sample.py >> "$LOG" 2>&1 || \
     echo "[$(ts)] [WARN] gen_pro_sample failed (cardul Pro rămâne cel de ieri)" >> "$LOG"
 
+# 🆕 1 oct 2026 — arhiva publică a analizelor Pro (toate zilele trecute) cu verificarea de a doua zi; best-effort.
+$PY ~/poseidon-site/scripts/gen_pro_arhiva.py >> "$LOG" 2>&1 || \
+    echo "[$(ts)] [WARN] gen_pro_arhiva failed (arhiva de ieri rămâne)" >> "$LOG"
+
 # 🆕 29 sept 2026 — lunea: reîmprospătez maparea meci ↔ eveniment la casă (validată prin scor), folosită de audit (cota de închidere) și de dataset; ~3 min, best-effort.
 if [ "$(TZ=Europe/Bucharest date +%u)" = "1" ]; then
     $PY ~/odds_decoder/scripts/build_sb_matched_ext.py >> "$LOG" 2>&1 || echo "[$(ts)] [WARN] build_sb_matched_ext failed (maparea veche rămâne)" >> "$LOG"
@@ -191,7 +195,7 @@ fi
 echo "[$(ts)] [GATE] OK: $GATE_OUT" >> "$LOG"
 
 # (13 iun — R2: verificarea RC2 era COD MORT sub set -e; push eșuat → trap ERR.)
-git add data/ index.html sitemap.xml predictii/ en/ track-record.html statistici-pariuri.html
+git add data/ index.html sitemap.xml predictii/ en/ track-record.html statistici-pariuri.html analize/
 git commit -m "data: $(date +%Y-%m-%d) refresh predicții + jurnal" >> "$LOG" 2>&1
 git push origin main >> "$LOG" 2>&1
 echo "[$(ts)] Published." >> "$LOG"
