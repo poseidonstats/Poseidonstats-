@@ -432,6 +432,26 @@ def jurnal_liga(zile: list[dict], tara: str, liga: str) -> str:
     return nota + tabel
 
 
+
+def nume_scurt(nume: str) -> str:
+    """„Premier League (Anglia)" → „Premier League"; țara rămâne doar unde numele ligii e ambiguu între țări
+    („Premier League (Rusia)" → „Premier League Rusia", „Liga 1 (SuperLiga României)" → „Liga 1 România")."""
+    m = re.match(r"^(.*?)\s*\((.*?)\)\s*$", nume)
+    if not m:
+        return nume
+    liga, tara = m.group(1).strip(), m.group(2).strip()
+    if liga not in TARA_IMPLICITA:              # ligă cu nume unic (Championship, La Liga…) → fără țară
+        return liga
+    implicit = TARA_IMPLICITA[liga]
+    if implicit is not None and tara == implicit:   # Premier League (Anglia), Serie A (Italia)…
+        return liga
+    return f"{liga} {TARA_SCURTA.get(tara, tara)}"  # Liga 1 România, Serie A Brazilia, Premier League Rusia
+
+
+# liga → țara pentru care numele se folosește FĂRĂ țară (celelalte țări primesc numele scurt al țării)
+TARA_IMPLICITA = {"Premier League": "Anglia", "Serie A": "Italia", "Bundesliga": "Germania", "Liga 1": None, "Liga 2": None, "Super League": None, "Primera Division": None, "Liga I": None}
+TARA_SCURTA = {"SuperLiga României": "România"}
+
 def pagina_liga(tara: str, liga: str, slug: str, nume: str, *,
                 meciuri: list[dict], cal: dict | None, zile: list[dict]) -> str:
     canonical = f"{BASE}/predictii/{slug}.html"
@@ -476,8 +496,8 @@ def pagina_liga(tara: str, liga: str, slug: str, nume: str, *,
 
     corp = f"""  <section class="intro">
     <div class="hero">
-      <h1 class="hero-title">Predicții {e(nume)}</h1>
-      <p class="hero-sub">Probabilități calculate de un model Poisson + Dixon-Coles și calibrate pe rezultate reale. Predicțiile se publică înainte de meci și rămân verificabile după.</p>
+      <h1 class="hero-title">Predicții {e(nume_scurt(nume))}</h1>
+      <p class="hero-sub">Probabilități pentru meciurile din {e(nume)}, calculate de un model Poisson + Dixon-Coles și calibrate pe rezultate reale, publicate înainte de meci și verificabile după.</p>
       <p class="hero-free">5 predicții complete gratuit în fiecare zi · fără cont · fără reclame · zero link-uri către case de pariuri</p>
     </div>
     <p>{rezumat}</p>
@@ -511,7 +531,11 @@ def pagina_liga(tara: str, liga: str, slug: str, nume: str, *,
     ld = breadcrumb([("POSEIDON", f"{BASE}/"),
                      ("Predicții pe ligi", f"{BASE}/predictii/index.html"),
                      (f"Predicții {nume}", canonical)])
-    return shell(titlu=f"Predicții {nume} | POSEIDON",
+    # 1 oct 2026 (întrebarea 5, ChatGPT): titlul prinde intenția de căutare „predicții <ligă>" + probabilități + anul; H1 scurt, subtitlul numește liga
+    titlu = f"Predicții {nume_scurt(nume)} {datetime.now().year} | Probabilități și meciuri"
+    if len(titlu) > 62:
+        titlu = f"Predicții {nume_scurt(nume)} {datetime.now().year} | Probabilități"
+    return shell(titlu=titlu,
                  descriere=descriere, canonical=canonical, corp=corp, adancime=1, jsonld=ld)
 
 
