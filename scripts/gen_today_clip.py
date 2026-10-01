@@ -1,6 +1,6 @@
 """Clip ZILNIC "Predicția de AZI" — meciuri din predictions.json LIVE.
 
-Optimizat TikTok 2026: LOOP perfect + HOOK + ÎNTREBARE + MUTE.
+Optimizat YouTube Shorts (TikTok scos din plan, 1 oct 2026): LOOP perfect + HOOK + ÎNTREBARE + MUTE.
 """
 from __future__ import annotations
 import csv

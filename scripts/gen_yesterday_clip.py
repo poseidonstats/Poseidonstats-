@@ -1,6 +1,6 @@
 """Clip ZILNIC "ce a ieșit IERI" — verificare onestă din poseidon_history.csv.
 
-Optimizat TikTok 2026:
+Optimizat YouTube Shorts (1 oct 2026; TikTok scos din plan — cont banat):
 - LOOP perfect (cadru 1 == ultim)
 - HOOK punchy <3s
 - Întrebare finală pentru comentarii
@@ -172,7 +172,8 @@ def main():
     cadru_intrebare("Tu ce-ai", "pune", "mâine?").save(out_dir / "06_intrebare.png")
     cadru_loop_P().save(out_dir / "07_loop.png")
 
-    output = Path.home() / f"Desktop/POSEIDON-ieri-{yest.isoformat()}.mp4"
+    out_root = Path.home() / "Clipuri POSEIDON"; out_root.mkdir(exist_ok=True)          # 1 oct: nimic pe Desktop (regula Andreei)
+    output = out_root / f"POSEIDON-ieri-{yest.isoformat()}.mp4"
     render(out_dir, output, hold=2.6, xfade=0.4)
     sz = output.stat().st_size // 1024
     print(f"✓ {output}  {sz} KB")
@@ -193,6 +194,13 @@ def main():
     voice_path = output.with_name(output.stem + "-VOCE.txt")
     voice_path.write_text(voice + "\n")
     print(f"✓ Script voce: {voice_path}")
+    # YouTube Shorts: titlu + descriere gata de lipit (1 oct 2026). Fără „sigur/garantat", fără case, disclaimer obligatoriu.
+    yt_title = f"Ieri: {n_win} din {n_total} predicții pe minim un gol s-au adeverit · {yest.strftime('%d.%m.%Y')} #Shorts"
+    yt_desc = (f"{voice}\n\nToate predicțiile sunt înghețate înainte de meci și rămân publice, inclusiv cele ratate: "
+               "https://poseidonstats.com/track-record.html\n5 predicții complete gratuit în fiecare zi: https://poseidonstats.com\n\n"
+               "Statistici informative · nu sfat de pariere · nu garanție · 18+\n#fotbal #predictii #statistici #poseidon")
+    yt_path = output.with_name(output.stem + "-YOUTUBE.txt"); yt_path.write_text(f"TITLU:\n{yt_title}\n\nDESCRIERE:\n{yt_desc}\n")
+    print(f"✓ Titlu + descriere YouTube: {yt_path}")
     print()
     print(f"=== Ieri ({yest}): Over 1.5 ≥65% ===")
     print(f"  N={n_total}  WIN={n_win}  LOSS={n_loss}  hit={hit:.0f}% (vs istoric {calib}%)")

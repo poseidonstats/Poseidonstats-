@@ -7,7 +7,7 @@ Logic ONEST:
   - Exclude meciuri în trecut (UTC now)
   - Folosește prob CALIBRATĂ (NU brut) — predictions.json deja are valoarea afișată
 
-Output: ~/Desktop/POSEIDON-top3-{YYYY-MM-DD}.mp4
+Output: ~/Clipuri POSEIDON/POSEIDON-top3-{YYYY-MM-DD}.mp4 (+ -VOCE.txt, -YOUTUBE.txt)
 
 Usage:
     python3 ~/poseidon-site/scripts/gen_top3_clip.py
@@ -15,7 +15,7 @@ Usage:
     python3 ~/poseidon-site/scripts/gen_top3_clip.py --hours 24
 
 CRON sugerat (după publish 07:50):
-    08:00 daily — pune fișier pe Desktop pentru postare manuală
+    08:00 daily — pune fișierul în ~/Clipuri POSEIDON pentru postare manuală pe YouTube Shorts
 """
 from __future__ import annotations
 
@@ -323,7 +323,8 @@ def main():
         output = Path(args.output)
     else:
         date_tag = datetime.now().strftime("%Y-%m-%d")
-        output = Path.home() / f"Desktop/POSEIDON-top3-{date_tag}.mp4"
+        out_root = Path.home() / "Clipuri POSEIDON"; out_root.mkdir(exist_ok=True)      # 1 oct: nimic pe Desktop (regula Andreei)
+        output = out_root / f"POSEIDON-top3-{date_tag}.mp4"
 
     render_video(out_dir, output)
     size = output.stat().st_size // 1024
@@ -345,6 +346,13 @@ def main():
     voice_path = output.with_name(output.stem + "-VOCE.txt")
     voice_path.write_text(voice + "\n")
     print(f"✓ Script voce: {voice_path}")
+    # YouTube Shorts: titlu + descriere gata de lipit (1 oct 2026).
+    yt_title = f"Top 3 meciuri azi, probabilități calibrate · {datetime.now().strftime('%d.%m.%Y')} #Shorts"
+    yt_desc = (f"{voice}\n\nProbabilități publicate înainte de meci, verificate public după: https://poseidonstats.com/track-record.html\n"
+               "5 predicții complete gratuit în fiecare zi: https://poseidonstats.com\n\n"
+               "Statistici informative · nu sfat de pariere · nu garanție · 18+\n#fotbal #predictii #statistici #poseidon")
+    yt_path = output.with_name(output.stem + "-YOUTUBE.txt"); yt_path.write_text(f"TITLU:\n{yt_title}\n\nDESCRIERE:\n{yt_desc}\n")
+    print(f"✓ Titlu + descriere YouTube: {yt_path}")
     print()
     print("=== TOP 3 selectat (verificare onestă cifre) ===")
     for i, p in enumerate(picks, 1):

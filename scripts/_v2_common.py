@@ -1,9 +1,9 @@
-"""Helpers comune pentru clipurile v2 (optim TikTok 2026):
+"""Helpers comune pentru clipurile v2 (optim YouTube Shorts; TikTok scos din plan 1 oct 2026):
 - LOOP perfect (cadru prim + ultim identic)
 - HOOK punchy <3s
 - ÎNTREBARE pentru comentarii
 - Stil PROMO (gradient profund + serif + trident + logo)
-- MUTE (sunet adăugat în TikTok la upload)
+- MUTE (vocea Andreei / sunet adăugat la upload pe YouTube)
 """
 from PIL import Image, ImageDraw, ImageFont
 from pathlib import Path
@@ -97,7 +97,7 @@ def cadru_loop_P():
 
 
 def cadru_loop():
-    """Cadru PRIM + ULTIM identic — pentru loop perfect TikTok."""
+    """Cadru PRIM + ULTIM identic — pentru loop perfect pe Shorts."""
     img = gradient_bg(); d = ImageDraw.Draw(img)
     draw_trident_big(d, W // 2, 800)
     f_brand = ImageFont.truetype(FONT_BOLD, 130)

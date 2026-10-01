@@ -1,6 +1,6 @@
 """Template Mondial 2026 — clipuri zilnice WC.
 
-Optimizat TikTok 2026: LOOP perfect + HOOK + ÎNTREBARE + MUTE.
+Optimizat YouTube Shorts (TikTok scos din plan, 1 oct 2026): LOOP perfect + HOOK + ÎNTREBARE + MUTE.
 Filtru ONEST naționale:
   - Over 1.5 70-90% (calibrat ±2pp pe N=6.746 backtest)
   - HT Over 0.5 60-80% (calibrat ±5pp)
