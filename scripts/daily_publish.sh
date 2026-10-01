@@ -153,6 +153,9 @@ fi
 # 🆕 29 sept 2026 — AUDIT public (Brier / log loss / ECE / intervale / vs piață) pe track-record.html, din jurnalul înghețat; best-effort.
 $PY ~/poseidon-site/scripts/gen_audit.py >> "$LOG" 2>&1 || echo "[$(ts)] [WARN] gen_audit failed (auditul de ieri rămâne)" >> "$LOG"
 
+# 🆕 1 oct 2026 — „Statistici pariuri fotbal” (RO + EN) din cotele de închidere; best-effort.
+$PY ~/poseidon-site/scripts/gen_statistici_pariuri.py >> "$LOG" 2>&1 || echo "[$(ts)] [WARN] gen_statistici_pariuri failed (pagina de ieri rămâne)" >> "$LOG"
+
 # 🆕 29 sept 2026 — DATASET public (data/dataset/jurnal_YYYY-MM.csv + index.json + platt_calibration.json + blocul „Date deschise" de pe track-record); best-effort.
 $PY ~/poseidon-site/scripts/gen_dataset.py >> "$LOG" 2>&1 || echo "[$(ts)] [WARN] gen_dataset failed (datasetul de ieri rămâne)" >> "$LOG"
 
@@ -188,7 +191,7 @@ fi
 echo "[$(ts)] [GATE] OK: $GATE_OUT" >> "$LOG"
 
 # (13 iun — R2: verificarea RC2 era COD MORT sub set -e; push eșuat → trap ERR.)
-git add data/ index.html sitemap.xml predictii/ en/ track-record.html
+git add data/ index.html sitemap.xml predictii/ en/ track-record.html statistici-pariuri.html
 git commit -m "data: $(date +%Y-%m-%d) refresh predicții + jurnal" >> "$LOG" 2>&1
 git push origin main >> "$LOG" 2>&1
 echo "[$(ts)] Published." >> "$LOG"

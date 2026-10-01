@@ -726,7 +726,8 @@ def scrie_legaturi_index(randuri: list[dict]) -> None:
     <ul class="ligi-grid">
 {lista}    </ul>
     <p class="muted"><a href="predictii/index.html">Toate ligile urmărite</a> ·
-    <a href="predictii/arhiva/index.html">arhiva zi cu zi</a></p>
+    <a href="predictii/arhiva/index.html">arhiva zi cu zi</a> ·
+    <a href="statistici-pariuri.html">statistici pariuri: cât de des se adeveresc cotele</a></p>
   </section>
   {LINKS_END}"""
     INDEX.write_text(re.sub(re.escape(LINKS_START) + r".*?" + re.escape(LINKS_END),
@@ -802,7 +803,9 @@ def main() -> int:
               (f"{BASE}/simulator.html", "weekly", "0.8"),
               (f"{BASE}/metodologie.html", "monthly", "0.6"),
               (f"{BASE}/terms.html", "yearly", "0.3"),
-              (f"{BASE}/predictii/index.html", "daily", "0.9")]
+              (f"{BASE}/predictii/index.html", "daily", "0.9"),
+              (f"{BASE}/statistici-pariuri.html", "weekly", "0.8"),          # 1 oct 2026 — pagina pe interogările reale din Search Console
+              (f"{BASE}/en/betting-odds-statistics.html", "weekly", "0.7")]
 
     randuri_hub = []
     for tara, liga, slug, nume in LEAGUES:
