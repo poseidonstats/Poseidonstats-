@@ -253,11 +253,19 @@ function renderLockedMatch(m) {
 }
 
 function renderUnlockCta(nLocked) {
-  const txt = tt("freemium.cta", "Modelul a calculat probabilitățile și pentru cele {n} meciuri de mai jos. Pe site publicăm zilnic 5 gratuit; restul ajung la abonați, pe Discord.")
-    .replace("{n}", nUnits(nLocked));
+  // 1 oct 2026 — rescris după cele 5 obiecții (evaluare ChatGPT): ce primești concret, dovada ÎNAINTE de preț, 3 pași după plată, anulare
+  const n = nUnits(nLocked);
+  const list = tt("unlock.list", "Toate cele {n} meciuri ale zilei · Toate probabilitățile (1X2, dublă șansă, goluri, GG, pauză, scor) · Simulator și bilete pe tot setul · Selecția zilei pe Discord").replace("{n}", n)
+    .split(" · ").map(x => `<li>${x}</li>`).join("");
   return `<div class="unlock-cta">
-    <div class="unlock-txt"><span class="unlock-icon">🔒</span> ${txt}</div>
-    <a href="#abonament" class="unlock-btn">${tt("freemium.cta.btn", "Vezi abonamentele")}</a>
+    <div class="unlock-txt"><span class="unlock-icon">🔒</span> ${tt("unlock.h", "Ai văzut cele 5 gratuite. Iată ce e în spatele lacătului, pentru <strong>5 $ pe lună</strong>:")}</div>
+    <ul class="unlock-list">${list}</ul>
+    <p class="unlock-proof">${tt("unlock.proof", "Nu plătești pentru o garanție, plătești pentru acces. Predicțiile sunt înghețate înainte de meci, iar rezultatele rămân publice, inclusiv cele ratate. Verifică înainte să plătești:")}
+      <a href="track-record.html" class="unlock-proof-btn">${tt("unlock.proof.btn", "Vezi track record-ul")}</a></p>
+    <p class="unlock-steps">${tt("unlock.steps", "După plată, 3 pași: alegi Basic pe Patreon → apeși „Intră cu Patreon” aici pe site → accesul se deschide pe loc.")}
+      <span class="muted">${tt("unlock.cancel", "Anulezi oricând din Patreon; accesul rămâne până la sfârșitul perioadei plătite.")}</span></p>
+    <a href="#abonament" class="unlock-btn">${tt("unlock.btn", "⭐ Alege Basic — 5 $/lună")}</a>
+    <span class="unlock-pro muted">${tt("unlock.pro", "Vrei și analizele scrise? Pro, 20 $/lună.")}</span>
   </div>`;
 }
 
