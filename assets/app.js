@@ -258,7 +258,7 @@ function renderUnlockCta(nLocked) {
   const list = tt("unlock.list", "Toate cele {n} meciuri ale zilei · Toate probabilitățile (1X2, dublă șansă, goluri, GG, pauză, scor) · Simulator și bilete pe tot setul · Selecția zilei pe Discord").replace("{n}", n)
     .split(" · ").map(x => `<li>${x}</li>`).join("");
   return `<div class="unlock-cta">
-    <div class="unlock-txt"><span class="unlock-icon">🔒</span> ${tt("unlock.h", "Ai văzut cele 5 gratuite. Iată ce e în spatele lacătului, pentru <strong>5 $ pe lună</strong>:")}</div>
+    <div class="unlock-txt"><span class="unlock-icon">🔒</span> ${tt("unlock.h", "<strong>2.000 de meciuri pe zi, probabilități calibrate, tu alegi ce faci cu ele.</strong> Ai văzut cele 5 gratuite; iată ce e în spatele lacătului, pentru 5 $ pe lună:")}</div>
     <ul class="unlock-list">${list}</ul>
     <p class="unlock-proof">${tt("unlock.proof", "Nu plătești pentru o garanție, plătești pentru acces. Predicțiile sunt înghețate înainte de meci, iar rezultatele rămân publice, inclusiv cele ratate. Verifică înainte să plătești:")}
       <a href="track-record.html" class="unlock-proof-btn">${tt("unlock.proof.btn", "Vezi track record-ul")}</a></p>
