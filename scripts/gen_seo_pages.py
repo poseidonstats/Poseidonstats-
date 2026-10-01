@@ -207,7 +207,7 @@ def wilson_lo(wins: int, n: int) -> float:
 # ───────────────────────────── shell HTML ─────────────────────────────
 
 def shell(*, titlu: str, descriere: str, canonical: str, corp: str,
-          adancime: int, jsonld: str = "") -> str:
+          adancime: int, jsonld: str = "", alternate_en: str | None = None) -> str:
     """Shell identic ca stil cu restul site-ului. Fără app.js: paginile sunt
     100% statice (nimic de randat din JS) — mai rapide și indexabile integral."""
     sus = "../" * adancime
@@ -229,7 +229,7 @@ def shell(*, titlu: str, descriere: str, canonical: str, corp: str,
 <meta property="og:url" content="{e(canonical)}">
 <meta property="og:type" content="website">
 <link rel="canonical" href="{e(canonical)}">
-<link rel="stylesheet" href="{sus}assets/style.css">
+{_hreflang(canonical, alternate_en)}<link rel="stylesheet" href="{sus}assets/style.css">
 <meta name="theme-color" content="#1e3a8a">
 <link rel="apple-touch-icon" href="{sus}assets/icon-192.png">
 <script data-goatcounter="https://poseidonstats.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
@@ -272,6 +272,14 @@ def shell(*, titlu: str, descriere: str, canonical: str, corp: str,
 </body>
 </html>
 """
+
+
+def _hreflang(ro: str, en: str | None) -> str:
+    """1 oct 2026: paginile de ligă au versiune în engleză (/en/predictions/) → hreflang ro ↔ en, x-default = ro."""
+    if not en:
+        return ""
+    return (f'<link rel="alternate" hreflang="ro" href="{e(ro)}">\n<link rel="alternate" hreflang="en" href="{e(en)}">\n'
+            f'<link rel="alternate" hreflang="x-default" href="{e(ro)}">\n')
 
 
 def breadcrumb(items: list[tuple[str, str]]) -> str:
@@ -535,8 +543,9 @@ def pagina_liga(tara: str, liga: str, slug: str, nume: str, *,
     titlu = f"Predicții {nume_scurt(nume)} {datetime.now().year} | Probabilități și meciuri"
     if len(titlu) > 62:
         titlu = f"Predicții {nume_scurt(nume)} {datetime.now().year} | Probabilități"
+    import gen_seo_pages_en as EN
     return shell(titlu=titlu,
-                 descriere=descriere, canonical=canonical, corp=corp, adancime=1, jsonld=ld)
+                 descriere=descriere, canonical=canonical, corp=corp, adancime=1, jsonld=ld, alternate_en=EN.url_en(slug))
 
 
 def pagina_hub(randuri: list[dict]) -> str:
@@ -583,7 +592,7 @@ def pagina_hub(randuri: list[dict]) -> str:
                  descriere=("Predicții pe ligi: Premier League, La Liga, Serie A, Bundesliga, "
                             "Ligue 1, Liga 1 și încă 30 de campionate, cu probabilități "
                             "calibrate empiric."),
-                 canonical=canonical, corp=corp, adancime=1, jsonld=ld)
+                 canonical=canonical, corp=corp, adancime=1, jsonld=ld, alternate_en=f"{BASE}/en/predictions/index.html")
 
 
 def pagina_zi(zi: dict) -> str:
@@ -807,6 +816,11 @@ def main() -> int:
 
     (OUT / "index.html").write_text(pagina_hub(randuri_hub))
     scrie_legaturi_index(randuri_hub)
+    try:                                         # 1 oct 2026 — paginile în engleză (best-effort: nu blochează publicarea RO)
+        import gen_seo_pages_en as EN
+        pagini.extend(EN.genereaza(per_liga, cal_map, zile))
+    except Exception as ex:  # noqa: BLE001
+        print(f"[gen_seo_pages] paginile EN au eșuat: {ex}", file=sys.stderr)
 
     zile_scrise = []
     for zi in sorted(zile, key=lambda z: z["date"], reverse=True):

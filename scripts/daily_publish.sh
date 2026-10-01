@@ -188,7 +188,7 @@ fi
 echo "[$(ts)] [GATE] OK: $GATE_OUT" >> "$LOG"
 
 # (13 iun — R2: verificarea RC2 era COD MORT sub set -e; push eșuat → trap ERR.)
-git add data/ index.html sitemap.xml predictii/ track-record.html
+git add data/ index.html sitemap.xml predictii/ en/ track-record.html
 git commit -m "data: $(date +%Y-%m-%d) refresh predicții + jurnal" >> "$LOG" 2>&1
 git push origin main >> "$LOG" 2>&1
 echo "[$(ts)] Published." >> "$LOG"
