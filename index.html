@@ -325,9 +325,9 @@
   <!-- ====== OFERTĂ — după cele 5 predicții gratuite ale zilei (freemium, 29 aug 2026) ====== -->
 
   <!-- Exemplu analiză Pro — analiza de IERI din arhiva #analize-pro, cu rezultatul real; rescris zilnic de scripts/gen_pro_sample.py -->
-  <section class="pro-sample">
+  <section class="pro-sample" id="exemplu-pro">
     <h2 data-i18n="pro.h2">🔱 Exemplu de analiză Pro</h2>
-    <p class="pro-sample-intro" data-i18n="pro.intro">Pe site vezi <strong>cifrele</strong>. Pe Discord, abonații Pro primesc și <strong>de ce</strong> — context real (clasament, formă, H2H, absențe) reconciliat cu modelul, cu capcanele marcate. Mai jos, o analiză reală, publicată la data ei:</p>
+    <p class="pro-sample-intro" data-i18n="pro.intro">Pe site vezi <strong>cifrele</strong>. Abonații Pro primesc, pe site și pe Discord, și <strong>de ce</strong> — context real (clasament, formă, H2H, absențe) reconciliat cu modelul, cu capcanele marcate. Mai jos, o analiză reală, publicată la data ei:</p>
 
     <!-- PRO_SAMPLE_CARD_START -->
     <div class="pro-card">
@@ -345,7 +345,7 @@
         </div>
         <div class="pro-lock-overlay">
           <span class="pro-lock-icon">🔒</span>
-          <span data-i18n="pro.locked">Reconcilierea model–realitate, piețele alese și riscul asumat — pe Discord Pro.</span>
+          <span data-i18n="pro.locked">Reconcilierea model–realitate, piețele alese și riscul asumat — în Pro, pe site și pe Discord.</span>
         </div>
       </div>
     </div>
@@ -376,13 +376,40 @@
 
   <!-- Abonamente — ce primești concret pe fiecare tier -->
   <section class="plans" id="abonament">
-    <h2 data-i18n="plans.h2">💎 2.000 de meciuri pe zi, probabilități calibrate — tu alegi ce faci cu ele</h2>
-    <p class="plans-lead" data-i18n="plans.lead">Ai <strong>5 predicții complete gratuit în fiecare zi</strong>, istoricul integral și track record-ul public, inclusiv predicțiile care au greșit. Dacă vrei să vezi toate meciurile și toate cifrele modelului, Basic costă <strong>5 $ pe lună</strong>; analizele scrise sunt la Pro, <strong>20 $ pe lună</strong>.</p>
+    <h2 data-i18n="plans.h2">💎 Pro: analiza scrisă a fiecărui meci — cifra, contextul verificat și capcanele</h2>
+    <p class="plans-lead" data-i18n="plans.lead"><strong>Pro, 20 $ pe lună</strong>: în fiecare dimineață, analizele scrise ale zilei — clasament, formă, H2H, absențe verificate, reconcilierea model–realitate și piețele alese, cu capcanele marcate. Mai sus ai analiza de ieri, cu rezultatul real. Dacă vrei doar cifrele, toate cele ~2.000 de meciuri ale zilei sunt la <strong>Basic, 5 $ pe lună</strong>. 5 predicții complete pe zi și track record-ul rămân gratuite.</p>
     <p class="plans-free" data-i18n="plans.free">🆓 <strong>Gratuit, fără cont:</strong> 5 predicții complete în fiecare zi, istoricul zi cu zi și track record-ul integral — inclusiv meciurile pe care le-am ratat. Fără reclame.</p>
 
     <p class="plans-proof" data-i18n="plans.proof"><strong>Verifică înainte să plătești.</strong> Predicțiile sunt generate la 07:15 și înghețate înainte de meci; rezultatul rămâne în istoric și când predicția greșește. Nu plătești pentru o promisiune de profit, plătești pentru acces la datele complete. <a href="track-record.html">Vezi track record-ul</a>.</p>
 
     <div class="plan-grid">
+      <div class="plan plan-featured">
+        <span class="plan-tag">ANALIZA COMPLETĂ</span>
+        <div class="plan-name" data-i18n="plans.pro.name">💎 Pro</div>
+        <div class="plan-price">$20 <span>/ lună</span></div>
+        <p class="plan-for" data-i18n="plans.pro.for">Pentru cine vrea să știe <strong>de ce</strong>, nu doar cât. Analizele zilei, pe site și pe Discord, verificate a doua zi cu scorul real. <a href="#exemplu-pro">Vezi analiza de ieri</a>.</p>
+        <ul>
+          <li data-i18n="plans.pro.f1">Tot ce e la Basic, inclusiv accesul complet pe site</li>
+          <li data-i18n="plans.pro.f2">Analizele scrise ale zilei, <strong>pe site</strong> (secțiunea Pro, cu contul Patreon) și pe Discord, în <strong>#analize-pro</strong></li>
+          <li data-i18n="plans.pro.f3">Context real verificat: clasament, formă, H2H, absențe</li>
+          <li data-i18n="plans.pro.f4">Reconcilierea model–realitate, cu capcanele marcate explicit</li>
+        </ul>
+        <a href="https://patreon.com/PoseidonPredictions" target="_blank" rel="noopener" class="plan-btn plan-btn-pro" data-i18n="plans.pro.btn">💎 Alege Pro — $20/lună</a>
+      </div>
+
+      <div class="plan">
+        <div class="plan-name" data-i18n="plans.basic.name">⭐ Basic</div>
+        <div class="plan-price">$5 <span>/ lună</span></div>
+        <p class="plan-for" data-i18n="plans.basic.for">Doar cifrele, fără analize: toată lista zilei, filtrată după ligă și piață, cu probabilitățile complete la fiecare meci.</p>
+        <ul>
+          <li data-i18n="plans.basic.f1"><strong>Acces complet pe site</strong>, cu contul Patreon: toate predicțiile zilei, simulatorul, biletele</li>
+          <li data-i18n="plans.basic.f2">Selecția calibrată a zilei și pe Discord, în <strong>#alerte-zilnice</strong>, fiecare meci cu cifrele complete (1X2, dublă șansă, goluri, GG, pauză, scor)</li>
+          <li data-i18n="plans.basic.f3">Acces la comunitate (#anunturi, #discutii)</li>
+          <li class="no" data-i18n="plans.basic.f4">Fără analizele scrise per meci</li>
+        </ul>
+        <a href="https://patreon.com/PoseidonPredictions" target="_blank" rel="noopener" class="plan-btn plan-btn-basic" data-i18n="plans.basic.btn">⭐ Alege Basic — $5/lună</a>
+      </div>
+
       <div class="plan plan-coffee">
         <div class="plan-name" data-i18n="plans.coffee.name">☕ Susținere, nu abonament</div>
         <div class="plan-price">$3 <span>/ lună</span></div>
@@ -394,35 +421,8 @@
         </ul>
         <a href="https://patreon.com/PoseidonPredictions" target="_blank" rel="noopener" class="plan-btn plan-btn-coffee" data-i18n="plans.coffee.btn">☕ Susține cu $3</a>
       </div>
-
-      <div class="plan">
-        <div class="plan-name" data-i18n="plans.basic.name">⭐ Basic</div>
-        <div class="plan-price">$5 <span>/ lună</span></div>
-        <p class="plan-for" data-i18n="plans.basic.for">Pentru cine vrea acces complet la datele POSEIDON: toată lista zilei, filtrată după ligă și piață, cu probabilitățile complete la fiecare meci.</p>
-        <ul>
-          <li data-i18n="plans.basic.f1"><strong>Acces complet pe site</strong>, cu contul Patreon: toate predicțiile zilei, simulatorul, biletele</li>
-          <li data-i18n="plans.basic.f2">Selecția calibrată a zilei și pe Discord, în <strong>#alerte-zilnice</strong>, fiecare meci cu cifrele complete (1X2, dublă șansă, goluri, GG, pauză, scor)</li>
-          <li data-i18n="plans.basic.f3">Acces la comunitate (#anunturi, #discutii)</li>
-          <li class="no" data-i18n="plans.basic.f4">Fără analizele scrise per meci</li>
-        </ul>
-        <a href="https://patreon.com/PoseidonPredictions" target="_blank" rel="noopener" class="plan-btn plan-btn-basic" data-i18n="plans.basic.btn">⭐ Alege Basic — $5/lună</a>
-      </div>
-
-      <div class="plan plan-featured">
-        <span class="plan-tag">ANALIZA COMPLETĂ</span>
-        <div class="plan-name" data-i18n="plans.pro.name">💎 Pro</div>
-        <div class="plan-price">$20 <span>/ lună</span></div>
-        <p class="plan-for" data-i18n="plans.pro.for">Pentru cine vrea și raționamentul din spatele cifrei.</p>
-        <ul>
-          <li data-i18n="plans.pro.f1">Tot ce e la Basic, inclusiv accesul complet pe site</li>
-          <li data-i18n="plans.pro.f2">Analizele scrise ale zilei, <strong>pe site</strong> (secțiunea Pro, cu contul Patreon) și pe Discord, în <strong>#analize-pro</strong></li>
-          <li data-i18n="plans.pro.f3">Context real verificat: clasament, formă, H2H, absențe</li>
-          <li data-i18n="plans.pro.f4">Reconcilierea model–realitate, cu capcanele marcate explicit</li>
-        </ul>
-        <a href="https://patreon.com/PoseidonPredictions" target="_blank" rel="noopener" class="plan-btn plan-btn-pro" data-i18n="plans.pro.btn">💎 Alege Pro — $20/lună</a>
-      </div>
     </div>
-    <p class="plans-steps" data-i18n="plans.steps"><strong>Cum funcționează:</strong> 1. alegi Basic sau Pro pe Patreon · 2. apeși „Intră cu Patreon” pe site · 3. accesul se deschide pe loc. Discordul îl conectezi din Patreon, dacă vrei alertele. Anulezi oricând; accesul rămâne până la sfârșitul perioadei plătite.</p>
+    <p class="plans-steps" data-i18n="plans.steps"><strong>Cum funcționează:</strong> 1. alegi Pro sau Basic pe Patreon · 2. apeși „Intră cu Patreon” pe site · 3. accesul se deschide pe loc. Discordul îl conectezi din Patreon, dacă vrei alertele. Anulezi oricând; accesul rămâne până la sfârșitul perioadei plătite.</p>
     <p class="plans-foot" data-i18n="plans.foot">Plata e procesată de Patreon; pe pagina lor alegi tier-ul cu numele de mai sus, apoi apeși „Intră cu Patreon” pe site și accesul se deschide pe loc. Anulezi oricând, din contul tău Patreon. Nu stocăm date de card. 18+.</p>
   </section>
 
@@ -433,7 +433,7 @@
       <div class="step">
         <span class="step-num">1</span>
         <strong data-i18n="steps.1.t">Alegi tier-ul pe Patreon</strong>
-        <span data-i18n="steps.1.d">Pe patreon.com/PoseidonPredictions selectezi ⭐ Basic sau 💎 Pro și finalizezi plata.</span>
+        <span data-i18n="steps.1.d">Pe patreon.com/PoseidonPredictions selectezi 💎 Pro sau ⭐ Basic și finalizezi plata.</span>
       </div>
       <div class="step">
         <span class="step-num">2</span>
@@ -539,7 +539,7 @@
   </div>
 </footer>
 
-<script src="assets/members.js?v=202609291735"></script>
-<script src="assets/app.js?v=202609291735"></script>
+<script src="assets/members.js?v=202610011300"></script>
+<script src="assets/app.js?v=202610011300"></script>
 </body>
 </html>

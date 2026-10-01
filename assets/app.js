@@ -253,19 +253,19 @@ function renderLockedMatch(m) {
 }
 
 function renderUnlockCta(nLocked) {
-  // 1 oct 2026 — rescris după cele 5 obiecții (evaluare ChatGPT): ce primești concret, dovada ÎNAINTE de preț, 3 pași după plată, anulare
+  // 1 oct 2026 (după-amiază) — Pro în față (decizia Andreei); dimineață: rescris după cele 5 obiecții (evaluare ChatGPT): ce primești concret, dovada ÎNAINTE de preț, 3 pași după plată, anulare
   const n = nUnits(nLocked);
-  const list = tt("unlock.list", "Toate cele {n} meciuri ale zilei · Toate probabilitățile (1X2, dublă șansă, goluri, GG, pauză, scor) · Simulator și bilete pe tot setul · Selecția zilei pe Discord").replace("{n}", n)
+  const list = tt("unlock.list", "Analizele scrise ale zilei, verificate a doua zi cu scorul real (Pro) · Toate cele {n} meciuri ale zilei · Toate probabilitățile (1X2, dublă șansă, goluri, GG, pauză, scor) · Simulator și bilete pe tot setul · Selecția zilei pe Discord").replace("{n}", n)
     .split(" · ").map(x => `<li>${x}</li>`).join("");
   return `<div class="unlock-cta">
-    <div class="unlock-txt"><span class="unlock-icon">🔒</span> ${tt("unlock.h", "<strong>2.000 de meciuri pe zi, probabilități calibrate, tu alegi ce faci cu ele.</strong> Ai văzut cele 5 gratuite; iată ce e în spatele lacătului, pentru 5 $ pe lună:")}</div>
+    <div class="unlock-txt"><span class="unlock-icon">🔒</span> ${tt("unlock.h", "<strong>Ai văzut cele 5 predicții gratuite ale zilei.</strong> În spatele lacătului, Pro îți dă analizele scrise ale zilei și toate cifrele; Basic, doar cifrele:")}</div>
     <ul class="unlock-list">${list}</ul>
     <p class="unlock-proof">${tt("unlock.proof", "Nu plătești pentru o garanție, plătești pentru acces. Predicțiile sunt înghețate înainte de meci, iar rezultatele rămân publice, inclusiv cele ratate. Verifică înainte să plătești:")}
       <a href="track-record.html" class="unlock-proof-btn">${tt("unlock.proof.btn", "Vezi track record-ul")}</a></p>
-    <p class="unlock-steps">${tt("unlock.steps", "După plată, 3 pași: alegi Basic pe Patreon → apeși „Intră cu Patreon” aici pe site → accesul se deschide pe loc.")}
+    <p class="unlock-steps">${tt("unlock.steps", "După plată, 3 pași: alegi Pro sau Basic pe Patreon → apeși „Intră cu Patreon” aici pe site → accesul se deschide pe loc.")}
       <span class="muted">${tt("unlock.cancel", "Anulezi oricând din Patreon; accesul rămâne până la sfârșitul perioadei plătite.")}</span></p>
-    <a href="#abonament" class="unlock-btn">${tt("unlock.btn", "⭐ Alege Basic — 5 $/lună")}</a>
-    <span class="unlock-pro muted">${tt("unlock.pro", "Vrei și analizele scrise? Pro, 20 $/lună.")}</span>
+    <a href="#abonament" class="unlock-btn">${tt("unlock.btn", "💎 Alege Pro — 20 $/lună")}</a>
+    <a href="#abonament" class="unlock-pro muted">${tt("unlock.alt", "Vrei doar cifrele? Basic, 5 $/lună.")}</a>
   </div>`;
 }
 

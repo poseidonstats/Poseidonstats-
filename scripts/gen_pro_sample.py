@@ -165,7 +165,7 @@ def html_card(item: dict, scor: tuple[int, int], baza: str, ok) -> str:
         '        </div>',
         '        <div class="pro-lock-overlay">',
         '          <span class="pro-lock-icon">🔒</span>',
-        '          <span data-i18n="pro.locked">Reconcilierea model–realitate, piețele alese și riscul asumat — pe Discord Pro.</span>',
+        '          <span data-i18n="pro.locked">Reconcilierea model–realitate, piețele alese și riscul asumat — în Pro, pe site și pe Discord.</span>',
         '        </div>',
         '      </div>',
         '    </div>'])
@@ -202,7 +202,7 @@ def html_lista_pro(rows: list[dict]) -> str:
         li.append(f"        <li>🔒 <strong>{H.escape(r['home'])} – {H.escape(r['away'])}</strong> · {H.escape(r.get('league', ''))}{tara}" + (f" · {ora}" if ora else "") + "</li>")
     n = len(rows)
     return "\n".join(['<div class="pro-today">',
-                      f'      <p class="pro-today-head">🔒 <strong>Azi în Pro: {n} analize scrise</strong>, cu context verificat (clasament, formă, H2H, absențe) — pe Discord, dimineața.</p>',
+                      f'      <p class="pro-today-head">🔒 <strong>Azi în Pro: {n} analize scrise</strong>, cu context verificat (clasament, formă, H2H, absențe) — pe site și pe Discord, dimineața.</p>',
                       '      <ul class="pro-today-list">', *li, '      </ul>', '    </div>'])
 
 
