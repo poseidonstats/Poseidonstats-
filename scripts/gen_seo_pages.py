@@ -661,10 +661,17 @@ def pagina_zi(zi: dict) -> str:
                      ("Predicții pe ligi", f"{BASE}/predictii/index.html"),
                      ("Arhivă", f"{BASE}/predictii/arhiva/index.html"),
                      (f"Predicții {data_ro(d)}", canonical)])
-    return shell(titlu=f"Predicții fotbal {data_ro(d)} — rezultate | POSEIDON",
-                 descriere=(f"Predicțiile POSEIDON pentru {data_ro(d)}, înghețate înainte de "
-                            f"meciuri, alături de rezultatele reale — inclusiv predicțiile ratate."),
-                 canonical=canonical, corp=corp, adancime=2, jsonld=ld)
+    # 1 oct 2026 (Search Console): căutările cu nume de echipe cad pe istoric → titlul și descrierea spun „rezultate + predicții
+    # verificate” și numesc meciurile zilei cu scorul, ca pagina zilei să fie răspunsul direct.
+    jucate = [m for m in sorted(zi.get("matches", []), key=lambda x: x.get("time", "")) if m.get("ft_h") is not None
+              and not echipa_exclusa({"home_team": m.get("home", ""), "away_team": m.get("away", ""), "country": m.get("country", ""), "league": m.get("league", "")})]
+    exemple = ", ".join(f'{m["home"]} – {m["away"]} {m["ft_h"]}-{m["ft_a"]}' for m in jucate[:3])
+    titlu = f"Rezultate și predicții verificate {data_ro(d)} | POSEIDON"
+    descriere = (f"{n} predicții rezolvate pe {data_ro(d)}: {exemple}. Probabilitățile înghețate înainte de meci, lângă scorul real, inclusiv cele ratate."
+                 if exemple else f"Predicțiile POSEIDON pentru {data_ro(d)}, înghețate înainte de meciuri, alături de rezultatele reale — inclusiv predicțiile ratate.")
+    if len(descriere) > 158:
+        descriere = descriere[:155].rsplit(",", 1)[0] + "…"
+    return shell(titlu=titlu, descriere=descriere, canonical=canonical, corp=corp, adancime=2, jsonld=ld)
 
 
 def pagina_arhiva(zile_scrise: list[str]) -> str:
