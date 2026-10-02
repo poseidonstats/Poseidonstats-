@@ -252,10 +252,10 @@ function renderLockedMatch(m) {
   </div>`;
 }
 
-function renderUnlockCta(nLocked) {
+function renderUnlockCta(nLocked, nLockedAzi = null) {
   // 1 oct 2026 (după-amiază) — Pro în față (decizia Andreei); dimineață: rescris după cele 5 obiecții (evaluare ChatGPT): ce primești concret, dovada ÎNAINTE de preț, 3 pași după plată, anulare
-  const n = nUnits(nLocked);
-  const list = tt("unlock.list", "Analizele scrise ale zilei, verificate a doua zi cu scorul real (Pro) · Toate cele {n} meciuri ale zilei · Toate probabilitățile (1X2, dublă șansă, goluri, GG, pauză, scor) · Simulator și bilete pe tot setul · Selecția zilei pe Discord").replace("{n}", n)
+  const n = nUnits(nLocked); const nAzi = nUnits(nLockedAzi == null ? nLocked : nLockedAzi);
+  const list = tt("unlock.list", "Analizele scrise ale zilei, verificate a doua zi cu scorul real (Pro) · Toate cele {azi} meciuri de azi și {n} pe următoarele 7 zile · Toate probabilitățile (1X2, dublă șansă, goluri, GG, pauză, scor) · Simulator și bilete pe tot setul · Selecția zilei pe Discord").replace("{azi}", nAzi).replace("{n}", n)
     .split(" · ").map(x => `<li>${x}</li>`).join("");
   return `<div class="unlock-cta">
     <div class="unlock-txt"><span class="unlock-icon">🔒</span> ${tt("unlock.h", "<strong>Ai văzut cele 5 predicții gratuite ale zilei.</strong> În spatele lacătului, Pro îți dă analizele scrise ale zilei și toate cifrele; Basic, doar cifrele:")}</div>
@@ -632,7 +632,7 @@ async function renderIndex() {
 
     let html = deschise.map(m => renderMatch(m, fmk)).join("");
     if (blocate.length) {
-      if (blocate.length) html += renderUnlockCta(blocate.length);
+      if (blocate.length) html += renderUnlockCta(blocate.length, blocateAzi);
       html += blocate.slice(0, LOCKED_PREVIEW).map(renderLockedMatch).join("");
       if (blocate.length > LOCKED_PREVIEW) {
         html += `<p class="locked-more muted">` + tt("freemium.more", "… și încă {n} meciuri analizate, nelistate aici.").replace("{n}", nUnits(blocate.length - LOCKED_PREVIEW)) + `</p>`;
