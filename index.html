@@ -180,6 +180,48 @@
     </div>
 
   <!-- PROOF_STATIC_START -->
+  <!-- ====== Exemplul Pro — PRIMUL pe pagină (2 oct 2026, Andreea: „ar trebui să fie prima”) ====== -->
+
+  <!-- Exemplu analiză Pro — analiza de IERI din arhiva #analize-pro, cu rezultatul real; rescris zilnic de scripts/gen_pro_sample.py -->
+  <section class="pro-sample" id="exemplu-pro">
+    <h2 data-i18n="pro.h2">🔱 Exemplu de analiză Pro</h2>
+    <p class="pro-sample-intro" data-i18n="pro.intro">Pe site vezi <strong>cifrele</strong>. Abonații Pro primesc, pe site și pe Discord, și <strong>de ce</strong> — context real (clasament, formă, H2H, absențe) reconciliat cu modelul, cu capcanele marcate. Mai jos, analiza de azi, completă, publicată înainte de meci. Rezultatul și verificarea pick-urilor apar a doua zi, în arhivă:</p>
+
+    <!-- PRO_SAMPLE_CARD_START -->
+    <div class="pro-card">
+      <div class="pro-card-head">💎 Maccabi Bnei Raina – Hapoel Kfar Shalem · Liga Leumit (Israel) · 1 octombrie 2026 · <strong>rezultat final 1-2</strong></div>
+      <div class="pro-visible">
+        <p><strong>⚡ Verdict:</strong> Două echipe vecine în clasament, despărțite de un punct, cu profiluri opuse: gazdele au apărare strânsă (11 goluri primite), oaspeții joacă meciuri deschise (15:16, cel mai permeabil atac-apărare din top 8). Datele împing spre un meci echilibrat, cu goluri — nu spre un favorit clar.</p>
+        <p><strong>📊 Context:</strong> Bnei Raina e 7 cu 12p (12:11), Kfar Shalem 8 cu 11p (15:16). Gazdele: 3V-2Î, dar ambele înfrângeri ACASĂ (1-2 și 1-2), victoriile venind în deplasare și la 4-2. Oaspeții: 3 meciuri cu 5+ goluri în ultimele 5 (3-3, 3-3, 3-2) și un 0-4 în deplasare. H2H: Bnei Raina 1-0 și 3-0, ambele acasă. Nicio absență raportată.</p>
+        <p><strong>🧮 Modelul vs realitate:</strong> Aici e punctul sensibil — modelul dă oaspeții favoriți (45% vs 34%), dar clasamentul, H2H-ul (2-0 pentru gazde) și forma de deplasare a lui Kfar Shalem (0-4) contrazic asta; piața vede exact invers (45% gazde). Divergență de ~15pp pe 1X2 → tratez rezultatul ca necalibrat aici și NU construiesc nimic pe el. Zona de goluri rămâne însă solidă: O2.5 la 66% stă pe banda 65-70% care a livrat 66.9% pe N=4903 (backtest 65k OOS), iar forward global dă 66% la prag ≥55% pe 16280 meciuri.</p>
+        <p><strong>🎯 Piețele alese:</strong></p><ul><li>🔒 <strong>Bază:</strong> Peste 1.5 goluri — 85%. Banda 85-100% a livrat 87.1% istoric (N=9207), forward 84% pe N=20054. Ambele echipe au marcat în 4 din ultimele 5.</li><li>🎯 <strong>Principal:</strong> Peste 2.5 goluri — 66%. Kfar Shalem a produs 5+ goluri în 3 din 5 meciuri; piața e la 61.5%, aproape de model.</li><li>💎 <strong>Curajos:</strong> GG / BTTS — 61% real afișat, <em>pick de cotă, cu risc asumat</em>. Banda 60-65% a livrat doar 58.3% (N=7912) — sub probabilitatea modelului, deci încredere redusă; gazdele au ținut poarta intactă în ambele H2H.</li></ul>
+        <p><strong>👁️ De urmărit:</strong> Dacă Bnei Raina marchează primul acasă, repetă scenariul 1-0/3-0 din H2H și meciul se închide — U2.5 devine scenariul real; dacă Kfar Shalem egalează până la pauză, meciul se deschide complet.</p>
+        <p class="pro-verificat">✅ Pick-ul de bază, <strong>Peste 1.5 goluri</strong>, a ieșit. <a href="analize/2026-10-01.html#m1555167">Verificarea completă →</a></p>
+      </div>
+    </div>
+    <!-- PRO_SAMPLE_CARD_END -->
+    <!-- PRO_TODAY_LIST_START -->
+    <div class="pro-today">
+      <p class="pro-today-head">🔒 <strong>Încă 11 analize azi în Pro</strong>, cu context verificat (clasament, formă, H2H, absențe) — pe site și pe Discord, dimineața.</p>
+      <ul class="pro-today-list">
+        <li>🔒 <strong>Real Unión de Tenerife – Laguna de Duero</strong> · Tercera División RFEF - Group 12 (Spain) · 23:00</li>
+        <li>🔒 <strong>Eintracht Stadtallendorf – Friedberg</strong> · Oberliga - Hessen (Germany) · 21:30</li>
+        <li>🔒 <strong>Hluboka nad Vltavou – Křimice</strong> · 4. liga - Divizie A (Czech-Republic) · 19:00</li>
+        <li>🔒 <strong>Fremad Amager – B 93</strong> · 2. Division (Denmark) · 20:00</li>
+        <li>🔒 <strong>Naestved – Nykobing FC</strong> · 2. Division (Denmark) · 20:00</li>
+        <li>🔒 <strong>South Korea – Venezuela</strong> · Friendlies (World) · 14:00</li>
+        <li>🔒 <strong>MŠK Senec – Spartak Myjava</strong> · 3. liga - West (Slovakia) · 19:30</li>
+        <li>🔒 <strong>China – Palestine</strong> · Friendlies (World) · 14:35</li>
+        <li>🔒 <strong>VSK Århus – Brabrand</strong> · 2. Division (Denmark) · 20:00</li>
+        <li>🔒 <strong>Congo DR – Uganda</strong> · Friendlies (World) · 14:00</li>
+        <li>🔒 <strong>Mauritius – Sri Lanka</strong> · Friendlies (World) · 18:00</li>
+      </ul>
+    </div>
+    <!-- PRO_TODAY_LIST_END -->
+    <p class="pro-arhiva" data-i18n="pro.arhiva">📂 <a href="analize/index.html">Toate analizele de până ieri, cu verificarea de a doua zi</a> — inclusiv cele care au greșit.</p>
+    <p class="pro-disclaimer" data-i18n="pro.disclaimer">Exemplu real, pe date înghețate. Statistic · informativ · nu sfat de pariere · 18+</p>
+  </section>
+
   <section class="proof" id="dovada">
     <h2 data-i18n="proof.h2">Ce s-a adeverit, din predicții înghețate</h2>
     <p class="proof-lead" data-i18n="proof.lead">Jurnal deschis din 2 iunie 2026. Fiecare predicție e înghețată la generare (07:15), publicată înainte de meci și comparată apoi cu rezultatul real. Nu ștergem nimic retroactiv.</p>
@@ -321,48 +363,6 @@
     <a href="statistici-pariuri.html">statistici pariuri: cât de des se adeveresc cotele</a></p>
   </section>
   <!-- LEAGUES_LINKS_END -->
-
-  <!-- ====== OFERTĂ — după cele 5 predicții gratuite ale zilei (freemium, 29 aug 2026) ====== -->
-
-  <!-- Exemplu analiză Pro — analiza de IERI din arhiva #analize-pro, cu rezultatul real; rescris zilnic de scripts/gen_pro_sample.py -->
-  <section class="pro-sample" id="exemplu-pro">
-    <h2 data-i18n="pro.h2">🔱 Exemplu de analiză Pro</h2>
-    <p class="pro-sample-intro" data-i18n="pro.intro">Pe site vezi <strong>cifrele</strong>. Abonații Pro primesc, pe site și pe Discord, și <strong>de ce</strong> — context real (clasament, formă, H2H, absențe) reconciliat cu modelul, cu capcanele marcate. Mai jos, analiza de azi, completă, publicată înainte de meci. Rezultatul și verificarea pick-urilor apar a doua zi, în arhivă:</p>
-
-    <!-- PRO_SAMPLE_CARD_START -->
-    <div class="pro-card">
-      <div class="pro-card-head">💎 Maccabi Bnei Raina – Hapoel Kfar Shalem · Liga Leumit (Israel) · 1 octombrie 2026 · <strong>rezultat final 1-2</strong></div>
-      <div class="pro-visible">
-        <p><strong>⚡ Verdict:</strong> Două echipe vecine în clasament, despărțite de un punct, cu profiluri opuse: gazdele au apărare strânsă (11 goluri primite), oaspeții joacă meciuri deschise (15:16, cel mai permeabil atac-apărare din top 8). Datele împing spre un meci echilibrat, cu goluri — nu spre un favorit clar.</p>
-        <p><strong>📊 Context:</strong> Bnei Raina e 7 cu 12p (12:11), Kfar Shalem 8 cu 11p (15:16). Gazdele: 3V-2Î, dar ambele înfrângeri ACASĂ (1-2 și 1-2), victoriile venind în deplasare și la 4-2. Oaspeții: 3 meciuri cu 5+ goluri în ultimele 5 (3-3, 3-3, 3-2) și un 0-4 în deplasare. H2H: Bnei Raina 1-0 și 3-0, ambele acasă. Nicio absență raportată.</p>
-        <p><strong>🧮 Modelul vs realitate:</strong> Aici e punctul sensibil — modelul dă oaspeții favoriți (45% vs 34%), dar clasamentul, H2H-ul (2-0 pentru gazde) și forma de deplasare a lui Kfar Shalem (0-4) contrazic asta; piața vede exact invers (45% gazde). Divergență de ~15pp pe 1X2 → tratez rezultatul ca necalibrat aici și NU construiesc nimic pe el. Zona de goluri rămâne însă solidă: O2.5 la 66% stă pe banda 65-70% care a livrat 66.9% pe N=4903 (backtest 65k OOS), iar forward global dă 66% la prag ≥55% pe 16280 meciuri.</p>
-        <p><strong>🎯 Piețele alese:</strong></p><ul><li>🔒 <strong>Bază:</strong> Peste 1.5 goluri — 85%. Banda 85-100% a livrat 87.1% istoric (N=9207), forward 84% pe N=20054. Ambele echipe au marcat în 4 din ultimele 5.</li><li>🎯 <strong>Principal:</strong> Peste 2.5 goluri — 66%. Kfar Shalem a produs 5+ goluri în 3 din 5 meciuri; piața e la 61.5%, aproape de model.</li><li>💎 <strong>Curajos:</strong> GG / BTTS — 61% real afișat, <em>pick de cotă, cu risc asumat</em>. Banda 60-65% a livrat doar 58.3% (N=7912) — sub probabilitatea modelului, deci încredere redusă; gazdele au ținut poarta intactă în ambele H2H.</li></ul>
-        <p><strong>👁️ De urmărit:</strong> Dacă Bnei Raina marchează primul acasă, repetă scenariul 1-0/3-0 din H2H și meciul se închide — U2.5 devine scenariul real; dacă Kfar Shalem egalează până la pauză, meciul se deschide complet.</p>
-        <p class="pro-verificat">✅ Pick-ul de bază, <strong>Peste 1.5 goluri</strong>, a ieșit. <a href="analize/2026-10-01.html#m1555167">Verificarea completă →</a></p>
-      </div>
-    </div>
-    <!-- PRO_SAMPLE_CARD_END -->
-    <!-- PRO_TODAY_LIST_START -->
-    <div class="pro-today">
-      <p class="pro-today-head">🔒 <strong>Încă 11 analize azi în Pro</strong>, cu context verificat (clasament, formă, H2H, absențe) — pe site și pe Discord, dimineața.</p>
-      <ul class="pro-today-list">
-        <li>🔒 <strong>Real Unión de Tenerife – Laguna de Duero</strong> · Tercera División RFEF - Group 12 (Spain) · 23:00</li>
-        <li>🔒 <strong>Eintracht Stadtallendorf – Friedberg</strong> · Oberliga - Hessen (Germany) · 21:30</li>
-        <li>🔒 <strong>Hluboka nad Vltavou – Křimice</strong> · 4. liga - Divizie A (Czech-Republic) · 19:00</li>
-        <li>🔒 <strong>Fremad Amager – B 93</strong> · 2. Division (Denmark) · 20:00</li>
-        <li>🔒 <strong>Naestved – Nykobing FC</strong> · 2. Division (Denmark) · 20:00</li>
-        <li>🔒 <strong>South Korea – Venezuela</strong> · Friendlies (World) · 14:00</li>
-        <li>🔒 <strong>MŠK Senec – Spartak Myjava</strong> · 3. liga - West (Slovakia) · 19:30</li>
-        <li>🔒 <strong>China – Palestine</strong> · Friendlies (World) · 14:35</li>
-        <li>🔒 <strong>VSK Århus – Brabrand</strong> · 2. Division (Denmark) · 20:00</li>
-        <li>🔒 <strong>Congo DR – Uganda</strong> · Friendlies (World) · 14:00</li>
-        <li>🔒 <strong>Mauritius – Sri Lanka</strong> · Friendlies (World) · 18:00</li>
-      </ul>
-    </div>
-    <!-- PRO_TODAY_LIST_END -->
-    <p class="pro-arhiva" data-i18n="pro.arhiva">📂 <a href="analize/index.html">Toate analizele de până ieri, cu verificarea de a doua zi</a> — inclusiv cele care au greșit.</p>
-    <p class="pro-disclaimer" data-i18n="pro.disclaimer">Exemplu real, pe date înghețate. Statistic · informativ · nu sfat de pariere · 18+</p>
-  </section>
 
   <section id="pro-analize" class="pro-analize"></section>
 
