@@ -467,7 +467,9 @@ async function renderSimulator() {
   let free = data.matches.filter(m => m.free && m.match_date.slice(0, 10) >= azi);
   if (free.length < 2) free = data.matches.filter(m => m.free);   // pauze: iau tot ce e liber
   SIM.free = free;
-  SIM.nTotal = data.matches.length;
+  // 2 oct 2026 — „toate cele {n} meciuri ale zilei” = doar ziua curentă (ora României), nu fereastra de 7 zile
+  const aziRO = new Date().toLocaleDateString("sv-SE", { timeZone: "Europe/Bucharest" });
+  SIM.nTotal = data.matches.filter(m => (m.match_date || "").slice(0, 10) === aziRO).length || data.matches.length;
   SIM.sel.clear();
 
   if (free.length < 2) {
