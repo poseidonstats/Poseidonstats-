@@ -272,10 +272,20 @@ def _semn(x: float, d: int = 1) -> str:
     return ("+" if x >= 0 else "") + _f(x, d)
 
 
+
+def _pe_zi(a: dict) -> int:
+    """Media de predicții rezolvate pe zi calendaristică a jurnalului (2 oct 2026 — cifra separată de cele 65.250 de calibrare)."""
+    try:
+        from datetime import date
+        d0 = date.fromisoformat(str(a.get("de_la"))[:10]); d1 = date.fromisoformat(str(a.get("pana_la"))[:10])
+        return round(a["n_rezolvate"] / max(1, (d1 - d0).days + 1))
+    except Exception:
+        return 0
+
 def html_audit(a: dict) -> str:
     L = [f'<section id="audit-section" class="audit">',
          '  <h3>Audit statistic — jurnalul forward, cifrele complete</h3>',
-         f'  <p>Calculat automat în fiecare dimineață din predicțiile înghețate la 07:15 (jurnal din {a.get("de_la")} până la {a.get("pana_la")}, {a["n_rezolvate"]:,} predicții rezolvate). '
+         f'  <p>Calculat automat în fiecare dimineață din predicțiile înghețate la 07:15 (jurnal din {a.get("de_la")} până la {a.get("pana_la")}, {a["n_rezolvate"]:,} predicții rezolvate, în medie {_pe_zi(a)} pe zi). '
          'Brier și log loss = cât de aproape sunt probabilitățile de realitate (mai mic = mai bine); BSS = câștigul față de „rata de bază" a evenimentului (0 = nimic peste a spune mereu media); '
          'ECE = eroarea medie de calibrare pe intervale de 10 pp; pantă și intercept = calibrarea Cox (regresie logistică a rezultatului pe logit-ul probabilității: pantă 1 și intercept 0 = perfect calibrat, '
          'pantă sub 1 = prea încrezător la extreme, intercept peste 0 = subestimează evenimentul). Cifrele sunt pe probabilitățile <strong>publicate</strong> (după calibrarea Platt per piață, refăcută săptămânal pe jurnal — deci ușor in-sample; '
