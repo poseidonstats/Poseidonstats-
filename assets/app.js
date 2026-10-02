@@ -619,9 +619,12 @@ async function renderIndex() {
     // Blocatele merg mereu cronologic: n-avem după ce altceva să le ordonăm onest.
     blocate.sort((a, b) => a.match_date.localeCompare(b.match_date));
 
+    // 2 oct 2026 — cifra onestă: blocatele de AZI separat de cele din toată fereastra (7 zile); „2117 azi” era fereastra întreagă.
+    const aziRO = new Date().toLocaleDateString("sv-SE", { timeZone: "Europe/Bucharest" });
+    const blocateAzi = blocate.filter(m => (m.match_date || "").slice(0, 10) === aziRO).length;
     document.getElementById("match-count").textContent = blocate.length
-      ? tt("freemium.count", "{free} predicții complete, gratuite. Alte {locked} meciuri analizate azi de model sunt disponibile abonaților.")
-          .replace("{free}", deschise.length).replace("{locked}", nUnits(blocate.length))
+      ? tt("freemium.count", "{free} predicții complete, gratuite. Alte {today} meciuri calculate de model pentru azi și {locked} în total pe următoarele 7 zile; le deblochezi pe toate cu Basic, 5 $/lună, intrând cu contul Patreon.")
+          .replace("{free}", deschise.length).replace("{today}", nUnits(blocateAzi)).replace("{locked}", nUnits(blocate.length))
       : `${deschise.length} meciuri afișate (din ${matches.length} totale).`;
 
     const matchesEl = document.getElementById("matches");
