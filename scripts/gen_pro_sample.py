@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
-"""Exemplul de analiză Pro de pe site, reîmprospătat ZILNIC (28 sept 2026, cerut de Andreea: „vreau să se publice pe site o
-analiză Pro în fiecare zi, să se vadă exemplu cum arată”).
+"""Exemplul de analiză Pro de pe prima pagină (28 sept 2026, cerut de Andreea; 2 oct 2026: „zilnic una nouă, ÎNAINTE de meci, nu după”).
 
-Ia arhiva analizelor Pro de IERI (~/football_predictor/data/pro_analyses/<zi>.json, ce s-a postat în #analize-pro), caută
-rezultatul final în football.db, alege o analiză cu rezultat cunoscut (de preferat una la care pick-ul de Bază a ieșit, dar
-rezultatul se afișează oricând, și când a greșit) și rescrie cardul dintre markerii PRO_SAMPLE_CARD din index.html:
-Verdict + Context vizibile, cu scorul final și verdictul Bazei; Modelul vs realitate / Picks / De urmărit rămân acoperite
-(blur + „pe Discord Pro”), ca în designul din iunie. HTML static, citibil de Google și de ChatGPT.
-Uz: gen_pro_sample.py [--date 2026-09-27] [--dry-run]     (implicit: ieri, ora României; chemat din daily_publish.sh)"""
+Cardul = analiza de AZI, completă, fără lacăt — prima din arhiva zilei (~/football_predictor/data/pro_analyses/<zi>.json, cea
+scrisă la 07:20 și postată în #analize-pro). Până apare fișierul zilei (publicarea site-ului e la 06:10, analizele la 07:28),
+cardul rămâne analiza de ieri, aceeași, acum cu scorul final. Sub card: rezultatul analizei de ieri + link la verificarea de a
+doua zi din arhivă (analize/<zi>.html). Lista „azi în Pro” rămâne cu lacăt, fără meciul publicat.
+Se cheamă din daily_publish.sh (06:10) și din publish_pro_sample.sh (07:45, după cronul Pro, cu push propriu).
+Uz: gen_pro_sample.py [--date 2026-10-02] [--dry-run]     (implicit: azi, ora României)"""
 from __future__ import annotations
 
 import argparse
@@ -139,40 +138,43 @@ def _data_ro(iso: str) -> str:
         return iso
 
 
-def html_card(item: dict, scor: tuple[int, int], baza: str, ok) -> str:
-    m = item["match"]; p = parseaza(item["analysis"]); gh, ga = scor
+def html_card(item: dict, zi: str, generat: str, scor: tuple[int, int] | None, baza: str, ok) -> str:
+    """Analiza completă, fără lacăt. Dacă meciul s-a jucat deja (cardul de ieri, dimineața devreme), capul arată scorul și verdictul Bazei."""
+    m = item["match"]; p = parseaza(item["analysis"])
     liga = m.get("league", ""); tara = m.get("country", "")
-    head = f"💎 {H.escape(m['home'])} – {H.escape(m['away'])} · {H.escape(liga)}" + (f" ({H.escape(tara)})" if tara else "") + f" · {_data_ro(m.get('date', ''))} · <strong>rezultat final {gh}-{ga}</strong>"
-    if baza:
-        verdict_baza = {True: f"✅ Pick-ul de bază al analizei, <strong>{_inline(baza)}</strong>, a ieșit.", False: f"❌ Pick-ul de bază al analizei, <strong>{_inline(baza)}</strong>, nu a ieșit — publicăm și când greșim.",
-                        None: f"Pick-ul de bază al analizei: <strong>{_inline(baza)}</strong>."}[ok]
-    else:
-        verdict_baza = ""
-    picks = " ".join(_scurt(_inline(l), 120) for l in p["picks"])
+    ora = generat[11:16] if len(generat) >= 16 else ""
+    head = f"💎 {H.escape(m['home'])} – {H.escape(m['away'])} · {H.escape(liga)}" + (f" ({H.escape(tara)})" if tara else "") + f" · {_data_ro(m.get('date', zi))}"
+    head += f" · <strong>rezultat final {scor[0]}-{scor[1]}</strong>" if scor else (f" · <strong>publicată la {ora}, înainte de meci</strong>" if ora else " · <strong>publicată înainte de meci</strong>")
+    picks = "".join(f"<li>{_inline(l)}</li>" for l in p["picks"])
+    verif = ""
+    if scor and baza:
+        verif = {True: f"✅ Pick-ul de bază, <strong>{_inline(baza)}</strong>, a ieșit.", False: f"❌ Pick-ul de bază, <strong>{_inline(baza)}</strong>, nu a ieșit — publicăm și când greșim.", None: f"Pick-ul de bază: <strong>{_inline(baza)}</strong>."}[ok]
+        verif = f'        <p class="pro-verificat">{verif} <a href="analize/{zi}.html#m{m.get("fixture_id")}">Verificarea completă →</a></p>\n'
     return "\n".join([
         '<div class="pro-card">',
         f'      <div class="pro-card-head">{head}</div>',
         '      <div class="pro-visible">',
         f'        <p><strong>⚡ Verdict:</strong> {_inline(p["verdict"])}</p>',
         f'        <p><strong>📊 Context:</strong> {_inline(p["context"])}</p>',
-        (f'        <p class="pro-verificat">{verdict_baza}</p>' if verdict_baza else ''),
-        '      </div>',
-        '      <div class="pro-locked">',
-        '        <div class="pro-locked-content" aria-hidden="true">',
-        f'          <p><strong>🧮 Modelul vs realitate:</strong> {_scurt(_inline(p["model"]), 220)}</p>',
-        f'          <p><strong>🎯 Piețele alese:</strong> {picks}</p>',
-        f'          <p><strong>👁️ De urmărit:</strong> {_scurt(_inline(p["urmarit"]), 160)}</p>',
-        '        </div>',
-        '        <div class="pro-lock-overlay">',
-        '          <span class="pro-lock-icon">🔒</span>',
-        '          <span data-i18n="pro.locked">Reconcilierea model–realitate, piețele alese și riscul asumat — în Pro, pe site și pe Discord.</span>',
-        '        </div>',
+        f'        <p><strong>🧮 Modelul vs realitate:</strong> {_inline(p["model"])}</p>',
+        f'        <p><strong>🎯 Piețele alese:</strong></p><ul>{picks}</ul>',
+        f'        <p><strong>👁️ De urmărit:</strong> {_inline(p["urmarit"])}</p>',
+        verif.rstrip("\n") if verif else '        <p class="muted">Rezultatul și verificarea pick-urilor apar mâine dimineață, în <a href="analize/index.html">arhiva analizelor</a>.</p>',
         '      </div>',
         '    </div>'])
 
 
-def injecteaza(html: str, card: str) -> str:
-    bloc = f"{START}\n    {card}\n    {END}"
+def html_ieri(item: dict, zi: str, scor: tuple[int, int] | None, baza: str, ok) -> str:
+    """Linia de sub card: ce s-a întâmplat cu analiza publicată ieri în același loc."""
+    m = item["match"]; nume = f"{H.escape(m['home'])} – {H.escape(m['away'])}"
+    if not scor:
+        return f'<p class="pro-ieri muted">Ieri, aici: <strong>{nume}</strong> — rezultatul final nu e încă în bază; verificarea apare în <a href="analize/{zi}.html">arhiva zilei</a>.</p>'
+    semn = {True: "✅ a ieșit", False: "❌ nu a ieșit", None: ""}[ok]
+    return f'<p class="pro-ieri">Ieri, aici: <strong>{nume}</strong>, {scor[0]}-{scor[1]}' + (f" — bază <strong>{_inline(baza)}</strong> {semn}" if baza else "") + f'. <a href="analize/{zi}.html#m{m.get("fixture_id")}">Verificarea de a doua zi →</a></p>'
+
+
+def injecteaza(html: str, card: str, ieri: str = "") -> str:
+    bloc = f"{START}\n    {card}" + (f"\n    {ieri}" if ieri else "") + f"\n    {END}"
     if START in html and END in html:
         return re.sub(re.escape(START) + r".*?" + re.escape(END), lambda _: bloc, html, flags=re.S)
     i = html.find('<div class="pro-card">'); j = html.find('<p class="pro-disclaimer"', i)
@@ -192,8 +194,9 @@ def _ora_ro_iso(iso: str) -> str:
         return ""
 
 
-def html_lista_pro(rows: list[dict]) -> str:
+def html_lista_pro(rows: list[dict], fara_fid: int | None = None) -> str:
     """Meciurile analizate azi în Pro, doar nume/ligă/oră, cu lacăt — vizitatorul vede ce ar primi, nu primește."""
+    rows = [r for r in rows if r.get("fixture_id") != fara_fid]
     if not rows:
         return ""
     li = []
@@ -202,7 +205,7 @@ def html_lista_pro(rows: list[dict]) -> str:
         li.append(f"        <li>🔒 <strong>{H.escape(r['home'])} – {H.escape(r['away'])}</strong> · {H.escape(r.get('league', ''))}{tara}" + (f" · {ora}" if ora else "") + "</li>")
     n = len(rows)
     return "\n".join(['<div class="pro-today">',
-                      f'      <p class="pro-today-head">🔒 <strong>Azi în Pro: {n} analize scrise</strong>, cu context verificat (clasament, formă, H2H, absențe) — pe site și pe Discord, dimineața.</p>',
+                      f'      <p class="pro-today-head">🔒 <strong>Încă {n} analize azi în Pro</strong>, cu context verificat (clasament, formă, H2H, absențe) — pe site și pe Discord, dimineața.</p>',
                       '      <ul class="pro-today-list">', *li, '      </ul>', '    </div>'])
 
 
@@ -237,28 +240,46 @@ def lista_pro_azi(zi: str, limit: int = 12) -> list[dict]:
 
 
 # ----------------------------------------------------------------- CLI
+def _incarca(zi: str):
+    f = ARHIVA / f"{zi}.json"
+    if not f.exists():
+        return None, ""
+    d = json.loads(f.read_text()); items = [it for it in d.get("items") or [] if it.get("match", {}).get("fixture_id")]
+    return (items[0] if items else None), d.get("generated_at", "")
+
+
+def _verdict(item: dict):
+    """(scor, piața de bază, a ieșit?) pentru un item — scor None dacă meciul nu e încheiat în bază."""
+    fid = item["match"]["fixture_id"]; scor = rezultate([fid]).get(fid)
+    baza = piata_baza(parseaza(item["analysis"])["picks"])
+    return scor, baza, (evalueaza(baza, *scor) if (scor and baza) else None)
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--date", default=(datetime.now(RO) - timedelta(days=1)).strftime("%Y-%m-%d")); ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--date", default=datetime.now(RO).strftime("%Y-%m-%d")); ap.add_argument("--dry-run", action="store_true")
     a = ap.parse_args()
-    f = ARHIVA / f"{a.date}.json"
-    if not f.exists():
-        print(f"[gen_pro_sample] fără arhivă Pro pentru {a.date} ({f}) — cardul rămâne cel de ieri"); return
-    items = json.loads(f.read_text()).get("items") or []
-    ales = alege(items, rezultate([it["match"].get("fixture_id") for it in items if it["match"].get("fixture_id")]))
-    if not ales:
-        print(f"[gen_pro_sample] {a.date}: {len(items)} analize, niciuna cu rezultat final în bază — cardul rămâne"); return
-    it, scor, baza, ok = ales
-    card = html_card(it, scor, baza, ok)
-    print(f"[gen_pro_sample] {a.date}: {it['match']['home']} – {it['match']['away']} ({it['match'].get('league')}) {scor[0]}-{scor[1]} · bază «{baza}» → {'a ieșit' if ok else ('nu a ieșit' if ok is False else 'neevaluat')}")
-    azi = datetime.now(RO).strftime("%Y-%m-%d"); rows = lista_pro_azi(azi)
-    print(f"[gen_pro_sample] lista Pro de azi ({azi}): {len(rows)} meciuri")
+    azi = a.date; ieri = (datetime.strptime(azi, "%Y-%m-%d") - timedelta(days=1)).strftime("%Y-%m-%d")
+    it_azi, gen_azi = _incarca(azi); it_ieri, gen_ieri = _incarca(ieri)
+    if it_azi:
+        scor, baza, ok = _verdict(it_azi)
+        card = html_card(it_azi, azi, gen_azi, scor, baza, ok); zi_card = azi; fid_card = it_azi["match"]["fixture_id"]
+        linie = html_ieri(it_ieri, ieri, *_verdict(it_ieri)) if it_ieri else ""
+        print(f"[gen_pro_sample] card AZI {azi}: {it_azi['match']['home']} – {it_azi['match']['away']} ({it_azi['match'].get('league')}), scrisă la {gen_azi[11:16]}")
+    elif it_ieri:
+        scor, baza, ok = _verdict(it_ieri)
+        card = html_card(it_ieri, ieri, gen_ieri, scor, baza, ok); zi_card = ieri; fid_card = None; linie = ""
+        print(f"[gen_pro_sample] fără arhivă Pro pentru {azi} încă — cardul rămâne analiza de ieri ({ieri}: {it_ieri['match']['home']} – {it_ieri['match']['away']}), " + (f"rezultat {scor[0]}-{scor[1]}" if scor else "fără rezultat încă"))
+    else:
+        print(f"[gen_pro_sample] nicio arhivă Pro pentru {azi} sau {ieri} — cardul rămâne"); return
+    rows = lista_pro_azi(azi)
+    print(f"[gen_pro_sample] lista Pro de azi ({azi}): {len(rows)} meciuri" + (", fără cel publicat" if fid_card else ""))
     if a.dry_run:
-        print(card); print(html_lista_pro(rows)); return
-    html = injecteaza(INDEX.read_text(encoding="utf-8"), card)
-    html = injecteaza_lista(html, html_lista_pro(rows))
+        print(card); print(linie); print(html_lista_pro(rows, fid_card)); return
+    html = injecteaza(INDEX.read_text(encoding="utf-8"), card, linie)
+    html = injecteaza_lista(html, html_lista_pro(rows, fid_card))
     INDEX.write_text(html, encoding="utf-8")
-    print(f"[gen_pro_sample] scris {INDEX}")
+    print(f"[gen_pro_sample] scris {INDEX} (card {zi_card})")
 
 
 if __name__ == "__main__":

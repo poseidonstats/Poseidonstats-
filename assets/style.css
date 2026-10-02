@@ -1144,3 +1144,4 @@ footer a { color: #93c5fd; }
 .pro-zile { columns: 2; column-gap: 24px; padding-left: 20px; }
 .pro-zile li { break-inside: avoid; margin: 3px 0; }
 @media (max-width: 640px) { .pro-zile { columns: 1; } }
+.pro-ieri { margin: 10px 0 0; padding: 8px 12px; border-radius: 8px; background: #f1f5f9; font-size: 0.92rem; }
