@@ -194,7 +194,20 @@ def _ora_ro_iso(iso: str) -> str:
         return ""
 
 
-def html_lista_pro(rows: list[dict], fara_fid: int | None = None) -> str:
+def stat_30_zile(azi: str) -> tuple[int, int, int, int]:
+    """(zile, medie, minim, maxim) analize Pro pe zi în ultimele 30 de zile dinaintea lui `azi` (din arhivă)."""
+    de_la = (datetime.strptime(azi, "%Y-%m-%d") - timedelta(days=30)).strftime("%Y-%m-%d"); n = []
+    for f in sorted(ARHIVA.glob("????-??-??.json")):
+        if de_la <= f.stem < azi:
+            try:
+                n.append(len([it for it in (json.loads(f.read_text()).get("items") or []) if it.get("match", {}).get("fixture_id")]))
+            except (OSError, ValueError):
+                pass
+    n = [x for x in n if x]
+    return (len(n), round(sum(n) / len(n)), min(n), max(n)) if n else (0, 0, 0, 0)
+
+
+def html_lista_pro(rows: list[dict], fara_fid: int | None = None, stat: tuple[int, int, int, int] | None = None) -> str:
     """Meciurile analizate azi în Pro, doar nume/ligă/oră, cu lacăt — vizitatorul vede ce ar primi, nu primește."""
     rows = [r for r in rows if r.get("fixture_id") != fara_fid]
     if not rows:
@@ -203,10 +216,12 @@ def html_lista_pro(rows: list[dict], fara_fid: int | None = None) -> str:
     for r in rows:
         ora = _ora_ro_iso(r.get("match_date", "")); tara = f" ({H.escape(r['country'])})" if r.get("country") else ""
         li.append(f"        <li>🔒 <strong>{H.escape(r['home'])} – {H.escape(r['away'])}</strong> · {H.escape(r.get('league', ''))}{tara}" + (f" · {ora}" if ora else "") + "</li>")
-    n = len(rows)
+    n = len(rows); linie_stat = []
+    if stat and stat[0]:
+        linie_stat = [f'      <p class="pro-today-stat muted">În ultimele {stat[0]} de zile: în medie <strong>{stat[1]} analize Pro pe zi</strong>, minim {stat[2]}, maxim {stat[3]}.</p>']
     return "\n".join(['<div class="pro-today">',
                       f'      <p class="pro-today-head">🔒 <strong>Încă {n} analize azi în Pro</strong>, cu context verificat (clasament, formă, H2H, absențe) — pe site și pe Discord, dimineața.</p>',
-                      '      <ul class="pro-today-list">', *li, '      </ul>', '    </div>'])
+                      '      <ul class="pro-today-list">', *li, '      </ul>', *linie_stat, '    </div>'])
 
 
 def injecteaza_lista(html: str, lista: str) -> str:
@@ -275,9 +290,9 @@ def main() -> None:
     rows = lista_pro_azi(azi)
     print(f"[gen_pro_sample] lista Pro de azi ({azi}): {len(rows)} meciuri" + (", fără cel publicat" if fid_card else ""))
     if a.dry_run:
-        print(card); print(linie); print(html_lista_pro(rows, fid_card)); return
+        print(card); print(linie); print(html_lista_pro(rows, fid_card, stat_30_zile(azi))); return
     html = injecteaza(INDEX.read_text(encoding="utf-8"), card, linie)
-    html = injecteaza_lista(html, html_lista_pro(rows, fid_card))
+    html = injecteaza_lista(html, html_lista_pro(rows, fid_card, stat_30_zile(azi)))
     INDEX.write_text(html, encoding="utf-8")
     print(f"[gen_pro_sample] scris {INDEX} (card {zi_card})")
 
