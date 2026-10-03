@@ -180,58 +180,6 @@
     </div>
 
   <!-- PROOF_STATIC_START -->
-  <!-- ====== Exemplul Pro — PRIMUL pe pagină (2 oct 2026, Andreea: „ar trebui să fie prima”) ====== -->
-
-  <!-- Exemplu analiză Pro — analiza de IERI din arhiva #analize-pro, cu rezultatul real; rescris zilnic de scripts/gen_pro_sample.py -->
-  <section class="pro-sample" id="exemplu-pro">
-    <h2 data-i18n="pro.h2">🔱 Exemplu de analiză Pro</h2>
-    <p class="pro-sample-intro" data-i18n="pro.intro">Pe site vezi <strong>cifrele</strong>. Abonații Pro primesc, pe site și pe Discord, și <strong>de ce</strong> — context real (clasament, formă, H2H, absențe) reconciliat cu modelul, cu capcanele marcate. Mai jos, analiza de azi, completă, publicată înainte de meci. Rezultatul și verificarea pick-urilor apar a doua zi, în arhivă:</p>
-
-    <!-- PRO_SAMPLE_CARD_START -->
-    <div class="pro-card">
-      <div class="pro-card-head">💎 Maccabi Bnei Raina – Hapoel Kfar Shalem · Liga Leumit (Israel) · 1 octombrie 2026 · <strong>rezultat final 1-2</strong></div>
-      <div class="pro-visible">
-        <p><strong>⚡ Verdict:</strong> Două echipe vecine în clasament, despărțite de un punct, cu profiluri opuse: gazdele au apărare strânsă (11 goluri primite), oaspeții joacă meciuri deschise (15:16, cel mai permeabil atac-apărare din top 8). Datele împing spre un meci echilibrat, cu goluri — nu spre un favorit clar.</p>
-        <p><strong>📊 Context:</strong> Bnei Raina e 7 cu 12p (12:11), Kfar Shalem 8 cu 11p (15:16). Gazdele: 3V-2Î, dar ambele înfrângeri ACASĂ (1-2 și 1-2), victoriile venind în deplasare și la 4-2. Oaspeții: 3 meciuri cu 5+ goluri în ultimele 5 (3-3, 3-3, 3-2) și un 0-4 în deplasare. H2H: Bnei Raina 1-0 și 3-0, ambele acasă. Nicio absență raportată.</p>
-        <p><strong>🧮 Modelul vs realitate:</strong> Aici e punctul sensibil — modelul dă oaspeții favoriți (45% vs 34%), dar clasamentul, H2H-ul (2-0 pentru gazde) și forma de deplasare a lui Kfar Shalem (0-4) contrazic asta; piața vede exact invers (45% gazde). Divergență de ~15pp pe 1X2 → tratez rezultatul ca necalibrat aici și NU construiesc nimic pe el. Zona de goluri rămâne însă solidă: O2.5 la 66% stă pe banda 65-70% care a livrat 66.9% pe N=4903 (backtest 65k OOS), iar forward global dă 66% la prag ≥55% pe 16280 meciuri.</p>
-        <p><strong>🎯 Piețele alese:</strong></p><ul><li>🔒 <strong>Bază:</strong> Peste 1.5 goluri — 85%. Banda 85-100% a livrat 87.1% istoric (N=9207), forward 84% pe N=20054. Ambele echipe au marcat în 4 din ultimele 5.</li><li>🎯 <strong>Principal:</strong> Peste 2.5 goluri — 66%. Kfar Shalem a produs 5+ goluri în 3 din 5 meciuri; piața e la 61.5%, aproape de model.</li><li>💎 <strong>Curajos:</strong> GG / BTTS — 61% real afișat, <em>pick de cotă, cu risc asumat</em>. Banda 60-65% a livrat doar 58.3% (N=7912) — sub probabilitatea modelului, deci încredere redusă; gazdele au ținut poarta intactă în ambele H2H.</li></ul>
-        <p><strong>👁️ De urmărit:</strong> Dacă Bnei Raina marchează primul acasă, repetă scenariul 1-0/3-0 din H2H și meciul se închide — U2.5 devine scenariul real; dacă Kfar Shalem egalează până la pauză, meciul se deschide complet.</p>
-        <p class="pro-verificat">✅ Pick-ul de bază, <strong>Peste 1.5 goluri</strong>, a ieșit. <a href="analize/2026-10-01.html#m1555167">Verificarea completă →</a></p>
-      </div>
-    </div>
-    <!-- PRO_SAMPLE_CARD_END -->
-    <!-- PRO_TODAY_LIST_START -->
-    <div class="pro-today">
-      <p class="pro-today-head">🔒 <strong>Încă 11 analize azi în Pro</strong>, cu context verificat (clasament, formă, H2H, absențe) — pe site și pe Discord, dimineața.</p>
-      <ul class="pro-today-list">
-        <li>🔒 <strong>Real Unión de Tenerife – Laguna de Duero</strong> · Tercera División RFEF - Group 12 (Spain) · 23:00</li>
-        <li>🔒 <strong>Eintracht Stadtallendorf – Friedberg</strong> · Oberliga - Hessen (Germany) · 21:30</li>
-        <li>🔒 <strong>Hluboka nad Vltavou – Křimice</strong> · 4. liga - Divizie A (Czech-Republic) · 19:00</li>
-        <li>🔒 <strong>Fremad Amager – B 93</strong> · 2. Division (Denmark) · 20:00</li>
-        <li>🔒 <strong>Naestved – Nykobing FC</strong> · 2. Division (Denmark) · 20:00</li>
-        <li>🔒 <strong>South Korea – Venezuela</strong> · Friendlies (World) · 14:00</li>
-        <li>🔒 <strong>MŠK Senec – Spartak Myjava</strong> · 3. liga - West (Slovakia) · 19:30</li>
-        <li>🔒 <strong>China – Palestine</strong> · Friendlies (World) · 14:35</li>
-        <li>🔒 <strong>VSK Århus – Brabrand</strong> · 2. Division (Denmark) · 20:00</li>
-        <li>🔒 <strong>Congo DR – Uganda</strong> · Friendlies (World) · 14:00</li>
-        <li>🔒 <strong>Mauritius – Sri Lanka</strong> · Friendlies (World) · 18:00</li>
-      </ul>
-      <p class="pro-today-stat muted">În ultimele 29 de zile: în medie <strong>12 analize Pro pe zi</strong>, minim 4, maxim 12.</p>
-    </div>
-    <!-- PRO_TODAY_LIST_END -->
-    <p class="pro-arhiva" data-i18n="pro.arhiva">📂 <a href="analize/index.html">Toate analizele de până ieri, cu verificarea de a doua zi</a> — inclusiv cele care au greșit.</p>
-    <div class="plans-pro-detail">
-      <h3 data-i18n="plans.get.h">Ce primești pentru 20 $ pe lună</h3>
-      <p data-i18n="plans.get.p">Nu plătești pentru o probabilitate diferită de cea publică. Plătești pentru <strong>cercetarea din spatele ei</strong>. În fiecare zi luăm meciurile unde cifra merită investigată și verificăm contextul care poate confirma sau contrazice modelul. Îți spunem explicit: <strong>modelul spune X, contextul spune Y, de aceea urmărim o piață și le ignorăm pe celelalte.</strong> Pentru fiecare meci primești:</p>
-      <div data-i18n="plans.get.list"><ul><li>ce spune modelul și cât de puternică e probabilitatea, cu banda ei istorică</li><li>forma recentă cu scoruri, clasamentul, absențele relevante, H2H când spune ceva</li><li>unde contextul <strong>susține</strong> modelul și unde <strong>îl contrazice</strong></li><li>capcanele pe care modelul numeric nu le vede</li><li>pick-urile analizei: Bază, Principal, Curajos, fiecare cu probabilitatea anunțată</li></ul></div>
-      <p data-i18n="plans.get.after"><strong>A doua zi nu rescriem analiza.</strong> Punem scorul real lângă ce am spus înainte de meci și arătăm unde modelul și contextul au avut dreptate, unde au greșit și unde rezultatul a fost zgomot. <a href="analize/index.html">Toate analizele de până ieri, verificate</a>. Nu promitem profit, nu vindem „ponturi sigure”. Dacă vrei doar probabilitățile, Basic e suficient. Dacă vrei să înțelegi de ce o probabilitate merită sau nu atenție, Pro e pentru tine.</p>
-      <h3 data-i18n="plans.day.h">O zi în Pro</h3>
-      <div data-i18n="plans.day.list"><ol><li><strong>07:15</strong> — predicțiile zilei sunt generate și înghețate.</li><li><strong>07:30</strong> — apar analizele scrise pentru meciurile alese, pe site (cu contul Patreon) și pe Discord.</li><li><strong>În analiză</strong> — model + context + contradicții + capcane + pick-uri cu probabilitate.</li><li><strong>A doua zi</strong> — scorul final și verificarea analizei, public.</li></ol></div>
-      <p class="plans-steps pro-cta-inline"><a href="https://patreon.com/PoseidonPredictions" target="_blank" rel="noopener" class="plan-btn plan-btn-pro" data-i18n="plans.pro.btn">💎 Alege Pro — $20/lună</a> <a href="https://patreon.com/PoseidonPredictions" target="_blank" rel="noopener" class="plan-btn plan-btn-basic" data-i18n="plans.basic.btn">⭐ Alege Basic — $5/lună</a></p>
-    </div>
-    <p class="pro-disclaimer" data-i18n="pro.disclaimer">Exemplu real, pe date înghețate. Statistic · informativ · nu sfat de pariere · 18+</p>
-  </section>
-
   <section class="proof" id="dovada">
     <h2 data-i18n="proof.h2">Ce s-a adeverit, din predicții înghețate</h2>
     <p class="proof-lead" data-i18n="proof.lead">Jurnal deschis din 2 iunie 2026. Fiecare predicție e înghețată la generare (07:15), publicată înainte de meci și comparată apoi cu rezultatul real. Nu ștergem nimic retroactiv.</p>
@@ -245,18 +193,18 @@
           <th data-i18n="proof.th.tier">Verdict propriu</th>
         </tr></thead>
         <tbody>
-          <tr><td><strong>Over 1.5</strong> <small class="proof-prag">≥ 75 %</small></td><td>18.655</td><td class="hit">82.7%</td><td>82.1%</td><td><span class="tier-badge tier-elite">STRONG ROBUST</span></td></tr>
-          <tr><td><strong>Over 2.5</strong> <small class="proof-prag">≥ 65 %</small></td><td>6.047</td><td class="hit">71.0%</td><td>69.9%</td><td><span class="tier-badge tier-strong">ROBUST</span></td></tr>
+          <tr><td><strong>Over 1.5</strong> <small class="proof-prag">≥ 75 %</small></td><td>18.780</td><td class="hit">82.7%</td><td>82.2%</td><td><span class="tier-badge tier-elite">STRONG ROBUST</span></td></tr>
+          <tr><td><strong>Over 2.5</strong> <small class="proof-prag">≥ 65 %</small></td><td>6.081</td><td class="hit">71.0%</td><td>69.9%</td><td><span class="tier-badge tier-strong">ROBUST</span></td></tr>
           <tr><td><strong>Over 3.5</strong> <small class="proof-prag">≥ 65 %</small></td><td>308</td><td class="hit">66.2%</td><td>60.8%</td><td><span class="tier-badge tier-mid">PRE-PROMISING</span></td></tr>
-          <tr><td><strong>BTTS Da</strong> <small class="proof-prag">≥ 65 %</small></td><td>910</td><td class="hit">67.6%</td><td>64.5%</td><td><span class="tier-badge tier-mid">PRE-PROMISING</span></td></tr>
-          <tr><td><strong>HT Over 0.5</strong> <small class="proof-prag">≥ 65 %</small></td><td>24.265</td><td class="hit">74.3%</td><td>73.7%</td><td><span class="tier-badge tier-strong">ROBUST</span></td></tr>
+          <tr><td><strong>BTTS Da</strong> <small class="proof-prag">≥ 65 %</small></td><td>912</td><td class="hit">67.7%</td><td>64.5%</td><td><span class="tier-badge tier-mid">PRE-PROMISING</span></td></tr>
+          <tr><td><strong>HT Over 0.5</strong> <small class="proof-prag">≥ 65 %</small></td><td>24.416</td><td class="hit">74.3%</td><td>73.7%</td><td><span class="tier-badge tier-strong">ROBUST</span></td></tr>
           <tr class="is-drop"><td><strong>HT Over 1.5</strong> <small class="proof-prag">≥ 65 %</small></td><td>210</td><td class="hit">58.1%</td><td>51.3%</td><td><span class="tier-badge tier-drop">DROP</span></td></tr>
         </tbody>
       </table>
     </div>
     <p class="proof-note" data-i18n="proof.note">Rândul roșu e aici intenționat: acolo modelul <strong>nu</strong> prezice suficient de bine, iar noi îl marcăm <strong>DROP</strong> în propriul nostru tabel. Un site care îți arată doar ce a mers nu-ți arată nimic.</p>
     <p class="proof-note">N = doar selecțiile la care probabilitatea a trecut pragul din dreptul pieței, nu toate predicțiile; cifrele pe toate predicțiile, piață cu piață, sunt în auditul de pe track record. „Verdict propriu" ține de mărimea eșantionului și de limita Wilson, <strong>nu</strong> de avantajul peste rata naturală a pieței. Tabelul complet, bucket cu bucket: <a href="track-record.html">track record</a> · <a href="istoric.html">istoric zi cu zi</a>.</p>
-    <p class="proof-asof">Cifre din jurnalul forward, actualizate 2 octombrie 2026 · informativ · nu sfat de pariere · 18+</p>
+    <p class="proof-asof">Cifre din jurnalul forward, actualizate 3 octombrie 2026 · informativ · nu sfat de pariere · 18+</p>
   </section>
   <!-- PROOF_STATIC_END -->
 
@@ -341,8 +289,11 @@
 
   <!-- DAILY_STATIC_START -->
   <section class="daily-static" id="repere-azi">
-    <h2>⭐ Predicții fotbal azi — 2 octombrie 2026</h2>
-    <p>Modelul a analizat azi 223 meciuri. În campionatele mari nu e azi niciun reper peste pragurile de afișare; cele 2 care trec pragul sunt în competiții mici, pe care nu le scoatem în față. Lista completă, cu filtre, e mai jos.</p>
+    <h2>⭐ Predicții fotbal azi — 3 octombrie 2026</h2>
+    <p>Repere calibrate din cele 972 meciuri analizate azi de model (lista completă, cu filtre, mai jos):</p>
+    <ul>
+      <li><strong>Sri Lanka – Djibouti</strong> (World · Friendlies): Over 1.5 goluri — <strong>85%</strong> calibrat</li>
+    </ul>
     <p class="pro-disclaimer">probabilități calibrate empiric · informativ · nu sfat de pariere · 18+</p>
   </section>
   <!-- DAILY_STATIC_END -->
@@ -360,11 +311,26 @@
     <ul class="ligi-grid">
       <li><a href="predictii/romania-liga-1.html">Liga 1 (SuperLiga României)</a><span class="liga-n">1</span></li>
       <li><a href="predictii/romania-liga-2.html">Liga 2 (România)</a><span class="liga-n">1</span></li>
+      <li><a href="predictii/anglia-championship.html">Championship (Anglia)</a><span class="liga-n">1</span></li>
       <li><a href="predictii/anglia-league-one.html">League One (Anglia)</a><span class="liga-n">11</span></li>
       <li><a href="predictii/anglia-league-two.html">League Two (Anglia)</a><span class="liga-n">12</span></li>
-      <li><a href="predictii/anglia-national-league.html">National League (Anglia)</a><span class="liga-n">12</span></li>
-      <li><a href="predictii/spania-segunda-division.html">Segunda División (Spania)</a><span class="liga-n">9</span></li>
-      <li><a href="predictii/portugalia-segunda-liga.html">Segunda Liga (Portugalia)</a><span class="liga-n">1</span></li>
+      <li><a href="predictii/anglia-national-league.html">National League (Anglia)</a><span class="liga-n">13</span></li>
+      <li><a href="predictii/spania-la-liga.html">La Liga (Spania)</a><span class="liga-n">1</span></li>
+      <li><a href="predictii/spania-segunda-division.html">Segunda División (Spania)</a><span class="liga-n">8</span></li>
+      <li><a href="predictii/germania-bundesliga.html">Bundesliga (Germania)</a><span class="liga-n">1</span></li>
+      <li><a href="predictii/franta-ligue-1.html">Ligue 1 (Franța)</a><span class="liga-n">1</span></li>
+      <li><a href="predictii/franta-ligue-2.html">Ligue 2 (Franța)</a><span class="liga-n">5</span></li>
+      <li><a href="predictii/olanda-eredivisie.html">Eredivisie (Olanda)</a><span class="liga-n">1</span></li>
+      <li><a href="predictii/portugalia-primeira-liga.html">Primeira Liga (Portugalia)</a><span class="liga-n">2</span></li>
+      <li><a href="predictii/portugalia-segunda-liga.html">Segunda Liga (Portugalia)</a><span class="liga-n">2</span></li>
+      <li><a href="predictii/turcia-super-lig.html">Süper Lig (Turcia)</a><span class="liga-n">1</span></li>
+      <li><a href="predictii/belgia-jupiler-pro-league.html">Jupiler Pro League (Belgia)</a><span class="liga-n">1</span></li>
+      <li><a href="predictii/polonia-ekstraklasa.html">Ekstraklasa (Polonia)</a><span class="liga-n">2</span></li>
+      <li><a href="predictii/cehia-liga-1.html">Prima ligă (Cehia)</a><span class="liga-n">1</span></li>
+      <li><a href="predictii/danemarca-superliga.html">Superliga (Danemarca)</a><span class="liga-n">1</span></li>
+      <li><a href="predictii/norvegia-eliteserien.html">Eliteserien (Norvegia)</a><span class="liga-n">1</span></li>
+      <li><a href="predictii/suedia-allsvenskan.html">Allsvenskan (Suedia)</a><span class="liga-n">1</span></li>
+      <li><a href="predictii/rusia-premier-league.html">Premier League (Rusia)</a><span class="liga-n">1</span></li>
       <li><a href="predictii/ucraina-premier-league.html">Premier League (Ucraina)</a><span class="liga-n">1</span></li>
       <li><a href="predictii/sua-mls.html">Major League Soccer (SUA)</a><span class="liga-n">1</span></li>
     </ul>
