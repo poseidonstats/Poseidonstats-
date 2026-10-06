@@ -262,9 +262,9 @@ function renderUnlockCta(nLocked, nLockedAzi = null) {
     <ul class="unlock-list">${list}</ul>
     <p class="unlock-proof">${tt("unlock.proof", "Nu plătești pentru o garanție, plătești pentru acces. Predicțiile sunt înghețate înainte de meci, iar rezultatele rămân publice, inclusiv cele ratate. Verifică înainte să plătești:")}
       <a href="track-record.html" class="unlock-proof-btn">${tt("unlock.proof.btn", "Vezi track record-ul")}</a></p>
-    <p class="unlock-steps">${tt("unlock.steps", "După plată, 3 pași: alegi Pro sau Basic pe Patreon → apeși „Intră cu Patreon” aici pe site → accesul se deschide pe loc.")}
-      <span class="muted">${tt("unlock.cancel", "Anulezi oricând din Patreon; accesul rămâne până la sfârșitul perioadei plătite.")}</span></p>
-    <a href="#abonament" class="unlock-btn">${tt("unlock.btn", "💎 Alege Pro — 20 $/lună")}</a>
+    <p class="unlock-steps">${tt("unlock.steps", "3 pași: alegi Pro (7 zile gratuit) sau Basic pe Patreon → apeși „Intră cu Patreon” aici pe site → accesul se deschide pe loc.")}
+      <span class="muted">${tt("unlock.cancel", "Primele 7 zile de Pro sunt gratuite; anulezi oricând din Patreon, și înainte de prima plată. Accesul rămâne până la sfârșitul perioadei plătite.")}</span></p>
+    <a href="#abonament" class="unlock-btn">${tt("unlock.btn", "💎 Încearcă Pro gratuit 7 zile")}</a>
     <a href="#abonament" class="unlock-pro muted">${tt("unlock.alt", "Vrei doar cifrele? Basic, 5 $/lună.")}</a>
   </div>`;
 }
