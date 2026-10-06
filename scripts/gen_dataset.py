@@ -69,11 +69,16 @@ def _num(v) -> str:
     return "" if v is None else repr(float(v))     # precizie completă: auditul refăcut din CSV dă EXACT cifrele publicate (rotunjirea la 4 zecimale le mișca în a 4-a zecimală)
 
 
+def _inghetat_inainte(r: dict) -> bool:
+    f = str(r.get("freeze_ts") or "")[:19].replace("T", " "); m = str(r.get("match_date") or "")[:19].replace("T", " ")
+    return not (f and m) or f < m
+
+
 def randuri_publice(rows: list[dict], inchidere: dict[int, dict]) -> list[dict]:
     """Doar RESOLVED; coloanele jurnalului redenumite neutru; + cota de închidere unde există mapare. Fiecare rând are exact COLOANE."""
     out = []
     for r in rows:
-        if r.get("status") != "RESOLVED":
+        if r.get("status") != "RESOLVED" or not _inghetat_inainte(r):   # 6 oct 2026: fără rândurile înghețate după kickoff (339, iunie)
             continue
         d = {RENUME.get(c, c): (r.get(c) if r.get(c) is not None else "") for c in JURNAL_COLOANE}
         try:

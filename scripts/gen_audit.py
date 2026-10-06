@@ -202,6 +202,12 @@ def _inchidere_din_rand(r: dict) -> dict | None:
     return d
 
 
+def _inghetat_inainte(r: dict) -> bool:
+    """True dacă înghețarea (freeze_ts, UTC) e strict înainte de kickoff (match_date, UTC). Fără una din date → se păstrează (comportament vechi)."""
+    f = str(r.get("freeze_ts") or "")[:19].replace("T", " "); m = str(r.get("match_date") or "")[:19].replace("T", " ")
+    return not (f and m) or f < m
+
+
 def citeste_public(director: Path) -> tuple[list[dict], dict]:
     """Rândurile din toate jurnal_*.csv (ordinea fișierelor) + parametrii Platt publicați lângă ele. Așa reface oricine cifrele auditului."""
     rows = []
@@ -225,7 +231,9 @@ def _y(oc: str, val: str, cheie: str) -> int | None:
 def audit(rows: list[dict], platt: dict | None = None, inchidere: dict[int, dict] | None = None) -> dict:
     """platt = parametrii (a, b) per piață aplicați peste probabilitățile BRUTE din jurnal (așa publică site-ul); None = brut.
     inchidere = fixture_id → probabilități de închidere ale pieței (incarca_inchidere); None/{} → cade pe cota de la ora predicției (mkt_p_o25)."""
-    R = [r for r in rows if r.get("status") == "RESOLVED"]; platt = platt or {}; inchidere = inchidere or {}
+    # 6 oct 2026 (audit rădăcină): 339 de rânduri din 2–3 iunie (primele zile ale jurnalului) au freeze_ts DUPĂ kickoff → ies din audit;
+    # integritatea „înghețat înainte de meci" e condiția, nu o promisiune. Data meciului poate fi mutată de API după înghețare (vezi `zile`).
+    R = [r for r in rows if r.get("status") == "RESOLVED" and _inghetat_inainte(r)]; platt = platt or {}; inchidere = inchidere or {}
     piete = []; vs = {}; ore = []
     for cheie, pc, oc, nume in PIETE:
         mp = platt.get(PLATT_KEY[cheie]); pairs = []; brute = []; tri = []
