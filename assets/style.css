@@ -988,6 +988,9 @@ footer a { color: #93c5fd; }
 }
 .match-free { border-left-color: #047857; }
 
+.trial-banner { display:block; margin: 0 0 14px; padding: 12px 16px; border-radius: 12px; background: linear-gradient(135deg, #dbeafe, #eff6ff); border: 1px solid #93c5fd; color: #1e3a8a; font-size: 0.95rem; text-decoration: none; line-height: 1.4; }
+.trial-banner:hover { background: linear-gradient(135deg, #bfdbfe, #dbeafe); }
+.trial-banner-cta { font-weight: 700; white-space: nowrap; }
 .unlock-cta {
   display: flex; align-items: center; justify-content: space-between; gap: 16px;
   flex-wrap: wrap; margin: 22px 0 12px; padding: 16px 20px;

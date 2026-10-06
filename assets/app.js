@@ -632,7 +632,11 @@ async function renderIndex() {
     const matchesEl = document.getElementById("matches");
     matchesEl.classList.toggle("only-calibrated-markets", !!(chkCalibMk && chkCalibMk.checked));
 
-    let html = deschise.map(m => renderMatch(m, fmk)).join("");
+    // 6 oct 2026 — banda de trial deasupra primului meci (doar pentru nemembri); blocul mare rămâne după cele 5 gratuite.
+    let html = blocate.length
+      ? `<a href="#abonament" class="trial-banner">${tt("trial.banner", "🎁 <strong>Pro, 7 zile gratuit</strong>: analizele scrise ale zilei, verificate a doua zi cu scorul real · <span class=\"trial-banner-cta\">Încearcă →</span>")}</a>`
+      : "";
+    html += deschise.map(m => renderMatch(m, fmk)).join("");
     if (blocate.length) {
       if (blocate.length) html += renderUnlockCta(blocate.length, blocateAzi);
       html += blocate.slice(0, LOCKED_PREVIEW).map(renderLockedMatch).join("");
