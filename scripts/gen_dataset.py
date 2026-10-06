@@ -119,7 +119,7 @@ def scrie(R: list[dict], out_dir: Path, azi: str | None = None) -> dict:
 
 def html_dataset(j: dict) -> str:
     L = ['<section id="dataset-section" class="audit">', '  <h3>Date deschise — jurnalul complet, de descărcat</h3>',
-         f'  <p>Toate predicțiile rezolvate, exact cum au fost înghețate la 07:15, câte un fișier CSV pe luna meciului: {_mii(j["n_total"])} rânduri, actualizate zilnic (ultima dată {j["generat_la"]}). '
+         f'  <p>Toate predicțiile rezolvate, exact cum au fost înghețate la 05:30, câte un fișier CSV pe luna meciului: {_mii(j["n_total"])} rânduri, actualizate zilnic (ultima dată {j["generat_la"]}). '
          'Fiecare rând are ora înghețării, probabilitățile brute ale modelului, rezultatul și, unde maparea cu evenimentul casei a fost validată prin nume și scor, cota de închidere a pieței fără marjă. '
          f'Fără cont, fără limită. Cifrele din auditul de mai sus se refac strict din aceste fișiere, cu <a href="{REPO_SCRIPT}" rel="noopener">scriptul de audit din depozitul public al site-ului</a> '
          '(Python 3, fără alte biblioteci): descarci fișierele într-un folder și rulezi <code>python3 gen_audit.py --public folderul_tau</code>.</p>',

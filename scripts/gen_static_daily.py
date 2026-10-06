@@ -239,24 +239,30 @@ def update_proof() -> None:
     if section is None:
         print("[gen_static_daily] history.json indisponibil/gol — dovada rămâne neatinsă")
         return
-    _fara_sectiuni_straine(re.search(re.escape(PROOF_START) + r".*?" + re.escape(PROOF_END), html, flags=re.S).group(0), "PROOF_STATIC")
+    _fara_sectiuni_straine(re.search(re.escape(PROOF_START) + r".*?" + re.escape(PROOF_END), html, flags=re.S).group(0), section, "PROOF_STATIC")
     new = re.sub(re.escape(PROOF_START) + r".*?" + re.escape(PROOF_END), lambda _: section,
                  html, flags=re.S)
     INDEX.write_text(new)
 
 
-def _fara_sectiuni_straine(bloc: str, nume: str) -> None:
-    """6 oct 2026: blocul dintre markeri NU trebuie să conțină alte secțiuni (pe 3 oct a șters exemplul Pro pus între markeri)."""
-    if 'id="exemplu-pro"' in bloc or 'class="pro-sample"' in bloc:
-        sys.exit(f"[gen_static_daily] între markerii {nume} e secțiunea exemplu-pro — abort, mut-o în afara markerilor")
+def _fara_sectiuni_straine(vechi: str, nou: str, nume: str) -> None:
+    """6 oct 2026: blocul dintre markeri se înlocuiește INTEGRAL. Refuz dacă blocul vechi conține secțiuni/id-uri/markeri
+    care nu există în blocul nou (pe 3 oct a șters exemplul Pro pus între markerii PROOF_STATIC)."""
+    import re as _re
+    vechi_ids = set(_re.findall(r'id="([^"]+)"', vechi)); noi_ids = set(_re.findall(r'id="([^"]+)"', nou))
+    straine = sorted(vechi_ids - noi_ids)
+    markeri = [m for m in _re.findall(r"<!-- ([A-Z_]+_START) -->", vechi) if m not in nou]
+    if straine or markeri:
+        sys.exit(f"[gen_static_daily] între markerii {nume} sunt elemente negenerate (id: {straine}, markeri: {markeri}) — abort, mută-le în afara markerilor")
 
 
 def update_index() -> None:
     html = INDEX.read_text()
     if START not in html or END not in html:
         sys.exit(f"[gen_static_daily] markerii {START} lipsesc din index.html — abort")
-    _fara_sectiuni_straine(re.search(re.escape(START) + r".*?" + re.escape(END), html, flags=re.S).group(0), "DAILY_STATIC")
-    new = re.sub(re.escape(START) + r".*?" + re.escape(END), build_section(), html, flags=re.S)
+    sect = build_section()
+    _fara_sectiuni_straine(re.search(re.escape(START) + r".*?" + re.escape(END), html, flags=re.S).group(0), sect, "DAILY_STATIC")
+    new = re.sub(re.escape(START) + r".*?" + re.escape(END), lambda _: sect, html, flags=re.S)
     INDEX.write_text(new)
 
 

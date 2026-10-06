@@ -112,13 +112,18 @@ async function loadPredictions() {
     if (M.tier()) PRED_CU_TOKEN = true;
     const r = await M.incarca(PRED_URL);
     PRED_SURSA = r.sursa;
+    // 6 oct 2026: abonat valid, dar datele membrilor n-au venit (9 zile de KV gol au trecut neobservate) → spunem clar, nu lacăte tăcute
+    if (M.tier() && r.sursa === "public" && r.eroare && r.eroare !== 401 && r.eroare !== 403) {
+      const b = document.getElementById("match-count");
+      if (b) b.insertAdjacentHTML("beforebegin", `<p class="membru-eroare">⚠️ ${tt("membru.eroare", "Ești membru, dar datele complete nu s-au încărcat (cod {cod}). Reîncarcă peste câteva minute; dacă persistă, scrie-ne pe Discord, #discutii.").replace("{cod}", r.eroare)}</p>`);
+    }
     // 29 sept — diagnostic: browserul spune worker-ului ce sursă a afișat (apare în `wrangler tail`); fără header, fără preflight
     try { fetch(`${M.MEMBERS_API}/api/ping?sursa=${r.sursa}&tier=${M.tier() || "none"}&v=${SCRIPT_V}`, { mode: "no-cors", cache: "no-store" }).catch(() => {}); } catch {}
     return r.data;
   }
   return fetchJSON(PRED_URL);
 }
-const SCRIPT_V = "20260929c";
+const SCRIPT_V = "20261006a";
 // 29 sept — plasă de siguranță: dacă la DOMContentLoaded există token valid, dar lista a fost desenată din fișierul public
 // (tokenul a ajuns târziu, script vechi din cache etc.), desenăm din nou cu datele de membru.
 if (typeof window !== "undefined") {
@@ -1214,8 +1219,17 @@ async function renderProAnalize() {
   const azi = new Date().toLocaleDateString("sv-SE", { timeZone: "Europe/Bucharest" });
   try {
     const r = await fetch(`${M.MEMBERS_API}/api/analize/${azi}`, { headers: { authorization: "Bearer " + localStorage.getItem("poseidon_members_token") }, cache: "no-store" });
-    if (!r.ok) { el.innerHTML = `<p class="muted">Analizele Pro de azi apar după 07:30. Până atunci: #analize-pro pe Discord.</p>`; return; }
+    if (!r.ok) {
+      // 6 oct 2026: mesaj după oră și cod — „apar după 07:45” doar dimineața; după aceea e o problemă a noastră, spusă ca atare
+      const oraRO = Number(new Date().toLocaleTimeString("en-GB", { timeZone: "Europe/Bucharest", hour: "2-digit", hour12: false }));
+      const msg = (r.status === 404 && oraRO < 8)
+        ? tt("pro.azi.devreme", "Analizele Pro de azi apar după 07:45. Până atunci: #analize-pro pe Discord.")
+        : (r.status === 401 || r.status === 403)
+          ? tt("pro.azi.sesiune", "Sesiunea a expirat — apasă „Intră cu Patreon” ca să vezi analizele.")
+          : tt("pro.azi.lipsa", "Analizele de azi nu s-au încărcat pe site (cod {cod}). Le găsești în #analize-pro pe Discord; noi reparăm aici.").replace("{cod}", r.status);
+      el.innerHTML = `<h2>${tt("pro.azi.h2", "💎 Analizele tale Pro de azi")}</h2><p class="muted">${msg}</p>`; return;
+    }
     const d = await r.json();
-    el.innerHTML = `<h2>💎 Analizele tale Pro de azi</h2>` + (d.items || []).map(it => `<article class="pro-card pro-card-full"><div class="pro-card-head">💎 ${_md(it.match?.home)} – ${_md(it.match?.away)} · ${_md(it.match?.league)}</div><div class="pro-visible">${_md(it.analysis)}</div></article>`).join("");
-  } catch (e) { console.warn("[membri] analize", e); }
+    el.innerHTML = `<h2>${tt("pro.azi.h2", "💎 Analizele tale Pro de azi")}</h2>` + (d.items || []).map(it => `<article class="pro-card pro-card-full"><div class="pro-card-head">💎 ${_md(it.match?.home)} – ${_md(it.match?.away)} · ${_md(it.match?.league)}</div><div class="pro-visible">${_md(it.analysis)}</div></article>`).join("");
+  } catch (e) { console.warn("[membri] analize", e); el.innerHTML = `<h2>${tt("pro.azi.h2", "💎 Analizele tale Pro de azi")}</h2><p class="muted">${tt("pro.azi.retea", "Nu am putut contacta serverul membrilor. Reîncarcă pagina; analizele sunt și în #analize-pro pe Discord.")}</p>`; }
 }

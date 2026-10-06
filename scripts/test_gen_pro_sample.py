@@ -54,21 +54,32 @@ def test_alege_prefera_analiza_cu_baza_iesita_si_rezultat_cunoscut():
 
 def test_html_card_are_scorul_verdictul_si_partea_blocata():
     it = {"match": {"fixture_id": 3, "home": "ESMTK", "away": "Dabas", "league": "NB III - Southeast", "country": "Hungary", "date": "2026-09-27"}, "analysis": TEXT}
-    h = G.html_card(it, (6, 0), "1X (ESMTK nu pierde)", True)
+    h = G.html_card(it, "2026-09-27", "2026-09-27T07:30:00", (6, 0), "1X (ESMTK nu pierde)", True)
     assert "ESMTK – Dabas" in h and "27 septembrie 2026" in h and "rezultat final 6-0" in h
-    assert "⚡ Verdict" in h and "ESMTK (locul 4, 15p)" in h and 'class="pro-locked"' in h and 'class="pro-lock-overlay"' in h
+    # 2 oct 2026: cardul e analiza completă, fără lacăt; verificarea stă sub el
+    assert "a ieșit" in h and 'href="analize/2026-09-27.html#m3"' in h and "1X (ESMTK nu pierde)" in h
     assert "a ieșit" in h and "**" not in h and "<strong>91%</strong>" in h
-    assert "<script" not in h and "&lt;" not in G.html_card(it, (6, 0), "1X", None)
+    assert "<script" not in h and "&lt;" not in G.html_card(it, "2026-09-27", "2026-09-27T07:30:00", (6, 0), "1X", None)
 
 
-def test_injecteaza_prima_data_si_apoi_idempotent():
-    vechi = ('  <section class="pro-sample">\n    <h2 data-i18n="pro.h2">🔱 Exemplu de analiză Pro</h2>\n    <p class="pro-sample-intro" data-i18n="pro.intro">x</p>\n\n'
-             '    <div class="pro-card">\n      <div class="pro-card-head">💎 Cardiff – Wrexham</div>\n      <div class="pro-locked">\n        <div class="pro-lock-overlay">🔒</div>\n      </div>\n    </div>\n'
+def test_injecteaza_refuza_fara_markeri_si_e_idempotent_cu_markeri():
+    # 6 oct 2026: fără markeri → abort (fallback-ul vechi ștergea blocul „Ce primești pentru 20 $” dintre .pro-card și .pro-disclaimer)
+    import pytest
+    vechi = ('  <section class="pro-sample">\n    <div class="pro-card">VECHI</div>\n    <div class="plans-pro-detail">BANI</div>\n'
              '    <p class="pro-disclaimer" data-i18n="pro.disclaimer">d</p>\n  </section>\n')
-    nou = G.injecteaza(vechi, '<div class="pro-card">NOU</div>')
-    assert "Cardiff" not in nou and "NOU" in nou and G.START in nou and G.END in nou and 'data-i18n="pro.intro"' in nou and 'data-i18n="pro.disclaimer"' in nou
+    with pytest.raises(SystemExit):
+        G.injecteaza(vechi, '<div class="pro-card">NOU</div>')
+    cu = vechi.replace('<div class="pro-card">VECHI</div>', f'{G.START}\n    <div class="pro-card">VECHI</div>\n    {G.END}')
+    nou = G.injecteaza(cu, '<div class="pro-card">NOU</div>')
+    assert "VECHI" not in nou and "NOU" in nou and "BANI" in nou and 'data-i18n="pro.disclaimer"' in nou
     nou2 = G.injecteaza(nou, '<div class="pro-card">NOU2</div>')
-    assert "NOU2" in nou2 and "NOU<" not in nou2 and nou2.count(G.START) == 1 and nou2.count(G.END) == 1
+    assert "NOU2" in nou2 and "NOU<" not in nou2 and "BANI" in nou2 and nou2.count(G.START) == 1 and nou2.count(G.END) == 1
+
+
+def test_piata_baza_scoate_steluțele_din_formatul_real():
+    assert G.piata_baza(["🔒 **Bază:** **Peste 1.5 goluri — 88%.** text"]) == "Peste 1.5 goluri"
+    assert G.piata_baza(["🔒 **Bază:** 1X (dublă șansă) — **91%**"]) == "1X (dublă șansă)"
+    assert G.evalueaza(G.piata_baza(["🔒 **Bază:** **Peste 1.5 goluri — 88%.**"]), 1, 1) is True
 
 
 def test_lista_pro_azi_cu_lacat_si_injectare_idempotenta():

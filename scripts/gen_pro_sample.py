@@ -61,7 +61,8 @@ def piata_baza(picks: list[str]) -> str:
     for l in picks:
         if l.startswith("🔒"):
             m = re.search(r"\*\*Baz[ăa]:\*\*\s*(.+?)\s+—", l)
-            return m.group(1).strip() if m else re.sub(r"^🔒\s*", "", l).split("—")[0].strip()
+            piata = m.group(1) if m else re.sub(r"^🔒\s*", "", l).split("—")[0]
+            return piata.replace("**", "").strip(" .*")   # 6 oct 2026: „**Peste 1.5 goluri” → „Peste 1.5 goluri”
     return ""
 
 
@@ -177,11 +178,8 @@ def injecteaza(html: str, card: str, ieri: str = "") -> str:
     bloc = f"{START}\n    {card}" + (f"\n    {ieri}" if ieri else "") + f"\n    {END}"
     if START in html and END in html:
         return re.sub(re.escape(START) + r".*?" + re.escape(END), lambda _: bloc, html, flags=re.S)
-    i = html.find('<div class="pro-card">'); j = html.find('<p class="pro-disclaimer"', i)
-    if i < 0 or j < 0:
-        raise SystemExit("[gen_pro_sample] nu găsesc cardul .pro-card / .pro-disclaimer în index.html")
-    html = html[:i] + bloc + "\n    " + html[j:]
-    return re.sub(r"<!-- Exemplu analiză Pro — [^\n]*-->", "<!-- Exemplu analiză Pro — analiza de IERI din arhiva #analize-pro, cu rezultatul real; rescris zilnic de scripts/gen_pro_sample.py -->", html)
+    # 6 oct 2026: fără fallback „între .pro-card și .pro-disclaimer” — ștergea tot ce stătea între ele (blocul „Ce primești pentru 20 $”).
+    raise SystemExit(f"[gen_pro_sample] markerii {START} / {END} lipsesc din index.html — abort, nimic scris")
 
 
 # ----------------------------------------------------------------- lista Pro de azi (cu lacăt)
@@ -209,7 +207,7 @@ def stat_30_zile(azi: str) -> tuple[int, int, int, int]:
 
 def html_lista_pro(rows: list[dict], fara_fid: int | None = None, stat: tuple[int, int, int, int] | None = None) -> str:
     """Meciurile analizate azi în Pro, doar nume/ligă/oră, cu lacăt — vizitatorul vede ce ar primi, nu primește."""
-    rows = [r for r in rows if r.get("fixture_id") != fara_fid]
+    rows = [r for r in rows if fara_fid is None or r.get("fixture_id") != fara_fid]   # 6 oct 2026: fără card publicat → nimic exclus
     if not rows:
         return ""
     li = []

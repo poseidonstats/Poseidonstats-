@@ -110,7 +110,7 @@
 
   <section id="forward-section">
     <h3 data-i18n="tr.h3.fwd">Performanță live (forward — în acumulare)</h3>
-    <p data-i18n="tr.p.fwd">Predicții înghețate la generare (07:15 zilnic), comparate cu rezultatul real după meci. Excluse meciurile neplayed.</p>
+    <p data-i18n="tr.p.fwd">Predicții înghețate la generare (05:30 zilnic), comparate cu rezultatul real după meci. Excluse meciurile neplayed.</p>
     <div id="forward-stats">
       <p class="muted" data-i18n="empty.fwd.static">Jurnalul live a început pe <strong>2 iunie 2026</strong>. Tabelul se populează pe măsură ce se joacă meciurile.</p>
     </div>
@@ -119,7 +119,7 @@
   <!-- AUDIT_STATIC_START -->
   <section id="audit-section" class="audit">
   <h3>Audit statistic — jurnalul forward, cifrele complete</h3>
-  <p>Calculat automat în fiecare dimineață din predicțiile înghețate la 07:15 (jurnal din 2026-06-02 până la 2026-10-05, 35,432 predicții rezolvate, în medie 281 pe zi). Brier și log loss = cât de aproape sunt probabilitățile de realitate (mai mic = mai bine); BSS = câștigul față de „rata de bază" a evenimentului (0 = nimic peste a spune mereu media); ECE = eroarea medie de calibrare pe intervale de 10 pp; pantă și intercept = calibrarea Cox (regresie logistică a rezultatului pe logit-ul probabilității: pantă 1 și intercept 0 = perfect calibrat, pantă sub 1 = prea încrezător la extreme, intercept peste 0 = subestimează evenimentul). Cifrele sunt pe probabilitățile <strong>publicate</strong> (după calibrarea Platt per piață, refăcută săptămânal pe jurnal — deci ușor in-sample; cu parametrii fitați înainte de 16 august, testul pe meciurile de după dă la peste 2,5 BSS +4,5 față de +4,1 brut). Coloana „BSS brut" = modelul fără calibrare. Pe scurt: modelul este calibrat față de rata de bază, dar <strong>nu bate piața</strong> — vezi ultimul tabel.</p>
+  <p>Calculat automat în fiecare dimineață din predicțiile înghețate la 05:30 (jurnal din 2026-06-02 până la 2026-10-05, 35,432 predicții rezolvate, în medie 281 pe zi). Brier și log loss = cât de aproape sunt probabilitățile de realitate (mai mic = mai bine); BSS = câștigul față de „rata de bază" a evenimentului (0 = nimic peste a spune mereu media); ECE = eroarea medie de calibrare pe intervale de 10 pp; pantă și intercept = calibrarea Cox (regresie logistică a rezultatului pe logit-ul probabilității: pantă 1 și intercept 0 = perfect calibrat, pantă sub 1 = prea încrezător la extreme, intercept peste 0 = subestimează evenimentul). Cifrele sunt pe probabilitățile <strong>publicate</strong> (după calibrarea Platt per piață, refăcută săptămânal pe jurnal — deci ușor in-sample; cu parametrii fitați înainte de 16 august, testul pe meciurile de după dă la peste 2,5 BSS +4,5 față de +4,1 brut). Coloana „BSS brut" = modelul fără calibrare. Pe scurt: modelul este calibrat față de rata de bază, dar <strong>nu bate piața</strong> — vezi ultimul tabel.</p>
   <div class="table-wrap"><table class="audit-table"><thead><tr><th>Piață</th><th>N</th><th>Rata reală</th><th>Brier</th><th>BSS</th><th>BSS brut</th><th>log loss</th><th>ECE</th><th>pantă</th><th>intercept</th></tr></thead><tbody>
     <tr><td>Peste 1,5 goluri</td><td>35432</td><td>78,5 %</td><td>0,1639</td><td>+2,9 %</td><td>+2,0 %</td><td>0,5050</td><td>0,9 pp</td><td>0,81</td><td>+0,27</td></tr>
     <tr><td>Peste 2,5 goluri</td><td>35432</td><td>57,4 %</td><td>0,2331</td><td>+4,7 %</td><td>+3,9 %</td><td>0,6584</td><td>0,7 pp</td><td>0,89</td><td>+0,06</td></tr>
@@ -239,7 +239,7 @@
   <!-- DATASET_STATIC_START -->
   <section id="dataset-section" class="audit">
   <h3>Date deschise — jurnalul complet, de descărcat</h3>
-  <p>Toate predicțiile rezolvate, exact cum au fost înghețate la 07:15, câte un fișier CSV pe luna meciului: 35.432 rânduri, actualizate zilnic (ultima dată 2026-10-06 05:58). Fiecare rând are ora înghețării, probabilitățile brute ale modelului, rezultatul și, unde maparea cu evenimentul casei a fost validată prin nume și scor, cota de închidere a pieței fără marjă. Fără cont, fără limită. Cifrele din auditul de mai sus se refac strict din aceste fișiere, cu <a href="https://github.com/poseidonstats/Poseidonstats-/blob/main/scripts/gen_audit.py" rel="noopener">scriptul de audit din depozitul public al site-ului</a> (Python 3, fără alte biblioteci): descarci fișierele într-un folder și rulezi <code>python3 gen_audit.py --public folderul_tau</code>.</p>
+  <p>Toate predicțiile rezolvate, exact cum au fost înghețate la 05:30, câte un fișier CSV pe luna meciului: 35.432 rânduri, actualizate zilnic (ultima dată 2026-10-06 05:58). Fiecare rând are ora înghețării, probabilitățile brute ale modelului, rezultatul și, unde maparea cu evenimentul casei a fost validată prin nume și scor, cota de închidere a pieței fără marjă. Fără cont, fără limită. Cifrele din auditul de mai sus se refac strict din aceste fișiere, cu <a href="https://github.com/poseidonstats/Poseidonstats-/blob/main/scripts/gen_audit.py" rel="noopener">scriptul de audit din depozitul public al site-ului</a> (Python 3, fără alte biblioteci): descarci fișierele într-un folder și rulezi <code>python3 gen_audit.py --public folderul_tau</code>.</p>
   <ul class="dataset-files">
     <li><a href="data/dataset/jurnal_2026-06.csv" download>jurnal_2026-06.csv</a> — 4.542 predicții</li>
     <li><a href="data/dataset/jurnal_2026-07.csv" download>jurnal_2026-07.csv</a> — 6.625 predicții</li>
@@ -318,7 +318,7 @@
     <h3 data-i18n="tr.h3.source">Sursă & metodologie</h3>
     <ul>
       <li data-i18n="tr.li.source.bt"><strong>Backtest istoric</strong> — backtest pe 65.250 meciuri jucate în ianuarie–mai 2026, cu ratings calculate strict pe 2024–2025 (înghețate la 31 dec 2025). Zero leakage temporal.</li>
-      <li data-i18n="tr.li.source.fwd"><strong>Jurnal forward</strong> — predicții înghețate la generare (07:15 zilnic), comparate cu rezultatul real după ce s-au jucat meciurile.</li>
+      <li data-i18n="tr.li.source.fwd"><strong>Jurnal forward</strong> — predicții înghețate la generare (05:30 zilnic), comparate cu rezultatul real după ce s-au jucat meciurile.</li>
       <li data-i18n="tr.li.source.calib"><strong>Calibrare per-ligă</strong> — pe sute de ligi cu shrinkage Bayesian, pentru a evita supra-fitare pe ligi cu sample mic.</li>
       <li data-i18n="tr.li.source.repro"><strong>Reproductibilitate</strong> — metodologia este descrisă complet la <a href="metodologie.html">Metodologie</a>.</li>
     </ul>
@@ -340,7 +340,7 @@
   </div>
 </footer>
 
-<script src="assets/app.js?v=202610020625"></script>
+<script src="assets/app.js?v=202610061200"></script>
 <script>renderTrackRecord();</script>
 </body>
 </html>

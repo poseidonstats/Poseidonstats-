@@ -194,6 +194,19 @@ NU s-a făcut push (date goale/invalide). Verifică build_public_json + predict_
 fi
 echo "[$(ts)] [GATE] OK: $GATE_OUT" >> "$LOG"
 
+# 🆕 6 oct 2026 — Gate HTML: index.html trebuie să aibă toate secțiunile/markerii și cel puțin atâtea <section> ca în HEAD.
+# Pe 3 oct gen_static_daily a șters „Exemplul Pro” și s-a publicat 3 zile fără el. Eșec = NU se publică + Telegram.
+HTML_RC=0
+HTML_OUT=$("$PY" ~/poseidon-site/scripts/gate_html.py ~/poseidon-site/index.html --vs HEAD 2>&1) || HTML_RC=$?
+if [ "$HTML_RC" -ne 0 ]; then
+    echo "[$(ts)] [GATE HTML] BLOCAT push: $HTML_OUT" >> "$LOG"
+    tg_send_quick "❌ <b>POSEIDON publish BLOCAT — gate HTML</b>
+$HTML_OUT
+NU s-a făcut push. index.html local e stricat de un generator; site-ul rămâne pe versiunea de ieri."
+    exit 1
+fi
+echo "[$(ts)] [GATE HTML] $HTML_OUT" >> "$LOG"
+
 # (13 iun — R2: verificarea RC2 era COD MORT sub set -e; push eșuat → trap ERR.)
 git add data/ index.html sitemap.xml predictii/ en/ track-record.html statistici-pariuri.html analize/
 git commit -m "data: $(date +%Y-%m-%d) refresh predicții + jurnal" >> "$LOG" 2>&1
@@ -203,3 +216,10 @@ echo "[$(ts)] Published." >> "$LOG"
 # 3. Telegram notify — plasă siguranță (nu blochează publish dacă cade)
 $PY ~/poseidon-site/scripts/notify_publish.py >> "$LOG" 2>&1 || \
     echo "[$(ts)] [WARN] notify_publish failed (publish OK, doar Telegram)" >> "$LOG"
+
+# 🆕 6 oct 2026 — WARN-urile „best-effort” din ciclul ăsta ajung pe Telegram (4 zile de „gen_pro_sample failed” n-au fost citite de nimeni).
+WARNS=$(awk -v start="$(date +%Y-%m-%d)" '$0 ~ "^\\[" start {blk=1} blk && /\[WARN\]/' "$LOG" | tail -n 20)
+if [ -n "$WARNS" ]; then
+    ~/odds_decoder/scripts/tg_trimite.sh "⚠️ POSEIDON publish: avertismente în ciclul de azi (site publicat, dar verifică):
+$WARNS" >/dev/null 2>&1 || true
+fi

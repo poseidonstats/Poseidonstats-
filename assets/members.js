@@ -30,22 +30,24 @@
   }
   async function incarcaPredictii({ api, token, publicUrl, fetchImpl, sterge }) {
     const f = fetchImpl || ((u, o) => fetch(u, o));
+    let eroare = null;
     if (api && token) {
       try {
         const r = await f(api + "/api/predictions", { headers: { authorization: "Bearer " + token }, cache: "no-store" });
         if (r.ok) return { sursa: "membru", data: await r.json() };
         if (r.status === 401 || r.status === 403) sterge && sterge();
-      } catch (e) { console.warn("[membri] API indisponibil, cad pe public", e); }
+        eroare = r.status;                                   // 6 oct 2026: 404/5xx la un membru valid NU mai cade tăcut pe public
+      } catch (e) { console.warn("[membri] API indisponibil, cad pe public", e); eroare = "rețea"; }
     }
     try {
       const r = await f(publicUrl, { cache: "no-cache" });
-      return { sursa: "public", data: r.ok ? await r.json() : null };
-    } catch { return { sursa: "public", data: null }; }
+      return { sursa: "public", data: r.ok ? await r.json() : null, eroare };
+    } catch { return { sursa: "public", data: null, eroare }; }
   }
   function textBara(tier, api) {
     // textele implicite sunt în română; app.js (applyI18n) le rescrie după limba aleasă, prin data-i18n
     if (!tier) return `<span class="members-hint" data-i18n="members.hint">Vrei să deblochezi toate meciurile zilei? <strong>5 $/lună</strong>. Vrei și analizele Pro? <strong>20 $/lună</strong>.</span>`
-      + `<a class="members-sub" href="#abonament" data-i18n="members.sub">Abonează-te</a>`
+      + `<a class="members-sub" href="index.html#abonament" data-i18n="members.sub">Abonează-te</a>`
       + `<a class="members-login" href="${api}/login" data-i18n="members.login">🔑 Ai deja abonament? Intră cu Patreon</a>`;
     const et = tier === "pro" ? `<span class="members-badge" data-i18n="members.badge.pro">💎 Membru Pro</span>` : `<span class="members-badge" data-i18n="members.badge.basic">⭐ Membru Basic</span>`;
     return et + `<a class="members-logout" href="#" data-members-logout data-i18n="members.logout">Ieși</a>`;

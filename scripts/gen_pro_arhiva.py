@@ -325,7 +325,7 @@ def html_index(zile: list[dict], tot: dict, pe_zi: list[dict], azi: str) -> str:
     <p>A doua zi revenim la aceeași analiză: ce am spus înainte de meci rămâne neschimbat, arătăm unde modelul și contextul au avut dreptate, unde au greșit și unde rezultatul a fost pur și simplu zgomot. Nu promitem profit. Nu vindem „ponturi sigure”. Nu schimbăm predicțiile după rezultat.</p>
     <h3>O zi în Pro</h3>
     <ol>
-      <li><strong>07:15</strong> — predicțiile zilei sunt generate și înghețate.</li>
+      <li><strong>05:30</strong> — predicțiile zilei sunt generate și înghețate.</li>
       <li><strong>07:30</strong> — apar analizele scrise pentru meciurile alese, pe site (cu contul Patreon) și pe Discord.</li>
       <li><strong>În analiză</strong> — model + context + contradicții + capcane + pick-uri cu probabilitate.</li>
       <li><strong>A doua zi</strong> — scorul final și verificarea analizei, aici, public.</li>
