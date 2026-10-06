@@ -239,15 +239,23 @@ def update_proof() -> None:
     if section is None:
         print("[gen_static_daily] history.json indisponibil/gol — dovada rămâne neatinsă")
         return
+    _fara_sectiuni_straine(re.search(re.escape(PROOF_START) + r".*?" + re.escape(PROOF_END), html, flags=re.S).group(0), "PROOF_STATIC")
     new = re.sub(re.escape(PROOF_START) + r".*?" + re.escape(PROOF_END), lambda _: section,
                  html, flags=re.S)
     INDEX.write_text(new)
+
+
+def _fara_sectiuni_straine(bloc: str, nume: str) -> None:
+    """6 oct 2026: blocul dintre markeri NU trebuie să conțină alte secțiuni (pe 3 oct a șters exemplul Pro pus între markeri)."""
+    if 'id="exemplu-pro"' in bloc or 'class="pro-sample"' in bloc:
+        sys.exit(f"[gen_static_daily] între markerii {nume} e secțiunea exemplu-pro — abort, mut-o în afara markerilor")
 
 
 def update_index() -> None:
     html = INDEX.read_text()
     if START not in html or END not in html:
         sys.exit(f"[gen_static_daily] markerii {START} lipsesc din index.html — abort")
+    _fara_sectiuni_straine(re.search(re.escape(START) + r".*?" + re.escape(END), html, flags=re.S).group(0), "DAILY_STATIC")
     new = re.sub(re.escape(START) + r".*?" + re.escape(END), build_section(), html, flags=re.S)
     INDEX.write_text(new)
 
