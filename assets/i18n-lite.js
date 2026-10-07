@@ -6,7 +6,13 @@
   var L = lang(); var sus = (document.currentScript && document.currentScript.getAttribute("data-sus")) || "";
   function aplica(I) {
     document.documentElement.lang = L;
-    document.querySelectorAll("[data-i18n]").forEach(function (el) { var k = el.getAttribute("data-i18n"); var v = (I[L] && I[L][k]) || (I.ro && I.ro[k]); if (v) el.innerHTML = v; });
+    document.querySelectorAll("[data-i18n]").forEach(function (el) {
+      var k = el.getAttribute("data-i18n"); var v = (I[L] && I[L][k]) || (I.ro && I.ro[k]); if (!v) return;
+      var vars = el.getAttribute("data-i18n-vars"); if (vars) { try { var o = JSON.parse(vars); Object.keys(o).forEach(function (n) { v = v.split("{" + n + "}").join(o[n]); }); } catch (e) {} }
+      el.innerHTML = v;
+    });
+    var fmt = new Intl.DateTimeFormat(L === "en" ? "en-GB" : L === "es" ? "es-ES" : L === "it" ? "it-IT" : "ro-RO", { day: "numeric", month: "long", year: "numeric" });
+    document.querySelectorAll("[data-date]").forEach(function (el) { var d = el.getAttribute("data-date"); if (/^\d{4}-\d{2}-\d{2}$/.test(d)) el.textContent = fmt.format(new Date(d + "T12:00:00Z")); });
     document.querySelectorAll("[data-lang]").forEach(function (el) { el.hidden = el.getAttribute("data-lang") !== L; });
     // dacă nu există varianta în limba aleasă, rămâne româna
     document.querySelectorAll("[data-lang-grup]").forEach(function (g) { var are = g.querySelector('[data-lang="' + L + '"]'); if (!are) { var ro = g.querySelector('[data-lang="ro"]'); if (ro) ro.hidden = false; } });

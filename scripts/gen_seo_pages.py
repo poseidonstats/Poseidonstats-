@@ -249,7 +249,7 @@ def shell(*, titlu: str, descriere: str, canonical: str, corp: str,
       <span class="brand-name">POSEIDON</span>
       <span class="brand-pulse"></span>
     </a>
-    <p class="tagline">Predicții fotbal calibrate pe <strong>{N_CAL} meciuri reale</strong> · zero leakage</p>
+    <p class="tagline" data-i18n="ligi.tagline" data-i18n-vars='{{"n":"{N_CAL}"}}'>Predicții fotbal calibrate pe <strong>{N_CAL} meciuri reale</strong> · zero leakage</p>
     <nav>
       <a href="{sus}index.html" data-i18n="nav.predictii">Predicții</a>
       <a href="{sus}predictii/index.html" data-i18n="nav.ligi">Pe ligi</a>
@@ -271,7 +271,7 @@ def shell(*, titlu: str, descriere: str, canonical: str, corp: str,
 <footer>
   <div class="container">
     <p><strong>POSEIDON</strong> — model statistic propriu, ratings Bayesian cu calibrare per-ligă.</p>
-    <p>⚠️ <strong>Informativ.</strong> NU sfat de pariere. <strong>NU garanție.</strong> Folosește responsabil. <strong>18+</strong>.</p>
+    <p><strong>Informativ.</strong> NU sfat de pariere. <strong>NU garanție.</strong> Folosește responsabil. <strong>18+</strong>.</p>
     <p class="muted">Contact: <a href="mailto:contact@poseidonstats.com">contact@poseidonstats.com</a> · Joc responsabil: <a href="https://www.jocresponsabil.ro" target="_blank" rel="noopener">jocresponsabil.ro</a> · <a href="{sus}terms.html">Termeni și Condiții</a></p>
   </div>
 </footer>
@@ -510,26 +510,26 @@ def pagina_liga(tara: str, liga: str, slug: str, nume: str, *,
 
     corp = f"""  <section class="intro">
     <div class="hero">
-      <h1 class="hero-title">Predicții {e(nume_scurt(nume))}</h1>
-      <p class="hero-sub">Probabilități pentru meciurile din {e(nume)}, calculate de un model Poisson + Dixon-Coles și calibrate pe rezultate reale, publicate înainte de meci și verificabile după.</p>
-      <p class="hero-free">5 predicții complete gratuit în fiecare zi · fără cont · fără reclame · zero link-uri către case de pariuri</p>
+      <h1 class="hero-title" data-i18n="ligi.h1" data-i18n-vars='{{"liga":"{e(nume_scurt(nume))}"}}'>Predicții {e(nume_scurt(nume))}</h1>
+      <p class="hero-sub" data-i18n="ligi.sub" data-i18n-vars='{{"liga":"{e(nume)}"}}'>Probabilități pentru meciurile din {e(nume)}, calculate de un model Poisson + Dixon-Coles și calibrate pe rezultate reale, publicate înainte de meci și verificabile după.</p>
+      <p class="hero-free" data-i18n="ligi.hero.free">5 predicții complete gratuit în fiecare zi · fără cont · fără reclame · zero link-uri către case de pariuri</p>
     </div>
     <p>{rezumat}</p>
   </section>
 
   <section>
-    <h2>Meciurile următoare din {e(nume)}</h2>
+    <h2 data-i18n="ligi.urmatoare" data-i18n-vars='{{"liga":"{e(nume)}"}}'>Meciurile următoare din {e(nume)}</h2>
 {continut if continut else '    <p class="muted">Niciun meci programat în fereastra curentă. Vezi <a href="../index.html">predicțiile gratuite ale zilei</a>.</p>'}
   </section>
 
   <section>
-    <h2>Cât de bine cunoaște modelul această ligă</h2>
+    <h2 data-i18n="ligi.cunoaste">Cât de bine cunoaște modelul această ligă</h2>
 {profil_calibrare(cal, nume, sum(1 for m in meciuri if not m.get("calibrated")), n_meci)}
-    <p class="muted">Metoda completă, cu ce corectăm și ce nu, e pe pagina de <a href="../metodologie.html">metodologie</a>.</p>
+    <p class="muted" data-i18n="ligi.metoda">Metoda completă, cu ce corectăm și ce nu, e pe pagina de <a href="../metodologie.html">metodologie</a>.</p>
   </section>
 
   <section>
-    <h2>Ce a ieșit până acum în {e(nume)}</h2>
+    <h2 data-i18n="ligi.iesit" data-i18n-vars='{{"liga":"{e(nume)}"}}'>Ce a ieșit până acum în {e(nume)}</h2>
 {jurnal_liga(zile, tara, liga)}
   </section>
 
@@ -566,29 +566,29 @@ def pagina_hub(randuri: list[dict]) -> str:
     )
     corp = f"""  <section class="intro">
     <div class="hero">
-      <h1 class="hero-title">Predicții fotbal pe ligi</h1>
-      <p class="hero-sub">Câte o pagină pentru fiecare campionat urmărit îndeaproape: meciurile următoare cu probabilități calibrate, profilul de calibrare al ligii și ce a ieșit din predicțiile deja rezolvate.</p>
-      <p class="hero-free">5 predicții complete gratuit în fiecare zi · fără cont · fără reclame · zero link-uri către case de pariuri</p>
+      <h1 class="hero-title" data-i18n="ligi.index.h1">Predicții fotbal pe ligi</h1>
+      <p class="hero-sub" data-i18n="ligi.index.sub">Câte o pagină pentru fiecare campionat urmărit îndeaproape: meciurile următoare cu probabilități calibrate, profilul de calibrare al ligii și ce a ieșit din predicțiile deja rezolvate.</p>
+      <p class="hero-free" data-i18n="ligi.hero.free">5 predicții complete gratuit în fiecare zi · fără cont · fără reclame · zero link-uri către case de pariuri</p>
     </div>
     <p>În acest moment sunt <strong>{total}</strong> meciuri programate în următoarele {FEREASTRA_ZILE} zile pe cele <strong>{len(cu_meci)}</strong> ligi cu program activ, din {len(randuri)} urmărite. Modelul analizează zilnic mult mai multe competiții — lista completă, cu filtre, e pe <a href="../index.html">pagina principală</a>.</p>
   </section>
 
   <section>
-    <h2>Toate ligile urmărite</h2>
+    <h2 data-i18n="ligi.toate">Toate ligile urmărite</h2>
     <div class="calibration-card">
       <table>
-        <thead><tr><th>Ligă</th><th>Meciuri în {FEREASTRA_ZILE} zile</th><th>Calibrare</th></tr></thead>
+        <thead><tr><th data-i18n="ligi.th.liga">Ligă</th><th data-i18n="ligi.th.meciuri" data-i18n-vars='{{"z":"{FEREASTRA_ZILE}"}}'>Meciuri în {FEREASTRA_ZILE} zile</th><th data-i18n="ligi.th.cal">Calibrare</th></tr></thead>
         <tbody>
 {lista}
         </tbody>
       </table>
     </div>
-    <p class="muted">„Calibrare" arată dacă profilul de goluri al ligii e validat separat, pe minimum 80 de meciuri de backtest, cu abatere sub ±10%. Ligile fără profil propriu folosesc calibrarea globală.</p>
+    <p class="muted" data-i18n="ligi.nota.cal">„Calibrare" arată dacă profilul de goluri al ligii e validat separat, pe minimum 80 de meciuri de backtest, cu abatere sub ±10%. Ligile fără profil propriu folosesc calibrarea globală.</p>
   </section>
 
   <section>
-    <h2>Arhiva pe zile</h2>
-    <p>Fiecare zi din jurnal are pagina ei: ce s-a prezis dimineața și ce a ieșit după meciuri, inclusiv predicțiile ratate. <a href="arhiva/index.html">Vezi arhiva</a>.</p>
+    <h2 data-i18n="ligi.arhiva.h">Arhiva pe zile</h2>
+    <p data-i18n="ligi.arhiva.p">Fiecare zi din jurnal are pagina ei: ce s-a prezis dimineața și ce a ieșit după meciuri, inclusiv predicțiile ratate. <a href="arhiva/index.html">Vezi arhiva</a>.</p>
   </section>
 
   <p class="pro-disclaimer">Probabilități calibrate empiric · informativ · nu sfat de pariere · 18+</p>
@@ -637,8 +637,8 @@ def pagina_zi(zi: dict) -> str:
                  "paginii. Reveniți după ce se joacă meciurile.")
     corp = f"""  <section class="intro">
     <div class="hero">
-      <h1 class="hero-title">Predicții fotbal {data_ro(d)}</h1>
-      <p class="hero-sub">Predicțiile publicate în dimineața acelei zile, exact cum au fost înghețate, alături de rezultatul real.</p>
+      <h1 class="hero-title" data-i18n="ligi.zi.h1" data-i18n-vars='{{"data":"<span data-date=\"{d}\">{data_ro(d)}</span>"}}'>Predicții fotbal <span data-date="{d}">{data_ro(d)}</span></h1>
+      <p class="hero-sub" data-i18n="ligi.zi.sub">Predicțiile publicate în dimineața acelei zile, exact cum au fost înghețate, alături de rezultatul real.</p>
     </div>
     <p>{antet}</p>
   </section>

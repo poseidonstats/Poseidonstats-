@@ -178,7 +178,7 @@ def shell(titlu: str, descriere: str, canonical: str, corp: str, sus: str = "../
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://gc.zgo.at; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://poseidonstats.goatcounter.com https://poseidon-members.poseidonstats.workers.dev; font-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://gc.zgo.at; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://poseidonstats.goatcounter.com https://poseidon-members.poseidonstats.workers.dev; font-src 'self'; base-uri 'self'; form-action 'self'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <title>{H.escape(titlu)}</title>
 <meta name="description" content="{H.escape(descriere, quote=True)}">
@@ -238,7 +238,7 @@ def _p(s: str) -> str:
 def html_analiza(item: dict, v: dict, generat: str) -> str:
     m = item["match"]; p = parseaza(item["analysis"]); rez = v["rez"]
     liga = H.escape(m.get("league", "")) + (f" ({H.escape(m['country'])})" if m.get("country") else "")
-    scor = f"<strong>rezultat final {rez['gh']}-{rez['ga']}</strong>" if rez else "<em>fără rezultat final în bază</em>"
+    scor = f"<strong data-i18n=\"arhiva.rezfinal\" data-i18n-vars='{{\"s\":\"{rez['gh']}-{rez['ga']}\"}}'>rezultat final {rez['gh']}-{rez['ga']}</strong>" if rez else "<em data-i18n=\"arhiva.fararez\">fără rezultat final în bază</em>"
     ora = generat[11:16] if len(generat) >= 16 else ""
     cifre = f"1 {m.get('p_home')}% · X {m.get('p_draw')}% · 2 {m.get('p_away')}% · Peste 1.5 {m.get('over15')}% · Peste 2.5 {m.get('over25')}% · GG {m.get('btts')}% · scor probabil {H.escape(str(m.get('score', '')))}"
     picks_html = "".join(f"<li>{H.escape(pk['tip'])}: <strong>{_inline(pk['piata'])}</strong>" + (f" — {pk['prob']}%" if pk.get("prob") is not None else "") + (f" — {_inline(pk['motiv'])}" if pk.get("motiv") else "") + "</li>" for pk in v["picks"])
@@ -246,31 +246,31 @@ def html_analiza(item: dict, v: dict, generat: str) -> str:
     if rez:
         rand = []
         for pk in v["picks"]:
-            ok = pk.get("ok"); semn = "✅ a ieșit" if ok else ("❌ nu a ieșit" if ok is False else "– neevaluabil din scor")
+            ok = pk.get("ok"); semn = '<span data-i18n="arhiva.semn.da">✅ a ieșit</span>' if ok else ('<span data-i18n="arhiva.semn.nu">❌ nu a ieșit</span>' if ok is False else '<span data-i18n="arhiva.semn.neev">– neevaluabil din scor</span>')
             rand.append(f"<tr><td>{H.escape(pk['tip'])}</td><td>{_inline(pk['piata'])}</td><td>{'' if pk.get('prob') is None else str(pk['prob']) + '%'}</td><td>{semn}</td></tr>")
         mg = v["model_goluri"]; pr = v["p_rezultat"]
         extra = []
         if mg:
-            extra.append(f"Goluri: modelul aștepta <strong>{mg[0]:.1f}</strong>, au fost <strong>{mg[1]}</strong>.")
+            extra.append(f"<span data-i18n=\"arhiva.goluri\" data-i18n-vars='{{\"a\":\"{mg[0]:.1f}\",\"b\":\"{mg[1]}\"}}'>Goluri: modelul aștepta <strong>{mg[0]:.1f}</strong>, au fost <strong>{mg[1]}</strong>.</span>")
         if pr and pr[1] is not None:
-            extra.append(f"Rezultat 1X2: <strong>{pr[0]}</strong>, cu <strong>{pr[1]}%</strong> în model.")
+            extra.append(f"<span data-i18n=\"arhiva.rez1x2\" data-i18n-vars='{{\"r\":\"{pr[0]}\",\"p\":\"{pr[1]}\"}}'>Rezultat 1X2: <strong>{pr[0]}</strong>, cu <strong>{pr[1]}%</strong> în model.</span>")
         ver = f"""
       <div class="pro-verificare">
-        <h4>🔎 Verificarea de a doua zi · {rez['gh']}-{rez['ga']}{f" (pauză {rez['hth']}-{rez['hta']})" if rez.get('hth') is not None else ''}</h4>
-        <div class="table-wrap"><table class="audit-table"><thead><tr><th>Pick</th><th>Piața</th><th>Anunțat</th><th>Rezultat</th></tr></thead><tbody>{''.join(rand) or '<tr><td colspan="4">Analiza nu are pick-uri în formatul standard.</td></tr>'}</tbody></table></div>
+        <h4 data-i18n="arhiva.verif.h" data-i18n-vars='{{"scor":"{rez['gh']}-{rez['ga']}{f" ({rez['hth']}-{rez['hta']})" if rez.get('hth') is not None else ''}"}}'>Verificarea de a doua zi · {rez['gh']}-{rez['ga']}{f" (pauză {rez['hth']}-{rez['hta']})" if rez.get('hth') is not None else ''}</h4>
+        <div class="table-wrap"><table class="audit-table"><thead><tr><th data-i18n="arhiva.th.pick">Pick</th><th data-i18n="arhiva.th.piata">Piața</th><th data-i18n="arhiva.th.anuntat">Anunțat</th><th data-i18n="arhiva.th.rezultat">Rezultat</th></tr></thead><tbody>{''.join(rand) or '<tr><td colspan="4">Analiza nu are pick-uri în formatul standard.</td></tr>'}</tbody></table></div>
         <p>{' '.join(extra)}</p>
-        <p class="pro-lectie"><strong>Lecția:</strong> {H.escape(v['lectie'])}</p>
+        <p class="pro-lectie"><strong data-i18n="arhiva.lectia">Lecția:</strong> {H.escape(v['lectie'])}</p>
       </div>"""
     return f"""
     <article class="pro-card pro-card-full" id="m{m['fixture_id']}">
-      <div class="pro-card-head">💎 {H.escape(m['home'])} – {H.escape(m['away'])} · {liga} · {_data_ro(m.get('date', ''))} · {scor}</div>
+      <div class="pro-card-head">{H.escape(m['home'])} – {H.escape(m['away'])} · {liga} · <span data-date="{m.get('date', '')[:10]}">{_data_ro(m.get('date', ''))}</span> · {scor}</div>
       <div class="pro-visible">
-        <p class="muted">Model înainte de meci: {cifre}.{f' Analiza scrisă la {ora}, în dimineața meciului; reprodusă neschimbată.' if ora else ' Reprodusă neschimbată.'}</p>
-        <p><strong>⚡ Verdict:</strong> {_p(p['verdict'])}</p>
-        <p><strong>📊 Context:</strong> {_p(p['context'])}</p>
-        <p><strong>🧮 Modelul vs realitate:</strong> {_p(p['model'])}</p>
-        <p><strong>🎯 Piețele alese:</strong></p><ul>{picks_html or '<li class="muted">—</li>'}</ul>
-        <p><strong>👁️ De urmărit:</strong> {_p(p['urmarit'])}</p>{ver}
+        <p class="muted" data-i18n="arhiva.model.inainte" data-i18n-vars='{{"cifre":"{cifre}","ora":"{ora or "—"}"}}'>Model înainte de meci: {cifre}.{f' Analiza scrisă la {ora}, în dimineața meciului; reprodusă neschimbată.' if ora else ' Reprodusă neschimbată.'}</p>
+        <p><strong data-i18n="arhiva.sect.verdict">Verdict:</strong> {_p(p['verdict'])}</p>
+        <p><strong data-i18n="arhiva.sect.context">Context:</strong> {_p(p['context'])}</p>
+        <p><strong data-i18n="arhiva.sect.model">Modelul vs realitate:</strong> {_p(p['model'])}</p>
+        <p><strong data-i18n="arhiva.sect.piete">Piețele alese:</strong></p><ul>{picks_html or '<li class="muted">—</li>'}</ul>
+        <p><strong data-i18n="arhiva.sect.urmarit">De urmărit:</strong> {_p(p['urmarit'])}</p>{ver}
       </div>
     </article>"""
 
@@ -305,44 +305,44 @@ def html_index(zile: list[dict], tot: dict, pe_zi: list[dict], azi: str) -> str:
             continue
         hit = d["k"] / d["n"]; wlo = wilson_lo(d["k"], d["n"]); medie = d["sp"] / d["np"] if d["np"] else None
         rows += f"<tr><td>{t}</td><td>{d['n']}</td><td>{hit * 100:.1f}%</td><td>{wlo * 100:.1f}%</td><td>{'' if medie is None else f'{medie:.1f}%'}</td><td>{'' if medie is None else f'{(hit * 100 - medie):+.1f} pp'}</td></tr>"
-    zile_html = "".join(f"<li><a href=\"{r['zi']}.html\">{_data_ro(r['zi'])}</a> — {r['n']} analize" + (f", bază {r['baza'][0]}/{r['baza'][1]}, principal {r['princ'][0]}/{r['princ'][1]}" if r["rez"] else ", rezultate încă nerezolvate") + "</li>" for r in reversed(pe_zi))
+    zile_html = "".join(f"<li><a href=\"{r['zi']}.html\"><span data-date=\"{r['zi']}\">{_data_ro(r['zi'])}</span></a> — <span data-i18n=\"arhiva.zi.linie\" data-i18n-vars='{{\"n\":\"{r['n']}\"}}'>{r['n']} analize</span>" + (f", <span data-i18n=\"arhiva.zi.baza\" data-i18n-vars='{{\"a\":\"{r['baza'][0]}/{r['baza'][1]}\",\"b\":\"{r['princ'][0]}/{r['princ'][1]}\"}}'>bază {r['baza'][0]}/{r['baza'][1]}, principal {r['princ'][0]}/{r['princ'][1]}</span>" if r["rez"] else ", <span data-i18n=\"arhiva.zi.nerez\">rezultate încă nerezolvate</span>") + "</li>" for r in reversed(pe_zi))
     n_tot = sum(len(z["items"]) for z in zile)
     corp = f"""
   <section class="intro">
-    <h1>💎 Analizele Pro, arhivate și verificate</h1>
-    <p>Aici sunt <strong>toate analizele Pro de până ieri</strong>, {n_tot} de la {_data_ro(zile[0]['zi'])}, exact cum au fost scrise în dimineața meciului, plus <strong>verificarea de a doua zi</strong> făcută automat din scorul final. Inclusiv cele care au greșit. Analizele de azi sunt pentru membrii Pro, pe <a href="../index.html#abonament">site și Discord</a>.</p>
+    <h1 data-i18n="arhiva.h1">Analizele Pro, arhivate și verificate</h1>
+    <p data-i18n="arhiva.intro" data-i18n-vars='{{"n":"{n_tot}","de_la":"<span data-date=\"{zile[0]['zi']}\">{_data_ro(zile[0]['zi'])}</span>"}}'>Aici sunt <strong>toate analizele Pro de până ieri</strong>, {n_tot} de la <span data-date="{zile[0]['zi']}">{_data_ro(zile[0]['zi'])}</span>, exact cum au fost scrise în dimineața meciului, plus <strong>verificarea de a doua zi</strong> făcută automat din scorul final. Inclusiv cele care au greșit. Analizele de azi sunt pentru membrii Pro, pe <a href="../index.html#abonament">site și Discord</a>.</p>
   </section>
 
   <section class="plans-pro-detail">
-    <h2>Ce primești pentru 20 $ pe lună</h2>
-    <p>Nu cumperi o probabilitate diferită de cea publică: modelul și calibrarea sunt aceleași pentru toată lumea. Cumperi munca din jurul cifrei. În fiecare dimineață alegem meciurile la care contextul merită citit și, pentru fiecare, primești:</p>
-    <ul>
+    <h2 data-i18n="plans.get.h">Ce primești pentru 20 $ pe lună</h2>
+    <p data-i18n="plans.get.p">Nu cumperi o probabilitate diferită de cea publică: modelul și calibrarea sunt aceleași pentru toată lumea. Cumperi munca din jurul cifrei. În fiecare dimineață alegem meciurile la care contextul merită citit și, pentru fiecare, primești:</p>
+    <div data-i18n="plans.get.list"><ul>
       <li>ce spune modelul și cât de puternică e probabilitatea, cu banda ei istorică</li>
       <li>forma recentă cu scoruri, clasamentul, absențele relevante, H2H când spune ceva</li>
       <li>unde contextul <strong>susține</strong> modelul și unde <strong>îl contrazice</strong></li>
       <li>capcanele pe care modelul numeric nu le vede</li>
       <li>pick-urile analizei: Bază, Principal, Curajos, fiecare cu probabilitatea anunțată</li>
-    </ul>
-    <p>A doua zi revenim la aceeași analiză: ce am spus înainte de meci rămâne neschimbat, arătăm unde modelul și contextul au avut dreptate, unde au greșit și unde rezultatul a fost pur și simplu zgomot. Nu promitem profit. Nu vindem „ponturi sigure”. Nu schimbăm predicțiile după rezultat.</p>
-    <h3>O zi în Pro</h3>
-    <ol>
+    </ul></div>
+    <p data-i18n="plans.get.after">A doua zi revenim la aceeași analiză: ce am spus înainte de meci rămâne neschimbat, arătăm unde modelul și contextul au avut dreptate, unde au greșit și unde rezultatul a fost pur și simplu zgomot. Nu promitem profit. Nu vindem „ponturi sigure”. Nu schimbăm predicțiile după rezultat.</p>
+    <h3 data-i18n="plans.day.h">O zi în Pro</h3>
+    <div data-i18n="plans.day.list"><ol>
       <li><strong>05:30</strong> — predicțiile zilei sunt generate și înghețate.</li>
       <li><strong>07:30</strong> — apar analizele scrise pentru meciurile alese, pe site (cu contul Patreon) și pe Discord.</li>
       <li><strong>În analiză</strong> — model + context + contradicții + capcane + pick-uri cu probabilitate.</li>
       <li><strong>A doua zi</strong> — scorul final și verificarea analizei, aici, public.</li>
-    </ol>
-    <p class="plans-steps"><a class="plan-btn plan-btn-pro" href="../index.html#abonament">💎 Alege Pro — 20 $/lună</a> <span class="muted">Vrei doar cifrele? Basic, 5 $/lună.</span></p>
+    </ol></div>
+    <p class="plans-steps"><a class="plan-btn plan-btn-pro" href="../index.html#abonament" data-i18n="plans.pro.btn">Încearcă Pro gratuit 7 zile</a> <span class="muted" data-i18n="unlock.alt">Vrei doar cifrele? Basic, 5 $/lună.</span></p>
   </section>
 
   <section class="audit">
-    <h2>Bilanțul pick-urilor, până la {_data_ro(azi)}</h2>
-    <p>Fiecare pick e judecat automat din scorul final; cele care nu pot fi judecate din scor (de exemplu formulări libere) nu intră. „Anunțat” e media probabilității scrise în analiză; „diferența” e cât de des a ieșit față de cât am anunțat — zero ar fi calibrare perfectă. Interval Wilson 95 % (limita de jos) lângă fiecare rată, pentru că N contează mai mult decât procentul.</p>
-    <div class="table-wrap"><table class="audit-table"><thead><tr><th>Pick</th><th>N</th><th>A ieșit</th><th>Wilson jos</th><th>Anunțat</th><th>Diferența</th></tr></thead><tbody>{rows}</tbody></table></div>
-    <p class="muted">Bază = piața cu probabilitatea cea mai mare din model; Principal = pick-ul analizei; Curajos = pick de cotă, cu risc declarat. Bilanțul e pe pick-uri, nu pe bani: o rată mare pe probabilități mari nu înseamnă profit.</p>
+    <h2 data-i18n="arhiva.bilant.h" data-i18n-vars='{{"data":"<span data-date=\"{azi}\">{_data_ro(azi)}</span>"}}'>Bilanțul pick-urilor, până la <span data-date="{azi}">{_data_ro(azi)}</span></h2>
+    <p data-i18n="arhiva.bilant.p">Fiecare pick e judecat automat din scorul final; cele care nu pot fi judecate din scor (de exemplu formulări libere) nu intră. „Anunțat” e media probabilității scrise în analiză; „diferența” e cât de des a ieșit față de cât am anunțat — zero ar fi calibrare perfectă. Interval Wilson 95 % (limita de jos) lângă fiecare rată, pentru că N contează mai mult decât procentul.</p>
+    <div class="table-wrap"><table class="audit-table"><thead><tr><th data-i18n="arhiva.th.pick">Pick</th><th>N</th><th data-i18n="arhiva.th.iesit">A ieșit</th><th data-i18n="arhiva.th.wlo">Wilson jos</th><th data-i18n="arhiva.th.anuntat">Anunțat</th><th data-i18n="arhiva.th.dif">Diferența</th></tr></thead><tbody>{rows}</tbody></table></div>
+    <p class="muted" data-i18n="arhiva.bilant.note">Bază = piața cu probabilitatea cea mai mare din model; Principal = pick-ul analizei; Curajos = pick de cotă, cu risc declarat. Bilanțul e pe pick-uri, nu pe bani: o rată mare pe probabilități mari nu înseamnă profit.</p>
   </section>
 
   <section>
-    <h2>Zilele arhivate</h2>
+    <h2 data-i18n="arhiva.zile.h">Zilele arhivate</h2>
     <ul class="pro-zile">{zile_html}</ul>
   </section>
 """
@@ -359,17 +359,17 @@ def html_zi(z: dict, rez: dict, prev: str | None, nxt: str | None) -> str:
                 var.append(f'<div data-lang="{cod}" hidden>{html_analiza({**it, "analysis": it[f"analysis_{cod}"]}, v, z["generat"])}</div>')
         return f'<div data-lang-grup>{"".join(var)}</div>' if len(var) > 1 else ro
     arts = "".join(_multi(it) for it in z["items"])
-    nav = " · ".join(x for x in [f'<a href="{prev}.html">← {_data_ro(prev)}</a>' if prev else "", '<a href="index.html">toate zilele</a>', f'<a href="{nxt}.html">{_data_ro(nxt)} →</a>' if nxt else ""] if x)
+    nav = " · ".join(x for x in [f'<a href="{prev}.html">← {_data_ro(prev)}</a>' if prev else "", '<a href="index.html" data-i18n="arhiva.toate">toate zilele</a>', f'<a href="{nxt}.html">{_data_ro(nxt)} →</a>' if nxt else ""] if x)
     n_rez = sum(1 for it in z["items"] if rez.get(it["match"]["fixture_id"]))
     corp = f"""
   <section class="intro">
-    <h1>💎 Analizele Pro din {_data_ro(z['zi'])}</h1>
-    <p>{len(z['items'])} analize scrise în dimineața zilei, reproduse neschimbate; {n_rez} cu rezultat final și verificarea de a doua zi. <a href="index.html">Ce e Pro și bilanțul tuturor pick-urilor →</a></p>
+    <h1 data-i18n="arhiva.zi.h1" data-i18n-vars='{{"data":"<span data-date=\"{z['zi']}\">{_data_ro(z['zi'])}</span>"}}'>Analizele Pro din <span data-date="{z['zi']}">{_data_ro(z['zi'])}</span></h1>
+    <p data-i18n="arhiva.zi.p" data-i18n-vars='{{"n":"{len(z['items'])}","rez":"{n_rez}"}}'>{len(z['items'])} analize scrise în dimineața zilei, reproduse neschimbate; {n_rez} cu rezultat final și verificarea de a doua zi. <a href="index.html">Ce e Pro și bilanțul tuturor pick-urilor →</a></p>
     <p class="muted">{nav}</p>
   </section>
   {arts}
   <p class="muted">{nav}</p>
-  <p class="pro-disclaimer">Exemple reale, pe date înghețate. Statistic · informativ · nu sfat de pariere · 18+</p>
+  <p class="pro-disclaimer" data-i18n="arhiva.disclaimer">Exemple reale, pe date înghețate. Statistic · informativ · nu sfat de pariere · 18+</p>
 """
     primele = ", ".join(f"{it['match']['home']} – {it['match']['away']}" for it in z["items"][:3])
     return shell(f"Analize Pro {_data_ro(z['zi'])}, cu rezultate | POSEIDON", f"{len(z['items'])} analize Pro din {_data_ro(z['zi'])} ({primele}…), textul de dinaintea meciului neschimbat, scorul final și verificarea fiecărui pick.", f"{BASE}/analize/{z['zi']}.html", corp)
