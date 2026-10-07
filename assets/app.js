@@ -123,7 +123,7 @@ async function loadPredictions() {
   }
   return fetchJSON(PRED_URL);
 }
-const SCRIPT_V = "20261007b";
+const SCRIPT_V = "20261007c";
 // 7 oct 2026 — evenimente în GoatCounter (fără cookie, fără date personale): clicuri pe butoanele de abonament/trial/login și
 // dacă vizitatorul a ajuns la secțiunea de abonament. Răspund la „250 de vizite și niciun abonat”: nu ajung la ofertă, sau ajung și pleacă?
 function _gcEvent(nume) {
@@ -1250,7 +1250,10 @@ async function renderProAnalize() {
   if (!M || !M.MEMBERS_API || !el || M.tier() !== "pro") return;
   // 7 oct 2026: pentru Pro, analizele stau EXACT unde se uită membrul — în secțiunea „Exemplu Pro”, în locul listei cu lacăt
   // „Încă N analize azi în Pro” (Andreea, logată Pro, nu le-a găsit: secțiunea era după lista de 164 de meciuri).
-  const loc = document.querySelector(".pro-today"); if (loc) loc.replaceWith(el);
+  // 7 oct 2026 (Andreea): pentru Pro, analizele sunt PRIMA secțiune a paginii — înaintea exemplului și a listei; lista cu lacăt dispare
+  const loc = document.querySelector(".pro-today"); if (loc) loc.remove();
+  const prima = document.querySelector("main.container > section, main.container > *"); const main = document.querySelector("main.container");
+  if (main && prima && prima !== el) main.insertBefore(el, prima);
   el.innerHTML = `<h2>${tt("pro.azi.h2", "💎 Analizele tale Pro de azi")}</h2><p class="muted">…</p>`;
   const azi = new Date().toLocaleDateString("sv-SE", { timeZone: "Europe/Bucharest" });
   try {

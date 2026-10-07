@@ -1108,6 +1108,8 @@ footer a { color: #93c5fd; }
 .members-hint { color: rgba(255,255,255,0.92); flex-basis: 100%; }
 .members-sub { padding: 6px 12px; border-radius: 999px; background: #facc15; color: #1e293b; text-decoration: none; font-weight: 700; }
 .pro-analize:empty { display: none; }
+.pro-analize { margin: 18px 0 28px; }
+.pro-analize h2 { margin: 0 0 10px; }
 .pro-card-full { margin: 12px 0; }
 
 /* 29 sept 2026 — audit statistic pe track record */
