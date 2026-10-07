@@ -55,7 +55,8 @@ function applyI18n() {
   document.querySelectorAll("[data-lang]").forEach(el => { el.hidden = el.getAttribute("data-lang") !== LANG; });
   document.querySelectorAll("[data-lang-grup]").forEach(g => { if (!g.querySelector('[data-lang="' + LANG + '"]')) { const ro = g.querySelector('[data-lang="ro"]'); if (ro) ro.hidden = false; } });
   if (!I18N) return;
-  for (let trecere = 0; trecere < 2; trecere++) document.querySelectorAll("[data-i18n]").forEach(el => {   // a 2-a trecere: span-uri injectate prin {variabile}
+  for (let trecere = 0; trecere < 2; trecere++) document.querySelectorAll("[data-i18n]").forEach(el => {   // a 2-a trecere: DOAR span-urile injectate prin {variabile}
+    if (trecere === 1 && !(el.parentElement && el.parentElement.closest("[data-i18n]"))) return;
     const key = el.getAttribute("data-i18n");
     let v = t(key); if (v === key) return;
     // 7 oct 2026: variabile {x} (data-i18n-vars, JSON) — aceeași convenție ca i18n-lite pe paginile generate
@@ -78,8 +79,13 @@ function applyI18n() {
   document.documentElement.lang = LANG;
 }
 
+let _i18nGataResolve = null;
+const I18N_READY = new Promise(r => { _i18nGataResolve = r; });
+// așteaptă i18n.json cel mult 2,5 s — dacă initI18n nu rulează (pagină fără auto-init), randarea nu rămâne blocată
+function i18nGata() { return I18N ? Promise.resolve() : Promise.race([I18N_READY, new Promise(r => setTimeout(r, 2500))]); }
 async function initI18n() {
   I18N = await fetchJSON(I18N_URL);
+  if (_i18nGataResolve) _i18nGataResolve();
   LANG = detectLang();
   applyI18n();
   mountLangSwitcher();
@@ -147,7 +153,7 @@ async function loadPredictions() {
   }
   return fetchJSON(PRED_URL);
 }
-const SCRIPT_V = "20261007s";
+const SCRIPT_V = "20261007t";
 // 7 oct 2026 — evenimente în GoatCounter (fără cookie, fără date personale): clicuri pe butoanele de abonament/trial/login și
 // dacă vizitatorul a ajuns la secțiunea de abonament. Răspund la „250 de vizite și niciun abonat”: nu ajung la ofertă, sau ajung și pleacă?
 function _gcEvent(nume) {
@@ -554,6 +560,7 @@ function simUpdate() {
 }
 
 async function renderSimulator() {
+  await i18nGata();
   const genEl = document.getElementById("sim-gen-result");
   const el = document.getElementById("sim-matches");
   if (!genEl && !el) return;
@@ -1084,13 +1091,14 @@ function _scopeBT(scope) {
   return (/^toate/i.test(String(scope || "")) ? tt("tr.bt.subset.all", "Sub-set: toate cele {n} meciuri.") : tt("tr.bt.subset.top", "Sub-set: {n} meciuri pe sub-set restrâns (calibrare strictă verificată).")).replace("{n}", n);
 }
 async function renderTrackRecord() {
+  await i18nGata();
   const calib = await fetchJSON(CALIB_URL);
   if (!calib) {
     document.getElementById("calibration-tables").innerHTML =
       `<p class="muted">${tt("tr.bt.fallback", "Calibrarea backtest se publică după prima rulare completă.")}</p>`;
   } else {
     const meta = calib.meta || {};
-    let html = `<p class="muted">${tt("tr.bt.sample", "Sample: <strong>{n}</strong> meciuri TEST 2026 (ratings înghețate la 31 dec 2025, train/test split strict, zero leakage).").replace("{n}", nUnits(meta.n_total || 0) || "—")}</p>`;
+    let html = `<p class="muted">${tt("tr.bt.sample", "Sample: <strong>{n}</strong> meciuri TEST 2026 (ratings înghețate la 31 dec 2025, train/test split strict, zero leakage).").replace("{n}", meta.n_total ? new Intl.NumberFormat(_loc()).format(meta.n_total) : "—")}</p>`;
     for (const market of (calib.markets || [])) {
       html += `<div class="calibration-card">
         <h4>${_numePiataBT(market.name)}</h4>
@@ -1178,6 +1186,7 @@ if (document.getElementById("matches")) renderIndex().then(renderProAnalize);
 let _histData = null;
 
 async function renderIstoric() {
+  await i18nGata();
   const data = await fetchJSON(HISTORY_URL);
   if (!data) {
     // history.json indisponibil — empty state onest pe AMBELE secțiuni

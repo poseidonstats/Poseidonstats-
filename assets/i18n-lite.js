@@ -6,7 +6,7 @@
   var L = lang(); var sus = (document.currentScript && document.currentScript.getAttribute("data-sus")) || "";
   function aplica(I) {
     document.documentElement.lang = L;
-    for (var trecere = 0; trecere < 2; trecere++) document.querySelectorAll("[data-i18n]").forEach(function (el) {
+    for (var trecere = 0; trecere < 2; trecere++) document.querySelectorAll("[data-i18n]").forEach(function (el) { if (trecere === 1 && !(el.parentElement && el.parentElement.closest("[data-i18n]"))) return;
       var k = el.getAttribute("data-i18n"); var v = (I[L] && I[L][k]) || (I.ro && I.ro[k]); if (!v) return;
       var vars = el.getAttribute("data-i18n-vars"); if (vars) { try { var o = JSON.parse(vars); Object.keys(o).forEach(function (n) { v = v.split("{" + n + "}").join(o[n]); }); } catch (e) {} }
       el.innerHTML = v;
