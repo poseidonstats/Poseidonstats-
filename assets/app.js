@@ -134,7 +134,7 @@ async function loadPredictions() {
   }
   return fetchJSON(PRED_URL);
 }
-const SCRIPT_V = "20261007j";
+const SCRIPT_V = "20261007k";
 // 7 oct 2026 — evenimente în GoatCounter (fără cookie, fără date personale): clicuri pe butoanele de abonament/trial/login și
 // dacă vizitatorul a ajuns la secțiunea de abonament. Răspund la „250 de vizite și niciun abonat”: nu ajung la ofertă, sau ajung și pleacă?
 function _gcEvent(nume) {
@@ -303,9 +303,12 @@ const LOCKED_PREVIEW = 40;   // câte rânduri blocate desenăm (2775 de noduri 
 // „2775 de meciuri", dar „5 meciuri". Fără asta, textele generate ies agramate.
 // Celelalte limbi nu au regula, deci primesc numărul simplu.
 function nUnits(n) {
-  if (LANG !== "ro") return String(n);
+  // 7 oct 2026: separator de mii după limbă (2.771 în RO/ES/IT, 2,771 în EN) + „de” în RO doar înaintea unui substantiv
+  // (textele care îl folosesc au substantivul imediat după: „2.771 de meciuri în total”, nu „2.771 de în total”)
+  const fmt = new Intl.NumberFormat(LANG === "en" ? "en-GB" : LANG === "es" ? "es-ES" : LANG === "it" ? "it-IT" : "ro-RO").format(n);
+  if (LANG !== "ro") return fmt;
   const r = n % 100;
-  return (r === 0 || r >= 20) ? `${n} de` : String(n);
+  return (r === 0 || r >= 20) ? `${fmt} de` : fmt;
 }
 
 function isLocked(m) {
@@ -335,7 +338,7 @@ function renderLockedMatch(m) {
 function renderUnlockCta(nLocked, nLockedAzi = null) {
   // 1 oct 2026 (după-amiază) — Pro în față (decizia Andreei); dimineață: rescris după cele 5 obiecții (evaluare ChatGPT): ce primești concret, dovada ÎNAINTE de preț, 3 pași după plată, anulare
   const n = nUnits(nLocked); const nAzi = nUnits(nLockedAzi == null ? nLocked : nLockedAzi);
-  const list = tt("unlock.list", "Analizele scrise ale zilei, verificate a doua zi cu scorul real (Pro) · Toate cele {azi} meciuri de azi și {n} pe următoarele 7 zile · Toate probabilitățile (1X2, dublă șansă, goluri, GG, pauză, scor) · Simulator și bilete pe tot setul · Selecția zilei pe Discord").replace("{azi}", nAzi).replace("{n}", n)
+  const list = tt("unlock.list", "Analizele scrise ale zilei, verificate a doua zi cu scorul real (Pro) · Toate cele {azi} meciuri de azi și {n} meciuri pe următoarele 7 zile · Toate probabilitățile (1X2, dublă șansă, goluri, GG, pauză, scor) · Simulator și bilete pe tot setul · Selecția zilei pe Discord").replace("{azi}", nAzi).replace("{n}", n)
     .split(" · ").map(x => `<li>${x}</li>`).join("");
   return `<div class="unlock-cta">
     <div class="unlock-txt"><span class="unlock-icon">🔒</span> ${tt("unlock.h", "<strong>Ai văzut cele 5 predicții gratuite ale zilei.</strong> În spatele lacătului, Pro îți dă analizele scrise ale zilei și toate cifrele; Basic, doar cifrele:")}</div>
@@ -705,7 +708,7 @@ async function renderIndex() {
     const aziRO = new Date().toLocaleDateString("sv-SE", { timeZone: "Europe/Bucharest" });
     const blocateAzi = blocate.filter(m => (m.match_date || "").slice(0, 10) === aziRO).length;
     document.getElementById("match-count").textContent = blocate.length
-      ? tt("freemium.count", "{free} predicții complete, gratuite. Alte {today} meciuri calculate de model pentru azi și {locked} în total pe următoarele 7 zile; le deblochezi pe toate cu Basic, 5 $/lună, intrând cu contul Patreon.")
+      ? tt("freemium.count", "{free} predicții complete, gratuite. Alte {today} meciuri calculate de model pentru azi și {locked} meciuri în total pe următoarele 7 zile; le deblochezi pe toate cu Basic, 5 $/lună, intrând cu contul Patreon.")
           .replace("{free}", deschise.length).replace("{today}", nUnits(blocateAzi)).replace("{locked}", nUnits(blocate.length))
       : `${deschise.length} meciuri afișate (din ${matches.length} totale).`;
 
