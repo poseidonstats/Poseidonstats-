@@ -133,10 +133,10 @@ def build_section() -> str:
     lines = [
         START,
         '  <section class="daily-static" id="repere-azi">',
-        f"    <h2>⭐ Predicții fotbal azi — {date_ro}</h2>",
+        f"    <h2 data-i18n=\"repere.h2\" data-i18n-vars='{{\"data\":\"<span data-date=\\\"{d.date().isoformat()}\\\">{date_ro}</span>\"}}'>Predicții fotbal azi — <span data-date=\"{d.date().isoformat()}\">{date_ro}</span></h2>",
     ]
     if picks:
-        lines.append(f"    <p>Repere calibrate din cele {n_today} meciuri analizate azi de model "
+        lines.append(f"    <p data-i18n=\"repere.p\" data-i18n-vars='{{\"n\":\"{n_today}\"}}'>Repere calibrate din cele {n_today} meciuri analizate azi de model "
                      "(lista completă, cu filtre, mai jos):</p>")
         lines.append("    <ul>")
         lines += ["      " + p for p in picks]
@@ -252,7 +252,7 @@ def build_proof_section() -> str | None:
         'bucket cu bucket: <a href="track-record.html">track record</a> · '
         '<a href="istoric.html">istoric zi cu zi</a>.</p>',
         _metrici_paragraf(),
-        f'    <p class="proof-asof">Cifre din jurnalul forward, actualizate {date_ro} · '
+        f'    <p class="proof-asof" data-i18n="proof.asof" data-i18n-vars=\'{{"data":"<span data-date=\\"{d.date().isoformat()}\\">{date_ro}</span>"}}\'>Cifre din jurnalul forward, actualizate <span data-date="{d.date().isoformat()}">{date_ro}</span> · '
         'informativ · nu sfat de pariere · 18+</p>',
         '  </section>',
         "  " + PROOF_END,

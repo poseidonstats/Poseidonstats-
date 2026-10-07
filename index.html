@@ -185,7 +185,7 @@ Statistici informative. Modelul poate greși. Verifică sursa. 18+.
 
     <!-- PRO_SAMPLE_CARD_START -->
     <div class="pro-card">
-      <div class="pro-card-head">💎 Maroons – Lugazi · Premier League (Uganda) · 7 octombrie 2026 · <strong>publicată la 07:22, înainte de meci</strong></div>
+      <div class="pro-card-head">Maroons – Lugazi · Premier League (Uganda) · <span data-date="2026-10-07">7 octombrie 2026</span> · <strong data-i18n="pro.card.publicata" data-i18n-vars='{"ora":"07:22"}'>publicată la 07:22, înainte de meci</strong></div>
       <div class="pro-visible">
         <p><strong>⚡ Verdict:</strong> Meci strâns, cu plafon de goluri scăzut — ambele echipe trag din zona de jos a clasamentului și niciuna nu produce volum ofensiv. Modelul vede Maroons favorită, iar singurul argument tare în spate e H2H-ul, nu forma actuală.</p>
         <p><strong>📊 Context:</strong> Maroons stau pe <strong>12 (3p, 5:6)</strong>, Lugazi pe <strong>7 (6p, 4:6)</strong> — Lugazi are dublu punctaj. Forma e aproape identică: Maroons 2V-3Î (V 3-1 depl., V 1-0 depl., dar 3 înfrângeri, 2 acasă), Lugazi 2V-3Î (V 1-0 depl., V 2-1 acasă, Î 0-2 și Î 0-1 acasă). H2H: <strong>4/4 pentru Maroons</strong> (0-1, 3-0, 0-1, 1-0) — 3 din 4 terminate cu maximum 1 gol încasat de Maroons. Nicio absență raportată.</p>
@@ -195,17 +195,17 @@ Statistici informative. Modelul poate greși. Verifică sursa. 18+.
         <p class="muted">Rezultatul și verificarea pick-urilor apar mâine dimineață, în <a href="analize/index.html">arhiva analizelor</a>.</p>
       </div>
     </div>
-    <p class="pro-ieri">Ieri, aici: <strong>Argentina – Benin</strong>, 3-0 — bază <strong>1X Argentina (model: 1X 99%, adică 1-ul singur 91%)</strong> ✅ a ieșit. <a href="analize/2026-10-06.html#m1640517">Verificarea de a doua zi →</a></p>
+    <p class="pro-ieri" data-i18n="pro.ieri.cu" data-i18n-vars='{"meci": "Argentina – Benin", "scor": "3-0", "baza": "<span data-i18n=\"pro.ieri.baza.da\" data-i18n-vars=&#39;{\"b\":\"1X Argentina (model: 1X 99%, adică 1-ul singur 91%)\"}&#39;> — bază <strong>1X Argentina (model: 1X 99%, adică 1-ul singur 91%)</strong> ✅ a ieșit</span>", "zi": "2026-10-06", "fid": "1640517"}'>Ieri, aici: <strong>Argentina – Benin</strong>, 3-0 — bază <strong>1X Argentina (model: 1X 99%, adică 1-ul singur 91%)</strong> ✅ a ieșit. <a href="analize/2026-10-06.html#m1640517">Verificarea de a doua zi →</a></p>
     <!-- PRO_SAMPLE_CARD_END -->
     <!-- PRO_TODAY_LIST_START -->
     <div class="pro-today">
-      <p class="pro-today-head">🔒 <strong>Încă 3 analize azi în Pro</strong>, cu context verificat (clasament, formă, H2H, absențe) — pe site și pe Discord, dimineața.</p>
+      <p class="pro-today-head" data-i18n="pro.today.head" data-i18n-vars='{"n":"3"}'>🔒 <strong>Încă 3 analize azi în Pro</strong>, cu context verificat (clasament, formă, H2H, absențe) — pe site și pe Discord, dimineața.</p>
       <ul class="pro-today-list">
         <li>🔒 <strong>Mexico – Chile</strong> · Friendlies (World) · 05:30</li>
         <li>🔒 <strong>Gosport Borough – Poole Town</strong> · Non League Premier - Southern South (England) · 21:45</li>
         <li>🔒 <strong>Avro – Lancaster City</strong> · Non League Premier - Northern (England) · 21:45</li>
       </ul>
-      <p class="pro-today-stat muted">În ultimele 30 de zile: în medie <strong>11 analize Pro pe zi</strong>, minim 4, maxim 12.</p>
+      <p class="pro-today-stat muted" data-i18n="pro.today.stat" data-i18n-vars='{"z":"30","m":"11","mi":"4","ma":"12"}'>În ultimele 30 de zile: în medie <strong>11 analize Pro pe zi</strong>, minim 4, maxim 12.</p>
     </div>
     <!-- PRO_TODAY_LIST_END -->
     <div class="plans-pro-detail">
@@ -246,7 +246,7 @@ Statistici informative. Modelul poate greși. Verifică sursa. 18+.
     <p class="proof-note" data-i18n="proof.note">Rândul roșu e aici intenționat: acolo modelul <strong>nu</strong> prezice suficient de bine, iar noi îl marcăm <strong>DROP</strong> în propriul nostru tabel. Un site care îți arată doar ce a mers nu-ți arată nimic.</p>
     <p class="proof-note">N = doar selecțiile la care probabilitatea a trecut pragul din dreptul pieței, nu toate predicțiile; cifrele pe toate predicțiile, piață cu piață, sunt în auditul de pe track record. „Verdict propriu" ține de mărimea eșantionului și de limita Wilson, <strong>nu</strong> de avantajul peste rata naturală a pieței. Tabelul complet, bucket cu bucket: <a href="track-record.html">track record</a> · <a href="istoric.html">istoric zi cu zi</a>.</p>
     <p class="proof-note proof-metrici" data-i18n="proof.metrici"><strong>Metrici pe toate cele 35.549 de predicții rezolvate</strong> (din 2 iunie 2026, nu doar cele peste prag): peste 1,5 — Brier 0,164, log loss 0,505, eroare de calibrare 0,9 pp · peste 2,5 — Brier 0,233, log loss 0,658, ECE 0,64 pp · GG — Brier 0,244, log loss 0,680. Test contra prețului de închidere al pieței, pe 20.068 meciuri (peste 2,5): Brier model 0,238 față de piață 0,235; ce adaugă modelul peste preț: 0,0002 log loss, adică nimic. <strong>Modelul e calibrat și nu bate piața.</strong> Diagrama de fiabilitate, Brier și log loss pe fiecare piață și jurnalul CSV cu ora înghețării fiecărei predicții: <a href="track-record.html">track record</a>.</p>
-    <p class="proof-asof">Cifre din jurnalul forward, actualizate 7 octombrie 2026 · informativ · nu sfat de pariere · 18+</p>
+    <p class="proof-asof" data-i18n="proof.asof" data-i18n-vars='{"data":"<span data-date=\"2026-10-07\">7 octombrie 2026</span>"}'>Cifre din jurnalul forward, actualizate <span data-date="2026-10-07">7 octombrie 2026</span> · informativ · nu sfat de pariere · 18+</p>
   </section>
   <!-- PROOF_STATIC_END -->
 
@@ -331,8 +331,8 @@ Statistici informative. Modelul poate greși. Verifică sursa. 18+.
 
   <!-- DAILY_STATIC_START -->
   <section class="daily-static" id="repere-azi">
-    <h2>Predicții fotbal azi — 7 octombrie 2026</h2>
-    <p>Repere calibrate din cele 164 meciuri analizate azi de model (lista completă, cu filtre, mai jos):</p>
+    <h2 data-i18n="repere.h2" data-i18n-vars='{"data":"<span data-date=\"2026-10-07\">7 octombrie 2026</span>"}'>Predicții fotbal azi — <span data-date="2026-10-07">7 octombrie 2026</span></h2>
+    <p data-i18n="repere.p" data-i18n-vars='{"n":"164"}'>Repere calibrate din cele 164 meciuri analizate azi de model (lista completă, cu filtre, mai jos):</p>
     <ul>
       <li><strong>Mexico – Chile</strong> (World · Friendlies): Over 1.5 goluri — <strong>79%</strong> calibrat</li>
     </ul>
@@ -546,6 +546,6 @@ Statistici informative. Modelul poate greși. Verifică sursa. 18+.
 </footer>
 
 <script src="assets/members.js?v=202610061200"></script>
-<script src="assets/app.js?v=202610072245"></script>
+<script src="assets/app.js?v=202610072330"></script>
 </body>
 </html>

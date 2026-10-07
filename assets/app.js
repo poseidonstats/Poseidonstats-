@@ -134,7 +134,7 @@ async function loadPredictions() {
   }
   return fetchJSON(PRED_URL);
 }
-const SCRIPT_V = "20261007m";
+const SCRIPT_V = "20261007n";
 // 7 oct 2026 — evenimente în GoatCounter (fără cookie, fără date personale): clicuri pe butoanele de abonament/trial/login și
 // dacă vizitatorul a ajuns la secțiunea de abonament. Răspund la „250 de vizite și niciun abonat”: nu ajung la ofertă, sau ajung și pleacă?
 function _gcEvent(nume) {
@@ -1143,7 +1143,7 @@ async function renderTrackRecord() {
         </p>
         ${fwd.calibration_note ? `<p class="muted" style="font-size:.82em">ℹ️ ${esc(fwd.calibration_note)}</p>` : ""}
         <p class="muted" style="font-size:.82em">Notă: «tier» (robust etc.) reflectă mărimea eșantionului + Wilson 95%, NU edge-ul peste baseline. HT Over 0.5 are lift modest peste rata de bază (~+2pp); Over 1.5 / Over 2.5 au lift mai mare.</p>
-        <p>Predicții resolved live: <strong>${fwd.n_resolved}</strong>
+        <p>${tt("tr.resolved.live", "Predicții rezolvate live: <strong>{n}</strong>").replace("{n}", fwd.n_resolved)}
         (din ${fwd.n_total} totale, ${fwd.n_pending} pending, ${fwd.n_not_played} amânate).</p>
         ${(fwd.markets || []).map(m => `<div>
           <h4>${m.name}</h4>
@@ -1240,17 +1240,17 @@ function renderIstoricDays() {
     if (visibleMatches.length === 0) return "";
 
     const statusBadge = d.status === "resolved"
-      ? `<span class="day-status status-resolved">REZOLVATĂ</span>`
+      ? `<span class="day-status status-resolved">${tt("ist.rezolvata", "REZOLVATĂ")}</span>`
       : d.status === "partial"
-      ? `<span class="day-status status-partial">PARȚIAL REZOLVATĂ</span>`
+      ? `<span class="day-status status-partial">${tt("ist.partial", "PARȚIAL REZOLVATĂ")}</span>`
       : d.status === "in_progress"
       ? `<span class="day-status status-live">ÎN CURS</span>`
-      : `<span class="day-status status-scheduled">PROGRAMATĂ</span>`;
+      : `<span class="day-status status-scheduled">${tt("ist.programata", "PROGRAMATĂ")}</span>`;
 
     const t = d.totals;
     const totalsLine = t.wins + t.losses > 0
-      ? `${t.picks} picks · <strong class="num-win">${t.wins} WIN</strong> · <strong class="num-loss">${t.losses} LOSS</strong>${t.pending > 0 ? ` · ${t.pending} pending` : ""}`
-      : `${t.picks} picks · ${t.pending} pending`;
+      ? tt("ist.picks", "{p} picks · <strong class=\"num-win\">{w} WIN</strong> · <strong class=\"num-loss\">{l} LOSS</strong>").replace("{p}", t.picks).replace("{w}", t.wins).replace("{l}", t.losses) + (t.pending > 0 ? tt("ist.pending.sufix", " · {n} în așteptare").replace("{n}", t.pending) : "")
+      : tt("ist.pending", "{p} picks · {n} în așteptare").replace("{p}", t.picks).replace("{n}", t.pending);
 
     return `<details class="day-card" ${d.status !== "scheduled" ? "open" : ""}>
       <summary>
@@ -1269,11 +1269,10 @@ function renderIstoricDays() {
 }
 
 function fmtDayDate(s) {
+  // 7 oct 2026: data în limba aleasă (era mereu în română)
   const d = new Date(s + "T12:00:00Z");
-  const wd = ["Duminică", "Luni", "Marți", "Miercuri", "Joi", "Vineri", "Sâmbătă"][d.getUTCDay()];
-  const m = ["ianuarie", "februarie", "martie", "aprilie", "mai", "iunie",
-             "iulie", "august", "septembrie", "octombrie", "noiembrie", "decembrie"][d.getUTCMonth()];
-  return `${wd}, ${d.getUTCDate()} ${m} ${d.getUTCFullYear()}`;
+  const t = new Intl.DateTimeFormat(_loc(), { weekday: "long", day: "numeric", month: "long", year: "numeric", timeZone: "UTC" }).format(d);
+  return t.charAt(0).toUpperCase() + t.slice(1);
 }
 
 function renderHistMatch(m) {

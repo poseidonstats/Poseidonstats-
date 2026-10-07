@@ -109,7 +109,7 @@ def _shell(*, lang: str, title: str, description: str, canonical: str, body: str
     ro = lang == "ro"
     alt = (f'<link rel="alternate" hreflang="ro" href="{canonical if ro else alternate}">\n<link rel="alternate" hreflang="en" href="{alternate if ro else canonical}">\n'
            f'<link rel="alternate" hreflang="x-default" href="{canonical if ro else alternate}">\n')
-    nav = ("Predicții", "Pe ligi", "Simulator", "Istoric", "Track record", "Metodologie", "💎 Abonamente") if ro else ("Predictions", "By league", "Simulator", "History", "Track record", "Methodology", "💎 Membership")
+    nav = ("Predicții", "Pe ligi", "Simulator", "Istoric", "Track record", "Metodologie", "Abonamente") if ro else ("Predictions", "By league", "Simulator", "History", "Track record", "Methodology", "Membership")
     banner = "⚠️ Statistici informative. Modelul poate greși. Verifică sursa. 18+." if ro else "⚠️ Statistical information only. The model can be wrong. Verify the source. 18+."
     tag = "Probabilități publicate înainte de meci · <strong>track record verificabil</strong> · dataset public" if ro else "Probabilities published before kick-off · <strong>verifiable track record</strong> · public dataset"
     foot = ("⚠️ <strong>Informativ.</strong> NU sfat de pariere. <strong>NU garanție.</strong> Folosește responsabil. <strong>18+</strong>." if ro
@@ -137,21 +137,22 @@ def _shell(*, lang: str, title: str, description: str, canonical: str, body: str
 </head>
 <body>
 
-<div class="legal-banner">{banner}</div>
+<div class="legal-banner" data-i18n="banner.legal">{banner}</div>
 
 <header>
   <div class="container">
     <a href="{up}index.html" class="brand"><span class="brand-icon">🔱</span><span class="brand-name">POSEIDON</span><span class="brand-pulse"></span></a>
     <p class="tagline">{tag}</p>
     <nav>
-      <a href="{up}index.html">{nav[0]}</a>
-      <a href="{up}{'predictii' if ro else 'en/predictions'}/index.html">{nav[1]}</a>
-      <a href="{up}simulator.html">{nav[2]}</a>
-      <a href="{up}istoric.html">{nav[3]}</a>
-      <a href="{up}track-record.html">{nav[4]}</a>
-      <a href="{up}metodologie.html">{nav[5]}</a>
-      <a href="{up}index.html#abonament">{nav[6]}</a>
+      <a href="{up}index.html" data-i18n="nav.predictii">{nav[0]}</a>
+      <a href="{up}{'predictii' if ro else 'en/predictions'}/index.html" data-i18n="nav.ligi">{nav[1]}</a>
+      <a href="{up}simulator.html" data-i18n="nav.simulator">{nav[2]}</a>
+      <a href="{up}istoric.html" data-i18n="nav.istoric">{nav[3]}</a>
+      <a href="{up}track-record.html" data-i18n="nav.trackrecord">{nav[4]}</a>
+      <a href="{up}metodologie.html" data-i18n="nav.metodologie">{nav[5]}</a>
+      <a class="patreon" href="{up}index.html#abonament" data-i18n="nav.abonamente">{nav[6]}</a>
     </nav>
+    <script src="{up}assets/i18n-lite.js" data-sus="{up}"></script>
   </div>
 </header>
 

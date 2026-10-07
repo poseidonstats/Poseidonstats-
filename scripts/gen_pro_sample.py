@@ -144,12 +144,13 @@ def html_card(item: dict, zi: str, generat: str, scor: tuple[int, int] | None, b
     m = item["match"]; p = parseaza(item["analysis"])
     liga = m.get("league", ""); tara = m.get("country", "")
     ora = generat[11:16] if len(generat) >= 16 else ""
-    head = f"💎 {H.escape(m['home'])} – {H.escape(m['away'])} · {H.escape(liga)}" + (f" ({H.escape(tara)})" if tara else "") + f" · {_data_ro(m.get('date', zi))}"
-    head += f" · <strong>rezultat final {scor[0]}-{scor[1]}</strong>" if scor else (f" · <strong>publicată la {ora}, înainte de meci</strong>" if ora else " · <strong>publicată înainte de meci</strong>")
+    head = f"{H.escape(m['home'])} – {H.escape(m['away'])} · {H.escape(liga)}" + (f" ({H.escape(tara)})" if tara else "") + f" · <span data-date=\"{(m.get('date') or zi)[:10]}\">{_data_ro(m.get('date', zi))}</span>"
+    head += (f" · <strong data-i18n=\"pro.card.rezfinal\" data-i18n-vars='{{\"s\":\"{scor[0]}-{scor[1]}\"}}'>rezultat final {scor[0]}-{scor[1]}</strong>" if scor
+             else (f" · <strong data-i18n=\"pro.card.publicata\" data-i18n-vars='{{\"ora\":\"{ora}\"}}'>publicată la {ora}, înainte de meci</strong>" if ora else " · <strong data-i18n=\"pro.card.publicata0\">publicată înainte de meci</strong>"))
     picks = "".join(f"<li>{_inline(l)}</li>" for l in p["picks"])
     verif = ""
     if scor and baza:
-        verif = {True: f"✅ Pick-ul de bază, <strong>{_inline(baza)}</strong>, a ieșit.", False: f"❌ Pick-ul de bază, <strong>{_inline(baza)}</strong>, nu a ieșit — publicăm și când greșim.", None: f"Pick-ul de bază: <strong>{_inline(baza)}</strong>."}[ok]
+        verif = {True: f"<span data-i18n=\"pro.card.verif.da\" data-i18n-vars='{{\"p\":\"{_inline(baza)}\"}}'>✅ Pick-ul de bază, <strong>{_inline(baza)}</strong>, a ieșit.</span>", False: f"<span data-i18n=\"pro.card.verif.nu\" data-i18n-vars='{{\"p\":\"{_inline(baza)}\"}}'>❌ Pick-ul de bază, <strong>{_inline(baza)}</strong>, nu a ieșit — publicăm și când greșim.</span>", None: f"Pick-ul de bază: <strong>{_inline(baza)}</strong>."}[ok]
         verif = f'        <p class="pro-verificat">{verif} <a href="analize/{zi}.html#m{m.get("fixture_id")}">Verificarea completă →</a></p>\n'
     return "\n".join([
         '<div class="pro-card">',
@@ -169,9 +170,13 @@ def html_ieri(item: dict, zi: str, scor: tuple[int, int] | None, baza: str, ok) 
     """Linia de sub card: ce s-a întâmplat cu analiza publicată ieri în același loc."""
     m = item["match"]; nume = f"{H.escape(m['home'])} – {H.escape(m['away'])}"
     if not scor:
-        return f'<p class="pro-ieri muted">Ieri, aici: <strong>{nume}</strong> — rezultatul final nu e încă în bază; verificarea apare în <a href="analize/{zi}.html">arhiva zilei</a>.</p>'
+        return f'<p class="pro-ieri muted" data-i18n="pro.ieri.fara" data-i18n-vars=\'{{"meci":"{nume}","zi":"{zi}"}}\'>Ieri, aici: <strong>{nume}</strong> — rezultatul final nu e încă în bază; verificarea apare în <a href="analize/{zi}.html">arhiva zilei</a>.</p>'
     semn = {True: "✅ a ieșit", False: "❌ nu a ieșit", None: ""}[ok]
-    return f'<p class="pro-ieri">Ieri, aici: <strong>{nume}</strong>, {scor[0]}-{scor[1]}' + (f" — bază <strong>{_inline(baza)}</strong> {semn}" if baza else "") + f'. <a href="analize/{zi}.html#m{m.get("fixture_id")}">Verificarea de a doua zi →</a></p>'
+    cheie_b = {True: "pro.ieri.baza.da", False: "pro.ieri.baza.nu", None: "pro.ieri.baza.neev"}[ok]
+    baza_html = f" — bază <strong>{_inline(baza)}</strong> {semn}".rstrip() if baza else ""
+    import json as _j
+    vars_ = _j.dumps({"meci": nume, "scor": f"{scor[0]}-{scor[1]}", "baza": (f'<span data-i18n="{cheie_b}" data-i18n-vars=\'{{"b":"{_inline(baza)}"}}\'>{baza_html}</span>' if baza else ""), "zi": zi, "fid": str(m.get("fixture_id"))}, ensure_ascii=False).replace("'", "&#39;")
+    return f'<p class="pro-ieri" data-i18n="pro.ieri.cu" data-i18n-vars=\'{vars_}\'>Ieri, aici: <strong>{nume}</strong>, {scor[0]}-{scor[1]}' + baza_html + f'. <a href="analize/{zi}.html#m{m.get("fixture_id")}">Verificarea de a doua zi →</a></p>'
 
 
 def injecteaza(html: str, card: str, ieri: str = "") -> str:
@@ -216,9 +221,9 @@ def html_lista_pro(rows: list[dict], fara_fid: int | None = None, stat: tuple[in
         li.append(f"        <li>🔒 <strong>{H.escape(r['home'])} – {H.escape(r['away'])}</strong> · {H.escape(r.get('league', ''))}{tara}" + (f" · {ora}" if ora else "") + "</li>")
     n = len(rows); linie_stat = []
     if stat and stat[0]:
-        linie_stat = [f'      <p class="pro-today-stat muted">În ultimele {stat[0]} de zile: în medie <strong>{stat[1]} analize Pro pe zi</strong>, minim {stat[2]}, maxim {stat[3]}.</p>']
+        linie_stat = [f'      <p class="pro-today-stat muted" data-i18n="pro.today.stat" data-i18n-vars=\'{{"z":"{stat[0]}","m":"{stat[1]}","mi":"{stat[2]}","ma":"{stat[3]}"}}\'>În ultimele {stat[0]} de zile: în medie <strong>{stat[1]} analize Pro pe zi</strong>, minim {stat[2]}, maxim {stat[3]}.</p>']
     return "\n".join(['<div class="pro-today">',
-                      f'      <p class="pro-today-head">🔒 <strong>Încă {n} analize azi în Pro</strong>, cu context verificat (clasament, formă, H2H, absențe) — pe site și pe Discord, dimineața.</p>',
+                      f'      <p class="pro-today-head" data-i18n="pro.today.head" data-i18n-vars=\'{{"n":"{n}"}}\'>🔒 <strong>Încă {n} analize azi în Pro</strong>, cu context verificat (clasament, formă, H2H, absențe) — pe site și pe Discord, dimineața.</p>',
                       '      <ul class="pro-today-list">', *li, '      </ul>', *linie_stat, '    </div>'])
 
 

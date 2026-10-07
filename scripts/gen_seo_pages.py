@@ -474,36 +474,27 @@ def pagina_liga(tara: str, liga: str, slug: str, nume: str, *,
     libere = [m for m in meciuri if not blocat(m)]
     if meciuri:
         prima = min(datetime.fromisoformat(m["match_date"].replace("Z", "+00:00")) for m in meciuri)
-        rezumat = (
-            f"Modelul a analizat <strong>{cu_de(n_meci)} "
-            f"{plural(n_meci, 'meci', 'meciuri')}</strong> din {e(nume)} în următoarele "
-            f"{FEREASTRA_ZILE} zile, primul pe {data_ro(prima.astimezone(TZ))}."
-        )
-        # Mediile se calculează DOAR pe meciurile cu cifre publice. A le calcula pe tot
-        # setul ar fi imposibil (blocatele n-au xG), iar a le prezenta ca „media ligii"
-        # dintr-un singur meci ar fi o cifră fără acoperire.
+        _iso = prima.astimezone(TZ).date().isoformat()
+        _n = (f'<span data-i18n="n.meci1">un meci</span>' if n_meci == 1 else f'<span data-i18n="n.meciuri" data-i18n-vars=\'{{"n":"{cu_de(n_meci)}"}}\'>{cu_de(n_meci)} meciuri</span>')
+        rezumat = (f'<span data-i18n="ligi.rez.main" data-i18n-vars=\'{{"n":"{_n.replace(chr(34), "&quot;")}","liga":"{e(nume)}","z":"{FEREASTRA_ZILE}","data":"<span data-date=\\"{_iso}\\">{data_ro(prima.astimezone(TZ))}</span>"}}\'>'
+                   f"Modelul a analizat <strong>{_n}</strong> din {e(nume)} în următoarele {FEREASTRA_ZILE} zile, primul pe <span data-date=\"{_iso}\">{data_ro(prima.astimezone(TZ))}</span>.</span>")
         if libere:
             xg_mediu = sum(m["xg_home"] + m["xg_away"] for m in libere) / len(libere)
-            cate = ("Unul dintre ele este publicat integral și gratuit mai jos, cu"
-                    if len(libere) == 1 else
-                    f"Dintre ele, {len(libere)} sunt publicate integral și gratuit mai jos, cu media")
-            rezumat += (f" {cate} golurilor așteptate de model la "
-                        f"<strong>{xg_mediu:.2f}</strong> pe partidă.")
+            if len(libere) == 1:
+                rezumat += f' <span data-i18n="ligi.rez.xg1" data-i18n-vars=\'{{"xg":"{xg_mediu:.2f}"}}\'>Unul dintre ele este publicat integral și gratuit mai jos, cu golurile așteptate de model la <strong>{xg_mediu:.2f}</strong> pe partidă.</span>'
+            else:
+                rezumat += f' <span data-i18n="ligi.rez.xgN" data-i18n-vars=\'{{"k":"{len(libere)}","xg":"{xg_mediu:.2f}"}}\'>Dintre ele, {len(libere)} sunt publicate integral și gratuit mai jos, cu media golurilor așteptate de model la <strong>{xg_mediu:.2f}</strong> pe partidă.</span>'
         else:
-            rezumat += (
-                " Cele 5 predicții publicate gratuit azi sunt pe alte competiții; probabilitățile "
-                "pentru meciurile de aici sunt disponibile abonaților. Programul, profilul de "
-                "calibrare al ligii și jurnalul predicțiilor deja verificate rămân publice, mai jos."
-            )
+            rezumat += ' <span data-i18n="ligi.rez.blocate">Cele 5 predicții publicate gratuit azi sunt pe alte competiții; probabilitățile pentru meciurile de aici sunt disponibile abonaților. Programul, profilul de calibrare al ligii și jurnalul predicțiilor deja verificate rămân publice, mai jos.</span>'
         continut = tabel_meciuri(meciuri)
         descriere = (f"{n_meci} {plural(n_meci, 'meci', 'meciuri')} din {nume}: program, profil de "
                      f"calibrare și jurnalul predicțiilor verificate. 5 predicții complete "
                      f"gratuit zilnic.")
     else:
-        rezumat = (f"În următoarele {FEREASTRA_ZILE} zile nu e programat niciun meci din "
+        rezumat = (f'<span data-i18n="ligi.rezumat0" data-i18n-vars=\'{{"z":"{FEREASTRA_ZILE}","liga":"{e(nume)}"}}\'>În următoarele {FEREASTRA_ZILE} zile nu e programat niciun meci din '
                    f"{e(nume)} în datele noastre — probabil pauză competițională sau "
                    f"intersezon. Pagina rămâne aici: profilul de calibrare de mai jos e "
-                   f"valabil oricum, iar meciurile reapar automat la reluare.")
+                   f"valabil oricum, iar meciurile reapar automat la reluare.</span>")
         continut = ""
         descriere = (f"Predicții {nume} de la modelul POSEIDON: profilul de calibrare al ligii "
                      f"și jurnalul predicțiilor verificate. Acces gratuit.")
@@ -559,9 +550,9 @@ def pagina_hub(randuri: list[dict]) -> str:
     cu_meci = [r for r in randuri if r["n"] > 0]
     total = sum(r["n"] for r in randuri)
     lista = "".join(
-        f'      <tr><td><a href="{r["slug"]}.html">Predicții {e(r["nume"])}</a></td>'
+        f'      <tr><td><a href="{r["slug"]}.html" data-i18n="ligi.row.pred" data-i18n-vars=\'{{"liga":"{e(r["nume"])}"}}\'>Predicții {e(r["nume"])}</a></td>'
         f'<td>{r["n"] or "—"}</td>'
-        f'<td>{"<span class=\"ok-tag\">✓ calibrată</span>" if r["cal_ok"] else "<span class=\"warn-tag\">⚠️ calibrare slabă</span>" if r["cal_ok"] is False else "<span class=\"muted\">—</span>"}</td></tr>'
+        f'<td>{"<span class=\"ok-tag\" data-i18n=\"ligi.cal.ok\">✓ calibrată</span>" if r["cal_ok"] else "<span class=\"warn-tag\" data-i18n=\"ligi.cal.slaba\">calibrare slabă</span>" if r["cal_ok"] is False else "<span class=\"muted\">—</span>"}</td></tr>'
         for r in randuri
     )
     corp = f"""  <section class="intro">
@@ -682,7 +673,7 @@ def pagina_zi(zi: dict) -> str:
 
 def pagina_arhiva(zile_scrise: list[str]) -> str:
     canonical = f"{BASE}/predictii/arhiva/index.html"
-    lista = "".join(f'      <li><a href="{z}.html">Predicții fotbal {data_ro(z)}</a></li>'
+    lista = "".join(f'      <li><a href="{z}.html" data-i18n="ligi.zi.item" data-i18n-vars=\'{{"data":"<span data-date=\\"{z}\\">{data_ro(z)}</span>"}}\'>Predicții fotbal <span data-date="{z}">{data_ro(z)}</span></a></li>'
                     for z in zile_scrise)
     corp = f"""  <section class="intro">
     <div class="hero">
@@ -693,7 +684,7 @@ def pagina_arhiva(zile_scrise: list[str]) -> str:
   </section>
 
   <section>
-    <h2>Zile arhivate</h2>
+    <h2 data-i18n="ligi.zile.h">Zile arhivate</h2>
     <ul class="arhiva-list">
 {lista}
     </ul>
