@@ -45,6 +45,13 @@ def verifica(acum: dt.datetime) -> list[str]:
     except Exception as e: err.append(f"predictions.json invalid ({st}): {e!r}"[:160])
     st, _ = get(f"{SITE}/analize/{ieri.isoformat()}.html")
     if st != 200 and acum.hour >= 8: err.append(f"arhiva Pro de ieri lipsește ({ieri}, HTTP {st})")
+    # 7 oct 2026: regresia din 29 sept (membrul Basic vedea lacăte 50 de minute): CSP-ul paginilor care încarcă members.js
+    # trebuie să permită cererile către Worker, altfel browserul le blochează tăcut și site-ul cade pe lista publică
+    for pag in ("index.html", "simulator.html", "track-record.html", "istoric.html"):
+        st, h = get(f"{SITE}/{pag}")
+        if st == 200 and "members.js" in h:
+            m = re.search(r"connect-src([^;\"]*)", h)
+            if not m or "poseidon-members.poseidonstats.workers.dev" not in m.group(1): err.append(f"{pag}: încarcă members.js dar CSP connect-src NU permite Worker-ul (membrii ar vedea lacăte)")
     st, body = get(f"{API}/api/health?zi={azi.isoformat()}")
     try:
         h = json.loads(body); gen = (h.get("predictions_full") or {}).get("generated_at", "")[:10]
@@ -61,7 +68,7 @@ def main() -> None:
         print(msg)
         if "--fara-telegram" not in sys.argv: subprocess.run([TG, msg], check=False)
         sys.exit(1)
-    print(f"[site_check] OK {acum:%d.%m %H:%M}: exemplul Pro de azi, lista Pro, trial, 5 gratuite, JSON de azi, arhiva de ieri, KV membri de azi")
+    print(f"[site_check] OK {acum:%d.%m %H:%M}: exemplul Pro de azi, lista Pro, trial, 5 gratuite, JSON de azi, arhiva de ieri, KV membri de azi, CSP permite Worker-ul pe paginile de membri")
 
 
 if __name__ == "__main__":
