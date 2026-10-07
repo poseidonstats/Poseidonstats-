@@ -123,7 +123,39 @@ async function loadPredictions() {
   }
   return fetchJSON(PRED_URL);
 }
-const SCRIPT_V = "20261006a";
+const SCRIPT_V = "20261007a";
+// 7 oct 2026 — evenimente în GoatCounter (fără cookie, fără date personale): clicuri pe butoanele de abonament/trial/login și
+// dacă vizitatorul a ajuns la secțiunea de abonament. Răspund la „250 de vizite și niciun abonat”: nu ajung la ofertă, sau ajung și pleacă?
+function _gcEvent(nume) {
+  try { if (window.goatcounter && window.goatcounter.count) window.goatcounter.count({ path: nume, title: nume, event: true }); } catch (e) {}
+}
+function _instaleazaUrmarireClicuri() {
+  document.addEventListener("click", (ev) => {
+    const a = ev.target.closest && ev.target.closest("a"); if (!a) return;
+    const h = a.getAttribute("href") || ""; const c = a.className || "";
+    if (h.includes("patreon.com")) _gcEvent("click/patreon/" + (c.includes("plan-btn-pro") ? "pro" : c.includes("plan-btn-basic") ? "basic" : c.includes("pro-cta") ? "pro-inline" : "alt"));
+    else if (c.includes("trial-banner")) _gcEvent("click/trial-banner");
+    else if (c.includes("unlock-btn")) _gcEvent("click/unlock-btn");
+    else if (c.includes("members-login")) _gcEvent("click/login-patreon");
+    else if (c.includes("members-sub")) _gcEvent("click/members-sub");
+    else if (h.includes("track-record")) _gcEvent("click/track-record");
+    else if (h.includes("analize/")) _gcEvent("click/arhiva-pro");
+  }, { passive: true });
+  const sec = document.getElementById("abonament");
+  if (sec && "IntersectionObserver" in window) {
+    const io = new IntersectionObserver((es) => { if (es.some(e => e.isIntersecting)) { _gcEvent("vazut/abonament"); io.disconnect(); } }, { threshold: 0.3 });
+    io.observe(sec);
+  }
+  const ex = document.getElementById("exemplu-pro");
+  if (ex && "IntersectionObserver" in window) {
+    const io2 = new IntersectionObserver((es) => { if (es.some(e => e.isIntersecting)) { _gcEvent("vazut/exemplu-pro"); io2.disconnect(); } }, { threshold: 0.3 });
+    io2.observe(ex);
+  }
+}
+if (typeof document !== "undefined") {
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", _instaleazaUrmarireClicuri); else _instaleazaUrmarireClicuri();
+}
+
 // 29 sept — plasă de siguranță: dacă la DOMContentLoaded există token valid, dar lista a fost desenată din fișierul public
 // (tokenul a ajuns târziu, script vechi din cache etc.), desenăm din nou cu datele de membru.
 if (typeof window !== "undefined") {
