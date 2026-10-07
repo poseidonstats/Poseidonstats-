@@ -90,7 +90,7 @@ function mountLangSwitcher() {
     applyI18n();
     injectLiveStats(); // re-injectare după ce applyI18n a rescris [data-i18n]
     // Re-render pagini dinamice
-    if (document.getElementById("matches")) renderIndex();
+    if (document.getElementById("matches")) renderIndex().then(renderProAnalize);
     if (document.getElementById("days-list")) renderIstoric();
     if (document.getElementById("calibration-tables")) renderTrackRecord();
     if (document.getElementById("sim-gen-result")) renderSimulator();
@@ -123,7 +123,7 @@ async function loadPredictions() {
   }
   return fetchJSON(PRED_URL);
 }
-const SCRIPT_V = "20261007d";
+const SCRIPT_V = "20261007e";
 // 7 oct 2026 — evenimente în GoatCounter (fără cookie, fără date personale): clicuri pe butoanele de abonament/trial/login și
 // dacă vizitatorul a ajuns la secțiunea de abonament. Răspund la „250 de vizite și niciun abonat”: nu ajung la ofertă, sau ajung și pleacă?
 function _gcEvent(nume) {
@@ -1270,6 +1270,9 @@ async function renderProAnalize() {
       el.innerHTML = `<h2>${tt("pro.azi.h2", "💎 Analizele tale Pro de azi")}</h2><p class="muted">${msg}</p>`; return;
     }
     const d = await r.json();
-    el.innerHTML = `<h2>${tt("pro.azi.h2", "💎 Analizele tale Pro de azi")}</h2>` + (d.items || []).map(it => `<article class="pro-card pro-card-full"><div class="pro-card-head">💎 ${_md(it.match?.home)} – ${_md(it.match?.away)} · ${_md(it.match?.league)}</div><div class="pro-visible">${_md(it.analysis)}</div></article>`).join("");
+    // 7 oct 2026: analiza în limba aleasă pe site (analysis_en/es/it din arhivă, traduse de traduce_analize.py); fără traducere → româna
+    const txt = it => (LANG !== "ro" && it[`analysis_${LANG}`]) || it.analysis;
+    const nota = (d.items || []).some(it => LANG !== "ro" && !it[`analysis_${LANG}`]) ? `<p class="muted">${tt("pro.azi.ro_only", "Traducerea apare în câteva minute; până atunci textul e în română.")}</p>` : "";
+    el.innerHTML = `<h2 data-i18n="pro.azi.h2">${tt("pro.azi.h2", "💎 Analizele tale Pro de azi")}</h2>${nota}` + (d.items || []).map(it => `<article class="pro-card pro-card-full"><div class="pro-card-head">💎 ${_md(it.match?.home)} – ${_md(it.match?.away)} · ${_md(it.match?.league)}</div><div class="pro-visible">${_md(txt(it))}</div></article>`).join("");
   } catch (e) { console.warn("[membri] analize", e); el.innerHTML = `<h2>${tt("pro.azi.h2", "💎 Analizele tale Pro de azi")}</h2><p class="muted">${tt("pro.azi.retea", "Nu am putut contacta serverul membrilor. Reîncarcă pagina; analizele sunt și în #analize-pro pe Discord.")}</p>`; }
 }
