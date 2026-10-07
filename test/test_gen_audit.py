@@ -37,7 +37,10 @@ def test_audit_din_jurnal_are_toate_pietele_si_piata(tmp_path):
 
 def test_html_static_si_injectare_idempotenta():
     a = G.audit(_rows()); h = G.html_audit(a)
-    assert "Brier" in h and "log loss" in h and "ECE" in h and "piaț" in h and "<script" not in h and "over_2_5" not in h and "Peste 2,5" in h
+    import re as _re
+    vizibil = _re.sub(r"<[^>]+>", "", h)   # 7 oct 2026: codul pieței stă doar în data-i18n (cheia de traducere), nu în text
+    assert "Brier" in h and "log loss" in h and "ECE" in h and "piaț" in h and "<script" not in h and "over_2_5" not in vizibil and "Peste 2,5" in h
+    assert 'data-i18n="audit.piata.over_2_5"' in h
     pagina = '<section id="forward-section">\n  x\n  </section>\n\n  <section>\n  y\n  </section>'
     p1 = G.injecteaza(pagina, h); assert G.START in p1 and p1.index(G.START) > p1.index('id="forward-section"') and p1.count("Brier") >= 1
     p2 = G.injecteaza(p1, h.replace("Brier", "BRIER2")); assert "BRIER2" in p2 and p2.count(G.START) == 1 and "Brier</th>" not in p2.split(G.START)[0]
