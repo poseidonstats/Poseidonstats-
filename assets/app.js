@@ -109,7 +109,7 @@ let PRED_CU_TOKEN = false;   // prima încărcare a pornit deja cu token → pla
 async function loadPredictions() {
   const M = (typeof window !== "undefined") ? window.PoseidonMembers : null;
   if (M && M.MEMBERS_API) {
-    if (M.tier()) PRED_CU_TOKEN = true;
+    if (M.tier()) { PRED_CU_TOKEN = true; try { document.body.classList.add("is-member"); } catch (e) {} }
     const r = await M.incarca(PRED_URL);
     PRED_SURSA = r.sursa;
     // 6 oct 2026: abonat valid, dar datele membrilor n-au venit (9 zile de KV gol au trecut neobservate) → spunem clar, nu lacăte tăcute
@@ -123,7 +123,7 @@ async function loadPredictions() {
   }
   return fetchJSON(PRED_URL);
 }
-const SCRIPT_V = "20261007e";
+const SCRIPT_V = "20261007f";
 // 7 oct 2026 — evenimente în GoatCounter (fără cookie, fără date personale): clicuri pe butoanele de abonament/trial/login și
 // dacă vizitatorul a ajuns la secțiunea de abonament. Răspund la „250 de vizite și niciun abonat”: nu ajung la ofertă, sau ajung și pleacă?
 function _gcEvent(nume) {
@@ -894,7 +894,7 @@ function renderMatch(m, filterMarket = "") {
   return `<div class="match ${m.calibrated ? "" : "uncalibrated"} ${m.free ? "match-free" : ""}">
     <div class="match-header">
       <div class="match-title">
-        <div class="match-teams">${esc(m.home_team)} <span class="vs">vs</span> ${esc(m.away_team)}</div>
+        <div class="match-teams"><span class="team home">${esc(m.home_team)}</span><span class="vs">vs</span><span class="team away">${esc(m.away_team)}</span></div>
         <div class="match-meta">
           <span class="liga">${esc(m.country)} · ${esc(m.league)}</span>
           <span class="when">${dateStr}</span>
@@ -905,7 +905,7 @@ function renderMatch(m, filterMarket = "") {
     </div>
 
     <div class="xg-section">
-      <div class="xg-label">xG model (Poisson + Dixon-Coles + 200K simulări Monte Carlo)</div>
+      <div class="xg-label" title="Poisson + Dixon-Coles + 200.000 simulări Monte Carlo">xG model <span class="xg-label-long">(Poisson + Dixon-Coles + 200K simulări Monte Carlo)</span></div>
       ${xgBar(m.xg_home, m.xg_away)}
       <div class="score-prob">
         <span class="score-label">Scor probabil</span>
@@ -957,6 +957,8 @@ function renderMatch(m, filterMarket = "") {
       </div>
     </div>
 
+    <details class="more-markets" ${(typeof window !== "undefined" && window.innerWidth > 600) ? "open" : ""}>
+    <summary class="more-markets-sum">${tt("match.more", "Mai multe piețe: dublă șansă, under, prima repriză")}</summary>
     ${m.prob_1x != null ? `<div class="phase-row extra">
       <div class="phase-label">🎯 Dublă șansă & Under</div>
       <div class="markets-grid">
@@ -984,6 +986,7 @@ function renderMatch(m, filterMarket = "") {
         </div>` : ""}
       </div>
     </div>` : ""}
+    </details>
   </div>`;
 }
 

@@ -1178,3 +1178,31 @@ footer a { color: #93c5fd; }
   .phase-label { font-size: 0.74rem; margin-bottom: 4px; }
   .score-prob { font-size: 0.9rem; }
 }
+
+/* 7 oct 2026 — redesign mobil, pasul 2: nav pe un rând derulabil, echipe una sub alta, piețe secundare pliate, membrii fără butoane de abonare */
+.match-teams .team { display: inline; }
+.more-markets > summary { display: none; }                 /* desktop: totul deschis, fără buton */
+.more-markets[open] > summary { display: none; }
+body.is-member nav a.patreon, body.is-member .trial-banner, body.is-member .unlock-cta { display: none !important; }
+.xg-label-long { color: #94a3b8; font-weight: 400; }
+@media (max-width: 600px) {
+  nav { flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; gap: 0; padding-bottom: 2px; }
+  nav::-webkit-scrollbar { display: none; }
+  nav a { padding: 10px 12px; font-size: 0.9rem; white-space: nowrap; flex: 0 0 auto; }
+  nav a.patreon { margin-left: 6px; }
+  .hero-title { font-size: 1.35rem; line-height: 1.25; }
+  .hero-sub { font-size: 0.9rem; }
+  .hero-free { font-size: 0.82rem; }
+  .trust-line { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 10px; }
+  .trust-item { font-size: 0.78rem; }
+  .match-teams { display: grid; grid-template-columns: 1fr; gap: 2px; font-size: 1.05rem; }
+  .match-teams .team { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .match-teams .vs { display: none; }
+  .match-meta .ok-tag, .match-meta .warn-tag { font-size: 0.68rem; padding: 1px 5px; }
+  .xg-label-long { display: none; }
+  .more-markets > summary, .more-markets[open] > summary { display: block; cursor: pointer; list-style: none; font-size: 0.82rem; font-weight: 600; color: #1e3a8a; background: #eff6ff; border: 1px solid #c7d2fe; border-radius: 8px; padding: 8px 12px; margin: 6px 0 4px; }
+  .more-markets > summary::-webkit-details-marker { display: none; }
+  .more-markets > summary::after { content: " ▾"; color: #64748b; }
+  .more-markets[open] > summary::after { content: " ▴"; }
+  .more-markets[open] > summary { margin-bottom: 8px; }
+}

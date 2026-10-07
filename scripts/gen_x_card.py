@@ -81,11 +81,35 @@ def card_ieri(picks: list[dict], zi: str) -> Image.Image:
     return img
 
 
+def card_tabla(picks: list[dict], zi: str, verificat: bool = False) -> Image.Image:
+    """„Today's board": până la 12 selecții, casa / model lângă fiecare; verificat=True → scor + bifă."""
+    img = fundal(); d = ImageDraw.Draw(img)
+    n = len(picks); k = sum(1 for p in picks if p.get("hit"))
+    antet(d, "Today's board, verified" if verificat else "Today's board", (f"{zi} · {k}/{n} hit" if verificat else f"{zi} · model and market both above 75% · results tomorrow"))
+    d.text((60, 200), "match", font=font(18), fill=GREY); d.text((620, 200), "market", font=font(18), fill=GREY)
+    d.text((820, 200), "book", font=font(18), fill=GREY); d.text((920, 200), "model", font=font(18), fill=GREY)
+    d.text((1030, 200), "score" if verificat else "", font=font(18), fill=GREY)
+    y0 = 228; pas = (H - 62 - y0) // max(1, n)
+    for i, p in enumerate(picks):
+        y = y0 + i * pas; f_m = font(26 if n <= 10 else 23, True); f_s = font(22 if n <= 10 else 20)
+        d.text((60, y), p["meci"][:40], font=f_m, fill=WHITE)
+        d.text((620, y + 2), p["piata"], font=f_s, fill=GREY)
+        d.text((820, y), f"{round(p['casa'] * 100)}%", font=f_m, fill=WHITE)
+        d.text((920, y), f"{round(p['p2'] * 100)}%", font=f_m, fill=GOLD)
+        if verificat:
+            ok = bool(p.get("hit")); d.text((1030, y), p.get("scor", "—"), font=f_m, fill=WHITE)
+            c = GREEN if ok else RED; cx, cy = W - 80, y + 16
+            d.ellipse((cx - 14, cy - 14, cx + 14, cy + 14), fill=c)
+    subsol(d, "18+ · informational only · every pick stays up, wins and losses")
+    return img
+
+
 def main() -> None:
-    ap = argparse.ArgumentParser(); ap.add_argument("tip", choices=["azi", "ieri"]); ap.add_argument("--data", required=True)
+    ap = argparse.ArgumentParser(); ap.add_argument("tip", choices=["azi", "ieri", "tabla", "tabla_ieri"]); ap.add_argument("--data", required=True)
     ap.add_argument("--zi", default=dt.date.today().strftime("%-d %b %Y")); ap.add_argument("--out", required=True); a = ap.parse_args()
     picks = json.loads(a.data)
-    (card_azi if a.tip == "azi" else card_ieri)(picks, a.zi).save(a.out); print(a.out)
+    fn = {"azi": card_azi, "ieri": card_ieri, "tabla": lambda p, z: card_tabla(p, z, False), "tabla_ieri": lambda p, z: card_tabla(p, z, True)}[a.tip]
+    fn(picks, a.zi).save(a.out); print(a.out)
 
 
 if __name__ == "__main__":
