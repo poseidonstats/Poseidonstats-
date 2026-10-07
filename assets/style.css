@@ -1155,3 +1155,26 @@ footer a { color: #93c5fd; }
 .pro-cta-inline { display: flex; gap: 10px; flex-wrap: wrap; margin: 12px 0 2px; }
 .pro-cta-inline .plan-btn { flex: 1 1 200px; text-align: center; }
 .pro-today-stat { margin: 8px 0 0; }
+
+/* 7 oct 2026 — MOBIL „profi” (Andreea: numele se rupeau literă cu literă, cardul cerea prea mult derulat).
+   Antetul cardului se așază pe verticală: echipele pe un rând lat, apoi liga/ora, apoi etichetele; grila de piețe mai densă. */
+@media (max-width: 600px) {
+  .match { padding: 12px 12px 10px; margin-bottom: 10px; }
+  .match-header { flex-direction: column; align-items: stretch; gap: 8px; margin-bottom: 10px; }
+  .match-title { width: 100%; }
+  .match-teams { font-size: 1.02rem; line-height: 1.25; }
+  .match-teams .vs { display: inline; }
+  .match-meta { margin-top: 3px; gap: 6px; font-size: 0.78rem; }
+  .match-meta .liga { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 70vw; }
+  .picks-row { width: 100%; gap: 4px; }
+  .pick-badge { font-size: 0.74rem; padding: 3px 8px; }
+  .xg-section { padding: 8px 10px; margin-bottom: 8px; }
+  .xg-label { font-size: 0.68rem; margin-bottom: 4px; }
+  .markets, .markets-grid { grid-template-columns: repeat(4, 1fr); gap: 5px; }
+  .market { padding: 6px 4px; font-size: 0.8rem; }
+  .market .label { font-size: 0.66rem; }
+  .phase-row { margin-bottom: 8px; }
+  .phase-row.ht { padding-top: 8px; }
+  .phase-label { font-size: 0.74rem; margin-bottom: 4px; }
+  .score-prob { font-size: 0.9rem; }
+}
