@@ -123,7 +123,7 @@ async function loadPredictions() {
   }
   return fetchJSON(PRED_URL);
 }
-const SCRIPT_V = "20261007c";
+const SCRIPT_V = "20261007d";
 // 7 oct 2026 — evenimente în GoatCounter (fără cookie, fără date personale): clicuri pe butoanele de abonament/trial/login și
 // dacă vizitatorul a ajuns la secțiunea de abonament. Răspund la „250 de vizite și niciun abonat”: nu ajung la ofertă, sau ajung și pleacă?
 function _gcEvent(nume) {
@@ -1242,7 +1242,8 @@ function renderHistMatch(m) {
 
 /* 28 sept 2026 — membrii Pro văd pe site analizele scrise ale zilei (aceleași ca în #analize-pro). */
 function _md(s) {
-  return String(s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>").replace(/\n/g, "<br>");
+  // 7 oct 2026: analiza începe cu „## 💎 Meci · Ligă · dată” — titlul e deja în capul cardului, îl scoatem; alte „#” devin text simplu
+  return String(s || "").trim().replace(/^#{1,6}\s[^\n]*\n?/, "").replace(/^#{1,6}\s+/gm, "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>").replace(/\n/g, "<br>");
 }
 async function renderProAnalize() {
   const M = (typeof window !== "undefined") ? window.PoseidonMembers : null;
