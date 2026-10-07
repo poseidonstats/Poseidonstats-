@@ -1265,3 +1265,8 @@ h2, h3 { letter-spacing: -0.01em; }
   @keyframes deschide { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
   .match .xg-bar-h { transition: width 0.45s ease-out; }
 }
+
+/* 7 oct 2026 — ultimele retușuri „profi”: reperele zilei în paleta mărcii (nu galben), roșul doar pentru rezultate (nu pentru probabilități mici) */
+.daily-static { background: #fff !important; border: 1px solid var(--line) !important; border-left: 4px solid var(--navy-2) !important; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+.daily-static h2, .daily-static h3 { color: var(--navy-2) !important; }
+.market .val.low { color: var(--muted); }
