@@ -1206,3 +1206,13 @@ body.is-member nav a.patreon, body.is-member .trial-banner, body.is-member .unlo
   .more-markets[open] > summary::after { content: " ▴"; }
   .more-markets[open] > summary { margin-bottom: 8px; }
 }
+
+/* 7 oct 2026 — membrii nu au nevoie de prezentare: intro și dovada ascunse; Pro fără exemplul Pro (are analizele sus); buton plutitor spre meciuri pe telefon */
+body.is-member .intro, body.is-member #dovada { display: none; }
+body.tier-pro #exemplu-pro { display: none; }
+body.tier-basic #exemplu-pro .pro-card { display: none; }
+.salt-meciuri { display: none; }
+@media (max-width: 600px) {
+  .salt-meciuri { display: inline-block; position: fixed; left: 50%; transform: translateX(-50%); bottom: 14px; z-index: 50; background: #0f172a; color: #fff; text-decoration: none; font-weight: 700; font-size: 0.9rem; padding: 10px 16px; border-radius: 999px; box-shadow: 0 6px 18px rgba(15,23,42,0.35); }
+  .salt-meciuri.ascuns { display: none; }
+}

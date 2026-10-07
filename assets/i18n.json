@@ -272,7 +272,10 @@
     "pro.azi.h2": "💎 Analizele tale Pro de azi",
     "proof.metrici": "<strong>Metrici pe toate cele 35.549 de predicții rezolvate</strong> (din 2 iunie 2026, nu doar cele peste prag): peste 1,5 — Brier 0,164, log loss 0,505, eroare de calibrare 0,9 pp · peste 2,5 — Brier 0,233, log loss 0,658, ECE 0,64 pp · GG — Brier 0,244, log loss 0,680. Test contra prețului de închidere al pieței, pe 20.068 meciuri (peste 2,5): Brier model 0,238 față de piață 0,235; ce adaugă modelul peste preț: 0,0002 log loss, adică nimic. <strong>Modelul e calibrat și nu bate piața.</strong> Diagrama de fiabilitate, Brier și log loss pe fiecare piață și jurnalul CSV cu ora înghețării fiecărei predicții: <a href=\"track-record.html\">track record</a>.",
     "pro.azi.ro_only": "Traducerea apare în câteva minute; până atunci textul e în română.",
-    "match.more": "Mai multe piețe: dublă șansă, under, prima repriză"
+    "match.more": "Mai multe piețe: dublă șansă, under, prima repriză",
+    "salt.meciuri": "⚽ Meciurile de azi",
+    "plans.pro.tag": "ANALIZA COMPLETĂ",
+    "plans.per": "/ lună"
   },
   "en": {
     "lang.name": "English",
@@ -547,7 +550,10 @@
     "pro.azi.h2": "💎 Your Pro analyses for today",
     "proof.metrici": "<strong>Metrics on all 35,549 resolved predictions</strong> (since 2 June 2026, not just those above the threshold): over 1.5 — Brier 0.164, log loss 0.505, calibration error 0.9 pp · over 2.5 — Brier 0.233, log loss 0.658, ECE 0.64 pp · BTTS — Brier 0.244, log loss 0.680. Tested against the market's closing price on 20,068 matches (over 2.5): model Brier 0.238 vs market 0.235; what the model adds on top of the price: +0.0002 log loss, i.e. nothing. <strong>The model is calibrated and does not beat the market.</strong> Reliability diagram, Brier and log loss per market, and the CSV journal with each prediction's freeze time: <a href=\"track-record.html\">track record</a>.",
     "pro.azi.ro_only": "The translation appears within a few minutes; until then the text is in Romanian.",
-    "match.more": "More markets: double chance, under, first half"
+    "match.more": "More markets: double chance, under, first half",
+    "salt.meciuri": "⚽ Today's matches",
+    "plans.pro.tag": "FULL ANALYSIS",
+    "plans.per": "/ month"
   },
   "es": {
     "lang.name": "Español",
@@ -822,7 +828,10 @@
     "pro.azi.h2": "💎 Tus análisis Pro de hoy",
     "proof.metrici": "<strong>Métricas sobre las 35.549 predicciones resueltas</strong> (desde el 2 de junio de 2026, no solo las que superan el umbral): más de 1,5 — Brier 0,164, log loss 0,505, error de calibración 0,9 pp · más de 2,5 — Brier 0,233, log loss 0,658, ECE 0,64 pp · ambos marcan — Brier 0,244, log loss 0,680. Comparado con el precio de cierre del mercado en 20.068 partidos (más de 2,5): Brier modelo 0,238 frente a mercado 0,235; lo que el modelo añade sobre el precio: 0,0002 log loss, es decir, nada. <strong>El modelo está calibrado y no supera al mercado.</strong> Diagrama de fiabilidad, Brier y log loss por mercado y el diario CSV con la hora de congelación: <a href=\"track-record.html\">track record</a>.",
     "pro.azi.ro_only": "La traducción aparece en unos minutos; hasta entonces el texto está en rumano.",
-    "match.more": "Más mercados: doble oportunidad, under, primera parte"
+    "match.more": "Más mercados: doble oportunidad, under, primera parte",
+    "salt.meciuri": "⚽ Partidos de hoy",
+    "plans.pro.tag": "ANÁLISIS COMPLETO",
+    "plans.per": "/ mes"
   },
   "it": {
     "lang.name": "Italiano",
@@ -1097,6 +1106,9 @@
     "pro.azi.h2": "💎 Le tue analisi Pro di oggi",
     "proof.metrici": "<strong>Metriche su tutte le 35.549 previsioni risolte</strong> (dal 2 giugno 2026, non solo quelle sopra soglia): over 1,5 — Brier 0,164, log loss 0,505, errore di calibrazione 0,9 pp · over 2,5 — Brier 0,233, log loss 0,658, ECE 0,64 pp · GG — Brier 0,244, log loss 0,680. Testato contro il prezzo di chiusura del mercato su 20.068 partite (over 2,5): Brier modello 0,238 contro mercato 0,235; ciò che il modello aggiunge al prezzo: 0,0002 log loss, cioè niente. <strong>Il modello è calibrato e non batte il mercato.</strong> Diagramma di affidabilità, Brier e log loss per mercato e il diario CSV con l'ora di congelamento: <a href=\"track-record.html\">track record</a>.",
     "pro.azi.ro_only": "La traduzione appare tra pochi minuti; fino ad allora il testo è in rumeno.",
-    "match.more": "Altri mercati: doppia chance, under, primo tempo"
+    "match.more": "Altri mercati: doppia chance, under, primo tempo",
+    "salt.meciuri": "⚽ Partite di oggi",
+    "plans.pro.tag": "ANALISI COMPLETA",
+    "plans.per": "/ mese"
   }
 }

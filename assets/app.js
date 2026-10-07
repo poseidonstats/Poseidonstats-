@@ -109,7 +109,15 @@ let PRED_CU_TOKEN = false;   // prima încărcare a pornit deja cu token → pla
 async function loadPredictions() {
   const M = (typeof window !== "undefined") ? window.PoseidonMembers : null;
   if (M && M.MEMBERS_API) {
-    if (M.tier()) { PRED_CU_TOKEN = true; try { document.body.classList.add("is-member"); } catch (e) {} }
+    if (M.tier()) {
+      PRED_CU_TOKEN = true;
+      // 7 oct 2026 (Andreea, logată: „tot scrolez mult până la meciuri”): membrul nu are nevoie de prezentare.
+      // body.is-member + tier-basic/tier-pro → CSS ascunde intro/dovadă; Basic: exemplul Pro (upsell) coboară SUB lista de meciuri.
+      try {
+        document.body.classList.add("is-member", "tier-" + M.tier());
+        if (M.tier() === "basic") { const ex = document.getElementById("exemplu-pro"), mt = document.getElementById("matches"); if (ex && mt && mt.parentNode) mt.parentNode.insertBefore(ex, mt.nextSibling); }
+      } catch (e) {}
+    }
     const r = await M.incarca(PRED_URL);
     PRED_SURSA = r.sursa;
     // 6 oct 2026: abonat valid, dar datele membrilor n-au venit (9 zile de KV gol au trecut neobservate) → spunem clar, nu lacăte tăcute
@@ -123,7 +131,7 @@ async function loadPredictions() {
   }
   return fetchJSON(PRED_URL);
 }
-const SCRIPT_V = "20261007f";
+const SCRIPT_V = "20261007g";
 // 7 oct 2026 — evenimente în GoatCounter (fără cookie, fără date personale): clicuri pe butoanele de abonament/trial/login și
 // dacă vizitatorul a ajuns la secțiunea de abonament. Răspund la „250 de vizite și niciun abonat”: nu ajung la ofertă, sau ajung și pleacă?
 function _gcEvent(nume) {
@@ -154,6 +162,19 @@ function _instaleazaUrmarireClicuri() {
 }
 if (typeof document !== "undefined") {
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", _instaleazaUrmarireClicuri); else _instaleazaUrmarireClicuri();
+}
+// 7 oct 2026 — buton plutitor „⚽ Meciurile de azi” pe telefon: sare direct la listă; dispare când lista e deja pe ecran
+function _butonSalt() {
+  const mt = document.getElementById("match-count"); if (!mt || document.getElementById("salt-meciuri")) return;
+  const b = document.createElement("a"); b.id = "salt-meciuri"; b.href = "#match-count"; b.className = "salt-meciuri";
+  b.textContent = tt("salt.meciuri", "⚽ Meciurile de azi"); document.body.appendChild(b);
+  if ("IntersectionObserver" in window) {
+    const io = new IntersectionObserver((es) => { b.classList.toggle("ascuns", es.some(e => e.isIntersecting)); }, { rootMargin: "0px 0px -60% 0px" });
+    io.observe(mt);
+  }
+}
+if (typeof document !== "undefined") {
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", _butonSalt); else _butonSalt();
 }
 
 // 29 sept — plasă de siguranță: dacă la DOMContentLoaded există token valid, dar lista a fost desenată din fișierul public
