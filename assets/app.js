@@ -134,7 +134,7 @@ async function loadPredictions() {
   }
   return fetchJSON(PRED_URL);
 }
-const SCRIPT_V = "20261007l";
+const SCRIPT_V = "20261007m";
 // 7 oct 2026 — evenimente în GoatCounter (fără cookie, fără date personale): clicuri pe butoanele de abonament/trial/login și
 // dacă vizitatorul a ajuns la secțiunea de abonament. Răspund la „250 de vizite și niciun abonat”: nu ajung la ofertă, sau ajung și pleacă?
 function _gcEvent(nume) {
@@ -414,11 +414,19 @@ function simBest(m) {
 // șansa compusă. Nimic aleatoriu: „altă variantă" înseamnă următoarea ca probabilitate,
 // nu o altă tragere la sorți.
 function simCombinatii(lista, n) {
+  // 7 oct 2026: enumerarea completă (C(L,n)) omora Safari la membri (40 meciuri → miliarde de combinații, pagina se închidea).
+  // Peste ~3.000 de combinații luăm variantele ca ferestre glisante pe lista sortată după probabilitate: top-n, apoi decalate cu 1…
+  const L = lista.slice().sort((a, b) => b.prob - a.prob);
+  let comb = 1; for (let i = 1; i <= n; i++) comb = comb * (L.length - n + i) / i;
   const out = [];
-  (function rec(start, acc) {
-    if (acc.length === n) { out.push(acc.slice()); return; }
-    for (let i = start; i < lista.length; i++) rec(i + 1, acc.concat([lista[i]]));
-  })(0, []);
+  if (comb <= 3000) {
+    (function rec(start, acc) {
+      if (acc.length === n) { out.push(acc.slice()); return; }
+      for (let i = start; i < L.length; i++) rec(i + 1, acc.concat([L[i]]));
+    })(0, []);
+  } else {
+    for (let k = 0; k + n <= L.length && out.length < 12; k++) out.push(L.slice(k, k + n));
+  }
   return out
     .map(sel => ({ sel, p: sel.reduce((a, s) => a * s.prob, 1) }))
     .sort((a, b) => b.p - a.p);
@@ -555,7 +563,7 @@ async function renderSimulator() {
   if (Mm && Mm.MEMBERS_API && Mm.tier() && PRED_SURSA === "membru") {
     free = data.matches.filter(m => !isLocked(m) && (m.match_date || "").slice(0, 10) === aziRO0 && m.prob_over_1_5 != null);
     if (free.length < 2) free = data.matches.filter(m => !isLocked(m) && (m.match_date || "").slice(0, 10) >= azi && m.prob_over_1_5 != null).slice(0, 60);
-    free.sort((a, b) => (b.prob_over_1_5 || 0) - (a.prob_over_1_5 || 0)); free = free.slice(0, 40);   // cele mai sigure 40, ca lista manuală să rămână parcurgibilă
+    free.sort((a, b) => (b.prob_over_1_5 || 0) - (a.prob_over_1_5 || 0)); free = free.slice(0, 12);   // cele mai sigure 40, ca lista manuală să rămână parcurgibilă
   } else {
     free = data.matches.filter(m => m.free && m.match_date.slice(0, 10) >= azi);
     if (free.length < 2) free = data.matches.filter(m => m.free);   // pauze: iau tot ce e liber
@@ -578,7 +586,7 @@ async function renderSimulator() {
   // Butoanele „câte selecții" — doar valorile posibile cu meciurile de azi.
   const pick = document.getElementById("sim-gen-count");
   if (pick) {
-    const maxN = free.length;
+    const maxN = Math.min(free.length, 10);   // 7 oct 2026: cel mult 10 selecții pe bilet; butoanele nu mai ies din ecran
     SIM.nGen = Math.min(SIM.nGen, maxN);
     pick.innerHTML = Array.from({ length: maxN - 1 }, (_, i) => i + 2)
       .map(n => `<button type="button" class="sim-n ${n === SIM.nGen ? "on" : ""}" data-n="${n}">${n}</button>`)

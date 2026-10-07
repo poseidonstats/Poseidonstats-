@@ -1073,7 +1073,8 @@ footer a { color: #93c5fd; }
 /* Simulator — modul „bilet generat" */
 .sim-gen-controls { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin: 14px 0 16px; }
 .sim-gen-lbl { font-size: 0.95rem; font-weight: 600; color: #334155; }
-.sim-n-row { display: flex; gap: 6px; }
+.sim-n-row { display: flex; gap: 6px; flex-wrap: wrap; }   /* 7 oct 2026: butoanele se încadrează în ecran */
+html, body { overflow-x: hidden; }
 .sim-n {
   width: 42px; height: 42px; border-radius: 10px; border: 1px solid #cbd5e1;
   background: #fff; font-size: 1.05rem; font-weight: 700; color: #334155;
