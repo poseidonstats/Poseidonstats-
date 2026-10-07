@@ -240,7 +240,7 @@ def shell(*, titlu: str, descriere: str, canonical: str, corp: str,
 {jsonld}</head>
 <body>
 
-<div class="legal-banner">Statistici informative. Modelul poate greși. Verifică sursa. 18+.</div>
+<div class="legal-banner" data-i18n="banner.legal">Statistici informative. Modelul poate greși. Verifică sursa. 18+.</div>
 
 <header>
   <div class="container">
@@ -251,15 +251,16 @@ def shell(*, titlu: str, descriere: str, canonical: str, corp: str,
     </a>
     <p class="tagline">Predicții fotbal calibrate pe <strong>{N_CAL} meciuri reale</strong> · zero leakage</p>
     <nav>
-      <a href="{sus}index.html">Predicții</a>
-      <a href="{sus}predictii/index.html">Pe ligi</a>
-      <a href="{sus}simulator.html">Simulator</a>
-      <a href="{sus}analize/index.html">Analize</a>
-      <a href="{sus}istoric.html">Istoric</a>
-      <a href="{sus}track-record.html">Track record</a>
-      <a href="{sus}metodologie.html">Metodologie</a>
-      <a href="{sus}index.html#abonament">💎 Abonamente</a>
+      <a href="{sus}index.html" data-i18n="nav.predictii">Predicții</a>
+      <a href="{sus}predictii/index.html" data-i18n="nav.ligi">Pe ligi</a>
+      <a href="{sus}simulator.html" data-i18n="nav.simulator">Simulator</a>
+      <a href="{sus}analize/index.html" data-i18n="nav.analize">Analize</a>
+      <a href="{sus}istoric.html" data-i18n="nav.istoric">Istoric</a>
+      <a href="{sus}track-record.html" data-i18n="nav.trackrecord">Track record</a>
+      <a href="{sus}metodologie.html" data-i18n="nav.metodologie">Metodologie</a>
+      <a class="patreon" href="{sus}index.html#abonament" data-i18n="nav.abonamente">Abonamente</a>
     </nav>
+    <script src="{sus}assets/i18n-lite.js" data-sus="{sus}"></script>
   </div>
 </header>
 

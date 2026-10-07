@@ -196,21 +196,22 @@ def shell(titlu: str, descriere: str, canonical: str, corp: str, sus: str = "../
 </head>
 <body>
 
-<div class="legal-banner">Statistici informative. Modelul poate greși. Verifică sursa. 18+.</div>
+<div class="legal-banner" data-i18n="banner.legal">Statistici informative. Modelul poate greși. Verifică sursa. 18+.</div>
 
 <header>
   <div class="container">
     <a class="brand" href="{sus}index.html"><img src="{sus}assets/icon-192.png" alt="POSEIDON" width="36" height="36"> <span>POSEIDON</span></a>
-    <p class="tagline">Analize Pro arhivate · textul de dinaintea meciului, neschimbat · verificarea de a doua zi</p>
+    <p class="tagline" data-i18n="arhiva.tagline">Analize Pro arhivate · textul de dinaintea meciului, neschimbat · verificarea de a doua zi</p>
     <nav>
-      <a href="{sus}index.html">Predicții</a>
-      <a href="{sus}predictii/index.html">Pe ligi</a>
-      <a href="{sus}analize/index.html" class="active">Analize</a>
-      <a href="{sus}istoric.html">Istoric</a>
-      <a href="{sus}track-record.html">Track record</a>
-      <a href="{sus}metodologie.html">Metodologie</a>
-      <a href="{sus}index.html#abonament">💎 Abonamente</a>
+      <a href="{sus}index.html" data-i18n="nav.predictii">Predicții</a>
+      <a href="{sus}predictii/index.html" data-i18n="nav.ligi">Pe ligi</a>
+      <a href="{sus}analize/index.html" class="active" data-i18n="nav.analize">Analize</a>
+      <a href="{sus}istoric.html" data-i18n="nav.istoric">Istoric</a>
+      <a href="{sus}track-record.html" data-i18n="nav.trackrecord">Track record</a>
+      <a href="{sus}metodologie.html" data-i18n="nav.metodologie">Metodologie</a>
+      <a class="patreon" href="{sus}index.html#abonament" data-i18n="nav.abonamente">Abonamente</a>
     </nav>
+    <script src="{sus}assets/i18n-lite.js" data-sus="{sus}"></script>
   </div>
 </header>
 
@@ -221,7 +222,7 @@ def shell(titlu: str, descriere: str, canonical: str, corp: str, sus: str = "../
 <footer>
   <div class="container">
     <p><strong>POSEIDON</strong> — model statistic propriu, ratings Bayesian cu calibrare per-ligă.</p>
-    <p>⚠️ <strong>Informativ.</strong> NU sfat de pariere. NU garanție. Folosește responsabil. <strong>18+</strong>.</p>
+    <p><strong>Informativ.</strong> NU sfat de pariere. NU garanție. Folosește responsabil. <strong>18+</strong>.</p>
     <p class="muted">Contact: <a href="mailto:contact@poseidonstats.com">contact@poseidonstats.com</a> · <a href="{sus}terms.html">Termeni</a></p>
   </div>
 </footer>
@@ -349,7 +350,15 @@ def html_index(zile: list[dict], tot: dict, pe_zi: list[dict], azi: str) -> str:
 
 
 def html_zi(z: dict, rez: dict, prev: str | None, nxt: str | None) -> str:
-    arts = "".join(html_analiza(it, verifica(it, rez.get(it["match"]["fixture_id"])), z["generat"]) for it in z["items"])
+    def _multi(it):
+        # 7 oct 2026: analiza în 4 limbi când există traduceri (analysis_en/es/it, din traduce_analize.py); i18n-lite arată varianta limbii alese
+        v = verifica(it, rez.get(it["match"]["fixture_id"])); ro = html_analiza(it, v, z["generat"])
+        var = [f'<div data-lang="ro">{ro}</div>']
+        for cod in ("en", "es", "it"):
+            if it.get(f"analysis_{cod}"):
+                var.append(f'<div data-lang="{cod}" hidden>{html_analiza({**it, "analysis": it[f"analysis_{cod}"]}, v, z["generat"])}</div>')
+        return f'<div data-lang-grup>{"".join(var)}</div>' if len(var) > 1 else ro
+    arts = "".join(_multi(it) for it in z["items"])
     nav = " · ".join(x for x in [f'<a href="{prev}.html">← {_data_ro(prev)}</a>' if prev else "", '<a href="index.html">toate zilele</a>', f'<a href="{nxt}.html">{_data_ro(nxt)} →</a>' if nxt else ""] if x)
     n_rez = sum(1 for it in z["items"] if rez.get(it["match"]["fixture_id"]))
     corp = f"""

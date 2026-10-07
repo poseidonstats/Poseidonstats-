@@ -276,7 +276,9 @@
     "salt.meciuri": "Meciurile de azi",
     "plans.pro.tag": "ANALIZA COMPLETĂ",
     "plans.per": "/ lună",
-    "filters.toggle": "Filtre"
+    "filters.toggle": "Filtre",
+    "arhiva.tagline": "Analize Pro arhivate · textul de dinaintea meciului, neschimbat · verificarea de a doua zi",
+    "ligi.tagline": "Predicții fotbal calibrate pe <strong>{n} meciuri reale</strong> · zero leakage"
   },
   "en": {
     "lang.name": "English",
@@ -555,7 +557,9 @@
     "salt.meciuri": "Today's matches",
     "plans.pro.tag": "FULL ANALYSIS",
     "plans.per": "/ month",
-    "filters.toggle": "Filters"
+    "filters.toggle": "Filters",
+    "arhiva.tagline": "Archived Pro analyses · the pre-match text, unchanged · next-day verification",
+    "ligi.tagline": "Football predictions calibrated on <strong>{n} real matches</strong> · zero leakage"
   },
   "es": {
     "lang.name": "Español",
@@ -834,7 +838,9 @@
     "salt.meciuri": "Partidos de hoy",
     "plans.pro.tag": "ANÁLISIS COMPLETO",
     "plans.per": "/ mes",
-    "filters.toggle": "Filtros"
+    "filters.toggle": "Filtros",
+    "arhiva.tagline": "Análisis Pro archivados · el texto previo al partido, sin cambios · verificación del día siguiente",
+    "ligi.tagline": "Predicciones de fútbol calibradas en <strong>{n} partidos reales</strong> · cero leakage"
   },
   "it": {
     "lang.name": "Italiano",
@@ -1113,6 +1119,8 @@
     "salt.meciuri": "Partite di oggi",
     "plans.pro.tag": "ANALISI COMPLETA",
     "plans.per": "/ mese",
-    "filters.toggle": "Filtri"
+    "filters.toggle": "Filtri",
+    "arhiva.tagline": "Analisi Pro archiviate · il testo pre-partita, invariato · verifica del giorno dopo",
+    "ligi.tagline": "Previsioni calcio calibrate su <strong>{n} partite reali</strong> · zero leakage"
   }
 }
