@@ -359,7 +359,7 @@ def html_zi(z: dict, rez: dict, prev: str | None, nxt: str | None) -> str:
                 var.append(f'<div data-lang="{cod}" hidden>{html_analiza({**it, "analysis": it[f"analysis_{cod}"]}, v, z["generat"])}</div>')
         return f'<div data-lang-grup>{"".join(var)}</div>' if len(var) > 1 else ro
     arts = "".join(_multi(it) for it in z["items"])
-    nav = " · ".join(x for x in [f'<a href="{prev}.html">← {_data_ro(prev)}</a>' if prev else "", '<a href="index.html" data-i18n="arhiva.toate">toate zilele</a>', f'<a href="{nxt}.html">{_data_ro(nxt)} →</a>' if nxt else ""] if x)
+    nav = " · ".join(x for x in [f'<a href="{prev}.html">← <span data-date="{prev}">{_data_ro(prev)}</span></a>' if prev else "", '<a href="index.html" data-i18n="arhiva.toate">toate zilele</a>', f'<a href="{nxt}.html"><span data-date="{nxt}">{_data_ro(nxt)}</span> →</a>' if nxt else ""] if x)
     n_rez = sum(1 for it in z["items"] if rez.get(it["match"]["fixture_id"]))
     corp = f"""
   <section class="intro">

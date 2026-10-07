@@ -134,6 +134,7 @@ def _shell(*, lang: str, title: str, description: str, canonical: str, body: str
 <meta name="theme-color" content="#1e3a8a">
 <link rel="apple-touch-icon" href="{up}assets/icon-192.png">
 <script data-goatcounter="https://poseidonstats.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<script>(function(){try{var l=localStorage.getItem("poseidon_lang");var ro=document.documentElement.lang==="ro";var alt=document.querySelector('link[rel="alternate"][hreflang="'+(ro?"en":"ro")+'"]');if(alt&&((ro&&l&&l!=="ro")||(!ro&&l==="ro")))location.replace(alt.href);}catch(e){}})();</script>
 </head>
 <body>
 

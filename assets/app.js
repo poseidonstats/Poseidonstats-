@@ -49,12 +49,22 @@ function t(key) {
   return (I18N[LANG] && I18N[LANG][key]) || (I18N.ro && I18N.ro[key]) || key;
 }
 
+function _loc() { return LANG === "en" ? "en-GB" : LANG === "es" ? "es-ES" : LANG === "it" ? "it-IT" : "ro-RO"; }
 function applyI18n() {
   if (!I18N) return;
   document.querySelectorAll("[data-i18n]").forEach(el => {
     const key = el.getAttribute("data-i18n");
-    el.innerHTML = t(key);
+    let v = t(key); if (v === key) return;
+    // 7 oct 2026: variabile {x} (data-i18n-vars, JSON) — aceeași convenție ca i18n-lite pe paginile generate
+    const vars = el.getAttribute("data-i18n-vars");
+    if (vars) { try { const o = JSON.parse(vars.replace(/&#39;/g, "'")); Object.keys(o).forEach(n => { v = v.split("{" + n + "}").join(o[n]); }); } catch (e) {} }
+    el.innerHTML = v;
   });
+  // date în limba aleasă
+  try {
+    const fmt = new Intl.DateTimeFormat(_loc(), { day: "numeric", month: "long", year: "numeric" });
+    document.querySelectorAll("[data-date]").forEach(el => { const dd = el.getAttribute("data-date"); if (/^\d{4}-\d{2}-\d{2}$/.test(dd)) el.textContent = fmt.format(new Date(dd + "T12:00:00Z")); });
+  } catch (e) {}
   document.querySelectorAll("[data-i18n-attr]").forEach(el => {
     // format: "attr:key,attr:key"
     el.getAttribute("data-i18n-attr").split(",").forEach(pair => {
@@ -134,7 +144,7 @@ async function loadPredictions() {
   }
   return fetchJSON(PRED_URL);
 }
-const SCRIPT_V = "20261007n";
+const SCRIPT_V = "20261007o";
 // 7 oct 2026 — evenimente în GoatCounter (fără cookie, fără date personale): clicuri pe butoanele de abonament/trial/login și
 // dacă vizitatorul a ajuns la secțiunea de abonament. Răspund la „250 de vizite și niciun abonat”: nu ajung la ofertă, sau ajung și pleacă?
 function _gcEvent(nume) {

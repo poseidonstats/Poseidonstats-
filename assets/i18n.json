@@ -367,7 +367,13 @@
     "ligi.rez.xgN": "Dintre ele, {k} sunt publicate integral și gratuit mai jos, cu media golurilor așteptate de model la <strong>{xg}</strong> pe partidă.",
     "ligi.rez.blocate": "Cele 5 predicții publicate gratuit azi sunt pe alte competiții; probabilitățile pentru meciurile de aici sunt disponibile abonaților. Programul, profilul de calibrare al ligii și jurnalul predicțiilor deja verificate rămân publice, mai jos.",
     "n.meciuri": "{n} meciuri",
-    "n.meci1": "un meci"
+    "n.meci1": "un meci",
+    "ligilinks.h2": "Predicții pe ligi",
+    "ligilinks.p": "Fiecare campionat urmărit are pagina lui: meciurile următoare cu probabilitățile calibrate, profilul de calibrare al ligii și ce a ieșit din predicțiile deja rezolvate. Cifra din dreptul ligii = meciuri programate în următoarele {z} zile.",
+    "ligilinks.foot": "<a href=\"predictii/index.html\">Toate ligile urmărite</a> · <a href=\"predictii/arhiva/index.html\">arhiva zi cu zi</a> · <a href=\"statistici-pariuri.html\">statistici pariuri: cât de des se adeveresc cotele</a>",
+    "ligi.jurnal.gol": "Încă nu avem predicții rezolvate pe această ligă în jurnalul forward (pornit pe {data}). Cum se joacă meciurile, apar aici — și cele nimerite, și cele ratate.",
+    "audit.h3": "Audit statistic — jurnalul forward, cifrele complete",
+    "audit.p": "Calculat automat în fiecare dimineață din predicțiile înghețate la 05:30 (jurnal din {de_la} până la {pana_la}, {n} predicții rezolvate, în medie {pe_zi} pe zi). Brier și log loss = cât de aproape sunt probabilitățile de realitate (mai mic = mai bine); BSS = câștigul față de „rata de bază\" a evenimentului (0 = nimic peste a spune mereu media); ECE = eroarea medie de calibrare pe intervale de 10 pp; pantă și intercept = calibrarea Cox (regresie logistică a rezultatului pe logit-ul probabilității: pantă 1 și intercept 0 = perfect calibrat, pantă sub 1 = prea încrezător la extreme, intercept peste 0 = subestimează evenimentul). Cifrele sunt pe probabilitățile <strong>publicate</strong> (după calibrarea Platt per piață, refăcută săptămânal pe jurnal — deci ușor in-sample; cu parametrii fitați înainte de 16 august, testul pe meciurile de după dă la peste 2,5 BSS +4,5 față de +4,1 brut). Coloana „BSS brut\" = modelul fără calibrare. Pe scurt: modelul este calibrat față de rata de bază, dar <strong>nu bate piața</strong> — vezi ultimul tabel."
   },
   "en": {
     "lang.name": "English",
@@ -737,7 +743,13 @@
     "ligi.rez.xgN": "Of these, {k} are published in full and free below, with the model's average expected goals at <strong>{xg}</strong> per match.",
     "ligi.rez.blocate": "Today's 5 free predictions are in other competitions; the probabilities for the matches here are available to members. The schedule, the league's calibration profile and the journal of already verified predictions stay public, below.",
     "n.meciuri": "{n} matches",
-    "n.meci1": "one match"
+    "n.meci1": "one match",
+    "ligilinks.h2": "Predictions by league",
+    "ligilinks.p": "Every league we follow has its own page: upcoming matches with calibrated probabilities, the league's calibration profile and what came true from the predictions already resolved. The number next to the league = matches scheduled in the next {z} days.",
+    "ligilinks.foot": "<a href=\"predictii/index.html\">All leagues we follow</a> · <a href=\"predictii/arhiva/index.html\">day-by-day archive</a> · <a href=\"en/betting-odds-statistics.html\">betting odds statistics: how often the odds come true</a>",
+    "ligi.jurnal.gol": "No resolved predictions for this league yet in the forward journal (started on {data}). As matches are played they appear here — hits and misses alike.",
+    "audit.h3": "Statistical audit — the forward journal, full figures",
+    "audit.p": "Computed automatically every morning from the predictions frozen at 05:30 (journal from {de_la} to {pana_la}, {n} resolved predictions, {pe_zi} a day on average). Brier and log loss = how close the probabilities are to reality (lower = better); BSS = the gain over the event's “base rate” (0 = nothing beyond always stating the average); ECE = mean calibration error over 10 pp bins; slope and intercept = Cox calibration (logistic regression of the outcome on the probability logit: slope 1 and intercept 0 = perfectly calibrated, slope below 1 = overconfident at the extremes, intercept above 0 = underestimates the event). Figures are on the <strong>published</strong> probabilities (after per-market Platt calibration, refit weekly on the journal — so slightly in-sample; with parameters fitted before 16 August, the test on later matches gives over 2.5 a BSS of +4.5 vs +4.1 raw). The “raw BSS” column = the model without calibration. In short: the model is calibrated against the base rate, but <strong>does not beat the market</strong> — see the last table."
   },
   "es": {
     "lang.name": "Español",
@@ -1107,7 +1119,13 @@
     "ligi.rez.xgN": "De ellos, {k} se publican íntegros y gratis abajo, con una media de goles esperados por el modelo de <strong>{xg}</strong> por partido.",
     "ligi.rez.blocate": "Las 5 predicciones gratuitas de hoy son de otras competiciones; las probabilidades de estos partidos están disponibles para los suscriptores. El calendario, el perfil de calibración de la liga y el diario de predicciones ya verificadas siguen siendo públicos, abajo.",
     "n.meciuri": "{n} partidos",
-    "n.meci1": "un partido"
+    "n.meci1": "un partido",
+    "ligilinks.h2": "Predicciones por liga",
+    "ligilinks.p": "Cada liga seguida tiene su página: próximos partidos con probabilidades calibradas, el perfil de calibración de la liga y qué salió de las predicciones ya resueltas. La cifra junto a la liga = partidos programados en los próximos {z} días.",
+    "ligilinks.foot": "<a href=\"predictii/index.html\">Todas las ligas seguidas</a> · <a href=\"predictii/arhiva/index.html\">archivo día a día</a> · <a href=\"en/betting-odds-statistics.html\">estadísticas de cuotas: con qué frecuencia se cumplen</a>",
+    "ligi.jurnal.gol": "Aún no hay predicciones resueltas de esta liga en el diario forward (iniciado el {data}). A medida que se juegan los partidos aparecen aquí — aciertos y fallos por igual.",
+    "audit.h3": "Auditoría estadística — el diario forward, cifras completas",
+    "audit.p": "Calculado automáticamente cada mañana a partir de las predicciones congeladas a las 05:30 (diario desde {de_la} hasta {pana_la}, {n} predicciones resueltas, {pe_zi} al día de media). Brier y log loss = cuánto se acercan las probabilidades a la realidad (menor = mejor); BSS = la ganancia respecto a la «tasa base» del evento (0 = nada más allá de decir siempre la media); ECE = error medio de calibración en intervalos de 10 pp; pendiente e intercepto = calibración de Cox (regresión logística del resultado sobre el logit de la probabilidad: pendiente 1 e intercepto 0 = calibración perfecta, pendiente menor de 1 = demasiada confianza en los extremos, intercepto mayor de 0 = subestima el evento). Las cifras son sobre las probabilidades <strong>publicadas</strong> (tras la calibración Platt por mercado, reajustada semanalmente en el diario — por tanto ligeramente in-sample; con parámetros ajustados antes del 16 de agosto, el test sobre los partidos posteriores da en más de 2,5 un BSS de +4,5 frente a +4,1 bruto). La columna «BSS bruto» = el modelo sin calibración. En resumen: el modelo está calibrado frente a la tasa base, pero <strong>no supera al mercado</strong> — véase la última tabla."
   },
   "it": {
     "lang.name": "Italiano",
@@ -1477,6 +1495,12 @@
     "ligi.rez.xgN": "Di queste, {k} sono pubblicate integralmente e gratis qui sotto, con la media dei gol attesi dal modello a <strong>{xg}</strong> a partita.",
     "ligi.rez.blocate": "Le 5 previsioni gratuite di oggi sono su altre competizioni; le probabilità per le partite qui sono disponibili agli abbonati. Il calendario, il profilo di calibrazione del campionato e il diario delle previsioni già verificate restano pubblici, sotto.",
     "n.meciuri": "{n} partite",
-    "n.meci1": "una partita"
+    "n.meci1": "una partita",
+    "ligilinks.h2": "Previsioni per campionato",
+    "ligilinks.p": "Ogni campionato seguito ha la sua pagina: prossime partite con probabilità calibrate, il profilo di calibrazione del campionato e cosa è uscito dalle previsioni già risolte. Il numero accanto al campionato = partite in programma nei prossimi {z} giorni.",
+    "ligilinks.foot": "<a href=\"predictii/index.html\">Tutti i campionati seguiti</a> · <a href=\"predictii/arhiva/index.html\">archivio giorno per giorno</a> · <a href=\"en/betting-odds-statistics.html\">statistiche quote: quanto spesso si avverano</a>",
+    "ligi.jurnal.gol": "Nessuna previsione risolta per questo campionato nel diario forward (avviato il {data}). Man mano che si giocano le partite appaiono qui — centrate e sbagliate.",
+    "audit.h3": "Audit statistico — il diario forward, cifre complete",
+    "audit.p": "Calcolato automaticamente ogni mattina dalle previsioni congelate alle 05:30 (diario dal {de_la} al {pana_la}, {n} previsioni risolte, {pe_zi} al giorno in media). Brier e log loss = quanto le probabilità sono vicine alla realtà (più basso = meglio); BSS = il guadagno rispetto al «tasso base» dell'evento (0 = nulla oltre dire sempre la media); ECE = errore medio di calibrazione su intervalli di 10 pp; pendenza e intercetta = calibrazione di Cox (regressione logistica del risultato sul logit della probabilità: pendenza 1 e intercetta 0 = perfettamente calibrato, pendenza sotto 1 = troppo sicuro agli estremi, intercetta sopra 0 = sottostima l'evento). Le cifre sono sulle probabilità <strong>pubblicate</strong> (dopo la calibrazione Platt per mercato, rifatta ogni settimana sul diario — quindi leggermente in-sample; con parametri stimati prima del 16 agosto, il test sulle partite successive dà su over 2,5 un BSS di +4,5 contro +4,1 grezzo). La colonna «BSS grezzo» = il modello senza calibrazione. In breve: il modello è calibrato rispetto al tasso base, ma <strong>non batte il mercato</strong> — vedi l'ultima tabella."
   }
 }

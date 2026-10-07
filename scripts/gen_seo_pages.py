@@ -416,8 +416,8 @@ def jurnal_liga(zile: list[dict], tara: str, liga: str) -> str:
                     per_piata[p["market"]][1] += 1
     n = wins + losses
     if n == 0:
-        return ('<p class="muted">Încă nu avem predicții rezolvate pe această ligă în jurnalul '
-                'forward (pornit pe 2 iunie 2026). Cum se joacă meciurile, apar aici — și cele '
+        return ('<p class="muted" data-i18n="ligi.jurnal.gol" data-i18n-vars=\'{"data":"<span data-date=\\"2026-06-02\\">2 iunie 2026</span>"}\'>Încă nu avem predicții rezolvate pe această ligă în jurnalul '
+                'forward (pornit pe <span data-date="2026-06-02">2 iunie 2026</span>). Cum se joacă meciurile, apar aici — și cele '
                 'nimerite, și cele ratate.</p>')
     hit = wins / n * 100
     wlo = wilson_lo(wins, n)
@@ -476,7 +476,8 @@ def pagina_liga(tara: str, liga: str, slug: str, nume: str, *,
         prima = min(datetime.fromisoformat(m["match_date"].replace("Z", "+00:00")) for m in meciuri)
         _iso = prima.astimezone(TZ).date().isoformat()
         _n = (f'<span data-i18n="n.meci1">un meci</span>' if n_meci == 1 else f'<span data-i18n="n.meciuri" data-i18n-vars=\'{{"n":"{cu_de(n_meci)}"}}\'>{cu_de(n_meci)} meciuri</span>')
-        rezumat = (f'<span data-i18n="ligi.rez.main" data-i18n-vars=\'{{"n":"{_n.replace(chr(34), "&quot;")}","liga":"{e(nume)}","z":"{FEREASTRA_ZILE}","data":"<span data-date=\\"{_iso}\\">{data_ro(prima.astimezone(TZ))}</span>"}}\'>'
+        _ntxt = (f"{cu_de(n_meci)} {plural(n_meci, 'meci', 'meciuri')}")
+        rezumat = (f'<span data-i18n="ligi.rez.main" data-i18n-vars=\'{{"n":"{_ntxt}","liga":"{e(nume)}","z":"{FEREASTRA_ZILE}","data":"<span data-date=\\"{_iso}\\">{data_ro(prima.astimezone(TZ))}</span>"}}\'>'
                    f"Modelul a analizat <strong>{_n}</strong> din {e(nume)} în următoarele {FEREASTRA_ZILE} zile, primul pe <span data-date=\"{_iso}\">{data_ro(prima.astimezone(TZ))}</span>.</span>")
         if libere:
             xg_mediu = sum(m["xg_home"] + m["xg_away"] for m in libere) / len(libere)
@@ -723,13 +724,13 @@ def scrie_legaturi_index(randuri: list[dict]) -> None:
     )
     bloc = f"""{LINKS_START}
   <section class="ligi-links">
-    <h2>Predicții pe ligi</h2>
-    <p>Fiecare campionat urmărit are pagina lui: meciurile următoare cu probabilitățile
+    <h2 data-i18n="ligilinks.h2">Predicții pe ligi</h2>
+    <p data-i18n="ligilinks.p" data-i18n-vars='{{"z":"{FEREASTRA_ZILE}"}}'>Fiecare campionat urmărit are pagina lui: meciurile următoare cu probabilitățile
     calibrate, profilul de calibrare al ligii și ce a ieșit din predicțiile deja rezolvate.
     Cifra din dreptul ligii = meciuri programate în următoarele {FEREASTRA_ZILE} zile.</p>
     <ul class="ligi-grid">
 {lista}    </ul>
-    <p class="muted"><a href="predictii/index.html">Toate ligile urmărite</a> ·
+    <p class="muted" data-i18n="ligilinks.foot"><a href="predictii/index.html">Toate ligile urmărite</a> ·
     <a href="predictii/arhiva/index.html">arhiva zi cu zi</a> ·
     <a href="statistici-pariuri.html">statistici pariuri: cât de des se adeveresc cotele</a></p>
   </section>
