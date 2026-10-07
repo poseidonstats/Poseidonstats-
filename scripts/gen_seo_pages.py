@@ -61,6 +61,10 @@ OUT = SITE / "predictii"
 ARH = OUT / "arhiva"
 SITEMAP = SITE / "sitemap.xml"
 INDEX = SITE / "index.html"
+try:
+    N_CAL = f"{json.load(open(SITE / 'data' / 'calibration.json'))['meta']['n_total']:,}".replace(",", ".")
+except Exception:
+    N_CAL = "65.436"
 BASE = "https://poseidonstats.com"
 
 LINKS_START = "<!-- LEAGUES_LINKS_START -->"
@@ -245,7 +249,7 @@ def shell(*, titlu: str, descriere: str, canonical: str, corp: str,
       <span class="brand-name">POSEIDON</span>
       <span class="brand-pulse"></span>
     </a>
-    <p class="tagline">Predicții fotbal calibrate pe <strong>65.250 meciuri reale</strong> · zero leakage</p>
+    <p class="tagline">Predicții fotbal calibrate pe <strong>{N_CAL} meciuri reale</strong> · zero leakage</p>
     <nav>
       <a href="{sus}index.html">Predicții</a>
       <a href="{sus}predictii/index.html">Pe ligi</a>

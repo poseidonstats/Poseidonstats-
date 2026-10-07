@@ -33,6 +33,8 @@ from _leagues_public import is_public_league
 SITE = Path.home() / "poseidon-site"
 PRED = SITE / "data" / "predictions.json"
 HIST = SITE / "data" / "history.json"
+AUDIT = SITE / "data" / "audit.json"
+I18N = SITE / "assets" / "i18n.json"
 INDEX = SITE / "index.html"
 SITEMAP = SITE / "sitemap.xml"
 
@@ -160,6 +162,32 @@ def build_section() -> str:
 PRAG_AFISARE = {"Over 1.5": 75, "Over 2.5": 65, "Over 3.5": 65, "BTTS Da": 65, "HT Over 0.5": 65, "HT Over 1.5": 65}
 
 
+def _metrici_paragraf() -> str:
+    """7 oct 2026: Brier, log loss, ECE și testul contra prețului de închidere, pe prima pagină (ChatGPT ne citea doar
+    prima pagină și spunea că „lipsesc"). Cifrele vin din data/audit.json; textul în 4 limbi e scris și în i18n.json."""
+    try:
+        a = json.loads(AUDIT.read_text()); P = {x["cheie"]: x for x in a["piete"]}; V = a["vs_piata"]
+    except Exception as e:
+        print(f"[gen_static_daily] audit.json indisponibil ({e}) — fără paragraful de metrici"); return ""
+    ro = lambda x, d=3: f"{x:.{d}f}".replace(".", ",")
+    n = f"{a['n_rezolvate']:,}".replace(",", "."); o15, o25, gg = P["over_1_5"], P["over_2_5"], P["btts"]; v = V["over_2_5"]
+    nv = f"{v['n']:,}".replace(",", "."); castig = v["informatie"]["castig_ll"]
+    T = {
+        "ro": f"<strong>Metrici pe toate cele {n} de predicții rezolvate</strong> (din 2 iunie 2026, nu doar cele peste prag): peste 1,5 — Brier {ro(o15['brier'])}, log loss {ro(o15['log_loss'])}, eroare de calibrare {ro(o15['ece'],1)} pp · peste 2,5 — Brier {ro(o25['brier'])}, log loss {ro(o25['log_loss'])}, ECE {ro(o25['ece'],2)} pp · GG — Brier {ro(gg['brier'])}, log loss {ro(gg['log_loss'])}. Test contra prețului de închidere al pieței, pe {nv} meciuri (peste 2,5): Brier model {ro(v['brier_model'])} față de piață {ro(v['brier_piata'])}; ce adaugă modelul peste preț: {ro(castig,4)} log loss, adică nimic. <strong>Modelul e calibrat și nu bate piața.</strong> Diagrama de fiabilitate, Brier și log loss pe fiecare piață și jurnalul CSV cu ora înghețării fiecărei predicții: <a href=\"track-record.html\">track record</a>.",
+        "en": f"<strong>Metrics on all {n} resolved predictions</strong> (since 2 June 2026, not just those above the threshold): over 1.5 — Brier {o15['brier']:.3f}, log loss {o15['log_loss']:.3f}, calibration error {o15['ece']:.1f} pp · over 2.5 — Brier {o25['brier']:.3f}, log loss {o25['log_loss']:.3f}, ECE {o25['ece']:.2f} pp · BTTS — Brier {gg['brier']:.3f}, log loss {gg['log_loss']:.3f}. Tested against the market's closing price on {v['n']:,} matches (over 2.5): model Brier {v['brier_model']:.3f} vs market {v['brier_piata']:.3f}; what the model adds on top of the price: {castig:+.4f} log loss, i.e. nothing. <strong>The model is calibrated and does not beat the market.</strong> Reliability diagram, Brier and log loss per market, and the CSV journal with each prediction's freeze time: <a href=\"track-record.html\">track record</a>.",
+        "es": f"<strong>Métricas sobre las {n} predicciones resueltas</strong> (desde el 2 de junio de 2026, no solo las que superan el umbral): más de 1,5 — Brier {ro(o15['brier'])}, log loss {ro(o15['log_loss'])}, error de calibración {ro(o15['ece'],1)} pp · más de 2,5 — Brier {ro(o25['brier'])}, log loss {ro(o25['log_loss'])}, ECE {ro(o25['ece'],2)} pp · ambos marcan — Brier {ro(gg['brier'])}, log loss {ro(gg['log_loss'])}. Comparado con el precio de cierre del mercado en {nv} partidos (más de 2,5): Brier modelo {ro(v['brier_model'])} frente a mercado {ro(v['brier_piata'])}; lo que el modelo añade sobre el precio: {ro(castig,4)} log loss, es decir, nada. <strong>El modelo está calibrado y no supera al mercado.</strong> Diagrama de fiabilidad, Brier y log loss por mercado y el diario CSV con la hora de congelación: <a href=\"track-record.html\">track record</a>.",
+        "it": f"<strong>Metriche su tutte le {n} previsioni risolte</strong> (dal 2 giugno 2026, non solo quelle sopra soglia): over 1,5 — Brier {ro(o15['brier'])}, log loss {ro(o15['log_loss'])}, errore di calibrazione {ro(o15['ece'],1)} pp · over 2,5 — Brier {ro(o25['brier'])}, log loss {ro(o25['log_loss'])}, ECE {ro(o25['ece'],2)} pp · GG — Brier {ro(gg['brier'])}, log loss {ro(gg['log_loss'])}. Testato contro il prezzo di chiusura del mercato su {nv} partite (over 2,5): Brier modello {ro(v['brier_model'])} contro mercato {ro(v['brier_piata'])}; ciò che il modello aggiunge al prezzo: {ro(castig,4)} log loss, cioè niente. <strong>Il modello è calibrato e non batte il mercato.</strong> Diagramma di affidabilità, Brier e log loss per mercato e il diario CSV con l'ora di congelamento: <a href=\"track-record.html\">track record</a>.",
+    }
+    try:
+        d = json.loads(I18N.read_text(encoding="utf-8"))
+        for lang, txt in T.items():
+            d.setdefault(lang, {})["proof.metrici"] = txt
+        I18N.write_text(json.dumps(d, ensure_ascii=False, indent=2), encoding="utf-8")
+    except Exception as e:
+        print(f"[gen_static_daily] i18n.json: nu pot scrie proof.metrici ({e})")
+    return f'    <p class="proof-note proof-metrici" data-i18n="proof.metrici">{T["ro"]}</p>'
+
+
 def build_proof_section() -> str | None:
     """Tabelul „ce s-a adeverit" din jurnalul forward (history.json).
 
@@ -199,7 +227,7 @@ def build_proof_section() -> str | None:
         '  <section class="proof" id="dovada">',
         '    <h2 data-i18n="proof.h2">Ce s-a adeverit, din predicții înghețate</h2>',
         '    <p class="proof-lead" data-i18n="proof.lead">Jurnal deschis din 2 iunie 2026. '
-        'Fiecare predicție e înghețată la generare (07:15), publicată înainte de meci și '
+        'Fiecare predicție e înghețată la generare (05:30), publicată înainte de meci și '
         'comparată apoi cu rezultatul real. Nu ștergem nimic retroactiv.</p>',
         '    <div class="proof-table-wrap">',
         '      <table class="proof-table">',
@@ -223,6 +251,7 @@ def build_proof_section() -> str | None:
         'Wilson, <strong>nu</strong> de avantajul peste rata naturală a pieței. Tabelul complet, '
         'bucket cu bucket: <a href="track-record.html">track record</a> · '
         '<a href="istoric.html">istoric zi cu zi</a>.</p>',
+        _metrici_paragraf(),
         f'    <p class="proof-asof">Cifre din jurnalul forward, actualizate {date_ro} · '
         'informativ · nu sfat de pariere · 18+</p>',
         '  </section>',
