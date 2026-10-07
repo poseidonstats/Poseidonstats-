@@ -543,7 +543,7 @@
     "pro.azi.lipsa": "Today's analyses did not load on the site (code {cod}). They are in #analize-pro on Discord; we are fixing this side.",
     "pro.azi.retea": "Could not reach the members server. Reload the page; the analyses are also in #analize-pro on Discord.",
     "pro.azi.h2": "💎 Your Pro analyses for today",
-    "proof.metrici": "<strong>Metrics on all 35.549 resolved predictions</strong> (since 2 June 2026, not just those above the threshold): over 1.5 — Brier 0.164, log loss 0.505, calibration error 0.9 pp · over 2.5 — Brier 0.233, log loss 0.658, ECE 0.64 pp · BTTS — Brier 0.244, log loss 0.680. Tested against the market's closing price on 20,068 matches (over 2.5): model Brier 0.238 vs market 0.235; what the model adds on top of the price: +0.0002 log loss, i.e. nothing. <strong>The model is calibrated and does not beat the market.</strong> Reliability diagram, Brier and log loss per market, and the CSV journal with each prediction's freeze time: <a href=\"track-record.html\">track record</a>."
+    "proof.metrici": "<strong>Metrics on all 35,549 resolved predictions</strong> (since 2 June 2026, not just those above the threshold): over 1.5 — Brier 0.164, log loss 0.505, calibration error 0.9 pp · over 2.5 — Brier 0.233, log loss 0.658, ECE 0.64 pp · BTTS — Brier 0.244, log loss 0.680. Tested against the market's closing price on 20,068 matches (over 2.5): model Brier 0.238 vs market 0.235; what the model adds on top of the price: +0.0002 log loss, i.e. nothing. <strong>The model is calibrated and does not beat the market.</strong> Reliability diagram, Brier and log loss per market, and the CSV journal with each prediction's freeze time: <a href=\"track-record.html\">track record</a>."
   },
   "es": {
     "lang.name": "Español",
