@@ -164,6 +164,21 @@ def nr_ro(n: int) -> str:
     return f"{n:,}".replace(",", ".")
 
 
+def _v(o: dict) -> str:
+    """JSON pentru data-i18n-vars într-un atribut cu ghilimele simple."""
+    return json.dumps(o, ensure_ascii=False).replace("'", "&#39;")
+
+
+PIATA_KEY = {"prob_over_1_5": "piata.o15", "prob_over_2_5": "piata.o25", "prob_over_3_5": "piata.o35",
+             "prob_home": "piata.home", "prob_away": "piata.away", "prob_btts": "piata.btts"}
+
+
+def n_meciuri(n: int) -> str:
+    """„un meci” / „7 meciuri” / „20 de meciuri” ca span tradus (n.meci1 / n.meciuri)."""
+    return ('<span data-i18n="n.meci1">un meci</span>' if n == 1
+            else f'<span data-i18n="n.meciuri" data-i18n-vars=\'{_v({"n": cu_de(n)})}\'>{cu_de(n)} meciuri</span>')
+
+
 def cu_de(n: int) -> str:
     """Numeralul românesc: „7 meciuri" dar „20 de meciuri" (ultimele două cifre 0 sau ≥20)."""
     r = n % 100
@@ -270,9 +285,9 @@ def shell(*, titlu: str, descriere: str, canonical: str, corp: str,
 
 <footer>
   <div class="container">
-    <p><strong>POSEIDON</strong> — model statistic propriu, ratings Bayesian cu calibrare per-ligă.</p>
-    <p><strong>Informativ.</strong> NU sfat de pariere. <strong>NU garanție.</strong> Folosește responsabil. <strong>18+</strong>.</p>
-    <p class="muted">Contact: <a href="mailto:contact@poseidonstats.com">contact@poseidonstats.com</a> · Joc responsabil: <a href="https://www.jocresponsabil.ro" target="_blank" rel="noopener">jocresponsabil.ro</a> · <a href="{sus}terms.html">Termeni și Condiții</a></p>
+    <p data-i18n="footer.title"><strong>POSEIDON</strong> — model statistic propriu, ratings Bayesian cu calibrare per-ligă.</p>
+    <p data-i18n="footer.disclaimer"><strong>Informativ.</strong> NU sfat de pariere. <strong>NU garanție.</strong> Folosește responsabil. <strong>18+</strong>.</p>
+    <p class="muted"><span data-i18n="footer.contact">Contact:</span> <a href="mailto:contact@poseidonstats.com">contact@poseidonstats.com</a> · <span data-i18n="footer.problem">Joc responsabil:</span> <a href="https://www.jocresponsabil.ro" target="_blank" rel="noopener">jocresponsabil.ro</a> · <a href="{sus}terms.html" data-i18n="footer.terms">Termeni și Condiții</a></p>
   </div>
 </footer>
 </body>
@@ -317,23 +332,23 @@ def tabel_meciuri(meciuri: list[dict]) -> str:
             for eticheta, cheie, _prag in MARKETS:
                 p = m.get(cheie)
                 if p is not None and (best is None or p > best[0]):
-                    best = (p, eticheta)
-        maxima = (f'<span class="piata-max">{e(best[1])} · {round(best[0] * 100)}%</span>'
+                    best = (p, eticheta, cheie)
+        maxima = (f'<span class="piata-max"><span data-i18n="{PIATA_KEY.get(best[2], "")}">{e(best[1])}</span> · {round(best[0] * 100)}%</span>'
                   if best else '<span class="muted">—</span>')
-        necal = "" if m.get("calibrated") else ' <span class="warn-tag">⚠️ necalibrată</span>'
+        necal = "" if m.get("calibrated") else ' <span class="warn-tag" data-i18n="ligi.necal">necalibrată</span>'
         cand = f"{dt.strftime('%d.%m')} <span class=\"muted\">{dt.strftime('%H:%M')}</span>"
         meci = f"<strong>{e(m['home_team'])}</strong> – <strong>{e(m['away_team'])}</strong>{necal}"
         if blocat(m):
             randuri.append(f"""        <tr class="rand-blocat">
           <td>{cand}</td>
           <td>{meci}</td>
-          <td colspan="4" class="blocat-note">🔒 probabilitățile acestui meci sunt pentru abonați</td>
-          <td><a href="../index.html#abonament" class="blocat-link">abonamente</a></td>
+          <td colspan="4" class="blocat-note" data-i18n="ligi.blocat">probabilitățile acestui meci sunt pentru abonați</td>
+          <td><a href="../index.html#abonament" class="blocat-link" data-i18n="ligi.abon">abonamente</a></td>
         </tr>""")
         else:
             randuri.append(f"""        <tr class="rand-liber">
           <td>{cand}</td>
-          <td>{meci} <span class="free-tag">✓ GRATUIT AZI</span></td>
+          <td>{meci} <span class="free-tag" data-i18n="ligi.free.azi">✓ GRATUIT AZI</span></td>
           <td>{round(m['prob_home'] * 100)}% · {round(m['prob_draw'] * 100)}% · {round(m['prob_away'] * 100)}%</td>
           <td>{round(m['prob_over_1_5'] * 100)}%</td>
           <td>{round(m['prob_over_2_5'] * 100)}%</td>
@@ -343,49 +358,51 @@ def tabel_meciuri(meciuri: list[dict]) -> str:
     return f"""    <div class="calibration-card">
       <table>
         <thead><tr>
-          <th>Când</th><th>Meci</th><th>1 · X · 2</th>
-          <th>Peste 1.5</th><th>Peste 2.5</th><th>Ambele</th><th>Cea mai probabilă piață</th>
+          <th data-i18n="ligi.tm.cand">Când</th><th data-i18n="ligi.tm.meci">Meci</th><th>1 · X · 2</th>
+          <th data-i18n="ligi.tm.o15">Peste 1.5</th><th data-i18n="ligi.tm.o25">Peste 2.5</th><th data-i18n="ligi.tm.btts">Ambele</th><th data-i18n="ligi.tm.max">Cea mai probabilă piață</th>
         </tr></thead>
         <tbody>
 {chr(10).join(randuri)}
         </tbody>
       </table>
-      <p class="muted" style="font-size:.82rem">Ora e cea a României. Probabilitățile sunt cele calibrate empiric, nu ieșirea brută a modelului. Ultima coloană arată doar care dintre piețele urmărite are cea mai mare probabilitate calculată — e o descriere a ieșirii modelului, nu o recomandare, iar un procent mare rămâne o probabilitate, nu o certitudine. Modelul calculează toate meciurile din listă; pe site publicăm gratuit 5 pe zi, iar restul probabilităților ajung la <a href="../index.html#abonament">abonați</a>.</p>
+      <p class="muted" style="font-size:.82rem" data-i18n="ligi.tm.nota">Ora e cea a României. Probabilitățile sunt cele calibrate empiric, nu ieșirea brută a modelului. Ultima coloană arată doar care dintre piețele urmărite are cea mai mare probabilitate calculată — e o descriere a ieșirii modelului, nu o recomandare, iar un procent mare rămâne o probabilitate, nu o certitudine. Modelul calculează toate meciurile din listă; pe site publicăm gratuit 5 pe zi, iar restul probabilităților ajung la <a href="../index.html#abonament">abonați</a>.</p>
     </div>"""
 
 
 def profil_calibrare(intrare: dict | None, nume: str, n_marcate: int = 0,
                      n_total: int = 0) -> str:
     if not intrare:
-        return ('<p class="muted">Această ligă nu are încă un profil de calibrare propriu '
+        return ('<p class="muted" data-i18n="ligi.prof.fara">Această ligă nu are încă un profil de calibrare propriu '
                 '(pragul e de minimum 80 de meciuri în backtest). Probabilitățile rămân '
                 'calibrate global.</p>')
     n, bias, ok = intrare["n"], intrare["bias_pp"], intrare["calibrated"]
-    directie = ("mai multe" if bias > 0 else "mai puține")
-    marker = ('<span class="ok-tag">✓ calibrată</span>' if ok
-              else '<span class="warn-tag">⚠️ calibrare slabă</span>')
+    directie = ('<span data-i18n="ligi.prof.mai_multe">mai multe</span>' if bias > 0 else '<span data-i18n="ligi.prof.mai_putine">mai puține</span>')
+    marker = ('<span class="ok-tag" data-i18n="ligi.cal.ok">✓ calibrată</span>' if ok
+              else '<span class="warn-tag" data-i18n="ligi.cal.slaba">calibrare slabă</span>')
+    _vars_expl = _v({"n": n_meciuri(n), "liga": e(nume), "bias": f"{abs(bias):.1f}", "dir": directie})
     explicatie = (
+        f'<span data-i18n="ligi.prof.expl" data-i18n-vars=\'{_vars_expl}\'>'
         f"Pe backtest-ul de calibrare (ianuarie–mai 2026, ratings înghețate la 31 decembrie "
-        f"2025), modelul a văzut <strong>{cu_de(n)} {plural(n, 'meci', 'meciuri')}</strong> din {e(nume)}. "
+        f"2025), modelul a văzut <strong>{n_meciuri(n)}</strong> din {e(nume)}. "
         f"Golurile pe care le aștepta erau cu <strong>{abs(bias):.1f}%</strong> {directie} "
-        f"decât cele marcate efectiv — exact abaterea pe care o corectează calibrarea per-ligă."
+        f"decât cele marcate efectiv — exact abaterea pe care o corectează calibrarea per-ligă.</span>"
     )
     if ok:
-        verdict = ("Abaterea intră în pragul de ±10% pe care îl cerem ca să considerăm profilul "
-                   "de goluri al ligii validat separat, nu doar acoperit de calibrarea globală.")
+        verdict = ('<span data-i18n="ligi.prof.ok">Abaterea intră în pragul de ±10% pe care îl cerem ca să considerăm profilul '
+                   "de goluri al ligii validat separat, nu doar acoperit de calibrarea globală.</span>")
     else:
-        verdict = ("Abaterea depășește pragul de ±10%, așa că marcăm liga explicit ca având "
+        verdict = ('<span data-i18n="ligi.prof.nu">Abaterea depășește pragul de ±10%, așa că marcăm liga explicit ca având '
                    "calibrare slabă: probabilitățile rămân calibrate global, dar profilul ei "
                    "propriu nu e validat separat. Preferăm să scrie asta pe pagină decât să nu "
-                   "știi.")
+                   "știi.</span>")
     # Cele două „calibrări" vin din surse diferite: marcajul de pe fiecare meci ține de
     # lista strictă de ligi verificate, iar profilul de mai sus de abaterea de goluri din
     # backtest. Când nu spun același lucru, o scriem — altfel pagina pare că se contrazice.
     lamurire = ""
     if ok and n_total and n_marcate == n_total:
         lamurire = (
-            '<p class="muted">De ce apar totuși meciurile de mai sus cu '
-            '<span class="warn-tag">⚠️ necalibrată</span>: sunt două criterii diferite. Marcajul '
+            '<p class="muted" data-i18n="ligi.prof.lamurire">De ce apar totuși meciurile de mai sus cu '
+            '<span class="warn-tag">necalibrată</span>: sunt două criterii diferite. Marcajul '
             "de pe meci arată că liga nu e în lista strictă de campionate cu calibrare verificată "
             "separat, folosită de site pentru acel semn. Profilul de aici măsoară altceva — "
             "abaterea golurilor așteptate față de cele marcate, pe backtest. Le arătăm pe "
@@ -426,10 +443,11 @@ def jurnal_liga(zile: list[dict], tara: str, liga: str) -> str:
         f'<td class="num-win">{v[0]}</td><td class="num-loss">{v[1]}</td></tr>'
         for k, v in sorted(per_piata.items(), key=lambda x: -(x[1][0] + x[1][1]))
     )
-    tabel = (f'<table class="cumulat-table"><thead><tr><th>Piață</th><th>N</th>'
+    tabel = (f'<table class="cumulat-table"><thead><tr><th data-i18n="ligi.jur.th.piata">Piață</th><th>N</th>'
              f"<th>WIN</th><th>LOSS</th></tr></thead><tbody>{randuri}</tbody></table>")
     if n < PRAG_TIER_MIN:
-        nota = (f'<p><strong>{n}</strong> {plural(n, "predicție rezolvată", "predicții rezolvate")} '
+        _vj = _v({"n": str(n), "pred": plural(n, "predicție rezolvată", "predicții rezolvate"), "w": str(wins), "nim": plural(wins, "nimerită", "nimerite"), "l": str(losses), "rat": plural(losses, "ratată", "ratate"), "prag": str(PRAG_TIER_MIN)})
+        nota = (f'<p data-i18n="ligi.jur.putine" data-i18n-vars=\'{_vj}\'><strong>{n}</strong> {plural(n, "predicție rezolvată", "predicții rezolvate")} '
                 f'până acum ({wins} {plural(wins, "nimerită", "nimerite")}, '
                 f'{losses} {plural(losses, "ratată", "ratate")}). '
                 f"<strong>Prea puține pentru un verdict</strong>: sub "
@@ -437,7 +455,8 @@ def jurnal_liga(zile: list[dict], tara: str, liga: str) -> str:
                 f"îl prezentăm ca atare. Cifra care contează acum e cea globală, de pe "
                 f'<a href="../track-record.html">track record</a>.</p>')
     else:
-        nota = (f'<p><strong>{n}</strong> predicții rezolvate: {wins} '
+        _vj = _v({"n": str(n), "w": str(wins), "nim": plural(wins, "nimerită", "nimerite"), "l": str(losses), "rat": plural(losses, "ratată", "ratate"), "hit": f"{hit:.1f}", "wlo": f"{wlo:.1f}"})
+        nota = (f'<p data-i18n="ligi.jur.ok" data-i18n-vars=\'{_vj}\'><strong>{n}</strong> predicții rezolvate: {wins} '
                 f'{plural(wins, "nimerită", "nimerite")}, {losses} '
                 f'{plural(losses, "ratată", "ratate")} '
                 f"— <strong>{hit:.1f}%</strong>, cu un minim statistic (Wilson 95%) de "
@@ -476,8 +495,7 @@ def pagina_liga(tara: str, liga: str, slug: str, nume: str, *,
         prima = min(datetime.fromisoformat(m["match_date"].replace("Z", "+00:00")) for m in meciuri)
         _iso = prima.astimezone(TZ).date().isoformat()
         _n = (f'<span data-i18n="n.meci1">un meci</span>' if n_meci == 1 else f'<span data-i18n="n.meciuri" data-i18n-vars=\'{{"n":"{cu_de(n_meci)}"}}\'>{cu_de(n_meci)} meciuri</span>')
-        _ntxt = (f"{cu_de(n_meci)} {plural(n_meci, 'meci', 'meciuri')}")
-        rezumat = (f'<span data-i18n="ligi.rez.main" data-i18n-vars=\'{{"n":"{_ntxt}","liga":"{e(nume)}","z":"{FEREASTRA_ZILE}","data":"<span data-date=\\"{_iso}\\">{data_ro(prima.astimezone(TZ))}</span>"}}\'>'
+        rezumat = (f'<span data-i18n="ligi.rez.main" data-i18n-vars=\'{_v({"n": _n, "liga": e(nume), "z": str(FEREASTRA_ZILE), "data": f"<span data-date=\"{_iso}\">{data_ro(prima.astimezone(TZ))}</span>"})}\'>'
                    f"Modelul a analizat <strong>{_n}</strong> din {e(nume)} în următoarele {FEREASTRA_ZILE} zile, primul pe <span data-date=\"{_iso}\">{data_ro(prima.astimezone(TZ))}</span>.</span>")
         if libere:
             xg_mediu = sum(m["xg_home"] + m["xg_away"] for m in libere) / len(libere)
@@ -511,7 +529,7 @@ def pagina_liga(tara: str, liga: str, slug: str, nume: str, *,
 
   <section>
     <h2 data-i18n="ligi.urmatoare" data-i18n-vars='{{"liga":"{e(nume)}"}}'>Meciurile următoare din {e(nume)}</h2>
-{continut if continut else '    <p class="muted">Niciun meci programat în fereastra curentă. Vezi <a href="../index.html">predicțiile gratuite ale zilei</a>.</p>'}
+{continut if continut else '    <p class="muted" data-i18n="ligi.niciun">Niciun meci programat în fereastra curentă. Vezi <a href="../index.html">predicțiile gratuite ale zilei</a>.</p>'}
   </section>
 
   <section>
@@ -525,14 +543,14 @@ def pagina_liga(tara: str, liga: str, slug: str, nume: str, *,
 {jurnal_liga(zile, tara, liga)}
   </section>
 
-  <section class="plans-free" style="margin-top:26px">
+  <section class="plans-free" style="margin-top:26px" data-i18n="ligi.plans">
     În fiecare zi publicăm gratuit 5 predicții complete, plus track record-ul integral — inclusiv
     meciurile pe care le-am ratat. Restul predicțiilor zilei, livrarea pe Discord și analiza scrisă
     per meci sunt la <a href="../index.html#abonament">abonamente</a>.
     Restul ligilor: <a href="index.html">toate paginile pe ligi</a>.
   </section>
 
-  <p class="pro-disclaimer">Probabilități calibrate empiric · informativ · nu sfat de pariere · 18+</p>
+  <p class="pro-disclaimer" data-i18n="repere.disclaimer">Probabilități calibrate empiric · informativ · nu sfat de pariere · 18+</p>
 """
     ld = breadcrumb([("POSEIDON", f"{BASE}/"),
                      ("Predicții pe ligi", f"{BASE}/predictii/index.html"),
@@ -583,7 +601,7 @@ def pagina_hub(randuri: list[dict]) -> str:
     <p data-i18n="ligi.arhiva.p">Fiecare zi din jurnal are pagina ei: ce s-a prezis dimineața și ce a ieșit după meciuri, inclusiv predicțiile ratate. <a href="arhiva/index.html">Vezi arhiva</a>.</p>
   </section>
 
-  <p class="pro-disclaimer">Probabilități calibrate empiric · informativ · nu sfat de pariere · 18+</p>
+  <p class="pro-disclaimer" data-i18n="repere.disclaimer">Probabilități calibrate empiric · informativ · nu sfat de pariere · 18+</p>
 """
     ld = breadcrumb([("POSEIDON", f"{BASE}/"), ("Predicții pe ligi", canonical)])
     return shell(titlu="Predicții fotbal pe ligi | POSEIDON",
@@ -621,12 +639,12 @@ def pagina_zi(zi: dict) -> str:
         return ""
     if n:
         hit = wins / n * 100
-        antet = (f'Din <strong>{n}</strong> predicții rezolvate în această zi, '
+        antet = (f'<span data-i18n="ligi.zi.antet" data-i18n-vars=\'{_v({"n": str(n), "w": str(wins), "l": str(losses), "hit": f"{hit:.1f}"})}\'>Din <strong>{n}</strong> predicții rezolvate în această zi, '
                  f'<strong>{wins}</strong> s-au adeverit și <strong>{losses}</strong> nu — '
-                 f"{hit:.1f}%. Ratările rămân în tabel; nu ștergem zilele slabe.")
+                 f"{hit:.1f}%. Ratările rămân în tabel; nu ștergem zilele slabe.</span>")
     else:
-        antet = ("Predicțiile acestei zile nu erau încă rezolvate la ultima actualizare a "
-                 "paginii. Reveniți după ce se joacă meciurile.")
+        antet = ('<span data-i18n="ligi.zi.antet0">Predicțiile acestei zile nu erau încă rezolvate la ultima actualizare a '
+                 "paginii. Reveniți după ce se joacă meciurile.</span>")
     corp = f"""  <section class="intro">
     <div class="hero">
       <h1 class="hero-title" data-i18n="ligi.zi.h1" data-i18n-vars='{{"data":"<span data-date=\"{d}\">{data_ro(d)}</span>"}}'>Predicții fotbal <span data-date="{d}">{data_ro(d)}</span></h1>
@@ -636,10 +654,10 @@ def pagina_zi(zi: dict) -> str:
   </section>
 
   <section>
-    <h2>Predicții și rezultate — {data_ro(d, cu_zi=True)}</h2>
+    <h2 data-i18n="ligi.zi.h2" data-i18n-vars='{{"data":"<span data-date=\"{d}\">{data_ro(d, cu_zi=True)}</span>"}}'>Predicții și rezultate — <span data-date="{d}">{data_ro(d, cu_zi=True)}</span></h2>
     <div class="calibration-card">
       <table>
-        <thead><tr><th>Ora</th><th>Meci</th><th>Scor</th><th>Predicții</th></tr></thead>
+        <thead><tr><th data-i18n="ligi.zi.th.ora">Ora</th><th data-i18n="ligi.tm.meci">Meci</th><th data-i18n="ligi.zi.th.scor">Scor</th><th data-i18n="ligi.zi.th.pred">Predicții</th></tr></thead>
         <tbody>
 {chr(10).join(randuri)}
         </tbody>
@@ -653,7 +671,7 @@ def pagina_zi(zi: dict) -> str:
     <a href="../index.html">paginile de campionat</a>.
   </section>
 
-  <p class="pro-disclaimer">Probabilități calibrate empiric · informativ · nu sfat de pariere · 18+</p>
+  <p class="pro-disclaimer" data-i18n="repere.disclaimer">Probabilități calibrate empiric · informativ · nu sfat de pariere · 18+</p>
 """
     ld = breadcrumb([("POSEIDON", f"{BASE}/"),
                      ("Predicții pe ligi", f"{BASE}/predictii/index.html"),
@@ -678,10 +696,10 @@ def pagina_arhiva(zile_scrise: list[str]) -> str:
                     for z in zile_scrise)
     corp = f"""  <section class="intro">
     <div class="hero">
-      <h1 class="hero-title">Arhiva predicțiilor, zi cu zi</h1>
-      <p class="hero-sub">Fiecare zi păstrează predicțiile exact cum au fost publicate dimineața, cu rezultatul real alături. Nimic nu se rescrie după meci.</p>
+      <h1 class="hero-title" data-i18n="ligi.arh.h1">Arhiva predicțiilor, zi cu zi</h1>
+      <p class="hero-sub" data-i18n="ligi.arh.sub">Fiecare zi păstrează predicțiile exact cum au fost publicate dimineața, cu rezultatul real alături. Nimic nu se rescrie după meci.</p>
     </div>
-    <p>Sunt <strong>{len(zile_scrise)}</strong> zile în arhiva publică. Tabelul cumulat pe piețe e pe <a href="../../istoric.html">istoric</a>, iar calibrarea completă pe <a href="../../track-record.html">track record</a>.</p>
+    <p data-i18n="ligi.arh.p" data-i18n-vars='{{"n":"{len(zile_scrise)}"}}'>Sunt <strong>{len(zile_scrise)}</strong> zile în arhiva publică. Tabelul cumulat pe piețe e pe <a href="../../istoric.html">istoric</a>, iar calibrarea completă pe <a href="../../track-record.html">track record</a>.</p>
   </section>
 
   <section>
@@ -691,7 +709,7 @@ def pagina_arhiva(zile_scrise: list[str]) -> str:
     </ul>
   </section>
 
-  <p class="pro-disclaimer">Probabilități calibrate empiric · informativ · nu sfat de pariere · 18+</p>
+  <p class="pro-disclaimer" data-i18n="repere.disclaimer">Probabilități calibrate empiric · informativ · nu sfat de pariere · 18+</p>
 """
     ld = breadcrumb([("POSEIDON", f"{BASE}/"),
                      ("Predicții pe ligi", f"{BASE}/predictii/index.html"),
