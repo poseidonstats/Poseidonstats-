@@ -647,14 +647,14 @@ def pagina_zi(zi: dict) -> str:
                  "paginii. Reveniți după ce se joacă meciurile.</span>")
     corp = f"""  <section class="intro">
     <div class="hero">
-      <h1 class="hero-title" data-i18n="ligi.zi.h1" data-i18n-vars='{{"data":"<span data-date=\"{d}\">{data_ro(d)}</span>"}}'>Predicții fotbal <span data-date="{d}">{data_ro(d)}</span></h1>
+      <h1 class="hero-title" data-i18n="ligi.zi.h1" data-i18n-vars='{_v({"data": f'<span data-date="{d}">{data_ro(d)}</span>'})}'>Predicții fotbal <span data-date="{d}">{data_ro(d)}</span></h1>
       <p class="hero-sub" data-i18n="ligi.zi.sub">Predicțiile publicate în dimineața acelei zile, exact cum au fost înghețate, alături de rezultatul real.</p>
     </div>
     <p>{antet}</p>
   </section>
 
   <section>
-    <h2 data-i18n="ligi.zi.h2" data-i18n-vars='{{"data":"<span data-date=\"{d}\">{data_ro(d, cu_zi=True)}</span>"}}'>Predicții și rezultate — <span data-date="{d}">{data_ro(d, cu_zi=True)}</span></h2>
+    <h2 data-i18n="ligi.zi.h2" data-i18n-vars='{_v({"data": f'<span data-date="{d}">{data_ro(d, cu_zi=True)}</span>'})}'>Predicții și rezultate — <span data-date="{d}">{data_ro(d, cu_zi=True)}</span></h2>
     <div class="calibration-card">
       <table>
         <thead><tr><th data-i18n="ligi.zi.th.ora">Ora</th><th data-i18n="ligi.tm.meci">Meci</th><th data-i18n="ligi.zi.th.scor">Scor</th><th data-i18n="ligi.zi.th.pred">Predicții</th></tr></thead>
