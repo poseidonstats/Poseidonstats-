@@ -52,7 +52,7 @@ function t(key) {
 function _loc() { return LANG === "en" ? "en-GB" : LANG === "es" ? "es-ES" : LANG === "it" ? "it-IT" : "ro-RO"; }
 function applyI18n() {
   if (!I18N) return;
-  document.querySelectorAll("[data-i18n]").forEach(el => {
+  for (let trecere = 0; trecere < 2; trecere++) document.querySelectorAll("[data-i18n]").forEach(el => {   // a 2-a trecere: span-uri injectate prin {variabile}
     const key = el.getAttribute("data-i18n");
     let v = t(key); if (v === key) return;
     // 7 oct 2026: variabile {x} (data-i18n-vars, JSON) — aceeași convenție ca i18n-lite pe paginile generate
@@ -144,7 +144,7 @@ async function loadPredictions() {
   }
   return fetchJSON(PRED_URL);
 }
-const SCRIPT_V = "20261007o";
+const SCRIPT_V = "20261007r";
 // 7 oct 2026 — evenimente în GoatCounter (fără cookie, fără date personale): clicuri pe butoanele de abonament/trial/login și
 // dacă vizitatorul a ajuns la secțiunea de abonament. Răspund la „250 de vizite și niciun abonat”: nu ajung la ofertă, sau ajung și pleacă?
 function _gcEvent(nume) {
@@ -1144,17 +1144,11 @@ async function renderTrackRecord() {
   const fwd = await fetchJSON(FORWARD_URL);
   const fwdHtml = (fwd && fwd.n_resolved > 0)
     ? `<div class="calibration-card">
-        <p class="muted" style="border-left:3px solid #b45309;padding-left:.6em">
-          <strong>Calibrare live, out-of-sample</strong> — în acumulare din 2 iunie 2026.
-          Pe fereastra curentă (iunie) modelul rulează <strong>conservator pe piețele Over (~2–3pp)</strong>:
-          evenimentele se întâmplă ceva mai des decât arată procentul calibrat
-          (Over 1.5 ≈ +2.8pp, HT Over 0.5 ≈ +2.2pp). E o sub-estimare reală a golurilor în acest
-          interval, nu un artefact de afișare — monitorizată.
-        </p>
+        <p class="muted" style="border-left:3px solid #b45309;padding-left:.6em">${tt("tr.fwd.p", "<strong>Calibrare live, out-of-sample</strong> — în acumulare din {data}.").replace("{data}", new Intl.DateTimeFormat(_loc(), { day: "numeric", month: "long", year: "numeric" }).format(new Date("2026-06-02T12:00:00Z")))}</p>
         ${fwd.calibration_note ? `<p class="muted" style="font-size:.82em">ℹ️ ${esc(fwd.calibration_note)}</p>` : ""}
-        <p class="muted" style="font-size:.82em">Notă: «tier» (robust etc.) reflectă mărimea eșantionului + Wilson 95%, NU edge-ul peste baseline. HT Over 0.5 are lift modest peste rata de bază (~+2pp); Over 1.5 / Over 2.5 au lift mai mare.</p>
+        <p class="muted" style="font-size:.82em">${tt("tr.fwd.note", "Notă: «tier» reflectă mărimea eșantionului + Wilson 95%, NU edge-ul peste baseline.")}</p>
         <p>${tt("tr.resolved.live", "Predicții rezolvate live: <strong>{n}</strong>").replace("{n}", fwd.n_resolved)}
-        (din ${fwd.n_total} totale, ${fwd.n_pending} pending, ${fwd.n_not_played} amânate).</p>
+        ${tt("tr.fwd.totals", "(din {t} totale, {p} în așteptare, {a} amânate).").replace("{t}", fwd.n_total).replace("{p}", fwd.n_pending).replace("{a}", fwd.n_not_played)}</p>
         ${(fwd.markets || []).map(m => `<div>
           <h4>${m.name}</h4>
           <table><thead><tr><th>Bucket prob</th><th>N</th><th>Real %</th></tr></thead>
@@ -1210,7 +1204,7 @@ async function renderIstoric() {
           </tr>`;
         }).join("")}</tbody>
       </table>
-      <p class="muted">${esc(data.note || "")}</p>`
+      <p class="muted">${tt("istoric.note", "Jurnal forward în acumulare din {data}. Predicții înghețate înainte de meci.").replace("{data}", new Intl.DateTimeFormat(_loc(), { day: "numeric", month: "long", year: "numeric" }).format(new Date("2026-06-02T12:00:00Z")))}</p>`
     : honestEmptyHtml(data.n_total != null ? data.n_total : null);
   document.getElementById("cumulat-stats").innerHTML = cumHtml;
 

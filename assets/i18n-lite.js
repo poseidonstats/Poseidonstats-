@@ -6,7 +6,7 @@
   var L = lang(); var sus = (document.currentScript && document.currentScript.getAttribute("data-sus")) || "";
   function aplica(I) {
     document.documentElement.lang = L;
-    document.querySelectorAll("[data-i18n]").forEach(function (el) {
+    for (var trecere = 0; trecere < 2; trecere++) document.querySelectorAll("[data-i18n]").forEach(function (el) {
       var k = el.getAttribute("data-i18n"); var v = (I[L] && I[L][k]) || (I.ro && I.ro[k]); if (!v) return;
       var vars = el.getAttribute("data-i18n-vars"); if (vars) { try { var o = JSON.parse(vars); Object.keys(o).forEach(function (n) { v = v.split("{" + n + "}").join(o[n]); }); } catch (e) {} }
       el.innerHTML = v;
@@ -15,7 +15,9 @@
     document.querySelectorAll("[data-date]").forEach(function (el) { var d = el.getAttribute("data-date"); if (/^\d{4}-\d{2}-\d{2}$/.test(d)) el.textContent = fmt.format(new Date(d + "T12:00:00Z")); });
     document.querySelectorAll("[data-lang]").forEach(function (el) { el.hidden = el.getAttribute("data-lang") !== L; });
     // dacă nu există varianta în limba aleasă, rămâne româna
-    document.querySelectorAll("[data-lang-grup]").forEach(function (g) { var are = g.querySelector('[data-lang="' + L + '"]'); if (!are) { var ro = g.querySelector('[data-lang="ro"]'); if (ro) ro.hidden = false; } });
+    document.querySelectorAll("[data-lang-grup]").forEach(function (g) { var are = g.querySelector('[data-lang="' + L + '"]'); if (!are) { var ro = g.querySelector('[data-lang="ro"]'); if (ro) { ro.hidden = false; if (L !== "ro" && !g.querySelector(".nota-ro")) { var n = document.createElement("p"); n.className = "muted nota-ro"; n.textContent = (I[L] && I[L]["arhiva.nota_ro"]) || ""; if (n.textContent) g.insertBefore(n, ro); } } } });
+    // analizele mai vechi de 7 oct 2026 nu au traducere (articol fără grup de limbi): notă scurtă
+    if (L !== "ro") document.querySelectorAll("article.pro-card-full").forEach(function (a) { if (!a.closest("[data-lang-grup]") && !a.querySelector(".nota-ro")) { var n = document.createElement("p"); n.className = "muted nota-ro"; n.textContent = (I[L] && I[L]["arhiva.nota_ro"]) || ""; var v = a.querySelector(".pro-visible"); if (n.textContent && v) v.insertBefore(n, v.firstChild); } });
   }
   function selector() {
     var nav = document.querySelector("nav"); if (!nav || nav.querySelector(".lang-switcher")) return;
