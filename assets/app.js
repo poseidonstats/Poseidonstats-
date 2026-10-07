@@ -134,7 +134,7 @@ async function loadPredictions() {
   }
   return fetchJSON(PRED_URL);
 }
-const SCRIPT_V = "20261007k";
+const SCRIPT_V = "20261007l";
 // 7 oct 2026 — evenimente în GoatCounter (fără cookie, fără date personale): clicuri pe butoanele de abonament/trial/login și
 // dacă vizitatorul a ajuns la secțiunea de abonament. Răspund la „250 de vizite și niciun abonat”: nu ajung la ofertă, sau ajung și pleacă?
 function _gcEvent(nume) {
@@ -547,8 +547,19 @@ async function renderSimulator() {
   }
 
   const azi = new Date().toISOString().slice(0, 10);
-  let free = data.matches.filter(m => m.free && m.match_date.slice(0, 10) >= azi);
-  if (free.length < 2) free = data.matches.filter(m => m.free);   // pauze: iau tot ce e liber
+  // 7 oct 2026: pentru MEMBRI setul complet n-are steagul `free` (0 lacăte) → simulatorul lua 0 meciuri și spunea „sub două
+  // meciuri gratuite”. Membru = toate meciurile de azi (ora RO) cu probabilități; vizitator = cele 5 gratuite, ca înainte.
+  const Mm = (typeof window !== "undefined") ? window.PoseidonMembers : null;
+  const aziRO0 = new Date().toLocaleDateString("sv-SE", { timeZone: "Europe/Bucharest" });
+  let free;
+  if (Mm && Mm.MEMBERS_API && Mm.tier() && PRED_SURSA === "membru") {
+    free = data.matches.filter(m => !isLocked(m) && (m.match_date || "").slice(0, 10) === aziRO0 && m.prob_over_1_5 != null);
+    if (free.length < 2) free = data.matches.filter(m => !isLocked(m) && (m.match_date || "").slice(0, 10) >= azi && m.prob_over_1_5 != null).slice(0, 60);
+    free.sort((a, b) => (b.prob_over_1_5 || 0) - (a.prob_over_1_5 || 0)); free = free.slice(0, 40);   // cele mai sigure 40, ca lista manuală să rămână parcurgibilă
+  } else {
+    free = data.matches.filter(m => m.free && m.match_date.slice(0, 10) >= azi);
+    if (free.length < 2) free = data.matches.filter(m => m.free);   // pauze: iau tot ce e liber
+  }
   SIM.free = free;
   // 2 oct 2026 — „toate cele {n} meciuri ale zilei” = doar ziua curentă (ora României), nu fereastra de 7 zile
   const aziRO = new Date().toLocaleDateString("sv-SE", { timeZone: "Europe/Bucharest" });
