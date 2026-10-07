@@ -1226,3 +1226,42 @@ body.tier-basic #exemplu-pro .pro-card { display: none; }
   section.filters:not(.deschis) { display: none; }
   body.is-member #match-count { margin-top: 6px; }
 }
+
+/* ============ 7 oct 2026 — „PROFI”: o paletă, fără emoji, cardul ca rând pe telefon ============ */
+:root { --navy: #0f1f4d; --navy-2: #1e3a8a; --gold: #f2be3c; --ink: #0f172a; --muted: #64748b; --line: #e2e8f0; --ok: #15803d; --ok-bg: #ecfdf5; --bad: #b91c1c; }
+/* badge-uri: o singură familie verde, intensitatea = probabilitatea */
+.pick-badge { border-radius: 8px; font-weight: 600; letter-spacing: 0.01em; }
+.pick-badge b { font-weight: 800; }
+.pick-badge.pick-elite { background: var(--ok); color: #fff; }
+.pick-badge.pick-strong { background: #dcfce7; color: #14532d; border: 1px solid #86efac; }
+.pick-badge.pick-good { background: #fff; color: #14532d; border: 1px solid #86efac; }
+.skill-dots, .skill-stars { font-size: 0.6em; letter-spacing: 1px; margin-left: 6px; vertical-align: middle; color: inherit; opacity: 0.85; }
+/* marcajul „i” în loc de triunghi galben */
+.market-warn { width: 14px; height: 14px; border-radius: 50%; border: 1px solid #cbd5e1 !important; color: #94a3b8; font: 600 9px/12px system-ui, sans-serif; text-align: center; padding: 0 !important; opacity: 1; background: #fff !important; }
+/* xG în culorile mărcii */
+.xg-bar-h { background: var(--navy-2); }
+.xg-bar-a { background: var(--gold); }
+/* etichetele de stare: text, nu emoji */
+.ok-tag { background: var(--ok-bg); color: var(--ok); border: 1px solid #bbf7d0; }
+.warn-tag { background: #fff7ed; color: #9a3412; border: 1px solid #fed7aa; }
+.free-tag { border-radius: 8px; }
+/* titluri fără emoji → aliniere curată */
+h2, h3 { letter-spacing: -0.01em; }
+/* cifra principală + chevron: pe desktop ascunse (acolo sunt badge-urile) */
+.match-lead, .match-chev { display: none; }
+@media (max-width: 600px) {
+  .match { padding: 0; border-left-width: 3px; overflow: hidden; }
+  .match-header { display: grid; grid-template-columns: 1fr auto 18px; grid-template-areas: "title lead chev" "picks picks picks"; align-items: center; gap: 4px 10px; padding: 12px 12px 10px; margin: 0; }
+  .match-title { grid-area: title; min-width: 0; }
+  .match-lead { grid-area: lead; display: flex; flex-direction: column; align-items: flex-end; line-height: 1.05; }
+  .lead-pct { font-size: 1.45rem; font-weight: 800; color: var(--ok); letter-spacing: -0.02em; }
+  .lead-mk { font-size: 0.68rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; white-space: nowrap; }
+  .match-chev { grid-area: chev; display: block; width: 8px; height: 8px; border-right: 2px solid #94a3b8; border-bottom: 2px solid #94a3b8; transform: rotate(45deg); transition: transform 0.2s; justify-self: center; }
+  .match.open .match-chev { transform: rotate(-135deg); }
+  .picks-row { grid-area: picks; margin-top: 2px; }
+  .match-teams { font-size: 1rem; }
+  .match-body { display: none; padding: 0 12px 10px; border-top: 1px solid var(--line); }
+  .match.open .match-body { display: block; padding-top: 10px; animation: deschide 0.18s ease-out; }
+  @keyframes deschide { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+  .match .xg-bar-h { transition: width 0.45s ease-out; }
+}

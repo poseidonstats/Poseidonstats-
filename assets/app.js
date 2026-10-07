@@ -134,7 +134,7 @@ async function loadPredictions() {
   }
   return fetchJSON(PRED_URL);
 }
-const SCRIPT_V = "20261007i";
+const SCRIPT_V = "20261007j";
 // 7 oct 2026 — evenimente în GoatCounter (fără cookie, fără date personale): clicuri pe butoanele de abonament/trial/login și
 // dacă vizitatorul a ajuns la secțiunea de abonament. Răspund la „250 de vizite și niciun abonat”: nu ajung la ofertă, sau ajung și pleacă?
 function _gcEvent(nume) {
@@ -165,6 +165,14 @@ function _instaleazaUrmarireClicuri() {
 }
 if (typeof document !== "undefined") {
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", _instaleazaUrmarireClicuri); else _instaleazaUrmarireClicuri();
+}
+// 7 oct 2026 — pe telefon cardul e un RÂND: tap pe antet deschide corpul (xG, piețe)
+if (typeof document !== "undefined") {
+  document.addEventListener("click", (ev) => {
+    if (window.innerWidth > 600) return;
+    const h = ev.target.closest && ev.target.closest(".match-header"); if (!h || ev.target.closest("a, button")) return;
+    h.parentElement.classList.toggle("open");
+  });
 }
 // 7 oct 2026 — pe telefon filtrele stau pliate sub un buton „Filtre ▾” (6 selectoare = un ecran întreg înainte de meciuri)
 function _pliazaFiltre() {
@@ -735,9 +743,9 @@ async function renderIndex() {
 function pickBadge(name, prob, stars = 0) {
   if (prob == null) return "";
   const cls = prob >= 0.80 ? "pick-elite" : prob >= 0.70 ? "pick-strong" : "pick-good";
-  const st = stars > 0 ? " " + "⭐".repeat(stars) : "";
+  const st = stars > 0 ? `<span class="skill-dots" aria-hidden="true">${"●".repeat(stars)}</span>` : "";
   const tip = `${name}: ${fmtPct(prob)} · skill ${stars}/3 (lift peste base-rate, backtest OOS). Informativ — nu recomandare.`;
-  return `<span class="pick-badge ${cls}" title="${tip}">★ ${name} ${fmtPct(prob)}${st}</span>`;
+  return `<span class="pick-badge ${cls}" title="${tip}">${name} <b>${fmtPct(prob)}</b>${st}</span>`;
 }
 
 function rawNote(raw, cal) {
@@ -782,7 +790,7 @@ function warnTipText(kind, pct) {
 
 function warnMark(kind, pct) {
   const tip = warnTipText(kind, pct);
-  return `<button type="button" class="market-warn" data-tip="${tip}" title="${tip}" aria-label="${tip}">⚠️</button>`;
+  return `<button type="button" class="market-warn" data-tip="${tip}" title="${tip}" aria-label="${tip}">i</button>`;
 }
 
 // Marcaj per piață calibrabilă, derivat din market_cert (3 stări). Certified → fără marcaj (curat).
@@ -801,7 +809,7 @@ function skillMark(key, prob) {
   if (prob == null || prob < c.threshold) return "";   // stele DOAR când piața e pick pe ACEST meci
   const hit = c.hit_at_threshold != null ? fmtPct(c.hit_at_threshold) : "—";
   const tip = `Skill ${c.skill_stars}/3 (lift +${c.lift_pp}pp peste base-rate). Hit istoric OOS: ${hit}.`;
-  return `<span class="skill-stars" title="${tip}" aria-label="${tip}">${"⭐".repeat(c.skill_stars)}</span>`;
+  return `<span class="skill-stars" title="${tip}" aria-label="${tip}">${"●".repeat(c.skill_stars)}</span>`;
 }
 
 /* Popover singleton — tap pe ⚠️ deschide explicația, tap în afară o închide. */
@@ -880,8 +888,8 @@ function isFilteredMarket(label, filterMarket) {
 
 function renderMatch(m, filterMarket = "") {
   const calibTag = m.calibrated
-    ? `<span class="ok-tag">✓ calibrată</span>`
-    : `<span class="warn-tag">⚠️ ligă necalibrată</span>`;
+    ? `<span class="ok-tag">calibrată</span>`
+    : `<span class="warn-tag">ligă necalibrată</span>`;
   // match_date e UTC (cu Z). Convertesc explicit la fusul orar Europe/Bucharest (ora RO).
   const d = new Date(m.match_date);
   const dateStr = d.toLocaleString("ro-RO", {
@@ -917,17 +925,17 @@ function renderMatch(m, filterMarket = "") {
     picks.push([PICK_LABEL[key] || key, p, c ? c.skill_stars : 0]);
   }
   picks.sort((a, b) => b[1] - a[1]);
+  const pick1x2 = m.prob_home >= m.prob_draw && m.prob_home >= m.prob_away ? "1" : m.prob_away >= m.prob_draw ? "2" : "X";
   const picksHtml = picks.map(([name, p, stars]) => pickBadge(name, p, stars)).join(" ");
 
-  // Pick 1X2 (cel mai probabil)
-  const pick1x2 = m.prob_home >= m.prob_draw && m.prob_home >= m.prob_away ? "1"
-                : m.prob_away >= m.prob_draw ? "2" : "X";
 
   const freeTag = m.free
-    ? `<span class="free-tag">${tt("freemium.tag", "✓ GRATUIT AZI")}</span>` : "";
+    ? `<span class="free-tag">${tt("freemium.tag", "GRATUIT AZI")}</span>` : "";
 
+  const lead = picks.length ? `<div class="match-lead"><span class="lead-pct">${fmtPct(picks[0][1])}</span><span class="lead-mk">${esc(picks[0][0])}</span></div>` : `<div class="match-lead"><span class="lead-pct">${fmtPct(Math.max(m.prob_home, m.prob_draw, m.prob_away))}</span><span class="lead-mk">${pick1x2}</span></div>`;
   return `<div class="match ${m.calibrated ? "" : "uncalibrated"} ${m.free ? "match-free" : ""}">
-    <div class="match-header">
+    <div class="match-header" role="button" tabindex="0">
+      ${lead}
       <div class="match-title">
         <div class="match-teams"><span class="team home">${esc(m.home_team)}</span><span class="vs">vs</span><span class="team away">${esc(m.away_team)}</span></div>
         <div class="match-meta">
@@ -937,8 +945,9 @@ function renderMatch(m, filterMarket = "") {
         </div>
       </div>
       ${picksHtml ? `<div class="picks-row">${picksHtml}</div>` : ""}
+      <span class="match-chev" aria-hidden="true"></span>
     </div>
-
+    <div class="match-body">
     <div class="xg-section">
       <div class="xg-label" title="Poisson + Dixon-Coles + 200.000 simulări Monte Carlo">xG model <span class="xg-label-long">(Poisson + Dixon-Coles + 200K simulări Monte Carlo)</span></div>
       ${xgBar(m.xg_home, m.xg_away)}
@@ -950,7 +959,7 @@ function renderMatch(m, filterMarket = "") {
     </div>
 
     <div class="phase-row ft">
-      <div class="phase-label">⏱ FT · 90 min</div>
+      <div class="phase-label">Final · 90 min</div>
       <div class="markets-grid">
         <div class="market uncal-market ${pick1x2 === "1" ? "pick" : ""} ${isFilteredMarket("1", filterMarket) ? "market-filtered" : ""}">
           <span class="label">1</span>
@@ -995,7 +1004,7 @@ function renderMatch(m, filterMarket = "") {
     <details class="more-markets" ${(typeof window !== "undefined" && window.innerWidth > 600) ? "open" : ""}>
     <summary class="more-markets-sum">${tt("match.more", "Mai multe piețe: dublă șansă, under, prima repriză")}</summary>
     ${m.prob_1x != null ? `<div class="phase-row extra">
-      <div class="phase-label">🎯 Dublă șansă & Under</div>
+      <div class="phase-label">Dublă șansă & Under</div>
       <div class="markets-grid">
         <div class="market ${isFilteredMarket("1X", filterMarket) ? "market-filtered" : ""}"><span class="label">1X</span><span class="val ${pctClass(m.prob_1x)}">${fmtPct(m.prob_1x)}</span>${skillMark("dc_1x", m.prob_1x)}</div>
         <div class="market ${isFilteredMarket("X2", filterMarket) ? "market-filtered" : ""}"><span class="label">X2</span><span class="val ${pctClass(m.prob_x2)}">${fmtPct(m.prob_x2)}</span>${skillMark("dc_x2", m.prob_x2)}</div>
@@ -1006,7 +1015,7 @@ function renderMatch(m, filterMarket = "") {
     </div>` : ""}
 
     ${m.ht_prob_home != null ? `<div class="phase-row ht">
-      <div class="phase-label">⌛ HT · prima repriză ${m.xg_home_ht ? `<span class="muted-xs">(xG ${m.xg_home_ht}–${m.xg_away_ht})</span>` : ""}</div>
+      <div class="phase-label">Prima repriză ${m.xg_home_ht ? `<span class="muted-xs">(xG ${m.xg_home_ht}–${m.xg_away_ht})</span>` : ""}</div>
       <div class="markets-grid">
         <div class="market uncal-market"><span class="label">1H</span><span class="val ${pctClass(m.ht_prob_home)}">${fmtPct(m.ht_prob_home)}</span>${warnMark("raw")}</div>
         <div class="market uncal-market"><span class="label">XH</span><span class="val ${pctClass(m.ht_prob_draw)}">${fmtPct(m.ht_prob_draw)}</span>${warnMark("raw")}</div>
@@ -1022,6 +1031,7 @@ function renderMatch(m, filterMarket = "") {
       </div>
     </div>` : ""}
     </details>
+    </div>
   </div>`;
 }
 
