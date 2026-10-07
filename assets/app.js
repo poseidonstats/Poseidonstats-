@@ -115,7 +115,10 @@ async function loadPredictions() {
       // body.is-member + tier-basic/tier-pro → CSS ascunde intro/dovadă; Basic: exemplul Pro (upsell) coboară SUB lista de meciuri.
       try {
         document.body.classList.add("is-member", "tier-" + M.tier());
-        if (M.tier() === "basic") { const ex = document.getElementById("exemplu-pro"), mt = document.getElementById("matches"); if (ex && mt && mt.parentNode) mt.parentNode.insertBefore(ex, mt.nextSibling); }
+        const mt = document.getElementById("matches");
+        if (M.tier() === "basic") { const ex = document.getElementById("exemplu-pro"); if (ex && mt && mt.parentNode) mt.parentNode.insertBefore(ex, mt.nextSibling); }
+        // reperele zilei coboară sub listă: membrul vrea lista imediat (analize Pro → filtre pliate → meciuri)
+        const rep = document.getElementById("repere-azi"); if (rep && mt && mt.parentNode) mt.parentNode.insertBefore(rep, mt.nextSibling);
       } catch (e) {}
     }
     const r = await M.incarca(PRED_URL);
@@ -131,7 +134,7 @@ async function loadPredictions() {
   }
   return fetchJSON(PRED_URL);
 }
-const SCRIPT_V = "20261007g";
+const SCRIPT_V = "20261007h";
 // 7 oct 2026 — evenimente în GoatCounter (fără cookie, fără date personale): clicuri pe butoanele de abonament/trial/login și
 // dacă vizitatorul a ajuns la secțiunea de abonament. Răspund la „250 de vizite și niciun abonat”: nu ajung la ofertă, sau ajung și pleacă?
 function _gcEvent(nume) {
@@ -162,6 +165,17 @@ function _instaleazaUrmarireClicuri() {
 }
 if (typeof document !== "undefined") {
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", _instaleazaUrmarireClicuri); else _instaleazaUrmarireClicuri();
+}
+// 7 oct 2026 — pe telefon filtrele stau pliate sub un buton „Filtre ▾” (6 selectoare = un ecran întreg înainte de meciuri)
+function _pliazaFiltre() {
+  const f = document.querySelector("section.filters"); if (!f || f.previousElementSibling?.classList?.contains("filtre-toggle")) return;
+  const b = document.createElement("button"); b.type = "button"; b.className = "filtre-toggle";
+  const txt = () => tt("filters.toggle", "⚙️ Filtre") + (f.classList.contains("deschis") ? " ▴" : " ▾");
+  b.textContent = txt(); b.addEventListener("click", () => { f.classList.toggle("deschis"); b.textContent = txt(); });
+  f.parentNode.insertBefore(b, f);
+}
+if (typeof document !== "undefined") {
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", _pliazaFiltre); else _pliazaFiltre();
 }
 // 7 oct 2026 — buton plutitor „⚽ Meciurile de azi” pe telefon: sare direct la listă; dispare când lista e deja pe ecran
 function _butonSalt() {

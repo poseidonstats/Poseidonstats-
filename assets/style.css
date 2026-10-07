@@ -1216,3 +1216,11 @@ body.tier-basic #exemplu-pro .pro-card { display: none; }
   .salt-meciuri { display: inline-block; position: fixed; left: 50%; transform: translateX(-50%); bottom: 14px; z-index: 50; background: #0f172a; color: #fff; text-decoration: none; font-weight: 700; font-size: 0.9rem; padding: 10px 16px; border-radius: 999px; box-shadow: 0 6px 18px rgba(15,23,42,0.35); }
   .salt-meciuri.ascuns { display: none; }
 }
+
+/* 7 oct 2026 — filtre pliate pe telefon */
+.filtre-toggle { display: none; }
+@media (max-width: 600px) {
+  .filtre-toggle { display: block; width: 100%; text-align: left; background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px 14px; font-size: 0.92rem; font-weight: 600; color: #1e3a8a; margin: 8px 0 6px; }
+  section.filters:not(.deschis) { display: none; }
+  body.is-member #match-count { margin-top: 6px; }
+}
