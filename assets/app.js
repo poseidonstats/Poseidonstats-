@@ -134,7 +134,7 @@ async function loadPredictions() {
   }
   return fetchJSON(PRED_URL);
 }
-const SCRIPT_V = "20261007h";
+const SCRIPT_V = "20261007i";
 // 7 oct 2026 — evenimente în GoatCounter (fără cookie, fără date personale): clicuri pe butoanele de abonament/trial/login și
 // dacă vizitatorul a ajuns la secțiunea de abonament. Răspund la „250 de vizite și niciun abonat”: nu ajung la ofertă, sau ajung și pleacă?
 function _gcEvent(nume) {
@@ -181,7 +181,7 @@ if (typeof document !== "undefined") {
 function _butonSalt() {
   const mt = document.getElementById("match-count"); if (!mt || document.getElementById("salt-meciuri")) return;
   const b = document.createElement("a"); b.id = "salt-meciuri"; b.href = "#match-count"; b.className = "salt-meciuri";
-  b.textContent = tt("salt.meciuri", "⚽ Meciurile de azi"); document.body.appendChild(b);
+  b.setAttribute("data-i18n", "salt.meciuri"); b.textContent = tt("salt.meciuri", "⚽ Meciurile de azi"); document.body.appendChild(b);
   if ("IntersectionObserver" in window) {
     const io = new IntersectionObserver((es) => { b.classList.toggle("ascuns", es.some(e => e.isIntersecting)); }, { rootMargin: "0px 0px -60% 0px" });
     io.observe(mt);

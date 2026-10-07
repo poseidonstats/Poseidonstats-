@@ -11,13 +11,15 @@ body {
 
 /* Banner legal — vizibil sus */
 .legal-banner {
-  background: #fef3c7;
-  color: #78350f;
+  /* 7 oct 2026: discret, în culoarea antetului (galbenul semăna cu un avertisment de browser) */
+  background: #0a1740;
+  color: #aab4d4;
   text-align: center;
-  font-size: 0.85rem;
-  padding: 6px 12px;
-  border-bottom: 1px solid #fde68a;
-  font-weight: 500;
+  font-size: 0.74rem;
+  padding: 5px 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  font-weight: 400;
+  letter-spacing: 0.01em;
 }
 
 /* Header */

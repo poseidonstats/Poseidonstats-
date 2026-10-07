@@ -85,7 +85,7 @@ def shell_en(*, title: str, description: str, canonical: str, body: str, jsonld:
 {jsonld}</head>
 <body>
 
-<div class="legal-banner">⚠️ Statistical information only. The model can be wrong. Verify the source. 18+.</div>
+<div class="legal-banner">Statistical information only. The model can be wrong. Verify the source. 18+.</div>
 
 <header>
   <div class="container">

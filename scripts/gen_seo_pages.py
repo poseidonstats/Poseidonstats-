@@ -240,7 +240,7 @@ def shell(*, titlu: str, descriere: str, canonical: str, corp: str,
 {jsonld}</head>
 <body>
 
-<div class="legal-banner">⚠️ Statistici informative. Modelul poate greși. Verifică sursa. 18+.</div>
+<div class="legal-banner">Statistici informative. Modelul poate greși. Verifică sursa. 18+.</div>
 
 <header>
   <div class="container">
