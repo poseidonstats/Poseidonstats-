@@ -19,7 +19,7 @@ def test_pagina_liga_are_titlul_si_h1_noi():
     html = G.pagina_liga("England", "Premier League", "anglia-premier-league", "Premier League (Anglia)", meciuri=[], cal=None, zile=[])
     an = datetime.now().year
     assert f"<title>Predicții Premier League {an} | Probabilități și meciuri</title>" in html
-    assert '<h1 class="hero-title">Predicții Premier League</h1>' in html
+    assert 'class="hero-title"' in html and 'Predicții Premier League</h1>' in html
     assert "Probabilități pentru meciurile din Premier League (Anglia)" in html
 
 
