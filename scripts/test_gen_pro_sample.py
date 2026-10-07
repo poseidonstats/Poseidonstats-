@@ -94,3 +94,14 @@ def test_lista_pro_azi_cu_lacat_si_injectare_idempotenta():
     p2 = G.injecteaza_lista(p1, "<div class='pro-today'>L2</div>")
     assert "L2" in p2 and "L1" not in p2 and p2.count(G.LISTA_START) == 1
     assert G.injecteaza_lista(p2, "") == p2                                                  # fără listă → pagina rămâne
+
+
+def test_html_card_variante_pe_limba_cand_exista_traducere():
+    # 7 oct 2026: cu analysis_en cardul are grup de limbi; fără traducere, un singur corp (fără grup)
+    it = {"match": {"fixture_id": 3, "home": "ESMTK", "away": "Dabas", "league": "NB III", "country": "Hungary", "date": "2026-09-27"}, "analysis": TEXT}
+    h1 = G.html_card(it, "2026-09-27", "2026-09-27T07:30:00", None, "", None)
+    assert "data-lang-grup" not in h1 and h1.count('class="pro-visible"') == 1 and 'data-i18n="pro.card.maine"' in h1
+    en = TEXT.replace("**Verdict:**", "**Verdict:** EN-VERSION")
+    h2 = G.html_card({**it, "analysis_en": en, "analysis_es": ""}, "2026-09-27", "2026-09-27T07:30:00", None, "", None)
+    assert "data-lang-grup" in h2 and 'data-lang="en" hidden' in h2 and 'data-lang="es"' not in h2
+    assert "EN-VERSION" in h2 and h2.count('class="pro-visible"') == 2 and 'data-i18n="arhiva.sect.verdict"' in h2

@@ -124,11 +124,11 @@ Statistici informative. Modelul poate greși. Verifică sursa. 18+.
   <section>
     <h3>Citire onestă</h3>
     <ul>
-      <li><strong>Tier-uri statistice</strong>: NOISE (N&lt;30), DROP (hit&lt;60% — sub baseline), PRE-PROMISING (N≥30, 60%≤hit&lt;70%), PROMISING (N≥100 + hit≥70% + Wlo≥55%),
+      <li data-i18n="istoric.leg.tier"><strong>Tier-uri statistice</strong>: NOISE (N&lt;30), DROP (hit&lt;60% — sub baseline), PRE-PROMISING (N≥30, 60%≤hit&lt;70%), PROMISING (N≥100 + hit≥70% + Wlo≥55%),
       ROBUST (N≥300 + hit≥70% + Wlo≥60%), STRONG ROBUST (N≥500 + hit≥75% + Wlo≥70%).</li>
-      <li><strong>Wlo</strong> (Wilson lower bound 95%) = pragul realist sub care hit-rate-ul nu pică în 95% din cazuri. Cu cât N e mai mic, cu atât Wlo e mai depărtat de hit% afișat.</li>
-      <li><strong>Sample mic ≠ performanță</strong>: o singură zi 7/7 e NOROC. Doar N≥300 cu Wlo&gt;60% se consideră semnal real.</li>
-      <li><strong>Marker ⚠️</strong> apare pe ligi care nu sunt în lista celor <span data-stat="leagues-cal">270</span> de ligi calibrate empiric — predicții afișate, dar cu rezervă.</li>
+      <li data-i18n="istoric.leg.wlo"><strong>Wlo</strong> (Wilson lower bound 95%) = pragul realist sub care hit-rate-ul nu pică în 95% din cazuri. Cu cât N e mai mic, cu atât Wlo e mai depărtat de hit% afișat.</li>
+      <li data-i18n="istoric.leg.sample"><strong>Sample mic ≠ performanță</strong>: o singură zi 7/7 e NOROC. Doar N≥300 cu Wlo&gt;60% se consideră semnal real.</li>
+      <li><strong data-i18n="istoric.leg.marker.a">Marker de rezervă</strong> <span data-i18n="istoric.leg.marker.b">apare pe ligi care nu sunt în lista celor</span> <span data-stat="leagues-cal">270</span> <span data-i18n="istoric.leg.marker.c">de ligi calibrate empiric — predicții afișate, dar cu rezervă.</span></li>
     </ul>
   </section>
 
@@ -142,7 +142,7 @@ Statistici informative. Modelul poate greși. Verifică sursa. 18+.
   </div>
 </footer>
 
-<script src="assets/app.js?v=20261007r"></script>
+<script src="assets/app.js?v=20261007s"></script>
 <script>renderIstoric();</script>
 </body>
 </html>

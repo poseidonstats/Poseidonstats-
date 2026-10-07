@@ -562,7 +562,7 @@ def pagina_hub(randuri: list[dict]) -> str:
       <p class="hero-sub" data-i18n="ligi.index.sub">Câte o pagină pentru fiecare campionat urmărit îndeaproape: meciurile următoare cu probabilități calibrate, profilul de calibrare al ligii și ce a ieșit din predicțiile deja rezolvate.</p>
       <p class="hero-free" data-i18n="ligi.hero.free">5 predicții complete gratuit în fiecare zi · fără cont · fără reclame · zero link-uri către case de pariuri</p>
     </div>
-    <p>În acest moment sunt <strong>{total}</strong> meciuri programate în următoarele {FEREASTRA_ZILE} zile pe cele <strong>{len(cu_meci)}</strong> ligi cu program activ, din {len(randuri)} urmărite. Modelul analizează zilnic mult mai multe competiții — lista completă, cu filtre, e pe <a href="../index.html">pagina principală</a>.</p>
+    <p data-i18n="ligi.index.rez" data-i18n-vars='{{"t":"{total}","z":"{FEREASTRA_ZILE}","a":"{len(cu_meci)}","u":"{len(randuri)}"}}'>În acest moment sunt <strong>{total}</strong> meciuri programate în următoarele {FEREASTRA_ZILE} zile pe cele <strong>{len(cu_meci)}</strong> ligi cu program activ, din {len(randuri)} urmărite. Modelul analizează zilnic mult mai multe competiții — lista completă, cu filtre, e pe <a href="../index.html">pagina principală</a>.</p>
   </section>
 
   <section>

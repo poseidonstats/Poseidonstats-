@@ -68,6 +68,8 @@ MARKETS = [
     ("Victorie oaspeți", "prob_away", 0.65),
     ("Ambele marchează", "prob_btts", 0.65),
 ]
+PIATA_KEY = {"Over 1.5 goluri": "piata.o15", "Over 2.5 goluri": "piata.o25", "Over 3.5 goluri": "piata.o35",
+             "Victorie gazde": "piata.home", "Victorie oaspeți": "piata.away", "Ambele marchează": "piata.btts"}
 
 RO_MONTHS = ["", "ianuarie", "februarie", "martie", "aprilie", "mai", "iunie",
              "iulie", "august", "septembrie", "octombrie", "noiembrie", "decembrie"]
@@ -110,13 +112,14 @@ def todays_picks(limit: int = 3) -> tuple[list[str], int, int]:
             p = m.get(key)
             if p is None or p < prag or p > MAX_PROB_DISPLAY:
                 continue
-            picks.append((p, f"<li><strong>{home} – {away}</strong> ({league}): "
+            vars_ = json.dumps({"meci": f"{home} – {away}", "liga": league,
+                                "piata": f'<span data-i18n="{PIATA_KEY.get(label, "")}">{label}</span>', "p": str(round(p * 100))}, ensure_ascii=False)
+            picks.append((p, (home, away), f"<li data-i18n=\"repere.item\" data-i18n-vars='{vars_}'><strong>{home} – {away}</strong> ({league}): "
                              f"{label} — <strong>{round(p * 100)}%</strong> calibrat</li>"))
     picks.sort(key=lambda x: -x[0])
     # un singur pick per meci (cel mai probabil), apoi top N
     seen, out = set(), []
-    for p, html in picks:
-        match_key = html.split("(")[0]
+    for p, match_key, html in picks:
         if match_key in seen:
             continue
         seen.add(match_key)
@@ -151,7 +154,7 @@ def build_section() -> str:
     else:
         lines.append(f"    <p>Modelul a analizat azi {n_today} meciuri; niciun reper calibrat "
                      "peste pragurile de afișare — lista completă mai jos.</p>")
-    lines.append('    <p class="pro-disclaimer">probabilități calibrate empiric · informativ · '
+    lines.append('    <p class="pro-disclaimer" data-i18n="repere.disclaimer">probabilități calibrate empiric · informativ · '
                  "nu sfat de pariere · 18+</p>")
     lines.append("  </section>")
     lines.append("  " + END)
@@ -246,7 +249,7 @@ def build_proof_section() -> str | None:
         '    <p class="proof-note" data-i18n="proof.note">Rândul roșu e aici intenționat: acolo '
         'modelul <strong>nu</strong> prezice suficient de bine, iar noi îl marcăm <strong>DROP</strong> '
         'în propriul nostru tabel. Un site care îți arată doar ce a mers nu-ți arată nimic.</p>',
-        '    <p class="proof-note">N = doar selecțiile la care probabilitatea a trecut pragul din dreptul pieței, nu toate predicțiile; '
+        '    <p class="proof-note" data-i18n="proof.note2">N = doar selecțiile la care probabilitatea a trecut pragul din dreptul pieței, nu toate predicțiile; '
         'cifrele pe toate predicțiile, piață cu piață, sunt în auditul de pe track record. „Verdict propriu\" ține de mărimea eșantionului și de limita '
         'Wilson, <strong>nu</strong> de avantajul peste rata naturală a pieței. Tabelul complet, '
         'bucket cu bucket: <a href="track-record.html">track record</a> · '

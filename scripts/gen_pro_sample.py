@@ -147,22 +147,32 @@ def html_card(item: dict, zi: str, generat: str, scor: tuple[int, int] | None, b
     head = f"{H.escape(m['home'])} – {H.escape(m['away'])} · {H.escape(liga)}" + (f" ({H.escape(tara)})" if tara else "") + f" · <span data-date=\"{(m.get('date') or zi)[:10]}\">{_data_ro(m.get('date', zi))}</span>"
     head += (f" · <strong data-i18n=\"pro.card.rezfinal\" data-i18n-vars='{{\"s\":\"{scor[0]}-{scor[1]}\"}}'>rezultat final {scor[0]}-{scor[1]}</strong>" if scor
              else (f" · <strong data-i18n=\"pro.card.publicata\" data-i18n-vars='{{\"ora\":\"{ora}\"}}'>publicată la {ora}, înainte de meci</strong>" if ora else " · <strong data-i18n=\"pro.card.publicata0\">publicată înainte de meci</strong>"))
-    picks = "".join(f"<li>{_inline(l)}</li>" for l in p["picks"])
     verif = ""
     if scor and baza:
         verif = {True: f"<span data-i18n=\"pro.card.verif.da\" data-i18n-vars='{{\"p\":\"{_inline(baza)}\"}}'>✅ Pick-ul de bază, <strong>{_inline(baza)}</strong>, a ieșit.</span>", False: f"<span data-i18n=\"pro.card.verif.nu\" data-i18n-vars='{{\"p\":\"{_inline(baza)}\"}}'>❌ Pick-ul de bază, <strong>{_inline(baza)}</strong>, nu a ieșit — publicăm și când greșim.</span>", None: f"Pick-ul de bază: <strong>{_inline(baza)}</strong>."}[ok]
         verif = f'        <p class="pro-verificat">{verif} <a href="analize/{zi}.html#m{m.get("fixture_id")}">Verificarea completă →</a></p>\n'
+    def _corp(p: dict) -> str:
+        picks = "".join(f"<li>{_inline(l)}</li>" for l in p["picks"])
+        return "\n".join([
+            '      <div class="pro-visible">',
+            f'        <p><strong data-i18n="arhiva.sect.verdict">Verdict:</strong> {_inline(p["verdict"])}</p>',
+            f'        <p><strong data-i18n="arhiva.sect.context">Context:</strong> {_inline(p["context"])}</p>',
+            f'        <p><strong data-i18n="arhiva.sect.model">Modelul vs realitate:</strong> {_inline(p["model"])}</p>',
+            f'        <p><strong data-i18n="arhiva.sect.piete">Piețele alese:</strong></p><ul>{picks}</ul>',
+            f'        <p><strong data-i18n="arhiva.sect.urmarit">De urmărit:</strong> {_inline(p["urmarit"])}</p>',
+            verif.rstrip("\n") if verif else '        <p class="muted" data-i18n="pro.card.maine">Rezultatul și verificarea pick-urilor apar mâine dimineață, în <a href="analize/index.html">arhiva analizelor</a>.</p>',
+            '      </div>'])
+    # 7 oct 2026: analiza în limba aleasă când există traduceri (analysis_en/es/it din traduce_analize.py); app.js arată varianta [data-lang]
+    variante = [f'<div data-lang="ro">\n{_corp(p)}\n</div>']
+    for cod in ("en", "es", "it"):
+        pt = parseaza(item.get(f"analysis_{cod}") or "")
+        if pt["verdict"] and pt["picks"]:
+            variante.append(f'<div data-lang="{cod}" hidden>\n{_corp(pt)}\n</div>')
+    corp = f'<div data-lang-grup>{"".join(variante)}</div>' if len(variante) > 1 else _corp(p)
     return "\n".join([
         '<div class="pro-card">',
         f'      <div class="pro-card-head">{head}</div>',
-        '      <div class="pro-visible">',
-        f'        <p><strong>⚡ Verdict:</strong> {_inline(p["verdict"])}</p>',
-        f'        <p><strong>📊 Context:</strong> {_inline(p["context"])}</p>',
-        f'        <p><strong>🧮 Modelul vs realitate:</strong> {_inline(p["model"])}</p>',
-        f'        <p><strong>🎯 Piețele alese:</strong></p><ul>{picks}</ul>',
-        f'        <p><strong>👁️ De urmărit:</strong> {_inline(p["urmarit"])}</p>',
-        verif.rstrip("\n") if verif else '        <p class="muted">Rezultatul și verificarea pick-urilor apar mâine dimineață, în <a href="analize/index.html">arhiva analizelor</a>.</p>',
-        '      </div>',
+        corp,
         '    </div>'])
 
 

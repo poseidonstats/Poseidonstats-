@@ -51,6 +51,9 @@ function t(key) {
 
 function _loc() { return LANG === "en" ? "en-GB" : LANG === "es" ? "es-ES" : LANG === "it" ? "it-IT" : "ro-RO"; }
 function applyI18n() {
+  // 7 oct 2026: variante pe limbă generate pe server ([data-lang] în [data-lang-grup]); fără varianta aleasă rămâne româna
+  document.querySelectorAll("[data-lang]").forEach(el => { el.hidden = el.getAttribute("data-lang") !== LANG; });
+  document.querySelectorAll("[data-lang-grup]").forEach(g => { if (!g.querySelector('[data-lang="' + LANG + '"]')) { const ro = g.querySelector('[data-lang="ro"]'); if (ro) ro.hidden = false; } });
   if (!I18N) return;
   for (let trecere = 0; trecere < 2; trecere++) document.querySelectorAll("[data-i18n]").forEach(el => {   // a 2-a trecere: span-uri injectate prin {variabile}
     const key = el.getAttribute("data-i18n");
@@ -144,7 +147,7 @@ async function loadPredictions() {
   }
   return fetchJSON(PRED_URL);
 }
-const SCRIPT_V = "20261007r";
+const SCRIPT_V = "20261007s";
 // 7 oct 2026 — evenimente în GoatCounter (fără cookie, fără date personale): clicuri pe butoanele de abonament/trial/login și
 // dacă vizitatorul a ajuns la secțiunea de abonament. Răspund la „250 de vizite și niciun abonat”: nu ajung la ofertă, sau ajung și pleacă?
 function _gcEvent(nume) {
@@ -1073,27 +1076,33 @@ function esc(s) {
 }
 
 /* ============== TRACK RECORD ============== */
+function _numePiataBT(name) {
+  return String(name || "").replace(" goluri", " " + tt("word.goals", "goluri")).replace("sub-set ligi top calibrate", tt("tr.bt.topsub", "sub-set ligi top calibrate"));
+}
+function _scopeBT(scope) {
+  const n = (String(scope || "").match(/[\d.,]+/) || [""])[0];
+  return (/^toate/i.test(String(scope || "")) ? tt("tr.bt.subset.all", "Sub-set: toate cele {n} meciuri.") : tt("tr.bt.subset.top", "Sub-set: {n} meciuri pe sub-set restrâns (calibrare strictă verificată).")).replace("{n}", n);
+}
 async function renderTrackRecord() {
   const calib = await fetchJSON(CALIB_URL);
   if (!calib) {
     document.getElementById("calibration-tables").innerHTML =
-      `<p class="muted">Calibrarea backtest se publică după prima rulare completă.</p>`;
+      `<p class="muted">${tt("tr.bt.fallback", "Calibrarea backtest se publică după prima rulare completă.")}</p>`;
   } else {
     const meta = calib.meta || {};
-    let html = `<p class="muted">Sample: <strong>${meta.n_total || "—"}</strong> meciuri TEST 2026
-                (ratings frozen 2025-12-31, train/test split strict, zero leakage).</p>`;
+    let html = `<p class="muted">${tt("tr.bt.sample", "Sample: <strong>{n}</strong> meciuri TEST 2026 (ratings înghețate la 31 dec 2025, train/test split strict, zero leakage).").replace("{n}", nUnits(meta.n_total || 0) || "—")}</p>`;
     for (const market of (calib.markets || [])) {
       html += `<div class="calibration-card">
-        <h4>${market.name}</h4>
-        <p class="muted">Sub-set: ${market.scope}. Coloana "Real" = procent din meciuri unde evenimentul s-a întâmplat efectiv.</p>
+        <h4>${_numePiataBT(market.name)}</h4>
+        <p class="muted">${_scopeBT(market.scope)} ${tt("tr.bt.real", "Coloana „Real” = procent din meciuri unde evenimentul s-a întâmplat efectiv.")}</p>
         <table>
           <thead>
-            <tr><th>Bucket prob</th><th>N</th><th>Real %</th><th>Wlo 95%</th><th>Diferență</th></tr>
+            <tr><th>${tt("tr.bt.th.bucket", "Interval prob.")}</th><th>N</th><th>${tt("tr.bt.th.real", "Real %")}</th><th>Wlo 95%</th><th>${tt("tr.bt.th.diff", "Diferență")}</th></tr>
           </thead>
           <tbody>
             ${market.buckets.map(b => `<tr${b.low_sample ? ' style="opacity:.45"' : ''}>
               <td>${b.range}</td>
-              <td>${b.n}${b.low_sample ? ' <span class="muted" title="sub 100 meciuri">⚠ sample mic</span>' : ''}</td>
+              <td>${b.n}${b.low_sample ? ' <span class="muted" title="${tt("tr.bt.lowsample.title", "sub 100 meciuri")}">${tt("tr.bt.lowsample", "sample mic")}</span>' : ''}</td>
               <td>${b.hit_pct.toFixed(1)}%</td>
               <td>${b.wlo_pct.toFixed(1)}%</td>
               <td style="color:${b.low_sample ? '#6b7280' : (Math.abs(b.diff_pp) <= 3 ? '#065f46' : '#991b1b')}">${b.low_sample ? "—" : (b.diff_pp >= 0 ? "+" : "") + b.diff_pp.toFixed(1) + "pp"}</td>
@@ -1110,34 +1119,34 @@ async function renderTrackRecord() {
     const ok = calib.leagues.filter(l => l.calibrated);
     const bad = calib.leagues.filter(l => !l.calibrated);
     let html = `<div class="calibration-card">
-      <h4>Ligi calibrate (${ok.length})</h4>
-      <p class="muted">Bias între goluri prezise vs reale: ±10%.</p>
-      <table><thead><tr><th>Țară / Ligă</th><th>N</th><th>Bias</th></tr></thead>
+      <h4>${tt("tr.lg.ok.h", "Ligi calibrate ({n})").replace("{n}", ok.length)}</h4>
+      <p class="muted">${tt("tr.lg.ok.p", "Bias între goluri prezise vs reale: ±10%.")}</p>
+      <table><thead><tr><th>${tt("tr.lg.th.liga", "Țară / Ligă")}</th><th>N</th><th>Bias</th></tr></thead>
         <tbody>${ok.slice(0, 30).map(l => `<tr>
           <td>${esc(l.country)} / ${esc(l.league)}</td>
           <td>${l.n}</td>
           <td>${l.bias_pp >= 0 ? "+" : ""}${l.bias_pp.toFixed(1)}%</td>
         </tr>`).join("")}</tbody>
       </table>
-      ${ok.length > 30 ? `<p class="muted">… +${ok.length - 30} ligi</p>` : ""}
+      ${ok.length > 30 ? `<p class="muted">${tt("tr.lg.more", "… +{n} ligi").replace("{n}", ok.length - 30)}</p>` : ""}
     </div>
 
     <div class="calibration-card">
-      <h4>Ligi cu calibrare slabă (${bad.length})</h4>
-      <p class="muted">Bias mai mare de ±10% sau sample sub 80 — predicții afișate cu marker ⚠️ pe pagina principală.</p>
-      <table><thead><tr><th>Țară / Ligă</th><th>N</th><th>Bias</th></tr></thead>
+      <h4>${tt("tr.lg.bad.h", "Ligi cu calibrare slabă ({n})").replace("{n}", bad.length)}</h4>
+      <p class="muted">${tt("tr.lg.bad.p", "Bias mai mare de ±10% sau sample sub 80 — predicții afișate cu marker de rezervă pe pagina principală.")}</p>
+      <table><thead><tr><th>${tt("tr.lg.th.liga", "Țară / Ligă")}</th><th>N</th><th>Bias</th></tr></thead>
         <tbody>${bad.slice(0, 30).map(l => `<tr>
           <td>${esc(l.country)} / ${esc(l.league)}</td>
           <td>${l.n}</td>
           <td>${l.bias_pp >= 0 ? "+" : ""}${l.bias_pp.toFixed(1)}%</td>
         </tr>`).join("")}</tbody>
       </table>
-      ${bad.length > 30 ? `<p class="muted">… +${bad.length - 30} ligi</p>` : ""}
+      ${bad.length > 30 ? `<p class="muted">${tt("tr.lg.more", "… +{n} ligi").replace("{n}", bad.length - 30)}</p>` : ""}
     </div>`;
     document.getElementById("leagues-tables").innerHTML = html;
   } else {
     document.getElementById("leagues-tables").innerHTML =
-      `<p class="muted">Tabelul per ligă se publică odată cu datele de calibrare — vezi secțiunea de mai sus.</p>`;
+      `<p class="muted">${tt("tr.lg.fallback", "Tabelul per ligă se publică odată cu datele de calibrare — vezi secțiunea de mai sus.")}</p>`;
   }
 
   // Forward — date reale SAU empty state onest (niciodată loader infinit)
@@ -1248,7 +1257,7 @@ function renderIstoricDays() {
       : d.status === "partial"
       ? `<span class="day-status status-partial">${tt("ist.partial", "PARȚIAL REZOLVATĂ")}</span>`
       : d.status === "in_progress"
-      ? `<span class="day-status status-live">ÎN CURS</span>`
+      ? `<span class="day-status status-live">${tt("ist.incurs", "ÎN CURS")}</span>`
       : `<span class="day-status status-scheduled">${tt("ist.programata", "PROGRAMATĂ")}</span>`;
 
     const t = d.totals;
