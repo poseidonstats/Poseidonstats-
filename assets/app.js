@@ -153,7 +153,7 @@ async function loadPredictions() {
   }
   return fetchJSON(PRED_URL);
 }
-const SCRIPT_V = "20261007t";
+const SCRIPT_V = "20261007u";
 // 7 oct 2026 — evenimente în GoatCounter (fără cookie, fără date personale): clicuri pe butoanele de abonament/trial/login și
 // dacă vizitatorul a ajuns la secțiunea de abonament. Răspund la „250 de vizite și niciun abonat”: nu ajung la ofertă, sau ajung și pleacă?
 function _gcEvent(nume) {
@@ -1162,15 +1162,15 @@ async function renderTrackRecord() {
   const fwdHtml = (fwd && fwd.n_resolved > 0)
     ? `<div class="calibration-card">
         <p class="muted" style="border-left:3px solid #b45309;padding-left:.6em">${tt("tr.fwd.p", "<strong>Calibrare live, out-of-sample</strong> — în acumulare din {data}.").replace("{data}", new Intl.DateTimeFormat(_loc(), { day: "numeric", month: "long", year: "numeric" }).format(new Date("2026-06-02T12:00:00Z")))}</p>
-        ${fwd.calibration_note ? `<p class="muted" style="font-size:.82em">ℹ️ ${esc(fwd.calibration_note)}</p>` : ""}
+        ${fwd.calibration_note ? `<p class="muted" style="font-size:.82em">${tt("tr.fwd.calnote", esc(fwd.calibration_note))}</p>` : ""}
         <p class="muted" style="font-size:.82em">${tt("tr.fwd.note", "Notă: «tier» reflectă mărimea eșantionului + Wilson 95%, NU edge-ul peste baseline.")}</p>
         <p>${tt("tr.resolved.live", "Predicții rezolvate live: <strong>{n}</strong>").replace("{n}", fwd.n_resolved)}
         ${tt("tr.fwd.totals", "(din {t} totale, {p} în așteptare, {a} amânate).").replace("{t}", fwd.n_total).replace("{p}", fwd.n_pending).replace("{a}", fwd.n_not_played)}</p>
         ${(fwd.markets || []).map(m => `<div>
-          <h4>${m.name}</h4>
-          <table><thead><tr><th>Bucket prob</th><th>N</th><th>Real %</th></tr></thead>
+          <h4>${_numePiataBT(m.name)}</h4>
+          <table><thead><tr><th>${tt("tr.bt.th.bucket", "Interval prob.")}</th><th>N</th><th>${tt("tr.bt.th.real", "Real %")}</th></tr></thead>
           <tbody>${m.buckets.map(b => `<tr${b.low_sample ? ' style="opacity:.45"' : ''}>
-            <td>${b.range}</td><td>${b.n}${b.low_sample ? ' <span class="muted">⚠ sample mic</span>' : ''}</td><td>${b.low_sample ? "—" : b.hit_pct.toFixed(1) + "%"}</td>
+            <td>${b.range}</td><td>${b.n}${b.low_sample ? ` <span class="muted">${tt("tr.bt.lowsample", "sample mic")}</span>` : ''}</td><td>${b.low_sample ? "—" : b.hit_pct.toFixed(1) + "%"}</td>
           </tr>`).join("")}</tbody></table>
         </div>`).join("")}
       </div>`

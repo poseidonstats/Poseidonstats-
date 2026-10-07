@@ -290,6 +290,18 @@ def _pe_zi(a: dict) -> int:
     except Exception:
         return 0
 
+def _nume(p: dict) -> str:
+    """Numele pieței ca span tradus (cheia după cod); fără cod cunoscut rămâne textul RO."""
+    cod = p.get("cod") or next((c for c, _, _, nume in PIETE if nume == p.get("nume")), None)
+    return f'<span data-i18n="audit.piata.{cod}">{p["nume"]}</span>' if cod else str(p.get("nume", ""))
+
+
+def _vars(o: dict) -> str:
+    """JSON pentru data-i18n-vars într-un atribut cu ghilimele simple (apostroful din valori → &#39;)."""
+    import json as _j
+    return _j.dumps(o, ensure_ascii=False).replace("'", "&#39;")
+
+
 def html_audit(a: dict) -> str:
     L = [f'<section id="audit-section" class="audit">',
          '  <h3 data-i18n="audit.h3">Audit statistic — jurnalul forward, cifrele complete</h3>',
@@ -299,46 +311,48 @@ def html_audit(a: dict) -> str:
          'pantă sub 1 = prea încrezător la extreme, intercept peste 0 = subestimează evenimentul). Cifrele sunt pe probabilitățile <strong>publicate</strong> (după calibrarea Platt per piață, refăcută săptămânal pe jurnal — deci ușor in-sample; '
          'cu parametrii fitați înainte de 16 august, testul pe meciurile de după dă la peste 2,5 BSS +4,5 față de +4,1 brut). Coloana „BSS brut" = modelul fără calibrare. '
          'Pe scurt: modelul este calibrat față de rata de bază, dar <strong>nu bate piața</strong> — vezi ultimul tabel.</p>',
-         '  <div class="table-wrap"><table class="audit-table"><thead><tr><th>Piață</th><th>N</th><th>Rata reală</th><th>Brier</th><th>BSS</th><th>BSS brut</th><th>log loss</th><th>ECE</th><th>pantă</th><th>intercept</th></tr></thead><tbody>']
+         '  <div class="table-wrap"><table class="audit-table"><thead><tr><th data-i18n="audit.th.piata">Piață</th><th>N</th><th data-i18n="audit.th.rata">Rata reală</th><th>Brier</th><th>BSS</th><th data-i18n="audit.th.bssbrut">BSS brut</th><th>log loss</th><th>ECE</th><th data-i18n="audit.th.panta">pantă</th><th data-i18n="audit.th.intercept">intercept</th></tr></thead><tbody>']
     for p in a["piete"]:
-        L.append(f'    <tr><td>{p["nume"]}</td><td>{p["n"]}</td><td>{_f(p["rata"] * 100)} %</td><td>{_f(p["brier"], 4)}</td><td>{_semn(p["bss"])} %</td><td>{_semn(p["bss_brut"])} %</td><td>{_f(p["log_loss"], 4)}</td><td>{_f(p["ece"])} pp</td>'
+        L.append(f'    <tr><td>{_nume(p)}</td><td>{p["n"]}</td><td>{_f(p["rata"] * 100)} %</td><td>{_f(p["brier"], 4)}</td><td>{_semn(p["bss"])} %</td><td>{_semn(p["bss_brut"])} %</td><td>{_f(p["log_loss"], 4)}</td><td>{_f(p["ece"])} pp</td>'
                  f'<td>{_f(p.get("panta", 1.0), 2)}</td><td>{_semn(p.get("intercept", 0.0), 2)}</td></tr>')
     L.append('  </tbody></table></div>')
-    L.append('  <h4>Calibrarea pe intervale — când modelul spune X %, în câte cazuri s-a întâmplat (toate intervalele cu cel puțin 100 de predicții) + diagrama de fiabilitate</h4>')
+    L.append('  <h4 data-i18n="audit.h4.intervale">Calibrarea pe intervale — când modelul spune X %, în câte cazuri s-a întâmplat (toate intervalele cu cel puțin 100 de predicții) + diagrama de fiabilitate</h4>')
     for p in a["piete"]:
         if not p["intervale"]:
             continue
-        L.append(f'  <details><summary>{p["nume"]} — {p["n"]} predicții</summary><div class="fiab-wrap">{svg_fiabilitate(p["intervale"])}</div><div class="table-wrap"><table class="audit-table"><thead><tr><th>interval</th><th>N</th><th>modelul spunea</th><th>s-a întâmplat</th><th>Wilson 95 % jos</th><th>diferență</th></tr></thead><tbody>')
+        L.append(f'  <details><summary data-i18n="audit.sum" data-i18n-vars=\'{{"nume":"{_nume(p).replace(chr(34), "\\\"")}","n":"{p["n"]}"}}\'>{_nume(p)} — {p["n"]} predicții</summary><div class="fiab-wrap">{svg_fiabilitate(p["intervale"])}</div><div class="table-wrap"><table class="audit-table"><thead><tr><th data-i18n="audit.th.interval">interval</th><th>N</th><th data-i18n="audit.th.spus">modelul spunea</th><th data-i18n="audit.th.iesit">s-a întâmplat</th><th data-i18n="audit.th.wlo">Wilson 95 % jos</th><th data-i18n="audit.th.dif">diferență</th></tr></thead><tbody>')
         for b in p["intervale"]:
             L.append(f'    <tr><td>{b["interval"]}</td><td>{b["n"]}</td><td>{_f(b["spus"])} %</td><td>{_f(b["iesit"])} %</td><td>{_f(b["wlo"])} %</td><td>{_semn(b["dif"])} pp</td></tr>')
         L.append('  </tbody></table></div></details>')
     vs = a.get("vs_piata") or {}
     if vs and all(v.get("sursa") == "inchidere" for v in vs.values()):
         zile = [v["de_la"] for v in vs.values()] + [v["pana_la"] for v in vs.values()]; ore = a.get("ore_inchidere_mediana")
-        L.append('  <h4>Modelul față de cota de închidere a pieței — și testul „aduce modelul informație peste piață?"</h4>')
-        L.append(f'  <p>Piața = ultimul preț disponibil înainte de start la o casă de pariuri licențiată în România, cu marja scoasă'
-                 + (f' (mediana: {_f(ore)} ore înainte de start)' if ore is not None else '') + f', pe meciurile din jurnal la care maparea cu evenimentul casei a fost validată prin nume și scor final ({min(zile)} → {max(zile)}). '
+        L.append('  <h4 data-i18n="audit.h4.inchidere">Modelul față de cota de închidere a pieței — și testul „aduce modelul informație peste piață?"</h4>')
+        med = (f'<span data-i18n="audit.mediana" data-i18n-vars=\'{{"ore":"{_f(ore)}"}}\'> (mediana: {_f(ore)} ore înainte de start)</span>' if ore is not None else '')
+        L.append(f'  <p data-i18n="audit.p.inchidere" data-i18n-vars=\'{_vars({"med": med, "de_la": min(zile), "pana_la": max(zile)})}\'>Piața = ultimul preț disponibil înainte de start la o casă de pariuri licențiată în România, cu marja scoasă'
+                 + med + f', pe meciurile din jurnal la care maparea cu evenimentul casei a fost validată prin nume și scor final ({min(zile)} → {max(zile)}). '
                  'Testul de informație: o regresie logistică a rezultatului pe logit-ul cotei și logit-ul modelului, învățată pe primele două treimi cronologic și testată pe ultima treime. '
                  'Dacă adăugarea modelului nu scade log loss-ul pieței, modelul nu știe nimic în plus față de cotă.</p>')
-        L.append('  <div class="table-wrap"><table class="audit-table"><thead><tr><th>Piață</th><th>N</th><th>BSS model</th><th>BSS piață</th><th>log loss model</th><th>log loss piață</th><th>ECE model</th><th>ECE piață</th>'
-                 '<th>test: N</th><th>log loss piață</th><th>piață + model</th><th>coeficient model</th></tr></thead><tbody>')
+        L.append('  <div class="table-wrap"><table class="audit-table"><thead><tr><th data-i18n="audit.th.piata">Piață</th><th>N</th><th data-i18n="audit.th.bss_model">BSS model</th><th data-i18n="audit.th.bss_piata">BSS piață</th><th data-i18n="audit.th.ll_model">log loss model</th><th data-i18n="audit.th.ll_piata">log loss piață</th><th data-i18n="audit.th.ece_model">ECE model</th><th data-i18n="audit.th.ece_piata">ECE piață</th>'
+                 '<th data-i18n="audit.th.test_n">test: N</th><th data-i18n="audit.th.ll_piata">log loss piață</th><th data-i18n="audit.th.piata_model">piață + model</th><th data-i18n="audit.th.coef">coeficient model</th></tr></thead><tbody>')
         for v in vs.values():
             t = v["informatie"]
-            L.append(f'    <tr><td>{v["nume"]}</td><td>{v["n"]}</td><td>{_semn(v["bss_model"])} %</td><td>{_semn(v["bss_piata"])} %</td><td>{_f(v["ll_model"], 4)}</td><td>{_f(v["ll_piata"], 4)}</td><td>{_f(v["ece_model"])} pp</td><td>{_f(v["ece_piata"])} pp</td>'
+            L.append(f'    <tr><td>{_nume(v)}</td><td>{v["n"]}</td><td>{_semn(v["bss_model"])} %</td><td>{_semn(v["bss_piata"])} %</td><td>{_f(v["ll_model"], 4)}</td><td>{_f(v["ll_piata"], 4)}</td><td>{_f(v["ece_model"])} pp</td><td>{_f(v["ece_piata"])} pp</td>'
                      f'<td>{t["n_test"]}</td><td>{_f(t["ll_piata"], 4)}</td><td>{_f(t["ll_piata_model"], 4)}</td><td>{_semn(t["coef_model"], 2)}</td></tr>')
         L.append('  </tbody></table></div>')
         cmax = max(v["informatie"]["castig_ll"] for v in vs.values())
+        nu = cmax < 0.002 and all(v["bss_piata"] >= v["bss_model"] for v in vs.values())
         verdict = ('modelul <strong>nu aduce informație peste cota de închidere</strong>: adăugat peste cotă, schimbă log loss-ul cu cel mult ' + _f(cmax, 4) + ' pe piața cea mai favorabilă lui, iar piața singură are BSS mai mare pe toate piețele'
-                   if cmax < 0.002 and all(v["bss_piata"] >= v["bss_model"] for v in vs.values()) else
-                   'pe unele piețe modelul adaugă ceva peste cotă (câștig de log loss până la ' + _f(cmax, 4) + ') — de urmărit în timp, nu e o promisiune')
-        L.append(f'  <p class="muted">Verdictul, în cuvinte: {verdict}. Îl publicăm exact așa. Predicțiile rămân informative, fără garanție.</p>')
+                   if nu else 'pe unele piețe modelul adaugă ceva peste cotă (câștig de log loss până la ' + _f(cmax, 4) + ') — de urmărit în timp, nu e o promisiune')
+        v_html = f'<span data-i18n="{"audit.verdict.nu" if nu else "audit.verdict.da"}" data-i18n-vars=\'{_vars({"c": _f(cmax, 4)})}\'>{verdict}</span>'
+        L.append(f'  <p class="muted" data-i18n="audit.verdict.wrap" data-i18n-vars=\'{_vars({"v": v_html})}\'>Verdictul, în cuvinte: {v_html}. Îl publicăm exact așa. Predicțiile rămân informative, fără garanție.</p>')
     elif vs:
-        L.append('  <h4>Modelul față de piață — pe meciurile la care avem cota casei la ora predicției</h4>')
-        L.append('  <div class="table-wrap"><table class="audit-table"><thead><tr><th>Piață</th><th>N</th><th>BSS model</th><th>BSS piață</th><th>Brier model</th><th>Brier piață</th><th>ECE model</th><th>ECE piață</th></tr></thead><tbody>')
+        L.append('  <h4 data-i18n="audit.h4.piata">Modelul față de piață — pe meciurile la care avem cota casei la ora predicției</h4>')
+        L.append('  <div class="table-wrap"><table class="audit-table"><thead><tr><th data-i18n="audit.th.piata">Piață</th><th>N</th><th data-i18n="audit.th.bss_model">BSS model</th><th data-i18n="audit.th.bss_piata">BSS piață</th><th data-i18n="audit.th.brier_model">Brier model</th><th data-i18n="audit.th.brier_piata">Brier piață</th><th data-i18n="audit.th.ece_model">ECE model</th><th data-i18n="audit.th.ece_piata">ECE piață</th></tr></thead><tbody>')
         for k, v in vs.items():
-            L.append(f'    <tr><td>{v["nume"]}</td><td>{v["n"]}</td><td>{_semn(v["bss_model"])} %</td><td>{_semn(v["bss_piata"])} %</td><td>{_f(v["brier_model"], 4)}</td><td>{_f(v["brier_piata"], 4)}</td><td>{_f(v["ece_model"])} pp</td><td>{_f(v["ece_piata"])} pp</td></tr>')
+            L.append(f'    <tr><td>{_nume(v)}</td><td>{v["n"]}</td><td>{_semn(v["bss_model"])} %</td><td>{_semn(v["bss_piata"])} %</td><td>{_f(v["brier_model"], 4)}</td><td>{_f(v["brier_piata"], 4)}</td><td>{_f(v["ece_model"])} pp</td><td>{_f(v["ece_piata"])} pp</td></tr>')
         L.append('  </tbody></table></div>')
-        L.append('  <p class="muted">Piața (cota casei fără marjă) are un BSS mai mare decât modelul: modelul nu aduce informație peste cotă. Îl publicăm exact așa. Predicțiile rămân informative, fără garanție.</p>')
+        L.append('  <p class="muted" data-i18n="audit.p.piata">Piața (cota casei fără marjă) are un BSS mai mare decât modelul: modelul nu aduce informație peste cotă. Îl publicăm exact așa. Predicțiile rămân informative, fără garanție.</p>')
     L.append('</section>')
     return "\n".join(L)
 

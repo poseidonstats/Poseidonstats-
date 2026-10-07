@@ -118,21 +118,23 @@ def scrie(R: list[dict], out_dir: Path, azi: str | None = None) -> dict:
 
 
 def html_dataset(j: dict) -> str:
-    L = ['<section id="dataset-section" class="audit">', '  <h3>Date deschise — jurnalul complet, de descărcat</h3>',
-         f'  <p>Toate predicțiile rezolvate, exact cum au fost înghețate la 05:30, câte un fișier CSV pe luna meciului: {_mii(j["n_total"])} rânduri, actualizate zilnic (ultima dată {j["generat_la"]}). '
+    import json as _j
+    _v = lambda o: _j.dumps(o, ensure_ascii=False).replace("'", "&#39;")
+    L = ['<section id="dataset-section" class="audit">', '  <h3 data-i18n="ds.h3">Date deschise — jurnalul complet, de descărcat</h3>',
+         f'  <p data-i18n="ds.p" data-i18n-vars=\'{_v({"n": _mii(j["n_total"]), "data": j["generat_la"], "url": REPO_SCRIPT})}\'>Toate predicțiile rezolvate, exact cum au fost înghețate la 05:30, câte un fișier CSV pe luna meciului: {_mii(j["n_total"])} rânduri, actualizate zilnic (ultima dată {j["generat_la"]}). '
          'Fiecare rând are ora înghețării, probabilitățile brute ale modelului, rezultatul și, unde maparea cu evenimentul casei a fost validată prin nume și scor, cota de închidere a pieței fără marjă. '
          f'Fără cont, fără limită. Cifrele din auditul de mai sus se refac strict din aceste fișiere, cu <a href="{REPO_SCRIPT}" rel="noopener">scriptul de audit din depozitul public al site-ului</a> '
          '(Python 3, fără alte biblioteci): descarci fișierele într-un folder și rulezi <code>python3 gen_audit.py --public folderul_tau</code>.</p>',
          '  <ul class="dataset-files">']
     for f in j["fisiere"]:
-        L.append(f'    <li><a href="data/dataset/{f["fisier"]}" download>{f["fisier"]}</a> — {_mii(f["n"])} {"predicție" if f["n"] == 1 else "predicții"}</li>')
-    L.append(f'    <li><a href="data/dataset/index.json">index.json</a> — lista fișierelor și schema · <a href="data/dataset/platt_calibration.json">platt_calibration.json</a> — parametrii de calibrare cu care site-ul afișează probabilitățile</li>')
+        L.append(f'    <li><a href="data/dataset/{f["fisier"]}" download>{f["fisier"]}</a> — ' + (f'<span data-i18n="ds.npred1">1 predicție</span>' if f["n"] == 1 else f'<span data-i18n="ds.npred" data-i18n-vars=\'{_v({"n": _mii(f["n"])})}\'>{_mii(f["n"])} predicții</span>') + '</li>')
+    L.append(f'    <li data-i18n="ds.index"><a href="data/dataset/index.json">index.json</a> — lista fișierelor și schema · <a href="data/dataset/platt_calibration.json">platt_calibration.json</a> — parametrii de calibrare cu care site-ul afișează probabilitățile</li>')
     L.append('  </ul>')
-    L.append('  <details><summary>Schema coloanelor</summary><div class="table-wrap"><table class="audit-table"><thead><tr><th>coloană</th><th>ce conține</th></tr></thead><tbody>')
+    L.append('  <details><summary data-i18n="ds.schema">Schema coloanelor</summary><div class="table-wrap"><table class="audit-table"><thead><tr><th data-i18n="ds.th.col">coloană</th><th data-i18n="ds.th.ce">ce conține</th></tr></thead><tbody>')
     for c in j["coloane"]:
-        L.append(f'    <tr><td><code>{c}</code></td><td>{DESCRIERI.get(c, "")}</td></tr>')
+        L.append(f'    <tr><td><code>{c}</code></td><td data-i18n="ds.col.{c}">{DESCRIERI.get(c, "")}</td></tr>')
     L.append('  </tbody></table></div></details>')
-    L.append('  <p class="muted">Probabilitățile <code>prob_*</code> sunt cele brute, înghețate; pe site le vezi după calibrarea Platt per piață (pantă sub 1), cu parametrii publicați mai sus și refăcuți săptămânal. '
+    L.append('  <p class="muted" data-i18n="ds.note">Probabilitățile <code>prob_*</code> sunt cele brute, înghețate; pe site le vezi după calibrarea Platt per piață (pantă sub 1), cu parametrii publicați mai sus și refăcuți săptămânal. '
              'Utilizare liberă, cu menționarea sursei: poseidonstats.com. Informativ, nu sfat de pariere, 18+.</p>')
     L.append('</section>')
     return "\n".join(L)
