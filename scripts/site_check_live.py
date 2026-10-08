@@ -31,8 +31,9 @@ def verifica(acum: dt.datetime) -> list[str]:
                        ("blocul «Ce primești pentru 20 $»", 'class="plans-pro-detail"'), ("secțiunea Dovada", 'id="dovada"'), ("Repere azi", 'id="repere-azi"'),
                        ("abonamentele", 'id="abonament"'), ("banner-ul legal", "legal-banner"), ("eticheta trial Pro", "plans.pro.trial")):
         if semn not in html: err.append(f"index.html: lipsește {nume}")
-    m = re.search(r'class="pro-card-head">([^<]*)', html)
-    if m and acum.hour >= 8 and data_ro not in m.group(1): err.append(f"cardul Pro nu e cel de azi ({data_ro}): «{m.group(1)[:80]}»")
+    m = re.search(r'class="pro-card-head">(.*?)</div>', html, re.S)
+    cap = re.sub(r"<[^>]+>", "", m.group(1)) if m else ""   # 8 oct 2026: capul are <span data-date> (i18n) — textul se citește fără taguri
+    if m and acum.hour >= 8 and data_ro not in cap: err.append(f"cardul Pro nu e cel de azi ({data_ro}): «{cap[:80]}»")
     if 'id="repere-azi"' in html and data_ro not in html.split('id="repere-azi"')[1][:1500]: err.append(f"Repere azi nu are data de azi ({data_ro})")
     st, js = get(f"{SITE}/assets/app.js")
     if st != 200 or "trial-banner" not in js: err.append("app.js: banda de trial lipsește sau fișierul nu răspunde")

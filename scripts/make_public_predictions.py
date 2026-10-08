@@ -72,6 +72,15 @@ def pick_free(matches: list[dict]) -> set[int]:
                 continue
             free.append(m)
             per_league[lg] = per_league.get(lg, 0) + 1
+    # 8 oct 2026: fallback promis în docstring, dar lipsă — cu doar 2 ligi calibrate în bucket, plafonul lăsa 4 gratuite.
+    # A treia trecere ignoră plafonul pe ligă; ordinea rămâne probabilitatea, tier1 înaintea tier2.
+    if len(free) < N_FREE:
+        for pool in (tier1, tier2):
+            for m in sorted(pool, key=lambda x: -x["prob_over_1_5"]):
+                if len(free) >= N_FREE:
+                    break
+                if m not in free:
+                    free.append(m)
     return {m["fixture_id"] for m in free}
 
 
