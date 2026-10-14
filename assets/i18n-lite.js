@@ -1,8 +1,8 @@
 // 7 oct 2026 — i18n ușor pentru paginile GENERATE (analize/, predictii/): aceeași limbă ca restul site-ului (localStorage
 // poseidon_lang), traduce [data-i18n] din assets/i18n.json, pune selectorul de limbă în nav și arată varianta [data-lang] potrivită.
 (function () {
-  var LANGS = ["ro", "en", "es", "it"], NUME = { ro: "🇷🇴 Română", en: "🇬🇧 English", es: "🇪🇸 Español", it: "🇮🇹 Italiano" };
-  function lang() { try { var s = localStorage.getItem("poseidon_lang"); if (LANGS.indexOf(s) >= 0) return s; } catch (e) {} var b = (navigator.language || "ro").slice(0, 2); return LANGS.indexOf(b) >= 0 ? b : "ro"; }
+  var LANGS = ["ro", "en", "es", "it", "fr"], NUME = { ro: "🇷🇴 Română", en: "🇬🇧 English", es: "🇪🇸 Español", it: "🇮🇹 Italiano", fr: "🇫🇷 Français" };  // 14 oct 2026: + fr
+  function lang() { try { var s = localStorage.getItem("poseidon_lang"); if (LANGS.indexOf(s) >= 0) return s; } catch (e) {} var b = (navigator.language || "ro").slice(0, 2); return LANGS.indexOf(b) >= 0 ? b : "en"; }  // 14 oct 2026: limbile pe care nu le avem cad pe engleză
   var L = lang(); var sus = (document.currentScript && document.currentScript.getAttribute("data-sus")) || "";
   function aplica(I) {
     document.documentElement.lang = L;
@@ -11,11 +11,11 @@
       var vars = el.getAttribute("data-i18n-vars"); if (vars) { try { var o = JSON.parse(vars); Object.keys(o).forEach(function (n) { v = v.split("{" + n + "}").join(o[n]); }); } catch (e) {} }
       el.innerHTML = v;
     });
-    var fmt = new Intl.DateTimeFormat(L === "en" ? "en-GB" : L === "es" ? "es-ES" : L === "it" ? "it-IT" : "ro-RO", { day: "numeric", month: "long", year: "numeric" });
+    var fmt = new Intl.DateTimeFormat(L === "en" ? "en-GB" : L === "es" ? "es-ES" : L === "it" ? "it-IT" : L === "fr" ? "fr-FR" : "ro-RO", { day: "numeric", month: "long", year: "numeric" });
     document.querySelectorAll("[data-date]").forEach(function (el) { var d = el.getAttribute("data-date"); if (/^\d{4}-\d{2}-\d{2}$/.test(d)) el.textContent = fmt.format(new Date(d + "T12:00:00Z")); });
     document.querySelectorAll("[data-lang]").forEach(function (el) { el.hidden = el.getAttribute("data-lang") !== L; });
     // dacă nu există varianta în limba aleasă, rămâne româna
-    document.querySelectorAll("[data-lang-grup]").forEach(function (g) { var are = g.querySelector('[data-lang="' + L + '"]'); if (!are) { var ro = g.querySelector('[data-lang="ro"]'); if (ro) { ro.hidden = false; if (L !== "ro" && !g.querySelector(".nota-ro")) { var n = document.createElement("p"); n.className = "muted nota-ro"; n.textContent = (I[L] && I[L]["arhiva.nota_ro"]) || ""; if (n.textContent) g.insertBefore(n, ro); } } } });
+    document.querySelectorAll("[data-lang-grup]").forEach(function (g) { var are = g.querySelector('[data-lang="' + L + '"]'); if (!are) { var en = g.querySelector('[data-lang="en"]'), ro = g.querySelector('[data-lang="ro"]'), alt = en || ro; if (alt) { alt.hidden = false; if (alt === ro && L !== "ro" && !g.querySelector(".nota-ro")) { var n = document.createElement("p"); n.className = "muted nota-ro"; n.textContent = (I[L] && I[L]["arhiva.nota_ro"]) || ""; if (n.textContent) g.insertBefore(n, ro); } } } });
     // analizele mai vechi de 7 oct 2026 nu au traducere (articol fără grup de limbi): notă scurtă
     if (L !== "ro") document.querySelectorAll("article.pro-card-full").forEach(function (a) { if (!a.closest("[data-lang-grup]") && !a.querySelector(".nota-ro")) { var n = document.createElement("p"); n.className = "muted nota-ro"; n.textContent = (I[L] && I[L]["arhiva.nota_ro"]) || ""; var v = a.querySelector(".pro-visible"); if (n.textContent && v) v.insertBefore(n, v.firstChild); } });
   }

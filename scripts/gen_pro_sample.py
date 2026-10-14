@@ -164,7 +164,7 @@ def html_card(item: dict, zi: str, generat: str, scor: tuple[int, int] | None, b
             '      </div>'])
     # 7 oct 2026: analiza în limba aleasă când există traduceri (analysis_en/es/it din traduce_analize.py); app.js arată varianta [data-lang]
     variante = [f'<div data-lang="ro">\n{_corp(p)}\n</div>']
-    for cod in ("en", "es", "it"):
+    for cod in ("en", "es", "it", "fr"):  # 14 oct 2026: + fr (traduce_analize.py)
         pt = parseaza(item.get(f"analysis_{cod}") or "")
         if pt["verdict"] and pt["picks"]:
             variante.append(f'<div data-lang="{cod}" hidden>\n{_corp(pt)}\n</div>')

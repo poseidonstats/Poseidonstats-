@@ -36,12 +36,13 @@ const PICK_FILTER = {                       // cheie scorecard -> valoarea filtr
 let I18N = null;
 let LANG = "ro";
 
+const LIMBI_SITE = ["ro", "en", "es", "it", "fr"];  // 14 oct 2026: + franceza (19 % din vizitatorii din 13-14 oct)
 function detectLang() {
   const saved = localStorage.getItem("poseidon_lang");
-  if (saved && ["ro","en","es","it"].includes(saved)) return saved;
+  if (saved && LIMBI_SITE.includes(saved)) return saved;
   const bl = (navigator.language || "ro").slice(0,2).toLowerCase();
-  if (["en","es","it","ro"].includes(bl)) return bl;
-  return "ro";
+  if (LIMBI_SITE.includes(bl)) return bl;
+  return "en";  // 14 oct 2026: limbile pe care nu le avem (turcă, greacă…) cad pe engleză, nu pe română
 }
 
 function t(key) {
@@ -49,11 +50,12 @@ function t(key) {
   return (I18N[LANG] && I18N[LANG][key]) || (I18N.ro && I18N.ro[key]) || key;
 }
 
-function _loc() { return LANG === "en" ? "en-GB" : LANG === "es" ? "es-ES" : LANG === "it" ? "it-IT" : "ro-RO"; }
+function _loc() { return LANG === "en" ? "en-GB" : LANG === "es" ? "es-ES" : LANG === "it" ? "it-IT" : LANG === "fr" ? "fr-FR" : "ro-RO"; }
 function applyI18n() {
   // 7 oct 2026: variante pe limbă generate pe server ([data-lang] în [data-lang-grup]); fără varianta aleasă rămâne româna
   document.querySelectorAll("[data-lang]").forEach(el => { el.hidden = el.getAttribute("data-lang") !== LANG; });
-  document.querySelectorAll("[data-lang-grup]").forEach(g => { if (!g.querySelector('[data-lang="' + LANG + '"]')) { const ro = g.querySelector('[data-lang="ro"]'); if (ro) ro.hidden = false; } });
+  // 14 oct 2026: fără varianta în limba aleasă → engleza, apoi româna (vizitatorii francezi/turci vedeau analiza în română)
+  document.querySelectorAll("[data-lang-grup]").forEach(g => { if (!g.querySelector('[data-lang="' + LANG + '"]')) { const alt = g.querySelector('[data-lang="en"]') || g.querySelector('[data-lang="ro"]'); if (alt) alt.hidden = false; } });
   if (!I18N) return;
   for (let trecere = 0; trecere < 2; trecere++) document.querySelectorAll("[data-i18n]").forEach(el => {   // a 2-a trecere: DOAR span-urile injectate prin {variabile}
     if (trecere === 1 && !(el.parentElement && el.parentElement.closest("[data-i18n]"))) return;
@@ -88,6 +90,7 @@ async function initI18n() {
   if (_i18nGataResolve) _i18nGataResolve();
   LANG = detectLang();
   applyI18n();
+  puneRezumatInCaseta();
   mountLangSwitcher();
   // Cifrele vii se injectează DUPĂ i18n (applyI18n rescrie innerHTML pe [data-i18n])
   loadLiveStats().then(injectLiveStats);
@@ -98,15 +101,16 @@ function mountLangSwitcher() {
   if (!nav || nav.querySelector(".lang-switcher")) return;
   const wrap = document.createElement("span");
   wrap.className = "lang-switcher";
-  const FLAGS = { ro:"🇷🇴", en:"🇬🇧", es:"🇪🇸", it:"🇮🇹" };
+  const FLAGS = { ro:"🇷🇴", en:"🇬🇧", es:"🇪🇸", it:"🇮🇹", fr:"🇫🇷" };
   wrap.innerHTML = `<select class="lang-select" aria-label="Language">
-    ${["ro","en","es","it"].map(l => `<option value="${l}" ${l===LANG?"selected":""}>${FLAGS[l]} ${I18N && I18N[l] ? I18N[l]["lang.name"] : l.toUpperCase()}</option>`).join("")}
+    ${LIMBI_SITE.map(l => `<option value="${l}" ${l===LANG?"selected":""}>${FLAGS[l]} ${I18N && I18N[l] ? I18N[l]["lang.name"] : l.toUpperCase()}</option>`).join("")}
   </select>`;
   nav.appendChild(wrap);
   wrap.querySelector("select").addEventListener("change", e => {
     LANG = e.target.value;
     localStorage.setItem("poseidon_lang", LANG);
     applyI18n();
+    puneRezumatInCaseta();
     injectLiveStats(); // re-injectare după ce applyI18n a rescris [data-i18n]
     // Re-render pagini dinamice
     if (document.getElementById("matches")) renderIndex().then(renderProAnalize);
@@ -153,7 +157,7 @@ async function loadPredictions() {
   }
   return fetchJSON(PRED_URL);
 }
-const SCRIPT_V = "20261007u";
+const SCRIPT_V = "20261014a";
 // 7 oct 2026 — evenimente în GoatCounter (fără cookie, fără date personale): clicuri pe butoanele de abonament/trial/login și
 // dacă vizitatorul a ajuns la secțiunea de abonament. Răspund la „250 de vizite și niciun abonat”: nu ajung la ofertă, sau ajung și pleacă?
 function _gcEvent(nume) {
@@ -165,7 +169,9 @@ function _instaleazaUrmarireClicuri() {
     const h = a.getAttribute("href") || ""; const c = a.className || "";
     if (h.includes("patreon.com")) _gcEvent("click/patreon/" + (c.includes("plan-btn-pro") ? "pro" : c.includes("plan-btn-basic") ? "basic" : c.includes("pro-cta") ? "pro-inline" : "alt"));
     else if (c.includes("trial-banner")) _gcEvent("click/trial-banner");
+    else if (c.includes("unlock-btn-basic")) _gcEvent("click/unlock-basic");   // 14 oct 2026: Basic e buton, numărat separat
     else if (c.includes("unlock-btn")) _gcEvent("click/unlock-btn");
+    else if (c.includes("rezumat-pro-link")) _gcEvent("click/exemplu-pro");    // 14 oct 2026: din rezumat la cardul întreg
     else if (c.includes("members-login")) _gcEvent("click/login-patreon");
     else if (c.includes("members-sub")) _gcEvent("click/members-sub");
     else if (h.includes("track-record")) _gcEvent("click/track-record");
@@ -176,9 +182,11 @@ function _instaleazaUrmarireClicuri() {
     const io = new IntersectionObserver((es) => { if (es.some(e => e.isIntersecting)) { _gcEvent("vazut/abonament"); io.disconnect(); } }, { threshold: 0.3 });
     io.observe(sec);
   }
-  const ex = document.getElementById("exemplu-pro");
+  // 14 oct 2026: secțiunea are ~3.000 px pe telefon, 30 % din ea nu încăpea niciodată pe un ecran de 700 px → contorul nu pornea
+  // (2 „văzut” la 79 de vizite). Numărăm capul cardului (un rând), când e pe jumătate vizibil.
+  const ex = document.querySelector("#exemplu-pro .pro-card-head") || document.getElementById("exemplu-pro");
   if (ex && "IntersectionObserver" in window) {
-    const io2 = new IntersectionObserver((es) => { if (es.some(e => e.isIntersecting)) { _gcEvent("vazut/exemplu-pro"); io2.disconnect(); } }, { threshold: 0.3 });
+    const io2 = new IntersectionObserver((es) => { if (es.some(e => e.isIntersecting)) { _gcEvent("vazut/exemplu-pro"); io2.disconnect(); } }, { threshold: 0.5 });
     io2.observe(ex);
   }
 }
@@ -354,6 +362,32 @@ function renderLockedMatch(m) {
   </div>`;
 }
 
+// 14 oct 2026 — rezumatul exemplului Pro acolo unde ajung vizitatorii (blocul „deblochează” și caseta de abonament): butoanele paginii
+// săreau peste exemplu (antetul → lista de predicții, bannerul și „deblochează” → caseta), deci argumentul nu era nicăieri pe drum.
+function rezumatExemplu(clasa = "") {
+  const card = document.querySelector("#exemplu-pro .pro-card"); if (!card) return "";
+  const grup = card.querySelector(`[data-lang="${LANG}"]`) || card.querySelector('[data-lang="en"]') || card.querySelector('[data-lang="ro"]') || card;
+  const verdictP = grup.querySelector(".pro-visible p"); if (!verdictP) return "";
+  const text = el => (el ? el.textContent : "").replace(/\s+/g, " ").trim();
+  let verdict = text(verdictP).replace(/^[^:]{1,24}:\s*/, "");   // fără eticheta „Verdict:” (în orice limbă)
+  if (verdict.length > 230) { const t = verdict.slice(0, 230); const p = Math.max(t.lastIndexOf(". "), t.lastIndexOf("! ")); verdict = p > 90 ? t.slice(0, p + 1) : t.trimEnd() + "…"; }
+  const cap = text(card.querySelector(".pro-card-head"));
+  let verif = ""; const v = grup.querySelector(".pro-verificat");
+  if (v) { const c = v.cloneNode(true); c.querySelectorAll("a").forEach(a => a.remove()); verif = text(c); }
+  return `<div class="unlock-exemplu ${clasa}">
+    <div class="unlock-exemplu-h">${tt("unlock.exemplu.h", "Din exemplul de analiză Pro, publicat înainte de meci:")}</div>
+    ${cap ? `<div class="unlock-exemplu-meci">${esc(cap)}</div>` : ""}
+    <p class="unlock-exemplu-verdict">${esc(verdict)}</p>
+    ${verif ? `<p class="unlock-exemplu-verif">${esc(verif)}</p>` : ""}
+    <a href="#exemplu-pro" class="rezumat-pro-link">${tt("unlock.exemplu.link", "Citește analiza întreagă ↑")}</a>
+  </div>`;
+}
+function puneRezumatInCaseta() {
+  const grid = document.querySelector("#abonament .plan-grid"); if (!grid) return;
+  document.querySelectorAll("#abonament .plans-exemplu").forEach(e => e.remove());
+  const h = rezumatExemplu("plans-exemplu"); if (h) grid.insertAdjacentHTML("beforebegin", h);
+}
+
 function renderUnlockCta(nLocked, nLockedAzi = null) {
   // 1 oct 2026 (după-amiază) — Pro în față (decizia Andreei); dimineață: rescris după cele 5 obiecții (evaluare ChatGPT): ce primești concret, dovada ÎNAINTE de preț, 3 pași după plată, anulare
   const n = nUnits(nLocked); const nAzi = nUnits(nLockedAzi == null ? nLocked : nLockedAzi);
@@ -362,12 +396,15 @@ function renderUnlockCta(nLocked, nLockedAzi = null) {
   return `<div class="unlock-cta">
     <div class="unlock-txt"><span class="unlock-icon">🔒</span> ${tt("unlock.h", "<strong>Ai văzut cele 5 predicții gratuite ale zilei.</strong> În spatele lacătului, Pro îți dă analizele scrise ale zilei și toate cifrele; Basic, doar cifrele:")}</div>
     <ul class="unlock-list">${list}</ul>
+    ${rezumatExemplu()}
     <p class="unlock-proof">${tt("unlock.proof", "Nu plătești pentru o garanție, plătești pentru acces. Predicțiile sunt înghețate înainte de meci, iar rezultatele rămân publice, inclusiv cele ratate. Verifică înainte să plătești:")}
       <a href="track-record.html" class="unlock-proof-btn">${tt("unlock.proof.btn", "Vezi track record-ul")}</a></p>
     <p class="unlock-steps">${tt("unlock.steps", "3 pași: alegi Pro (7 zile gratuit) sau Basic pe Patreon → apeși „Intră cu Patreon” aici pe site → accesul se deschide pe loc.")}
       <span class="muted">${tt("unlock.cancel", "Primele 7 zile de Pro sunt gratuite; anulezi oricând din Patreon, și înainte de prima plată. Accesul rămâne până la sfârșitul perioadei plătite.")}</span></p>
-    <a href="#abonament" class="unlock-btn">${tt("unlock.btn", "💎 Încearcă Pro gratuit 7 zile")}</a>
-    <a href="#abonament" class="unlock-pro muted">${tt("unlock.alt", "Vrei doar cifrele? Basic, 5 $/lună.")}</a>
+    <div class="unlock-btns">
+      <a href="#abonament" class="unlock-btn">${tt("unlock.btn", "💎 Încearcă Pro gratuit 7 zile")}</a>
+      <a href="#abonament" class="unlock-btn unlock-btn-basic">${tt("unlock.basic.btn", "⭐ Deblochează toate predicțiile — Basic, 5 $/lună")}</a>
+    </div>
   </div>`;
 }
 

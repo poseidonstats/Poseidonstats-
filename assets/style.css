@@ -1008,6 +1008,17 @@ footer a { color: #93c5fd; }
   white-space: nowrap; transition: transform 0.15s, box-shadow 0.15s;
 }
 .unlock-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(30,58,138,0.3); }
+/* 14 oct 2026 — rezumatul exemplului Pro în blocul „deblochează” și în caseta de abonament; Basic ca buton, nu link șters */
+.unlock-exemplu { flex-basis: 100%; margin: 10px 0 4px; padding: 12px 14px; border-left: 3px solid #1e3a8a; background: rgba(255,255,255,0.75); border-radius: 8px; color: #1e293b; font-size: 0.93rem; line-height: 1.5; }
+.unlock-exemplu-h { font-weight: 700; color: #1e3a8a; margin-bottom: 4px; }
+.unlock-exemplu-meci { font-weight: 600; margin-bottom: 4px; }
+.unlock-exemplu p { margin: 4px 0; }
+.unlock-exemplu-verif { font-weight: 600; }
+.rezumat-pro-link { display: inline-block; margin-top: 4px; font-weight: 600; color: #1e3a8a; text-decoration: underline; }
+.plans-exemplu { margin: 0 0 16px; background: #fff; }
+.unlock-btns { display: flex; flex-direction: column; gap: 8px; }
+.unlock-btn-basic { background: #fff; color: #1e3a8a; border: 2px solid #1e3a8a; }
+body.is-member .plans-exemplu { display: none; }
 
 .match-locked {
   display: flex; align-items: center; justify-content: space-between; gap: 12px;
