@@ -63,13 +63,18 @@ def card_azi(picks: list[dict], zi: str) -> Image.Image:
 
 def card_ieri(picks: list[dict], zi: str) -> Image.Image:
     img = fundal(); d = ImageDraw.Draw(img)
-    n = len(picks); k = sum(1 for p in picks if p.get("hit"))
-    antet(d, "Yesterday, verified", f"{zi} · posted before kick-off · {k}/{n} hit")
-    y0 = 225; pas = (H - 70 - y0) // max(1, n)
+    # 14 oct 2026: amânatele/fără rezultat nu sunt ratate — n = doar meciurile cu rezultat, cerc gri și „postponed”/„pending” în loc de scor
+    n = sum(1 for p in picks if p.get("hit") is not None); k = sum(1 for p in picks if p.get("hit")); aman = sum(1 for p in picks if p.get("amanat"))
+    antet(d, "Yesterday, verified", f"{zi} · posted before kick-off · {k}/{n} hit" + (f" · {aman} postponed" if aman else ""))
+    y0 = 225; pas = (H - 70 - y0) // max(1, len(picks))
     for i, p in enumerate(picks):
         y = y0 + i * pas; ok = bool(p.get("hit"))
         d.text((60, y), p["meci"], font=font(34, True), fill=WHITE)
         d.text((60, y + 44), f"{p['piata']} · {round(p['p'] * 100)}%", font=font(26), fill=GREY)
+        if p.get("hit") is None:
+            d.text((760, y + 12), "postponed" if p.get("amanat") else "pending", font=font(30, True), fill=GREY)
+            cx, cy = W - 100, y + 30; d.ellipse((cx - 26, cy - 26, cx + 26, cy + 26), outline=GREY, width=4)
+            continue
         d.text((760, y + 6), p.get("scor", "—"), font=font(44, True), fill=WHITE)
         c = GREEN if ok else RED; cx, cy = W - 100, y + 30
         d.ellipse((cx - 26, cy - 26, cx + 26, cy + 26), fill=c)
@@ -84,8 +89,9 @@ def card_ieri(picks: list[dict], zi: str) -> Image.Image:
 def card_tabla(picks: list[dict], zi: str, verificat: bool = False) -> Image.Image:
     """„Today's board": până la 12 selecții, casa / model lângă fiecare; verificat=True → scor + bifă."""
     img = fundal(); d = ImageDraw.Draw(img)
-    n = len(picks); k = sum(1 for p in picks if p.get("hit"))
-    antet(d, "Today's board, verified" if verificat else "Today's board", (f"{zi} · {k}/{n} hit" if verificat else f"{zi} · model and market both above 75% · results tomorrow"))
+    n = len(picks); k = sum(1 for p in picks if p.get("hit")); nr = sum(1 for p in picks if p.get("hit") is not None); aman = sum(1 for p in picks if p.get("amanat"))
+    antet(d, "Today's board, verified" if verificat else "Today's board",
+          (f"{zi} · {k}/{nr} hit" + (f" · {aman} postponed" if aman else "") if verificat else f"{zi} · model and market both above 75% · results tomorrow"))
     d.text((60, 200), "match", font=font(18), fill=GREY); d.text((620, 200), "market", font=font(18), fill=GREY)
     d.text((820, 200), "book", font=font(18), fill=GREY); d.text((920, 200), "model", font=font(18), fill=GREY)
     d.text((1030, 200), "score" if verificat else "", font=font(18), fill=GREY)
@@ -97,8 +103,13 @@ def card_tabla(picks: list[dict], zi: str, verificat: bool = False) -> Image.Ima
         d.text((820, y), f"{round(p['casa'] * 100)}%", font=f_m, fill=WHITE)
         d.text((920, y), f"{round(p['p2'] * 100)}%", font=f_m, fill=GOLD)
         if verificat:
-            ok = bool(p.get("hit")); d.text((1030, y), p.get("scor", "—"), font=f_m, fill=WHITE)
-            c = GREEN if ok else RED; cx, cy = W - 80, y + 16
+            ok = bool(p.get("hit")); cx, cy = W - 80, y + 16
+            if p.get("hit") is None:  # amânat / fără rezultat: gri, nu roșu
+                d.text((1030, y), "postp." if p.get("amanat") else "—", font=f_m, fill=GREY)
+                d.ellipse((cx - 14, cy - 14, cx + 14, cy + 14), outline=GREY, width=3)
+                continue
+            d.text((1030, y), p.get("scor", "—"), font=f_m, fill=WHITE)
+            c = GREEN if ok else RED
             d.ellipse((cx - 14, cy - 14, cx + 14, cy + 14), fill=c)
     subsol(d, "18+ · informational only · every pick stays up, wins and losses")
     return img
