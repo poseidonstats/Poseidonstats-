@@ -354,7 +354,7 @@ def html_zi(z: dict, rez: dict, prev: str | None, nxt: str | None) -> str:
         # 7 oct 2026: analiza în 4 limbi când există traduceri (analysis_en/es/it, din traduce_analize.py); i18n-lite arată varianta limbii alese
         v = verifica(it, rez.get(it["match"]["fixture_id"])); ro = html_analiza(it, v, z["generat"])
         var = [f'<div data-lang="ro">{ro}</div>']
-        for cod in ("en", "es", "it", "fr"):  # 14 oct 2026: + fr
+        for cod in ("en", "es", "it", "fr", "id"):  # 14 oct 2026: + fr, + id
             if it.get(f"analysis_{cod}"):
                 var.append(f'<div data-lang="{cod}" hidden>{html_analiza({**it, "analysis": it[f"analysis_{cod}"]}, v, z["generat"])}</div>')
         return f'<div data-lang-grup>{"".join(var)}</div>' if len(var) > 1 else ro

@@ -1,7 +1,7 @@
 // 7 oct 2026 — i18n ușor pentru paginile GENERATE (analize/, predictii/): aceeași limbă ca restul site-ului (localStorage
 // poseidon_lang), traduce [data-i18n] din assets/i18n.json, pune selectorul de limbă în nav și arată varianta [data-lang] potrivită.
 (function () {
-  var LANGS = ["ro", "en", "es", "it", "fr"], NUME = { ro: "🇷🇴 Română", en: "🇬🇧 English", es: "🇪🇸 Español", it: "🇮🇹 Italiano", fr: "🇫🇷 Français" };  // 14 oct 2026: + fr
+  var LANGS = ["ro", "en", "es", "it", "fr", "id"], NUME = { ro: "🇷🇴 Română", en: "🇬🇧 English", es: "🇪🇸 Español", it: "🇮🇹 Italiano", fr: "🇫🇷 Français", id: "🇮🇩 Bahasa Indonesia" };  // 14 oct 2026: + fr, + id
   function lang() { try { var s = localStorage.getItem("poseidon_lang"); if (LANGS.indexOf(s) >= 0) return s; } catch (e) {} var b = (navigator.language || "ro").slice(0, 2); return LANGS.indexOf(b) >= 0 ? b : "en"; }  // 14 oct 2026: limbile pe care nu le avem cad pe engleză
   var L = lang(); var sus = (document.currentScript && document.currentScript.getAttribute("data-sus")) || "";
   function aplica(I) {
@@ -11,7 +11,7 @@
       var vars = el.getAttribute("data-i18n-vars"); if (vars) { try { var o = JSON.parse(vars); Object.keys(o).forEach(function (n) { v = v.split("{" + n + "}").join(o[n]); }); } catch (e) {} }
       el.innerHTML = v;
     });
-    var fmt = new Intl.DateTimeFormat(L === "en" ? "en-GB" : L === "es" ? "es-ES" : L === "it" ? "it-IT" : L === "fr" ? "fr-FR" : "ro-RO", { day: "numeric", month: "long", year: "numeric" });
+    var fmt = new Intl.DateTimeFormat(L === "en" ? "en-GB" : L === "es" ? "es-ES" : L === "it" ? "it-IT" : L === "fr" ? "fr-FR" : L === "id" ? "id-ID" : "ro-RO", { day: "numeric", month: "long", year: "numeric" });
     document.querySelectorAll("[data-date]").forEach(function (el) { var d = el.getAttribute("data-date"); if (/^\d{4}-\d{2}-\d{2}$/.test(d)) el.textContent = fmt.format(new Date(d + "T12:00:00Z")); });
     document.querySelectorAll("[data-lang]").forEach(function (el) { el.hidden = el.getAttribute("data-lang") !== L; });
     // dacă nu există varianta în limba aleasă, rămâne româna

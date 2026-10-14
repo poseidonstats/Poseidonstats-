@@ -36,7 +36,7 @@ const PICK_FILTER = {                       // cheie scorecard -> valoarea filtr
 let I18N = null;
 let LANG = "ro";
 
-const LIMBI_SITE = ["ro", "en", "es", "it", "fr"];  // 14 oct 2026: + franceza (19 % din vizitatorii din 13-14 oct)
+const LIMBI_SITE = ["ro", "en", "es", "it", "fr", "id"];  // 14 oct 2026: + franceza (19 % din vizitatori), + indoneziana (intrarea în Asia, decizia ei)
 function detectLang() {
   const saved = localStorage.getItem("poseidon_lang");
   if (saved && LIMBI_SITE.includes(saved)) return saved;
@@ -50,7 +50,7 @@ function t(key) {
   return (I18N[LANG] && I18N[LANG][key]) || (I18N.ro && I18N.ro[key]) || key;
 }
 
-function _loc() { return LANG === "en" ? "en-GB" : LANG === "es" ? "es-ES" : LANG === "it" ? "it-IT" : LANG === "fr" ? "fr-FR" : "ro-RO"; }
+function _loc() { return LANG === "en" ? "en-GB" : LANG === "es" ? "es-ES" : LANG === "it" ? "it-IT" : LANG === "fr" ? "fr-FR" : LANG === "id" ? "id-ID" : "ro-RO"; }
 function applyI18n() {
   // 7 oct 2026: variante pe limbă generate pe server ([data-lang] în [data-lang-grup]); fără varianta aleasă rămâne româna
   document.querySelectorAll("[data-lang]").forEach(el => { el.hidden = el.getAttribute("data-lang") !== LANG; });
@@ -101,7 +101,7 @@ function mountLangSwitcher() {
   if (!nav || nav.querySelector(".lang-switcher")) return;
   const wrap = document.createElement("span");
   wrap.className = "lang-switcher";
-  const FLAGS = { ro:"🇷🇴", en:"🇬🇧", es:"🇪🇸", it:"🇮🇹", fr:"🇫🇷" };
+  const FLAGS = { ro:"🇷🇴", en:"🇬🇧", es:"🇪🇸", it:"🇮🇹", fr:"🇫🇷", id:"🇮🇩" };
   wrap.innerHTML = `<select class="lang-select" aria-label="Language">
     ${LIMBI_SITE.map(l => `<option value="${l}" ${l===LANG?"selected":""}>${FLAGS[l]} ${I18N && I18N[l] ? I18N[l]["lang.name"] : l.toUpperCase()}</option>`).join("")}
   </select>`;
@@ -157,7 +157,7 @@ async function loadPredictions() {
   }
   return fetchJSON(PRED_URL);
 }
-const SCRIPT_V = "20261014b";
+const SCRIPT_V = "20261014c";
 // 7 oct 2026 — evenimente în GoatCounter (fără cookie, fără date personale): clicuri pe butoanele de abonament/trial/login și
 // dacă vizitatorul a ajuns la secțiunea de abonament. Răspund la „250 de vizite și niciun abonat”: nu ajung la ofertă, sau ajung și pleacă?
 function _gcEvent(nume) {
