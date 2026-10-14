@@ -860,6 +860,15 @@ footer a { color: #93c5fd; }
 .hero-btn-primary { background: linear-gradient(135deg, #047857, #065f46); color: #fff; }
 .hero-btn-ghost { background: #fff; color: #1e3a8a; border: 2px solid #c7d2fe; }
 .hero-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(30,58,138,0.22); }
+/* 14 oct 2026 — oferta scurtă sub antet: liniștită, trei rânduri, fără culori de casă de pariuri */
+.oferta-scurta { margin: 14px 0 0; padding: 8px 14px; border: 1px solid #e2e8f0; border-radius: 12px; background: #fff; font-size: 0.92rem; line-height: 1.45; color: #1e293b; }
+.oferta-rand { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 6px 0; border-bottom: 1px solid #f1f5f9; }
+.oferta-btn { flex-shrink: 0; padding: 5px 12px; border-radius: 999px; font-weight: 700; font-size: 0.85rem; text-decoration: none; white-space: nowrap; }
+.oferta-btn-pro { background: #1e3a8a; color: #fff; }
+.oferta-btn-basic { background: #fff; color: #1e3a8a; border: 1.5px solid #1e3a8a; }
+.oferta-linkuri { padding: 6px 0 2px; font-size: 0.88rem; color: #475569; }
+.oferta-linkuri a { color: #1e3a8a; text-decoration: underline; }
+@media (max-width: 600px) { .oferta-rand { flex-direction: column; align-items: flex-start; gap: 6px; } }
 @media (max-width: 600px) {
   .hero-cta { flex-direction: column; }
   .hero-btn { text-align: center; }

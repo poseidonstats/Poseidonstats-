@@ -157,7 +157,7 @@ async function loadPredictions() {
   }
   return fetchJSON(PRED_URL);
 }
-const SCRIPT_V = "20261014a";
+const SCRIPT_V = "20261014b";
 // 7 oct 2026 — evenimente în GoatCounter (fără cookie, fără date personale): clicuri pe butoanele de abonament/trial/login și
 // dacă vizitatorul a ajuns la secțiunea de abonament. Răspund la „250 de vizite și niciun abonat”: nu ajung la ofertă, sau ajung și pleacă?
 function _gcEvent(nume) {
@@ -168,6 +168,9 @@ function _instaleazaUrmarireClicuri() {
     const a = ev.target.closest && ev.target.closest("a"); if (!a) return;
     const h = a.getAttribute("href") || ""; const c = a.className || "";
     if (h.includes("patreon.com")) _gcEvent("click/patreon/" + (c.includes("plan-btn-pro") ? "pro" : c.includes("plan-btn-basic") ? "basic" : c.includes("pro-cta") ? "pro-inline" : "alt"));
+    else if (c.includes("oferta-btn-pro")) _gcEvent("click/oferta-sus/pro");          // 14 oct 2026: oferta scurtă de sub antet
+    else if (c.includes("oferta-btn-basic")) _gcEvent("click/oferta-sus/basic");
+    else if (c.includes("oferta-link-exemplu")) _gcEvent("click/oferta-sus/exemplu");
     else if (c.includes("trial-banner")) _gcEvent("click/trial-banner");
     else if (c.includes("unlock-btn-basic")) _gcEvent("click/unlock-basic");   // 14 oct 2026: Basic e buton, numărat separat
     else if (c.includes("unlock-btn")) _gcEvent("click/unlock-btn");
@@ -188,6 +191,11 @@ function _instaleazaUrmarireClicuri() {
   if (ex && "IntersectionObserver" in window) {
     const io2 = new IntersectionObserver((es) => { if (es.some(e => e.isIntersecting)) { _gcEvent("vazut/exemplu-pro"); io2.disconnect(); } }, { threshold: 0.5 });
     io2.observe(ex);
+  }
+  const of = document.getElementById("oferta-sus");  // 14 oct 2026: câți văd oferta de sub antet (ar trebui aproape toți)
+  if (of && "IntersectionObserver" in window) {
+    const io3 = new IntersectionObserver((es) => { if (es.some(e => e.isIntersecting)) { _gcEvent("vazut/oferta-sus"); io3.disconnect(); } }, { threshold: 0.5 });
+    io3.observe(of);
   }
 }
 if (typeof document !== "undefined") {
