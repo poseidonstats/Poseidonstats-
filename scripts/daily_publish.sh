@@ -208,7 +208,8 @@ fi
 echo "[$(ts)] [GATE HTML] $HTML_OUT" >> "$LOG"
 
 # (13 iun — R2: verificarea RC2 era COD MORT sub set -e; push eșuat → trap ERR.)
-git add data/ index.html sitemap.xml predictii/ en/ track-record.html statistici-pariuri.html analize/
+# 15 oct 2026: și assets/i18n.json — gen_static_daily scrie acolo proof.metrici în 6 limbi; fără add, cifrele de pe site rămâneau cu o zi în urmă
+git add data/ index.html sitemap.xml predictii/ en/ track-record.html statistici-pariuri.html analize/ assets/i18n.json
 git commit -m "data: $(date +%Y-%m-%d) refresh predicții + jurnal" >> "$LOG" 2>&1
 git push origin main >> "$LOG" 2>&1
 echo "[$(ts)] Published." >> "$LOG"
