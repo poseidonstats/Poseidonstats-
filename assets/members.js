@@ -53,6 +53,12 @@
     return et + `<a class="members-logout" href="#" data-members-logout data-i18n="members.logout">Ieși</a>`;
   }
 
+  // 15 oct 2026: după „Intră cu Patreon” fără abonament plătit, worker-ul întoarce ?members=none. Textul era fix, în română; acum e
+  // traductibil (data-i18n members.none) și spune ce e de făcut: membrii gratuiți nu au acces, plată refuzată → cardul pe Patreon, apoi din nou login.
+  function textNone() {
+    return `<span class="members-hint members-none" data-i18n="members.none">Contul tău Patreon nu are un abonament activ Basic sau Pro. Membrii gratuiți nu au acces pe site. Dacă plata ți-a fost refuzată, actualizează cardul pe <a href="https://patreon.com/PoseidonPredictions">Patreon</a> și apasă din nou „Intră cu Patreon”.</span>`;
+  }
+
   // ---- doar în browser
   function token() { try { return localStorage.getItem(CHEIE); } catch { return null; } }
   function sterge() { try { localStorage.removeItem(CHEIE); } catch {} }
@@ -68,16 +74,16 @@
       const tier = tierDinToken(token());
       if (!tier) sterge();
       bara.innerHTML = textBara(tier, MEMBERS_API);
-      if (new URLSearchParams(window.location.search).get("members") === "none") bara.innerHTML += `<span class="members-hint">Contul Patreon nu are un abonament activ Basic sau Pro.</span>`;
+      if (new URLSearchParams(window.location.search).get("members") === "none") bara.innerHTML += textNone();
       const out = bara.querySelector("[data-members-logout]");
       if (out) out.addEventListener("click", (e) => { e.preventDefault(); sterge(); location.reload(); });
     }
   }
   const api = {
-    MEMBERS_API, tokenDinUrl, captureaza, tierDinToken, incarcaPredictii, textBara,
+    MEMBERS_API, tokenDinUrl, captureaza, tierDinToken, incarcaPredictii, textBara, textNone,
     tier: () => tierDinToken(token()),
     incarca: (publicUrl) => incarcaPredictii({ api: MEMBERS_API, token: token(), publicUrl, sterge }),
   };
   if (typeof window !== "undefined") { root.PoseidonMembers = api; document.addEventListener("DOMContentLoaded", init); }
-  if (typeof module !== "undefined" && module.exports) module.exports = { tokenDinUrl, captureaza, tierDinToken, incarcaPredictii, textBara };
+  if (typeof module !== "undefined" && module.exports) module.exports = { tokenDinUrl, captureaza, tierDinToken, incarcaPredictii, textBara, textNone };
 })(typeof window !== "undefined" ? window : globalThis);

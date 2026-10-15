@@ -1,7 +1,7 @@
 // Teste (înaintea codului) — assets/members.js: tokenul din URL, tier-ul afișat, încărcarea datelor complete cu revenire la public.
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { tokenDinUrl, tierDinToken, incarcaPredictii, textBara } from "../assets/members.js";
+import { tokenDinUrl, tierDinToken, incarcaPredictii, textBara, textNone } from "../assets/members.js";
 
 const b64u = (o) => Buffer.from(JSON.stringify(o)).toString("base64").replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
 const tokBasic = b64u({ sub: "u1", tier: "basic", exp: 1_900_000_000 }) + ".sig";
@@ -70,4 +70,15 @@ test("tokenul din URL se salvează SINCRON, la încărcarea scriptului, nu la DO
   assert.equal(storage.getItem("poseidon_members_token"), tokBasic);
   assert.equal(captureaza("?x=1", storage), null);
   assert.equal(storage.getItem("poseidon_members_token"), tokBasic);     // fără token în URL nu ștergem ce era
+});
+
+test("după login fără abonament (?members=none) mesajul e traductibil în toate cele 6 limbi și spune ce e de făcut", async () => {
+  const fs = await import("node:fs"); const i18n = JSON.parse(fs.readFileSync(new URL("../assets/i18n.json", import.meta.url), "utf8"));
+  const h = textNone();
+  assert.match(h, /data-i18n="members.none"/); assert.match(h, /patreon\.com\/PoseidonPredictions/);
+  for (const lang of ["ro", "en", "es", "it", "fr", "id"]) {
+    assert.ok(i18n[lang]["members.none"], `${lang} members.none`);
+    assert.match(i18n[lang]["members.none"], /patreon\.com\/PoseidonPredictions/, `${lang}: link spre Patreon`);
+    assert.ok(i18n[lang]["members.none"].includes(i18n[lang]["members.login"].split("? ").pop()), `${lang}: numește butonul de login exact ca în bară`);
+  }
 });
