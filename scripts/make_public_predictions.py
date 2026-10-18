@@ -11,8 +11,18 @@ Fluxul (daily_publish.sh, imediat după build_public_json):
 Selecția FREE (ziua curentă Europe/Bucharest): calibrated + ligă publică
 (_leagues_public) + Over 1.5 în bucketul calibrat [0.70, 0.88), sortate
 descrescător, max 2 per ligă (diversitate). Fallback dacă nu se umplu 5:
-calibrate din orice ligă, același bucket. Track-record-ul (history/forward)
-NU e atins — rămâne public integral, e dovada care vinde.
+calibrate din orice ligă, același bucket. Track-record-ul rezolvat (history
+WIN/LOSS, forward) NU e atins — rămâne public integral, e dovada care vinde.
+
+18 oct 2026 (scurgere găsită la cartografierea pentru aplicația iOS, regula aprobată de
+Andreea): history.json publica selecțiile și procentele TUTUROR meciurilor din azi și din
+următoarele 6 zile, inclusiv ale celor `locked` (2.740 de meciuri în ziua aia), prin
+istoric.html și predictii/arhiva/<zi>.html. Acum, pasul 3: history.json se reduce cu
+aceleași free_ids — la meciurile care nu sunt gratuite rămân doar selecțiile rezolvate
+(WIN/LOSS); cele PENDING se scot până se joacă meciul. Meciurile rămase fără selecții și
+zilele rămase fără meciuri dispar; totalurile se recalculează; `locked_pending` spune câte
+selecții sunt ascunse. generated_at și cumulated_markets nu se ating (gate-ul de freshness).
+Rulează și când predictions.json e deja freemium (free_ids din `free: true`), idempotent.
 
 Fail-closed: orice excepție => exit != 0 => daily_publish (set -e + trap ERR)
 NU publică fișierul întreg din greșeală.
@@ -31,6 +41,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from _leagues_public import is_public_league  # noqa: E402
 
 SITE_JSON = Path.home() / "poseidon-site" / "data" / "predictions.json"
+HIST_JSON = SITE_JSON.parent / "history.json"
 FULL_JSON = Path.home() / "football_predictor" / "data" / "predictions_full.json"
 RO = ZoneInfo("Europe/Bucharest")
 
@@ -84,6 +95,37 @@ def pick_free(matches: list[dict]) -> set[int]:
     return {m["fixture_id"] for m in free}
 
 
+def reduce_history(hist: dict, free_ids: set[int]) -> dict:
+    """history.json public: la meciurile care nu sunt gratuite rămân doar selecțiile rezolvate (WIN/LOSS);
+    PENDING-ul lor se scoate până se joacă meciul. Meciurile fără selecții rămase și zilele fără meciuri
+    dispar; totalurile se recalculează; `locked_pending` = câte selecții sunt ascunse. Idempotent."""
+    days_out = []
+    for d in hist.get("days", []):
+        kept = []
+        hidden = int((d.get("totals") or {}).get("locked_pending", 0))   # ce era deja ascuns la o reducere anterioară (idempotență)
+        for m in d.get("matches", []):
+            picks = m.get("picks", [])
+            if m.get("fixture_id") in free_ids:
+                kept.append(m)
+                continue
+            vizibile = [p for p in picks if p.get("outcome") != "PENDING"]
+            hidden += len(picks) - len(vizibile)
+            if vizibile:
+                kept.append({**m, "picks": vizibile})
+        if not kept:
+            continue
+        toate = [p for m in kept for p in m.get("picks", [])]
+        totals = {
+            "picks": len(toate),
+            "wins": sum(1 for p in toate if p.get("outcome") == "WIN"),
+            "losses": sum(1 for p in toate if p.get("outcome") == "LOSS"),
+            "pending": sum(1 for p in toate if p.get("outcome") == "PENDING"),
+            "locked_pending": hidden,
+        }
+        days_out.append({**d, "matches": kept, "totals": totals})
+    return {**hist, "days": days_out}
+
+
 def atomic_write(path: Path, text: str) -> None:
     fd, tmp = tempfile.mkstemp(dir=str(path.parent), prefix=f".{path.name}.tmp.")
     try:
@@ -104,35 +146,48 @@ def main() -> int:
 
     # Idempotență ÎNTÂI: dacă fișierul site-ului e DEJA redus (re-rulare în
     # aceeași zi fără rebuild), NU suprascrie FULL-ul intern cu redusul și
-    # nu re-reduce. Exit 0 — starea publicabilă e deja corectă.
+    # nu re-reduce; free_ids vin din `free: true`, ca history să se reducă la fel.
     if data.get("freemium"):
-        print("[make_public] predictions.json e DEJA freemium — nimic de făcut.")
+        print("[make_public] predictions.json e DEJA freemium — nu-l ating.")
+        free_ids = {m["fixture_id"] for m in matches if m.get("free")}
+    else:
+        # 1) FULL privat pentru consumatorii interni — doar dintr-un fișier întreg.
+        atomic_write(FULL_JSON, json.dumps(data, ensure_ascii=False, indent=1))
+
+        # 2) predictions.json redus.
+        free_ids = pick_free(matches)
+        out_matches = []
+        for m in matches:
+            if m["fixture_id"] in free_ids:
+                m2 = dict(m)
+                m2["free"] = True
+                out_matches.append(m2)
+            else:
+                locked = {k: m.get(k) for k in LOCKED_KEYS}
+                locked["locked"] = True
+                out_matches.append(locked)
+
+        data["matches"] = out_matches
+        data["freemium"] = {
+            "free": len(free_ids),
+            "locked": len(out_matches) - len(free_ids),
+            "policy": f"{N_FREE} meciuri gratuite pe zi; restul pe abonament (Patreon).",
+        }
+        atomic_write(SITE_JSON, json.dumps(data, ensure_ascii=False, indent=1))
+        print(f"[make_public] OK: {len(free_ids)} free + {len(out_matches)-len(free_ids)} locked "
+              f"| FULL intern: {FULL_JSON}")
+
+    # 3) history.json redus cu aceleași free_ids (18 oct 2026). Lipsa fișierului nu e scurgere → doar mesaj.
+    if not HIST_JSON.exists():
+        print("[make_public] history.json lipsă — nimic de redus.")
         return 0
-
-    # 1) FULL privat pentru consumatorii interni — doar dintr-un fișier întreg.
-    atomic_write(FULL_JSON, json.dumps(data, ensure_ascii=False, indent=1))
-
-    free_ids = pick_free(matches)
-    out_matches = []
-    for m in matches:
-        if m["fixture_id"] in free_ids:
-            m2 = dict(m)
-            m2["free"] = True
-            out_matches.append(m2)
-        else:
-            locked = {k: m.get(k) for k in LOCKED_KEYS}
-            locked["locked"] = True
-            out_matches.append(locked)
-
-    data["matches"] = out_matches
-    data["freemium"] = {
-        "free": len(free_ids),
-        "locked": len(out_matches) - len(free_ids),
-        "policy": f"{N_FREE} meciuri gratuite pe zi; restul pe abonament (Patreon).",
-    }
-    atomic_write(SITE_JSON, json.dumps(data, ensure_ascii=False, indent=1))
-    print(f"[make_public] OK: {len(free_ids)} free + {len(out_matches)-len(free_ids)} locked "
-          f"| FULL intern: {FULL_JSON}")
+    hist = json.loads(HIST_JSON.read_text())
+    inainte = sum(len(m.get("picks", [])) for d in hist.get("days", []) for m in d.get("matches", []))
+    red = reduce_history(hist, free_ids)
+    dupa = sum(len(m.get("picks", [])) for d in red["days"] for m in d["matches"])
+    atomic_write(HIST_JSON, json.dumps(red, ensure_ascii=False, indent=1))
+    print(f"[make_public] history.json: {len(hist.get('days', []))} → {len(red['days'])} zile, "
+          f"{inainte} → {dupa} selecții ({inainte - dupa} PENDING blocate ascunse).")
     return 0
 
 
