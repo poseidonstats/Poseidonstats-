@@ -291,18 +291,18 @@ Statistici informative. Modelul poate greși. Verifică sursa. 18+.
           <th data-i18n="proof.th.tier">Verdict propriu</th>
         </tr></thead>
         <tbody>
-          <tr><td><strong>Over 1.5</strong> <small class="proof-prag">≥ 75 %</small></td><td>23.041</td><td class="hit">82.4%</td><td>81.9%</td><td><span class="tier-badge tier-elite">STRONG ROBUST</span></td></tr>
-          <tr><td><strong>Over 2.5</strong> <small class="proof-prag">≥ 65 %</small></td><td>7.724</td><td class="hit">70.7%</td><td>69.7%</td><td><span class="tier-badge tier-strong">ROBUST</span></td></tr>
-          <tr><td><strong>Over 3.5</strong> <small class="proof-prag">≥ 65 %</small></td><td>435</td><td class="hit">66.9%</td><td>62.3%</td><td><span class="tier-badge tier-mid">PRE-PROMISING</span></td></tr>
-          <tr><td><strong>BTTS Da</strong> <small class="proof-prag">≥ 65 %</small></td><td>1.525</td><td class="hit">67.7%</td><td>65.3%</td><td><span class="tier-badge tier-mid">PRE-PROMISING</span></td></tr>
-          <tr><td><strong>HT Over 0.5</strong> <small class="proof-prag">≥ 65 %</small></td><td>29.637</td><td class="hit">74.2%</td><td>73.6%</td><td><span class="tier-badge tier-strong">ROBUST</span></td></tr>
-          <tr class="is-drop"><td><strong>HT Over 1.5</strong> <small class="proof-prag">≥ 65 %</small></td><td>272</td><td class="hit">57.7%</td><td>51.8%</td><td><span class="tier-badge tier-drop">DROP</span></td></tr>
+          <tr><td><strong>Over 1.5</strong> <small class="proof-prag">≥ 75 %</small></td><td>23.216</td><td class="hit">82.4%</td><td>81.9%</td><td><span class="tier-badge tier-elite">STRONG ROBUST</span></td></tr>
+          <tr><td><strong>Over 2.5</strong> <small class="proof-prag">≥ 65 %</small></td><td>7.770</td><td class="hit">70.7%</td><td>69.7%</td><td><span class="tier-badge tier-strong">ROBUST</span></td></tr>
+          <tr><td><strong>Over 3.5</strong> <small class="proof-prag">≥ 65 %</small></td><td>436</td><td class="hit">67.0%</td><td>62.4%</td><td><span class="tier-badge tier-mid">PRE-PROMISING</span></td></tr>
+          <tr><td><strong>BTTS Da</strong> <small class="proof-prag">≥ 65 %</small></td><td>1.529</td><td class="hit">67.7%</td><td>65.3%</td><td><span class="tier-badge tier-mid">PRE-PROMISING</span></td></tr>
+          <tr><td><strong>HT Over 0.5</strong> <small class="proof-prag">≥ 65 %</small></td><td>29.859</td><td class="hit">74.1%</td><td>73.6%</td><td><span class="tier-badge tier-strong">ROBUST</span></td></tr>
+          <tr class="is-drop"><td><strong>HT Over 1.5</strong> <small class="proof-prag">≥ 65 %</small></td><td>273</td><td class="hit">57.5%</td><td>51.6%</td><td><span class="tier-badge tier-drop">DROP</span></td></tr>
         </tbody>
       </table>
     </div>
     <p class="proof-note" data-i18n="proof.note">Rândul roșu e aici intenționat: acolo modelul <strong>nu</strong> prezice suficient de bine, iar noi îl marcăm <strong>DROP</strong> în propriul nostru tabel. Un site care îți arată doar ce a mers nu-ți arată nimic.</p>
     <p class="proof-note" data-i18n="proof.note2">N = doar selecțiile la care probabilitatea a trecut pragul din dreptul pieței, nu toate predicțiile; cifrele pe toate predicțiile, piață cu piață, sunt în auditul de pe track record. „Verdict propriu" ține de mărimea eșantionului și de limita Wilson, <strong>nu</strong> de avantajul peste rata naturală a pieței. Tabelul complet, bucket cu bucket: <a href="track-record.html">track record</a> · <a href="istoric.html">istoric zi cu zi</a>.</p>
-    <p class="proof-note proof-metrici" data-i18n="proof.metrici"><strong>Metrici pe toate cele 39.459 de predicții rezolvate</strong> (din 2 iunie 2026, nu doar cele peste prag): peste 1,5 — Brier 0,165, log loss 0,507, eroare de calibrare 0,9 pp · peste 2,5 — Brier 0,233, log loss 0,659, ECE 0,79 pp · GG — Brier 0,244, log loss 0,681. Test contra prețului de închidere al pieței, pe 22.598 meciuri (peste 2,5): Brier model 0,238 față de piață 0,236; ce adaugă modelul peste preț: 0,0003 log loss, adică nimic. <strong>Modelul e calibrat și nu bate piața.</strong> Diagrama de fiabilitate, Brier și log loss pe fiecare piață și jurnalul CSV cu ora înghețării fiecărei predicții: <a href="track-record.html">track record</a>.</p>
+    <p class="proof-note proof-metrici" data-i18n="proof.metrici"><strong>Metrici pe toate cele 40.729 de predicții rezolvate</strong> (din 2 iunie 2026, nu doar cele peste prag): peste 1,5 — Brier 0,164, log loss 0,506, eroare de calibrare 0,9 pp · peste 2,5 — Brier 0,233, log loss 0,659, ECE 0,78 pp · GG — Brier 0,244, log loss 0,681. Test contra prețului de închidere al pieței, pe 22.598 meciuri (peste 2,5): Brier model 0,238 față de piață 0,236; ce adaugă modelul peste preț: 0,0003 log loss, adică nimic. <strong>Modelul e calibrat și nu bate piața.</strong> Diagrama de fiabilitate, Brier și log loss pe fiecare piață și jurnalul CSV cu ora înghețării fiecărei predicții: <a href="track-record.html">track record</a>.</p>
     <p class="proof-asof" data-i18n="proof.asof" data-i18n-vars='{"data":"<span data-date=\"2026-10-18\">18 octombrie 2026</span>"}'>Cifre din jurnalul forward, actualizate <span data-date="2026-10-18">18 octombrie 2026</span> · informativ · nu sfat de pariere · 18+</p>
   </section>
   <!-- PROOF_STATIC_END -->
@@ -389,11 +389,11 @@ Statistici informative. Modelul poate greși. Verifică sursa. 18+.
   <!-- DAILY_STATIC_START -->
   <section class="daily-static" id="repere-azi">
     <h2 data-i18n="repere.h2" data-i18n-vars='{"data":"<span data-date=\"2026-10-18\">18 octombrie 2026</span>"}'>Predicții fotbal azi — <span data-date="2026-10-18">18 octombrie 2026</span></h2>
-    <p data-i18n="repere.p" data-i18n-vars='{"n":"920"}'>Repere calibrate din cele 920 meciuri analizate azi de model (lista completă, cu filtre, mai jos):</p>
+    <p data-i18n="repere.p" data-i18n-vars='{"n":"887"}'>Repere calibrate din cele 887 meciuri analizate azi de model (lista completă, cu filtre, mai jos):</p>
     <ul>
       <li data-i18n="repere.item" data-i18n-vars='{"meci": "Borussia Monchengladbach – 1899 Hoffenheim", "liga": "Germany · Bundesliga", "piata": "<span data-i18n=\"piata.o15\">Over 1.5 goluri</span>", "p": "88"}'><strong>Borussia Monchengladbach – 1899 Hoffenheim</strong> (Germany · Bundesliga): Over 1.5 goluri — <strong>88%</strong> calibrat</li>
-      <li data-i18n="repere.item" data-i18n-vars='{"meci": "Los Angeles Galaxy – San Diego", "liga": "USA · Major League Soccer", "piata": "<span data-i18n=\"piata.o15\">Over 1.5 goluri</span>", "p": "86"}'><strong>Los Angeles Galaxy – San Diego</strong> (USA · Major League Soccer): Over 1.5 goluri — <strong>86%</strong> calibrat</li>
       <li data-i18n="repere.item" data-i18n-vars='{"meci": "Karlsruher SC – SV Darmstadt 98", "liga": "Germany · 2. Bundesliga", "piata": "<span data-i18n=\"piata.o15\">Over 1.5 goluri</span>", "p": "85"}'><strong>Karlsruher SC – SV Darmstadt 98</strong> (Germany · 2. Bundesliga): Over 1.5 goluri — <strong>85%</strong> calibrat</li>
+      <li data-i18n="repere.item" data-i18n-vars='{"meci": "Dynamo Dresden – FC Magdeburg", "liga": "Germany · 2. Bundesliga", "piata": "<span data-i18n=\"piata.o15\">Over 1.5 goluri</span>", "p": "85"}'><strong>Dynamo Dresden – FC Magdeburg</strong> (Germany · 2. Bundesliga): Over 1.5 goluri — <strong>85%</strong> calibrat</li>
     </ul>
     <p class="pro-disclaimer" data-i18n="repere.disclaimer">probabilități calibrate empiric · informativ · nu sfat de pariere · 18+</p>
   </section>
@@ -441,7 +441,7 @@ Statistici informative. Modelul poate greși. Verifică sursa. 18+.
       <li><a href="predictii/suedia-allsvenskan.html">Allsvenskan (Suedia)</a><span class="liga-n">12</span></li>
       <li><a href="predictii/rusia-premier-league.html">Premier League (Rusia)</a><span class="liga-n">10</span></li>
       <li><a href="predictii/ucraina-premier-league.html">Premier League (Ucraina)</a><span class="liga-n">12</span></li>
-      <li><a href="predictii/sua-mls.html">Major League Soccer (SUA)</a><span class="liga-n">13</span></li>
+      <li><a href="predictii/sua-mls.html">Major League Soccer (SUA)</a><span class="liga-n">9</span></li>
       <li><a href="predictii/brazilia-serie-a.html">Brasileirão Série A (Brazilia)</a><span class="liga-n">12</span></li>
       <li><a href="predictii/argentina-liga-profesional.html">Liga Profesional (Argentina)</a><span class="liga-n">13</span></li>
       <li><a href="predictii/uefa-champions-league.html">UEFA Champions League</a><span class="liga-n">18</span></li>
