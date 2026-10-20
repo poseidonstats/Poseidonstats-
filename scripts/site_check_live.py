@@ -43,7 +43,7 @@ def verifica(acum: dt.datetime) -> list[str]:
     if st != 200: return [f"index.html: {cod(st, html)}"]
     for nume, semn in (("secțiunea Exemplul Pro", 'id="exemplu-pro"'), ("cardul Pro", 'class="pro-card"'), ("lista Pro de azi", 'class="pro-today"'),
                        ("blocul «Ce primești pentru 20 $»", 'class="plans-pro-detail"'), ("secțiunea Dovada", 'id="dovada"'), ("Repere azi", 'id="repere-azi"'),
-                       ("abonamentele", 'id="abonament"'), ("banner-ul legal", "legal-banner"), ("eticheta trial Pro", "plans.pro.trial")):
+                       ("abonamentele", 'id="abonament"'), ("banner-ul legal", "legal-banner"), ("nota Pro de sub preț", "plans.pro.trial")):
         if semn not in html: err.append(f"index.html: lipsește {nume}")
     m = re.search(r'class="pro-card-head">(.*?)</div>', html, re.S)
     cap = re.sub(r"<[^>]+>", "", m.group(1)) if m else ""   # 8 oct 2026: capul are <span data-date> (i18n) — textul se citește fără taguri
@@ -53,7 +53,7 @@ def verifica(acum: dt.datetime) -> list[str]:
     if st != 200:
         err.append(f"app.js: {cod(st, js)}")
     elif "trial-banner" not in js:
-        err.append("app.js: banda de trial lipsește")
+        err.append("app.js: banda Pro lipsește")
     st, body = get(f"{SITE}/data/predictions.json")
     if st != 200:
         err.append(f"predictions.json: {cod(st, body)}"[:160])
@@ -92,7 +92,7 @@ def main() -> None:
         print(msg)
         if "--fara-telegram" not in sys.argv: subprocess.run([TG, msg], check=False)
         sys.exit(1)
-    print(f"[site_check] OK {acum:%d.%m %H:%M}: exemplul Pro de azi, lista Pro, trial, 5 gratuite, JSON de azi, arhiva de ieri, KV membri de azi, CSP permite Worker-ul pe paginile de membri")
+    print(f"[site_check] OK {acum:%d.%m %H:%M}: exemplul Pro de azi, lista Pro, nota Pro, 5 gratuite, JSON de azi, arhiva de ieri, KV membri de azi, CSP permite Worker-ul pe paginile de membri")
 
 
 if __name__ == "__main__":

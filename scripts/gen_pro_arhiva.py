@@ -17,6 +17,7 @@ import html as H
 import json
 import math
 import re
+import unicodedata
 import sqlite3
 import sys
 from collections import Counter
@@ -43,7 +44,7 @@ def pick_din_linie(linie: str) -> dict | None:
     Probabilitatea anunțată = primul procent din partea bold sau din primele ~60 de caractere de după ea (formatele reale:
     „— 88%.”, „· 76%”, „— **71%**”, „prob. reală ~13%”)."""
     tip = TIP.get(linie[:1])
-    if not tip:
+    if not tip or "fără pick curajos" in linie:  # 20 oct 2026: rândul fix „fără pick curajos azi” nu e un pick
         return None
     rest = re.sub(r"^.\s*\*\*[^*]+:\*\*\s*", "", linie).strip()
     m = re.match(r"\*\*(.+?)\*\*\s*(.*)$", rest, re.S)
@@ -62,7 +63,9 @@ def pick_din_linie(linie: str) -> dict | None:
 
 
 def _norm(s: str) -> str:
-    return re.sub(r"[^a-z0-9 ]", " ", s.lower().replace("ș", "s").replace("ş", "s").replace("ț", "t").replace("ţ", "t").replace("ă", "a").replace("â", "a").replace("î", "i")).strip()
+    """Litere mici, fără diacritice (NFKD, 20 oct 2026: „Rīgas”, „Diósgyőri” rămâneau neevaluabile cu înlocuirea doar a diacriticelor românești)."""
+    s = "".join(c for c in unicodedata.normalize("NFKD", s) if not unicodedata.combining(c))
+    return re.sub(r"[^a-z0-9 ]", " ", s.lower()).strip()
 
 
 def evalueaza_pick(piata: str, gh: int, ga: int, home: str, away: str, hth: int | None = None, hta: int | None = None):
@@ -323,6 +326,7 @@ def html_index(zile: list[dict], tot: dict, pe_zi: list[dict], azi: str) -> str:
       <li>capcanele pe care modelul numeric nu le vede</li>
       <li>pick-urile analizei: Bază, Principal, Curajos, fiecare cu probabilitatea anunțată</li>
     </ul></div>
+    <p class="muted" data-i18n="plans.glosar">xG în analizele POSEIDON = golurile așteptate de modelul nostru pentru fiecare echipă, calibrat pe meciurile trecute, nu xG din șuturi.</p>
     <p data-i18n="plans.get.after">A doua zi revenim la aceeași analiză: ce am spus înainte de meci rămâne neschimbat, arătăm unde modelul și contextul au avut dreptate, unde au greșit și unde rezultatul a fost pur și simplu zgomot. Nu promitem profit. Nu vindem „ponturi sigure”. Nu schimbăm predicțiile după rezultat.</p>
     <h3 data-i18n="plans.day.h">O zi în Pro</h3>
     <div data-i18n="plans.day.list"><ol>
@@ -331,7 +335,7 @@ def html_index(zile: list[dict], tot: dict, pe_zi: list[dict], azi: str) -> str:
       <li><strong>În analiză</strong> — model + context + contradicții + capcane + pick-uri cu probabilitate.</li>
       <li><strong>A doua zi</strong> — scorul final și verificarea analizei, aici, public.</li>
     </ol></div>
-    <p class="plans-steps"><a class="plan-btn plan-btn-pro" href="../index.html#abonament" data-i18n="plans.pro.btn">Încearcă Pro gratuit 7 zile</a> <span class="muted" data-i18n="unlock.alt">Vrei doar cifrele? Basic, 5 $/lună.</span></p>
+    <p class="plans-steps"><a class="plan-btn plan-btn-pro" href="../index.html#abonament" data-i18n="plans.pro.btn">Alege Pro — $20/lună</a> <span class="muted" data-i18n="unlock.alt">Vrei doar cifrele? Basic, 5 $/lună.</span></p>
   </section>
 
   <section class="audit">

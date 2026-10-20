@@ -407,10 +407,10 @@ function renderUnlockCta(nLocked, nLockedAzi = null) {
     ${rezumatExemplu()}
     <p class="unlock-proof">${tt("unlock.proof", "Nu plătești pentru o garanție, plătești pentru acces. Predicțiile sunt înghețate înainte de meci, iar rezultatele rămân publice, inclusiv cele ratate. Verifică înainte să plătești:")}
       <a href="track-record.html" class="unlock-proof-btn">${tt("unlock.proof.btn", "Vezi track record-ul")}</a></p>
-    <p class="unlock-steps">${tt("unlock.steps", "3 pași: alegi Pro (7 zile gratuit) sau Basic pe Patreon → apeși „Intră cu Patreon” aici pe site → accesul se deschide pe loc.")}
-      <span class="muted">${tt("unlock.cancel", "Primele 7 zile de Pro sunt gratuite; anulezi oricând din Patreon, și înainte de prima plată. Accesul rămâne până la sfârșitul perioadei plătite.")}</span></p>
+    <p class="unlock-steps">${tt("unlock.steps", "3 pași: alegi Pro sau Basic pe Patreon → apeși „Intră cu Patreon” aici pe site → accesul se deschide pe loc.")}
+      <span class="muted">${tt("unlock.cancel", "Plata se face la Patreon, cu card sau PayPal; anulezi oricând din contul tău Patreon, iar accesul rămâne până la sfârșitul perioadei plătite.")}</span></p>
     <div class="unlock-btns">
-      <a href="#abonament" class="unlock-btn">${tt("unlock.btn", "💎 Încearcă Pro gratuit 7 zile")}</a>
+      <a href="#abonament" class="unlock-btn">${tt("unlock.btn", "💎 Alege Pro — $20/lună")}</a>
       <a href="#abonament" class="unlock-btn unlock-btn-basic">${tt("unlock.basic.btn", "⭐ Deblochează toate predicțiile — Basic, 5 $/lună")}</a>
     </div>
   </div>`;
@@ -799,9 +799,9 @@ async function renderIndex() {
     const matchesEl = document.getElementById("matches");
     matchesEl.classList.toggle("only-calibrated-markets", !!(chkCalibMk && chkCalibMk.checked));
 
-    // 6 oct 2026 — banda de trial deasupra primului meci (doar pentru nemembri); blocul mare rămâne după cele 5 gratuite.
+    // 6 oct 2026 — banda Pro deasupra primului meci (doar pentru nemembri); blocul mare rămâne după cele 5 gratuite. 20 oct 2026: fără probă gratuită (decizia Andreei); clasa „trial-banner” rămâne, pentru CSS și evenimentul GoatCounter.
     let html = blocate.length
-      ? `<a href="#abonament" class="trial-banner">${tt("trial.banner", "🎁 <strong>Pro, 7 zile gratuit</strong>: analizele scrise ale zilei, verificate a doua zi cu scorul real · <span class=\"trial-banner-cta\">Încearcă →</span>")}</a>`
+      ? `<a href="#abonament" class="trial-banner">${tt("trial.banner", "💎 <strong>Pro, 20 $/lună</strong>: analizele scrise ale zilei, verificate a doua zi cu scorul real · <span class=\"trial-banner-cta\">Alege →</span>")}</a>`
       : "";
     html += deschise.map(m => renderMatch(m, fmk)).join("");
     if (blocate.length) {
