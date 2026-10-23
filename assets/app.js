@@ -1163,7 +1163,7 @@ async function renderTrackRecord() {
           <tbody>
             ${market.buckets.map(b => `<tr${b.low_sample ? ' style="opacity:.45"' : ''}>
               <td>${b.range}</td>
-              <td>${b.n}${b.low_sample ? ' <span class="muted" title="${tt("tr.bt.lowsample.title", "sub 100 meciuri")}">${tt("tr.bt.lowsample", "sample mic")}</span>' : ''}</td>
+              <td>${b.n}${b.low_sample ? ` <span class="muted" title="${tt("tr.bt.lowsample.title", "sub 100 meciuri")}">${tt("tr.bt.lowsample", "sample mic")}</span>` : ''}</td>
               <td>${b.hit_pct.toFixed(1)}%</td>
               <td>${b.wlo_pct.toFixed(1)}%</td>
               <td style="color:${b.low_sample ? '#6b7280' : (Math.abs(b.diff_pp) <= 3 ? '#065f46' : '#991b1b')}">${b.low_sample ? "—" : (b.diff_pp >= 0 ? "+" : "") + b.diff_pp.toFixed(1) + "pp"}</td>
