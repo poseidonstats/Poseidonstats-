@@ -351,7 +351,7 @@ function isLocked(m) {
 }
 
 function matchWhen(m) {
-  return new Date(m.match_date).toLocaleString("ro-RO", {
+  return new Date(m.match_date).toLocaleString(_loc(), {
     weekday: "short", day: "2-digit", month: "short",
     hour: "2-digit", minute: "2-digit", timeZone: "Europe/Bucharest"
   });
@@ -366,7 +366,7 @@ function renderLockedMatch(m) {
         <span class="when">${matchWhen(m)}</span>
       </div>
     </div>
-    <span class="lock-tag" aria-label="predicție disponibilă pentru abonați">🔒</span>
+    <span class="lock-tag" aria-label="${tt("match.locked", "predicție disponibilă pentru abonați")}">🔒</span>
   </div>`;
 }
 
@@ -706,12 +706,13 @@ async function renderIndex() {
   // F3 — încarc și calibration.json pt eligibilitatea per piață (badge data-driven).
   // Fallback grațios: dacă lipsește, MARKET_CERT={} → marketState cade pe PROMOTED (ca înainte).
   const [data, calib] = await Promise.all([loadPredictions(), fetchJSON(CALIB_URL)]);
+  await i18nGata();
   if (calib && calib.market_cert) MARKET_CERT = calib.market_cert;
   const scData = await fetchJSON(SCORECARD_URL);
   if (scData && scData.markets) scData.markets.forEach(c => { SCORECARD[c.key] = c; });
   if (!data || !data.matches) {
     document.getElementById("matches").innerHTML =
-      `<p class="muted">Datele se încarcă... Dacă persistă, predicțiile zilei nu sunt încă publicate.</p>`;
+      `<p class="muted">${tt("match.loading", "Datele se încarcă... Dacă persistă, predicțiile zilei nu sunt încă publicate.")}</p>`;
     return;
   }
   const matches = data.matches;
@@ -728,9 +729,12 @@ async function renderIndex() {
   const selSort = document.getElementById("filter-sort");
   const chkCalib = document.getElementById("filter-calibrated-only");
   const chkCalibMk = document.getElementById("filter-calibrated-markets");
-  days.forEach(d => selDay.add(new Option(d, d)));
-  leagues.forEach(l => selLeague.add(new Option(l, l)));
-  countries.forEach(c => selCountry.add(new Option(c, c)));
+  [[selDay, days], [selLeague, leagues], [selCountry, countries]].forEach(([select, values]) => {
+    const existing = new Set(Array.from(select.options, option => option.value));
+    values.forEach(value => {
+      if (!existing.has(value)) { select.add(new Option(value, value)); existing.add(value); }
+    });
+  });
 
   // Pe baza calibrată (afișată). Returnează valoarea pentru piața selectată.
   function probForMarket(m, mk) {
@@ -794,7 +798,7 @@ async function renderIndex() {
     document.getElementById("match-count").textContent = blocate.length
       ? tt("freemium.count", "{free} predicții complete, gratuite. Alte {today} meciuri calculate de model pentru azi și {locked} meciuri în total pe următoarele 7 zile; le deblochezi pe toate cu Basic, 5 $/lună, intrând cu contul Patreon.")
           .replace("{free}", deschise.length).replace("{today}", nUnits(blocateAzi)).replace("{locked}", nUnits(blocate.length))
-      : `${deschise.length} meciuri afișate (din ${matches.length} totale).`;
+      : tt("match.count", "{shown} meciuri afișate (din {total} totale).").replace("{shown}", deschise.length).replace("{total}", matches.length);
 
     const matchesEl = document.getElementById("matches");
     matchesEl.classList.toggle("only-calibrated-markets", !!(chkCalibMk && chkCalibMk.checked));
@@ -831,13 +835,13 @@ function pickBadge(name, prob, stars = 0) {
   if (prob == null) return "";
   const cls = prob >= 0.80 ? "pick-elite" : prob >= 0.70 ? "pick-strong" : "pick-good";
   const st = stars > 0 ? `<span class="skill-dots" aria-hidden="true">${"●".repeat(stars)}</span>` : "";
-  const tip = `${name}: ${fmtPct(prob)} · skill ${stars}/3 (lift peste base-rate, backtest OOS). Informativ — nu recomandare.`;
+  const tip = tt("match.pick.tip", "{name}: {prob} · skill {stars}/3 (lift peste base-rate, backtest OOS). Informativ — nu recomandare.").replace("{name}", name).replace("{prob}", fmtPct(prob)).replace("{stars}", stars);
   return `<span class="pick-badge ${cls}" title="${tip}">${name} <b>${fmtPct(prob)}</b>${st}</span>`;
 }
 
 function rawNote(raw, cal) {
   if (raw == null || Math.abs(raw - cal) < 0.03) return "";
-  return `<span class="raw-note">brut ${fmtPct(raw)}</span>`;
+  return `<span class="raw-note">${tt("match.raw", "brut")} ${fmtPct(raw)}</span>`;
 }
 
 /* ============== Marcaj onestitate per piață (F3 — eligibilitate empirică + veto editorial) ==============
@@ -869,10 +873,14 @@ function marketState(label) {
 
 function warnTipText(kind, pct) {
   if (kind === "raw")
-    return "Probabilitate brută a modelului, fără re-mapare empirică.";
+    return tt("market.warn.raw", "Probabilitate brută a modelului, fără re-mapare empirică.");
   if (kind === "eligible")
-    return `Calibrare validată empiric (${pct != null ? pct + "% din " : ""}ligi în ±10%), dar nepromovată editorial.`;
-  return `Calibrată empiric, dar sub pragul de certificare per-ligă${pct != null ? ` (${pct}% din ligi în ±10%, prag 70%)` : ""}. Poate fi mai puțin fiabilă pe unele ligi.`;
+    return pct != null
+      ? tt("market.warn.eligible.pct", "Calibrare validată empiric ({pct}% din ligi în ±10%), dar nepromovată editorial.").replace("{pct}", pct)
+      : tt("market.warn.eligible", "Calibrare validată empiric (ligi în ±10%), dar nepromovată editorial.");
+  return pct != null
+    ? tt("market.warn.below.pct", "Calibrată empiric, dar sub pragul de certificare per-ligă ({pct}% din ligi în ±10%, prag 70%). Poate fi mai puțin fiabilă pe unele ligi.").replace("{pct}", pct)
+    : tt("market.warn.below", "Calibrată empiric, dar sub pragul de certificare per-ligă. Poate fi mai puțin fiabilă pe unele ligi.");
 }
 
 function warnMark(kind, pct) {
@@ -895,7 +903,7 @@ function skillMark(key, prob) {
   if (!c || c.tier !== "PICK" || !c.skill_stars) return "";
   if (prob == null || prob < c.threshold) return "";   // stele DOAR când piața e pick pe ACEST meci
   const hit = c.hit_at_threshold != null ? fmtPct(c.hit_at_threshold) : "—";
-  const tip = `Skill ${c.skill_stars}/3 (lift +${c.lift_pp}pp peste base-rate). Hit istoric OOS: ${hit}.`;
+  const tip = tt("match.skill.tip", "Skill {stars}/3 (lift +{lift}pp peste base-rate). Hit istoric OOS: {hit}.").replace("{stars}", c.skill_stars).replace("{lift}", c.lift_pp).replace("{hit}", hit);
   return `<span class="skill-stars" title="${tip}" aria-label="${tip}">${"●".repeat(c.skill_stars)}</span>`;
 }
 
@@ -975,11 +983,11 @@ function isFilteredMarket(label, filterMarket) {
 
 function renderMatch(m, filterMarket = "") {
   const calibTag = m.calibrated
-    ? `<span class="ok-tag">calibrată</span>`
-    : `<span class="warn-tag">ligă necalibrată</span>`;
+    ? `<span class="ok-tag">${tt("match.calibrated", "calibrată")}</span>`
+    : `<span class="warn-tag">${tt("match.uncalibrated", "ligă necalibrată")}</span>`;
   // match_date e UTC (cu Z). Convertesc explicit la fusul orar Europe/Bucharest (ora RO).
   const d = new Date(m.match_date);
-  const dateStr = d.toLocaleString("ro-RO", {
+  const dateStr = d.toLocaleString(_loc(), {
     weekday: "short", day: "2-digit", month: "short",
     hour: "2-digit", minute: "2-digit",
     timeZone: "Europe/Bucharest"
@@ -1036,17 +1044,17 @@ function renderMatch(m, filterMarket = "") {
     </div>
     <div class="match-body">
     <div class="xg-section">
-      <div class="xg-label" title="Poisson + Dixon-Coles + 200.000 simulări Monte Carlo">xG model <span class="xg-label-long">(Poisson + Dixon-Coles + 200K simulări Monte Carlo)</span></div>
+      <div class="xg-label" title="${tt("match.xg.tip", "Poisson + Dixon-Coles + 200.000 simulări Monte Carlo")}">${tt("match.xg.label", "xG model")} <span class="xg-label-long">(${tt("match.xg.detail", "Poisson + Dixon-Coles + 200K simulări Monte Carlo")})</span></div>
       ${xgBar(m.xg_home, m.xg_away)}
       <div class="score-prob">
-        <span class="score-label">Scor probabil</span>
+        <span class="score-label">${tt("match.score", "Scor probabil")}</span>
         <span class="score-val">${m.top_score_h}–${m.top_score_a}</span>
         <span class="score-pct">(${fmtPct(m.top_score_prob)})</span>
       </div>
     </div>
 
     <div class="phase-row ft">
-      <div class="phase-label">Final · 90 min</div>
+      <div class="phase-label">${tt("match.phase.ft", "Final · 90 min")}</div>
       <div class="markets-grid">
         <div class="market uncal-market ${pick1x2 === "1" ? "pick" : ""} ${isFilteredMarket("1", filterMarket) ? "market-filtered" : ""}">
           <span class="label">1</span>
@@ -1091,7 +1099,7 @@ function renderMatch(m, filterMarket = "") {
     <details class="more-markets" ${(typeof window !== "undefined" && window.innerWidth > 600) ? "open" : ""}>
     <summary class="more-markets-sum">${tt("match.more", "Mai multe piețe: dublă șansă, under, prima repriză")}</summary>
     ${m.prob_1x != null ? `<div class="phase-row extra">
-      <div class="phase-label">Dublă șansă & Under</div>
+      <div class="phase-label">${tt("match.phase.dc", "Dublă șansă & Under")}</div>
       <div class="markets-grid">
         <div class="market ${isFilteredMarket("1X", filterMarket) ? "market-filtered" : ""}"><span class="label">1X</span><span class="val ${pctClass(m.prob_1x)}">${fmtPct(m.prob_1x)}</span>${skillMark("dc_1x", m.prob_1x)}</div>
         <div class="market ${isFilteredMarket("X2", filterMarket) ? "market-filtered" : ""}"><span class="label">X2</span><span class="val ${pctClass(m.prob_x2)}">${fmtPct(m.prob_x2)}</span>${skillMark("dc_x2", m.prob_x2)}</div>
@@ -1102,7 +1110,7 @@ function renderMatch(m, filterMarket = "") {
     </div>` : ""}
 
     ${m.ht_prob_home != null ? `<div class="phase-row ht">
-      <div class="phase-label">Prima repriză ${m.xg_home_ht ? `<span class="muted-xs">(xG ${m.xg_home_ht}–${m.xg_away_ht})</span>` : ""}</div>
+      <div class="phase-label">${tt("match.phase.ht", "Prima repriză")} ${m.xg_home_ht ? `<span class="muted-xs">(xG ${m.xg_home_ht}–${m.xg_away_ht})</span>` : ""}</div>
       <div class="markets-grid">
         <div class="market uncal-market"><span class="label">1H</span><span class="val ${pctClass(m.ht_prob_home)}">${fmtPct(m.ht_prob_home)}</span>${warnMark("raw")}</div>
         <div class="market uncal-market"><span class="label">XH</span><span class="val ${pctClass(m.ht_prob_draw)}">${fmtPct(m.ht_prob_draw)}</span>${warnMark("raw")}</div>
@@ -1111,7 +1119,7 @@ function renderMatch(m, filterMarket = "") {
         <div class="market uncal-market ${isFilteredMarket("HT O1.5", filterMarket) ? "market-filtered" : ""}"><span class="label">HT O1.5</span><span class="val ${pctClass(m.prob_ht_over_1_5)}">${fmtPct(m.prob_ht_over_1_5)}</span>${marketCertMark("HT O1.5")}</div>
         <div class="market uncal-market"><span class="label">HT BTTS</span><span class="val ${pctClass(m.ht_prob_btts)}">${fmtPct(m.ht_prob_btts)}</span>${warnMark("raw")}</div>
         ${m.ht_top_score_h != null ? `<div class="market score-ht">
-          <span class="label">Scor HT</span>
+          <span class="label">${tt("match.score.ht", "Scor HT")}</span>
           <span class="val">${m.ht_top_score_h}–${m.ht_top_score_a}</span>
           <span class="raw-note">${fmtPct(m.ht_top_score_prob)}</span>
         </div>` : ""}

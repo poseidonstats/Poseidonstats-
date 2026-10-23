@@ -147,6 +147,21 @@
     observer.observe(nav,{childList:true,subtree:true});
     return observer;
   }
+  function ensureProofNotice(doc, tr) {
+    const metrics = doc.querySelector('.proof-metrici');
+    if (!metrics || !metrics.parentNode) return;
+    let notice = doc.querySelector('.dashboard-proof-note');
+    if (!notice) {
+      notice = doc.createElement('p');
+      notice.className = 'proof-note dashboard-proof-note';
+      metrics.parentNode.insertBefore(notice,metrics);
+    }
+    notice.textContent = tr('proof.previous.note') + ' ';
+    const link = doc.createElement('a');
+    link.setAttribute('href','track-record.html');
+    link.textContent = tr('proof.previous.link');
+    notice.appendChild(link);
+  }
   function analysisAction(tier) {
     if (tier === 'pro') return {href:'#pro-analize',key:'dashboard.analysis.member',sample:false};
     if (tier === 'basic') return {href:'analize/index.html',key:'dashboard.analysis.readarchive',sample:false};
@@ -172,6 +187,7 @@
     if (!doc.querySelector('[data-dashboard-kpis]')) return;
     if (typeof i18nGata === 'function') await i18nGata();
     watchLanguageSelector(doc,translator());
+    ensureProofNotice(doc,translator());
     let predictions = null, history = null, audit = null, archive = null;
     const dateSelect = doc.getElementById('dashboard-date');
     const leagues = doc.getElementById('dashboard-leagues');
@@ -260,7 +276,7 @@
       }
       target.innerHTML = cards.join('') || `<p>${escapeHTML(tr('dashboard.data.unavailable'))}</p>`;
     }
-    function render() {decorateLanguageSelector(doc,translator());renderDates();renderLeagues();renderTable();renderMetrics();renderAnalyses();}
+    function render() {decorateLanguageSelector(doc,translator());ensureProofNotice(doc,translator());renderDates();renderLeagues();renderTable();renderMetrics();renderAnalyses();}
     if (dateSelect) dateSelect.addEventListener('change', () => {selectedLeague='';renderLeagues();renderTable();});
     if (leagues) leagues.addEventListener('click', event => {
       const button = event.target.closest('[data-dashboard-league]');
@@ -287,5 +303,5 @@
     } catch (_) { /* Current real sample remains available if the archive cannot load. */ }
     renderAnalyses();
   }
-  return {escapeHTML,dayOf,availableDays,chooseDay,isPublic,selectRows,extractMetrics,cumulativeResolved,renderRows,renderChart,revealMatch,chooseAnalysisLanguage,analysisLanguageNotice,decorateLanguageSelector,watchLanguageSelector,analysisAction,membershipTier,observeMembership,mount};
+  return {escapeHTML,dayOf,availableDays,chooseDay,isPublic,selectRows,extractMetrics,cumulativeResolved,renderRows,renderChart,revealMatch,chooseAnalysisLanguage,analysisLanguageNotice,decorateLanguageSelector,watchLanguageSelector,ensureProofNotice,analysisAction,membershipTier,observeMembership,mount};
 });
