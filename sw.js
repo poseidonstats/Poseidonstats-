@@ -2,7 +2,7 @@
    cache-ul doar ca rezervă offline. Versiunea veche (cache-first pe shell) ținea telefoanele pe pagina și scripturile de la prima
    vizită, iar cererile către zona de membri (alt domeniu) treceau tot prin ea și se puteau îngheța. Cererile către alte domenii
    (Worker-ul de membri, Patreon) NU mai sunt interceptate deloc. */
-const CACHE = "poseidon-v83";
+const CACHE = "poseidon-v84";
 const SHELL = [
   "./index.html",
   "./simulator.html",
@@ -11,7 +11,9 @@ const SHELL = [
   "./metodologie.html",
   "./terms.html",
   "./assets/style.css",
+  "./assets/home-modern.css",
   "./assets/app.js",
+  "./assets/home-dashboard.js",
   "./assets/members.js",
   "./manifest.json",
 ];

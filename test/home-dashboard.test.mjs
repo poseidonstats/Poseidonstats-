@@ -1,0 +1,325 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import { createRequire } from 'node:module';
+import { execFileSync } from 'node:child_process';
+import { createContext, runInContext } from 'node:vm';
+const require = createRequire(import.meta.url);
+const dashboard = require('../assets/home-dashboard.js');
+const read = path => JSON.parse(readFileSync(new URL('../' + path, import.meta.url), 'utf8'));
+const predictions = read('data/predictions.json');
+const history = read('data/history.json');
+const audit = read('data/audit.json');
+const i18n = read('assets/i18n.json');
+const tr = key => i18n.en[key] || key;
+
+test('KPI values come directly from their distinct real source samples', () => {
+  const metrics = dashboard.extractMetrics(audit, history);
+  const record = history.cumulated_markets.find(m => m.name === 'Over 1.5');
+  const market = audit.piete.find(m => m.cheie === 'over_1_5');
+  assert.equal(metrics.resolved, audit.n_rezolvate);
+  assert.equal(metrics.auditedMarkets, audit.piete.length);
+  assert.equal(metrics.brier, market.brier);
+  assert.equal(metrics.brierN, market.n);
+  assert.equal(metrics.hit, record.hit_pct);
+  assert.equal(metrics.n, record.n);
+  assert.equal(metrics.wlo, record.wlo_pct);
+  assert.equal(record.n, record.wins + record.losses);
+  // Samples are selected by their own source keys; their sizes may coincide on a future export.
+});
+
+test('real recent journal sums resolved selections chronologically, never pending or profit', () => {
+  const points = dashboard.cumulativeResolved(history);
+  const sorted = history.days.filter(d => d.totals.wins + d.totals.losses > 0).sort((a,b) => a.date.localeCompare(b.date));
+  let independentSum = 0;
+  assert.equal(points.length, sorted.length);
+  if (!sorted.length) {
+    assert.deepEqual(points,[]);
+    assert.match(dashboard.renderChart(points,tr,'en-GB','test-chart'),/Data temporarily unavailable/);
+    return;
+  }
+  for (let i = 0; i < sorted.length; i++) {
+    independentSum += sorted[i].totals.wins + sorted[i].totals.losses;
+    assert.equal(points[i].date, sorted[i].date);
+    assert.equal(points[i].cumulative, independentSum);
+  }
+  const partialDays=sorted.filter(day => ['partial','in_progress'].includes(day.status)).map(day => day.date);
+  assert.deepEqual(points.filter(p => p.partial).map(p => p.date),partialDays);
+  const chart = dashboard.renderChart(points,tr,'en-GB','test-chart');
+  const number=new Intl.NumberFormat('en-GB').format(independentSum);
+  const date=day=>new Intl.DateTimeFormat('en-GB',{day:'numeric',month:'short',timeZone:'Europe/Bucharest'}).format(new Date(day+'T12:00:00Z'));
+  assert(chart.includes(number));
+  assert(chart.includes(date(sorted[0].date)));
+  assert(chart.includes(date(sorted[sorted.length-1].date)));
+  if (partialDays.length) assert.match(chart,/Partial days/);
+  assert.doesNotMatch(chart,/profit/i);
+});
+
+test('public real rows preserve exact probabilities and prioritize free chronological matches', () => {
+  const days = dashboard.availableDays(predictions);
+  const firstPublic=predictions.matches.find(m => m.free === true && m.locked !== true);
+  const sourceDay=firstPublic ? dashboard.dayOf(firstPublic.match_date) : days[0] || '';
+  const day=sourceDay ? dashboard.chooseDay(days,new Date(sourceDay+'T12:00:00Z')) : dashboard.chooseDay(days);
+  assert.equal(day,sourceDay);
+  const selection = dashboard.selectRows(predictions, day);
+  const free = predictions.matches.filter(m => m.free === true && !m.locked && dashboard.dayOf(m.match_date) === day).sort((a,b) => Date.parse(a.match_date)-Date.parse(b.match_date));
+  assert.equal(selection.free, free.length);
+  assert.equal(selection.rows.length,Math.min(7,selection.total));
+  assert.deepEqual(selection.rows.slice(0,Math.min(7,free.length)).map(r => r.fixture_id),free.slice(0,7).map(m => m.fixture_id));
+  for (const row of selection.rows) {
+    const original = predictions.matches.find(m => m.fixture_id === row.fixture_id);
+    assert.equal(row.home,original.home_team);
+    if (!row.locked) assert.deepEqual(row.probabilities,[original.prob_home,original.prob_draw,original.prob_away]);
+    else assert.deepEqual(row.probabilities,[null,null,null]);
+  }
+});
+
+test('locked preview stays identity-only even if an explicitly locked fixture contains numeric fields', () => {
+  const fixture = { matches:[{fixture_id:1,match_date:'2026-10-23T14:00:00Z',home_team:'<script>alert(1)</script>',away_team:'A & B',league:'League',locked:true,free:true,prob_home:.999,prob_draw:.001,prob_away:0}] };
+  const rows = dashboard.selectRows(fixture,'2026-10-23').rows;
+  assert.deepEqual(rows[0].probabilities,[null,null,null]);
+  const html = dashboard.renderRows(rows,tr,'en-GB');
+  assert.doesNotMatch(html, /99\.9%|0\.1%|<script>/);
+  assert.match(html,/&lt;script&gt;/);
+  assert.match(html,/A &amp; B/);
+  assert.equal((html.match(/>—<\/td>/g)||[]).length,3);
+  assert.match(html,/dashboard-lock/);
+});
+
+test('Bucharest date boundaries and absent-current-day fallback use available dates', () => {
+  assert.equal(dashboard.dayOf('2026-10-23T22:30:00Z'),'2026-10-24');
+  const days = ['2026-10-23','2026-10-25'];
+  assert.equal(dashboard.chooseDay(days,new Date('2026-10-24T10:00:00Z')),'2026-10-25');
+  assert.equal(dashboard.chooseDay(days,new Date('2026-11-01T10:00:00Z')),'2026-10-25');
+  assert.equal(dashboard.chooseDay([],new Date('2026-10-23T10:00:00Z')),'');
+  assert.equal(dashboard.dayOf('invalid'),'');
+});
+
+test('date and league filters return only matching real identities', () => {
+  const source = predictions.matches.find(m => m.free) || predictions.matches[0];
+  if (!source) {assert.deepEqual(dashboard.selectRows(predictions,'').rows,[]);return;}
+  const selected = dashboard.selectRows(predictions,dashboard.dayOf(source.match_date),source.league);
+  assert(selected.rows.length > 0);
+  assert(selected.rows.every(m => m.league === source.league && dashboard.dayOf(m.match_date) === dashboard.dayOf(source.match_date)));
+  assert.deepEqual(dashboard.selectRows(predictions,'1999-01-01').rows,[]);
+});
+
+test('missing exports raise errors, missing metrics remain null instead of becoming invented zero', () => {
+  assert.throws(() => dashboard.selectRows(null,'2026-10-23'), /Missing public predictions/);
+  assert.throws(() => dashboard.extractMetrics(null,history), /Missing public audit/);
+  assert.throws(() => dashboard.cumulativeResolved(null), /Missing public journal/);
+  const incomplete = dashboard.extractMetrics({n_rezolvate:0,piete:[]},{cumulated_markets:[]});
+  assert.equal(incomplete.hit,null);
+  assert.equal(incomplete.brier,null);
+  assert.equal(incomplete.resolved,0);
+  const source = {matches:[{match_date:'2026-10-23T09:00:00Z',free:true,prob_home:null,prob_draw:'0.2',prob_away:NaN}]};
+  assert.deepEqual(dashboard.selectRows(source,'2026-10-23').rows[0].probabilities,[null,null,null]);
+});
+
+test('fixture links reset legacy filters before selecting source UTC date, league and zero threshold', () => {
+  const calls = [];
+  const elements = Object.fromEntries(['filter-day','filter-league','filter-minprob'].map(id => [id,{value:'stale',dispatchEvent:event => calls.push([id,event.type])}]));
+  elements['filter-reset']={click:()=>calls.push(['reset'])};
+  dashboard.revealMatch({getElementById:id=>elements[id]}, {match_date:'2026-10-23T22:30:00Z',league:'Test league'});
+  assert.deepEqual(calls[0],['reset']);
+  assert.equal(elements['filter-day'].value,'2026-10-23');
+  assert.equal(elements['filter-league'].value,'Test league');
+  assert.equal(elements['filter-minprob'].value,'0');
+  assert.equal(calls.length,4);
+});
+
+test('all six dictionaries preserve every original value and fully translate new dashboard keys', () => {
+  const original = JSON.parse(execFileSync('git',['show','HEAD:assets/i18n.json'],{encoding:'utf8',cwd:new URL('..',import.meta.url)}));
+  const keys = Object.keys(i18n.ro).filter(key => key.startsWith('dashboard.')).sort();
+  assert(keys.length >= 47);
+  for (const lang of ['ro','en','es','it','fr','id']) {
+    for (const [key,value] of Object.entries(original[lang])) assert.equal(i18n[lang][key],value,`${lang}.${key}`);
+    assert.deepEqual(Object.keys(i18n[lang]).filter(key => key.startsWith('dashboard.')).sort(),keys);
+    for (const key of keys) assert.equal(typeof i18n[lang][key],'string');
+    assert.match(i18n[lang]['dashboard.kpi.hit'], /Over 1.5 ≥75%/);
+    assert(i18n[lang]['dashboard.table.rawnote'].startsWith('1/X/2'));
+  }
+});
+
+test('fetch failure renders a visible unavailable state and calls only local public files', async () => {
+  // Explicit minimal DOM/network mocks; no production requests or browser dependencies.
+  const table = {innerHTML:''}, status = {textContent:''}, kpis = [{textContent:''},{textContent:''}], charts = [{innerHTML:''},{innerHTML:''}];
+  const doc = {
+    documentElement:{lang:'en'},
+    querySelector:selector => selector === '[data-dashboard-kpis]' ? kpis[0] : null,
+    querySelectorAll:selector => selector === '[data-dashboard-kpis]' ? kpis : selector === '[data-dashboard-chart]' ? charts : [],
+    getElementById:id => ({'dashboard-predictions':table,'dashboard-table-status':status})[id] || null,
+    addEventListener:()=>{}
+  };
+  const requests = [];
+  const previousFetch = globalThis.fetch, previousT = globalThis.t;
+  globalThis.fetch = async path => {requests.push(path);throw new Error('Explicit unavailable-export mock');};
+  globalThis.t = tr;
+  try {
+    await dashboard.mount(doc);
+    assert.match(table.innerHTML,/Data temporarily unavailable/);
+    assert.match(status.textContent,/Public data could not load/);
+    assert(kpis.every(k => k.textContent === tr('dashboard.data.unavailable')));
+    assert(charts.every(chart => /Data temporarily unavailable/.test(chart.innerHTML)));
+    assert.deepEqual(requests,['data/predictions.json','data/history.json','data/audit.json','analize/index.html']);
+  } finally {
+    globalThis.fetch = previousFetch;
+    if (previousT === undefined) delete globalThis.t; else globalThis.t = previousT;
+  }
+});
+
+test('navigation and date accessibility labels use attribute-only translations in all six languages', () => {
+  const html = readFileSync(new URL('../index.html',import.meta.url),'utf8');
+  const nav = html.match(/<nav\b[^>]*>/)?.[0];
+  const date = Array.from(html.matchAll(/<select\b[^>]*>/g), m => m[0]).find(tag => /\bid="dashboard-date"/.test(tag));
+  for (const [tag,key] of [[nav,'dashboard.nav.label'],[date,'filters.day']]) {
+    assert(tag,'actual control opening tag exists');
+    const mapping = tag.match(/\bdata-i18n-attr="([^"]+)"/)?.[1];
+    assert(mapping,'control uses supported data-i18n-attr mapping');
+    const attrs = Object.fromEntries(mapping.split(',').map(pair => pair.split(':').map(s=>s.trim())));
+    assert.equal(attrs['aria-label'],key);
+    assert.doesNotMatch(tag,/\sdata-i18n=/,'translation must not replace children');
+    for (const lang of ['ro','en','es','it','fr','id']) assert(i18n[lang][key]?.trim(),`${lang}.${key}`);
+  }
+  assert.match(nav,/aria-label="Navigare principală"/);
+  assert.match(date,/aria-label="Zi:"/);
+});
+
+test('analysis actions route anonymous, Basic and Pro visitors to accessible existing destinations', () => {
+  assert.deepEqual(dashboard.analysisAction(null),{href:'#exemplu-pro',key:'dashboard.analysis.read',sample:true});
+  assert.deepEqual(dashboard.analysisAction('basic'),{href:'analize/index.html',key:'dashboard.analysis.readarchive',sample:false});
+  assert.deepEqual(dashboard.analysisAction('pro'),{href:'#pro-analize',key:'dashboard.analysis.member',sample:false});
+  const html = readFileSync(new URL('../index.html',import.meta.url),'utf8');
+  for (const state of [null,'basic','pro']) {
+    const action=dashboard.analysisAction(state);
+    if (action.href.startsWith('#')) assert(html.includes(`id="${action.href.slice(1)}"`));
+    for (const lang of ['ro','en','es','it','fr','id']) assert(i18n[lang][action.key]?.trim(),`${lang}.${action.key}`);
+  }
+});
+
+test('asynchronous membership class transitions refresh analysis routing without private requests', () => {
+  const classes = new Set();
+  const body = {classList:{contains:cls=>classes.has(cls)}};
+  let callback, watched, options;
+  class ObserverStub {
+    constructor(cb) {callback=cb;}
+    observe(target,opts) {watched=target;options=opts;}
+  }
+  const routes=[];
+  const render=()=>routes.push(dashboard.analysisAction(dashboard.membershipTier(body)).href);
+  render();
+  dashboard.observeMembership(body,render,ObserverStub);
+  assert.equal(watched,body);
+  assert.deepEqual(options,{attributes:true,attributeFilter:['class']});
+  classes.add('is-member');classes.add('tier-basic');callback();
+  classes.add('unrelated-page-class');callback();
+  classes.delete('tier-basic');classes.add('tier-pro');callback();
+  classes.clear();callback();
+  assert.deepEqual(routes,['#exemplu-pro','analize/index.html','#pro-analize','#exemplu-pro']);
+});
+
+test('analysis language fallback is explicit for missing Italian, but absent for available French and Indonesian', () => {
+  const languages=['ro','en','es','fr','id'];
+  assert.deepEqual(dashboard.chooseAnalysisLanguage('fr',languages),{language:'fr',fallback:false});
+  assert.deepEqual(dashboard.chooseAnalysisLanguage('id',languages),{language:'id',fallback:false});
+  assert.deepEqual(dashboard.chooseAnalysisLanguage('it',languages),{language:'en',fallback:true});
+  assert.deepEqual(dashboard.chooseAnalysisLanguage('it',['ro']),{language:'ro',fallback:true});
+  assert.deepEqual(dashboard.chooseAnalysisLanguage('it',[]),{language:null,fallback:true});
+  assert.equal(dashboard.analysisLanguageNotice({language:'fr',fallback:false},tr),'');
+  assert.equal(dashboard.analysisLanguageNotice({language:'en',fallback:true},tr),'Analysis content is available in English.');
+  assert.equal(dashboard.analysisLanguageNotice({language:'ro',fallback:true},tr),'Analysis content is available in Romanian.');
+  assert.equal(dashboard.analysisLanguageNotice({language:null,fallback:true},tr),tr('dashboard.data.unavailable'));
+});
+
+test('language switcher gets translated attribute-only labels, including late-created controls', () => {
+  const attrs={};let select=null,callback,disconnected=false,observed;
+  const nav={};
+  const doc={querySelectorAll:selector=>selector==='.lang-select'&&select?[select]:[],querySelector:selector=>selector==='header nav'?nav:null};
+  class ObserverStub {
+    constructor(cb) {callback=cb;}
+    observe(target,options) {observed=[target,options];}
+    disconnect() {disconnected=true;}
+  }
+  dashboard.watchLanguageSelector(doc,tr,ObserverStub);
+  assert.deepEqual(observed,[nav,{childList:true,subtree:true}]);
+  select={setAttribute:(key,value)=>{attrs[key]=value;}};
+  callback();
+  assert.equal(attrs['data-i18n-attr'],'aria-label:dashboard.language.label');
+  assert.equal(attrs['aria-label'],'Language');
+  assert.equal(disconnected,true);
+  dashboard.decorateLanguageSelector(doc,key=>i18n.fr[key]);
+  assert.equal(attrs['aria-label'],'Langue');
+  assert.equal(attrs['data-i18n'],undefined);
+});
+
+test('dashboard translations keep informed/evaluated terminology and preserve markup and placeholders', () => {
+  assert.equal(i18n.id['dashboard.hero.title'],'Statistik mendalam<br>untuk <span>keputusan berbasis informasi</span>');
+  for (const [lang,words] of [['es',['Predicciones evaluadas','Selecciones evaluadas']],['it',['Previsioni valutate','Selezioni valutate']],['fr',['Prédictions évaluées','Sélections évaluées']]]) {
+    assert.equal(i18n[lang]['dashboard.kpi.resolved'],words[0]);
+    assert(i18n[lang]['dashboard.chart.title'].startsWith(words[1]));
+    assert.doesNotMatch(i18n[lang]['dashboard.chart.total'],/resueltas|risolte|réglées/);
+  }
+  for (const key of Object.keys(i18n.ro).filter(key=>key.startsWith('dashboard.'))) {
+    const tokens = text => ({variables:(text.match(/\{\w+\}/g)||[]).sort(),tags:text.match(/<\/?[^>]+>/g)||[]});
+    for (const lang of ['en','es','it','fr','id']) assert.deepEqual(tokens(i18n[lang][key]),tokens(i18n.ro[key]),`${lang}.${key}`);
+  }
+});
+
+test('new dashboard and header links avoid member-hidden intro targets', () => {
+  const html=readFileSync(new URL('../index.html',import.meta.url),'utf8');
+  const start=html.indexOf('<header>'), end=html.indexOf('<div class="dashboard-detail-heading">');
+  assert(start >= 0 && end > start);
+  const newUI=html.slice(start,end);
+  const marketAnchor=Array.from(newUI.matchAll(/<a\b[^>]*>/g),m=>m[0]).find(tag=>/data-i18n="dashboard\.track\.market"/.test(tag));
+  assert(marketAnchor);
+  assert.match(marketAnchor,/href="track-record\.html"/);
+  const allowed=new Set(['dashboard','dashboard-analyses','abonament','matches','intrebari']);
+  const introStart=html.indexOf('<section class="intro">');
+  assert(introStart >= 0);
+  let depth=0,introEnd=-1;
+  for (const match of html.slice(introStart).matchAll(/<\/?section\b[^>]*>/g)) {
+    depth += match[0].startsWith('</') ? -1 : 1;
+    if (depth === 0) {introEnd=introStart+match.index+match[0].length;break;}
+  }
+  assert(introEnd > introStart);
+  for (const match of newUI.matchAll(/<a\b[^>]*\bhref="#([^"]+)"[^>]*>/g)) {
+    const id=match[1];
+    assert(allowed.has(id),`new fragment #${id} must stay in the member-visible set`);
+    const target=Array.from(html.matchAll(/<[a-z][^>]*\bid="([^"]+)"[^>]*>/g)).find(m=>m[1]===id);
+    assert(target,`target #${id} exists`);
+    assert(target.index < introStart || target.index >= introEnd,`#${id} is outside the intro hidden for members`);
+  }
+});
+
+test('service worker shell includes homepage assets once and leaves external or non-GET requests alone', () => {
+  const current=readFileSync(new URL('../sw.js',import.meta.url),'utf8');
+  const handlers=new Map();
+  const context=createContext({
+    URL,
+    self:{location:{origin:'https://preview.invalid'},addEventListener:(type,handler)=>handlers.set(type,handler)},
+    caches:{},
+    fetch:()=>{throw new Error('No network call permitted in this service-worker unit test');}
+  });
+  runInContext(current,context);
+  assert.match(runInContext('CACHE',context),/^poseidon-v\d+$/);
+  const shell=Array.from(runInContext('SHELL',context));
+  for (const asset of ['./assets/home-modern.css','./assets/home-dashboard.js']) {
+    assert.equal(shell.filter(value=>value===asset).length,1);
+    assert(readFileSync(new URL('../'+asset.slice(2),import.meta.url)).length>0);
+  }
+  assert.deepEqual([...handlers.keys()],['install','activate','fetch']);
+  for (const request of [{url:'https://external.invalid/api/data',method:'GET'},{url:'https://preview.invalid/member',method:'POST'}]) {
+    handlers.get('fetch')({request,respondWith:()=>assert.fail('must not intercept external or non-GET requests')});
+  }
+});
+
+
+test('explicit synthetic public fixture preserves finite probabilities when daily exports have no free rows', () => {
+  // UI unit fixture only; these values are never presented as real match predictions.
+  const fixture={matches:[{fixture_id:1,match_date:'2026-10-23T12:00:00Z',home_team:'Test home',away_team:'Test away',league:'Test league',free:true,prob_home:.6,prob_draw:.25,prob_away:.15}]};
+  const selected=dashboard.selectRows(fixture,'2026-10-23');
+  assert.equal(selected.rows.length,1);
+  assert.equal(selected.free,1);
+  assert.equal(selected.rows[0].locked,false);
+  assert.deepEqual(selected.rows[0].probabilities,[.6,.25,.15]);
+});
