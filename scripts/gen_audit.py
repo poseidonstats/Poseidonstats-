@@ -22,6 +22,9 @@ from datetime import datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
+import sys
+sys.path.insert(0, str(Path.home() / "football_predictor" / "scripts" / "poseidon"))   # 24 oct 2026: snapshot-ul publicat (build_public_json)
+
 SITE = Path(__file__).resolve().parent.parent
 JURNAL = Path.home() / "football_predictor" / "data" / "poseidon_history.csv"
 OUT_JSON = SITE / "data" / "audit.json"
@@ -220,28 +223,71 @@ def citeste_public(director: Path) -> tuple[list[dict], dict]:
     return rows, pl
 
 
+COL_SNAPSHOT = ["prob_over_1_5", "prob_over_2_5", "prob_over_3_5", "prob_btts", "prob_ht_over_0_5", "prob_ht_over_1_5", "prob_home", "prob_draw", "prob_away"]
+
+
+def randuri_snapshot() -> list[dict]:
+    """Rândurile care intră în bilanț, pe snapshot-ul PUBLICAT (24 oct 2026, auditul Codex): `cal_<col>` = probabilitatea publicată înaintea
+    meciului (ziua meciului sau prima înghețare) cu Platt-ul în vigoare atunci, 1X2 renormalizat și plafonat ca pe site; `pub_<col>` = brutul
+    aceluiași snapshot. Filtrul de integritate (înghețat înainte de kickoff, nereprogramat la > 10 zile) e deja aplicat."""
+    import build_public_json as BPJ
+    _df, df_ok, _raport = BPJ._jurnal_publicat()
+    if df_ok is None:
+        return []
+    cols = ["fixture_id", "match_date", "freeze_ts", "status", "mkt_p_o25", "pub_ts", "pub_sursa", "platt_versiune",
+            "outcome_over_1_5", "outcome_over_2_5", "outcome_over_3_5", "outcome_btts", "outcome_ht_over_0_5", "outcome_ht_over_1_5", "outcome_1x2"]
+    cols += [f"cal_{c}" for c in COL_SNAPSHOT] + [f"pub_{c}" for c in COL_SNAPSHOT]
+    d = df_ok[[c for c in cols if c in df_ok.columns]]
+    return [{k: ("" if v is None or (isinstance(v, float) and v != v) else v) for k, v in r.items()} for r in d.to_dict("records")]
+
+
+def randuri_snapshot_complet() -> list[dict]:
+    """Ca randuri_snapshot, dar cu TOATE coloanele jurnalului (pentru setul de date public)."""
+    import build_public_json as BPJ
+    _df, df_ok, _raport = BPJ._jurnal_publicat()
+    if df_ok is None:
+        return []
+    out = []
+    for r in df_ok.to_dict("records"):
+        out.append({k: ("" if v is None or (isinstance(v, float) and v != v) else v) for k, v in r.items()})
+    return out
+
+
 def _y(oc: str, val: str, cheie: str) -> int | None:
     if val in (None, ""):
         return None
+    sv = str(val).strip()
     if oc == "outcome_1x2":
-        return 1 if val in X12[cheie] else 0
-    return 1 if val in ("1", "1.0", "True", "true") else 0
+        sv = {"1.0": "1", "2.0": "2"}.get(sv, sv).upper()   # 24 oct 2026: trei rânduri vechi aveau „1.0” / „2.0”
+        return 1 if sv in X12[cheie] else 0
+    return 1 if sv in ("1", "1.0", "True", "true") else 0
 
 
-def audit(rows: list[dict], platt: dict | None = None, inchidere: dict[int, dict] | None = None) -> dict:
-    """platt = parametrii (a, b) per piață aplicați peste probabilitățile BRUTE din jurnal (așa publică site-ul); None = brut.
+def audit(rows: list[dict], platt: dict | None = None, inchidere: dict[int, dict] | None = None, precalibrat: bool | None = None) -> dict:
+    """platt = parametrii (a, b) per piață aplicați peste probabilitățile BRUTE din jurnal; None = brut.
+    precalibrat (24 oct 2026, auditul Codex): rândurile au DEJA probabilitatea publicată, calibrată cu Platt-ul în vigoare atunci (`cal_<col>`,
+    din randuri_snapshot sau din setul de date public) și brutul ei (`pub_<col>`): nu se mai aplică Platt-ul curent retroactiv. Implicit: dacă
+    rândurile au coloanele cal_*, se folosesc.
     inchidere = fixture_id → probabilități de închidere ale pieței (incarca_inchidere); None/{} → cade pe cota de la ora predicției (mkt_p_o25)."""
-    # 6 oct 2026 (audit rădăcină): 339 de rânduri din 2–3 iunie (primele zile ale jurnalului) au freeze_ts DUPĂ kickoff → ies din audit;
-    # integritatea „înghețat înainte de meci" e condiția, nu o promisiune. Data meciului poate fi mutată de API după înghețare (vezi `zile`).
-    R = [r for r in rows if r.get("status") == "RESOLVED" and _inghetat_inainte(r)]; platt = platt or {}; inchidere = inchidere or {}
+    # 6 oct 2026 (audit rădăcină): rândurile cu freeze_ts DUPĂ kickoff ies din audit; integritatea „înghețat înainte de meci" e condiția.
+    if precalibrat is None:
+        precalibrat = bool(rows) and "cal_prob_over_2_5" in rows[0]
+    R = [r for r in rows if r.get("status") == "RESOLVED" and (precalibrat or _inghetat_inainte(r))]; platt = platt or {}; inchidere = inchidere or {}
     piete = []; vs = {}; ore = []
     for cheie, pc, oc, nume in PIETE:
         mp = platt.get(PLATT_KEY[cheie]); pairs = []; brute = []; tri = []
         for r in R:
-            p = r.get(pc); y = _y(oc, r.get(oc), cheie)
-            if p in (None, "") or y is None:
-                continue
-            pm = aplica_platt(float(p), mp); pairs.append((pm, y)); brute.append((float(p), y))
+            y = _y(oc, r.get(oc), cheie)
+            if precalibrat:
+                p, pb = r.get(f"cal_{pc}"), r.get(f"pub_{pc}")
+                if p in (None, "") or y is None:
+                    continue
+                pm = float(p); pairs.append((pm, y)); brute.append((float(pb) if pb not in (None, "") else pm, y))
+            else:
+                p = r.get(pc)
+                if p in (None, "") or y is None:
+                    continue
+                pm = aplica_platt(float(p), mp); pairs.append((pm, y)); brute.append((float(p), y))
             try:
                 c = inchidere.get(int(r.get("fixture_id") or -1)) if inchidere else _inchidere_din_rand(r)
             except ValueError:
@@ -253,23 +299,25 @@ def audit(rows: list[dict], platt: dict | None = None, inchidere: dict[int, dict
         if len(pairs) < MIN_N:
             continue
         m = metrici(pairs); mb = metrici(brute); a_, b_ = panta_intercept(pairs)
-        piete.append({"cheie": cheie, "nume": nume, **m, "bss_brut": mb["bss"], "ece_brut": mb["ece"], "panta": a_, "intercept": b_, "calibrat": bool(mp), "intervale": intervale(pairs)})
+        piete.append({"cheie": cheie, "nume": nume, **m, "bss_brut": mb["bss"], "ece_brut": mb["ece"], "panta": a_, "intercept": b_, "calibrat": bool(mp) or precalibrat, "intervale": intervale(pairs)})
         if len(tri) >= MIN_N:
             mm = metrici([(p, y) for p, _, y, _ in tri]); mq = metrici([(q, y) for _, q, y, _ in tri])
             vs[cheie] = {"nume": nume, "n": len(tri), "sursa": "inchidere", "bss_model": mm["bss"], "bss_piata": mq["bss"], "brier_model": mm["brier"], "brier_piata": mq["brier"],
                          "ll_model": mm["log_loss"], "ll_piata": mq["log_loss"], "ece_model": mm["ece"], "ece_piata": mq["ece"], "informatie": test_informatie(tri),
                          "de_la": min(t[3] for t in tri)[:10], "pana_la": max(t[3] for t in tri)[:10]}
     ore_med = sorted(ore)[len(ore) // 2] if ore else None
-    mp25 = platt.get("over_2_5")
-    pm = [(aplica_platt(float(r["prob_over_2_5"]), mp25), float(r["mkt_p_o25"]), _y("outcome_over_2_5", r.get("outcome_over_2_5"), "over_2_5")) for r in R
-          if r.get("mkt_p_o25") not in (None, "") and r.get("prob_over_2_5") not in (None, "") and r.get("outcome_over_2_5") not in (None, "")]
+    mp25 = platt.get("over_2_5"); c25 = "cal_prob_over_2_5" if precalibrat else "prob_over_2_5"
+    pm = [((float(r[c25]) if precalibrat else aplica_platt(float(r[c25]), mp25)), float(r["mkt_p_o25"]), _y("outcome_over_2_5", r.get("outcome_over_2_5"), "over_2_5")) for r in R
+          if r.get("mkt_p_o25") not in (None, "") and r.get(c25) not in (None, "") and r.get("outcome_over_2_5") not in (None, "")]
     if not vs and len(pm) >= MIN_N:
         mm = metrici([(p, y) for p, _, y in pm]); mp = metrici([(q, y) for _, q, y in pm])
         vs["over_2_5"] = {"nume": "Peste 2,5 goluri", "n": len(pm), "sursa": "ora_predictiei", "bss_model": mm["bss"], "bss_piata": mp["bss"], "brier_model": mm["brier"], "brier_piata": mp["brier"],
                           "ll_model": mm["log_loss"], "ll_piata": mp["log_loss"], "ece_model": mm["ece"], "ece_piata": mp["ece"]}
     azi = datetime.now(RO).strftime("%Y-%m-%d")
     zile = sorted({(r.get("match_date") or "")[:10] for r in R if r.get("match_date") and (r.get("match_date") or "")[:10] <= azi})  # API mută uneori data meciului după rezolvare
-    return {"generat_la": datetime.now(RO).strftime("%Y-%m-%d %H:%M"), "n_rezolvate": len(R), "de_la": zile[0] if zile else None, "pana_la": zile[-1] if zile else None, "piete": piete, "vs_piata": vs, "ore_inchidere_mediana": ore_med, "calibrare": "platt" if platt else "brut"}
+    return {"generat_la": datetime.now(RO).strftime("%Y-%m-%d %H:%M"), "n_rezolvate": len(R), "de_la": zile[0] if zile else None, "pana_la": zile[-1] if zile else None, "piete": piete, "vs_piata": vs, "ore_inchidere_mediana": ore_med,
+            "calibrare": "platt_snapshot" if precalibrat else ("platt" if platt else "brut"),
+            "snapshot": {"dayof": sum(1 for r in R if r.get("pub_sursa") == "dayof"), "prima": sum(1 for r in R if r.get("pub_sursa") == "prima")} if precalibrat else None}
 
 
 def _f(x, d=1):
@@ -303,13 +351,13 @@ def _vars(o: dict) -> str:
 
 
 def html_audit(a: dict) -> str:
-    L = [f'<section id="audit-section" class="audit">',
+    L = ['<section id="audit-section" class="audit">',
          '  <h3 data-i18n="audit.h3">Audit statistic — jurnalul forward, cifrele complete</h3>',
          f'  <p data-i18n="audit.p" data-i18n-vars=\'{{"de_la":"{a.get("de_la")}","pana_la":"{a.get("pana_la")}","n":"{a["n_rezolvate"]:,}","pe_zi":"{_pe_zi(a)}"}}\'>Calculat automat în fiecare dimineață din predicțiile înghețate la 05:30 (jurnal din {a.get("de_la")} până la {a.get("pana_la")}, {a["n_rezolvate"]:,} predicții rezolvate, în medie {_pe_zi(a)} pe zi). '
          'Brier și log loss = cât de aproape sunt probabilitățile de realitate (mai mic = mai bine); BSS = câștigul față de „rata de bază" a evenimentului (0 = nimic peste a spune mereu media); '
          'ECE = eroarea medie de calibrare pe intervale de 10 pp; pantă și intercept = calibrarea Cox (regresie logistică a rezultatului pe logit-ul probabilității: pantă 1 și intercept 0 = perfect calibrat, '
-         'pantă sub 1 = prea încrezător la extreme, intercept peste 0 = subestimează evenimentul). Cifrele sunt pe probabilitățile <strong>publicate</strong> (după calibrarea Platt per piață, refăcută săptămânal pe jurnal — deci ușor in-sample; '
-         'cu parametrii fitați înainte de 16 august, testul pe meciurile de după dă la peste 2,5 BSS +4,5 față de +4,1 brut). Coloana „BSS brut" = modelul fără calibrare. '
+         'pantă sub 1 = prea încrezător la extreme, intercept peste 0 = subestimează evenimentul). Cifrele sunt pe probabilitățile <strong>publicate</strong> înaintea fiecărui meci: snapshot-ul din ziua meciului (altfel prima înghețare), cu calibrarea Platt în vigoare atunci — '
+         'nimic nu se recalibrează după rezultat; intră doar predicțiile înghețate înainte de kickoff și nereprogramate la peste 10 zile. Coloana „BSS brut" = același snapshot fără calibrare. '
          'Pe scurt: modelul este calibrat față de rata de bază, dar <strong>nu bate piața</strong> — vezi ultimul tabel.</p>',
          '  <div class="table-wrap"><table class="audit-table"><thead><tr><th data-i18n="audit.th.piata">Piață</th><th>N</th><th data-i18n="audit.th.rata">Rata reală</th><th>Brier</th><th>BSS</th><th data-i18n="audit.th.bssbrut">BSS brut</th><th>log loss</th><th>ECE</th><th data-i18n="audit.th.panta">pantă</th><th data-i18n="audit.th.intercept">intercept</th></tr></thead><tbody>']
     for p in a["piete"]:
@@ -376,8 +424,9 @@ def main() -> None:
     if a.public:
         rows, pl = citeste_public(Path(a.public)); au = audit(rows, pl, None)
         print(json.dumps(au, ensure_ascii=False, indent=1)); return
-    rows = list(csv.DictReader(open(JURNAL, newline="", encoding="utf-8")))
+    rows = randuri_snapshot()   # 24 oct 2026: snapshot-ul publicat, nu jurnalul brut + Platt-ul curent
     pl = platt_params(); inc = incarca_inchidere(); au = audit(rows, pl, inc); h = html_audit(au)
+    print(f"[gen_audit] snapshot publicat: {au.get('snapshot')}")
     print(f"[gen_audit] cote de închidere mapate: {len(inc)} meciuri (mapare {MAPARE.name}, master {MASTER.name})")
     print(f"[gen_audit] calibrare: {'Platt (' + str(len(pl)) + ' piețe)' if pl else 'BRUT — platt_calibration.json lipsește'}")
     print(f"[gen_audit] {au['n_rezolvate']} predicții rezolvate · {len(au['piete'])} piețe · vs piață: {list(au['vs_piata'].keys())}")

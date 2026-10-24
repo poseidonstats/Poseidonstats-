@@ -9,7 +9,6 @@ Optimizat YouTube Shorts (1 oct 2026; TikTok scos din plan — cont banat):
 Usage: python3 gen_yesterday_clip.py
 """
 from __future__ import annotations
-import csv
 import sys
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -26,7 +25,7 @@ from _v2_common import (
 from _leagues_public import is_public_league
 
 HIST_CSV = Path.home() / "football_predictor/data/poseidon_history.csv"
-MIN_PROB = 0.65
+MIN_PROB = 0.75   # 24 oct 2026: pragul PICK al site-ului pentru Over 1.5 (scorecard), nu 0,65
 MAX_PROB_DISPLAY = 0.88  # exclude super-favoriți umflați din AFIȘAJ
 EXCLUDE_TEAM_SUFFIX = (" II", " III", " B", " C", " Reserve", " Reserves",
                        " U23", " U21", " U20", " U19", " U18", " U17", " U16", " U15", " U14",
@@ -43,26 +42,42 @@ def load_yesterday():
     istorică e CALCULATĂ din jurnal la fiecare rulare (era hardcodată 78,
     realul era ~81) — pe tot jurnalul RESOLVED, aceleași filtre ca titlul.
     """
-    yest = (datetime.now() - timedelta(days=1)).date()
+    # 24 oct 2026 (auditul Codex): (1) outcome-urile din CSV sunt „0.0”/„1.0” → filtrul `in ("0", "1")` nu lăsa niciun rând și clipul nu se mai
+    # genera; (2) probabilitatea e acum cea PUBLICATĂ (snapshot-ul zilei + Platt-ul de atunci, prag 0,75 ca pe site), nu brutul primei înghețări;
+    # (3) „ieri” e ziua României. Sursa: aceleași rânduri ca auditul/istoricul (gen_audit.randuri_snapshot_complet).
+    from zoneinfo import ZoneInfo
+    sys.path.insert(0, str(Path.home() / "football_predictor" / "scripts" / "poseidon"))
+    import gen_audit as GA
+    from snapshot_publicat import normalizeaza_outcome
+    ro = ZoneInfo("Europe/Bucharest")
+    yest = (datetime.now(ro) - timedelta(days=1)).date()
     rows = []
     hist_n = hist_win = 0
-    with open(HIST_CSV) as f:
-        for r in csv.DictReader(f):
-            if r["status"] != "RESOLVED": continue
-            try: p = float(r["prob_over_1_5"])
-            except: continue
-            if p < MIN_PROB: continue
-            if r["outcome_over_1_5"] not in ("0", "1"): continue
-            if not is_public_league(r["country"], r["league"]): continue
-            hist_n += 1
-            hist_win += int(r["outcome_over_1_5"])
-            if not r["match_date"].startswith(yest.isoformat()): continue
-            rows.append({
-                "home": r["home_team"], "away": r["away_team"],
-                "country": r["country"], "league": r["league"],
-                "prob": p, "outcome": int(r["outcome_over_1_5"]),
-                "ft_h": r["ft_home"], "ft_a": r["ft_away"],
-            })
+    for r in GA.randuri_snapshot_complet():
+        p = r.get("cal_prob_over_1_5")
+        o = normalizeaza_outcome(r.get("outcome_over_1_5"))
+        if p in (None, "") or o is None:
+            continue
+        p = float(p)
+        if p < MIN_PROB:
+            continue
+        if not is_public_league(r["country"], r["league"]):
+            continue
+        hist_n += 1
+        hist_win += o
+        try:
+            zi = datetime.fromisoformat(str(r["match_date"]).replace("Z", "+00:00"))
+            zi = (zi if zi.tzinfo else zi.replace(tzinfo=ZoneInfo("UTC"))).astimezone(ro).date()
+        except ValueError:
+            continue
+        if zi != yest:
+            continue
+        rows.append({
+            "home": r["home_team"], "away": r["away_team"],
+            "country": r["country"], "league": r["league"],
+            "prob": p, "outcome": o,
+            "ft_h": r["ft_home"], "ft_a": r["ft_away"],
+        })
     calib = round(hist_win / hist_n * 100) if hist_n else 0
     return rows, yest, calib
 
@@ -187,7 +202,7 @@ def main():
     win_w = "una câștigată" if n_win == 1 else f"{n_win} câștigate"
     loss_w = "una pierdută" if n_loss == 1 else f"{n_loss} pierdute"
     voice = (
-        f"Ieri, {n_total} predicții publice pe minim un gol: {win_w}, "
+        f"Ieri, {n_total} predicții publice pe minim două goluri: {win_w}, "
         f"{loss_w}.{loss_part} Media pe termen lung e {int(calib)} la sută "
         "— mâine poate fi și mai puțin. Totul înghețat public, verificabil pe site."
     )

@@ -32,6 +32,9 @@ const PICK_FILTER = {                       // cheie scorecard -> valoarea filtr
   "dc_1x": "dc_1x", "dc_x2": "dc_x2", "dc_12": "dc_12",
 };
 
+// 24 oct 2026 (audit): ziua României a unui moment ISO UTC („…Z”); „azi” pe site = ziua României, nu ziua UTC
+const ziRO = iso => { try { return new Date(iso).toLocaleDateString("sv-SE", { timeZone: "Europe/Bucharest" }); } catch (e) { return String(iso || "").slice(0, 10); } };
+
 /* ============== i18n ============== */
 let I18N = null;
 let LANG = "ro";
@@ -608,6 +611,7 @@ function simUpdate() {
 }
 
 async function renderSimulator() {
+  const ziRO = iso => { try { return new Date(iso).toLocaleDateString("sv-SE", { timeZone: "Europe/Bucharest" }); } catch (e) { return String(iso || "").slice(0, 10); } };  // 24 oct 2026: ziua României (local, ca testele să poată rula funcția izolat)
   await i18nGata();
   const genEl = document.getElementById("sim-gen-result");
   const el = document.getElementById("sim-matches");
@@ -622,24 +626,24 @@ async function renderSimulator() {
     return;
   }
 
-  const azi = new Date().toISOString().slice(0, 10);
+  const azi = new Date().toLocaleDateString("sv-SE", { timeZone: "Europe/Bucharest" });   // 24 oct 2026: ziua României, nu UTC
   // 7 oct 2026: pentru MEMBRI setul complet n-are steagul `free` (0 lacăte) → simulatorul lua 0 meciuri și spunea „sub două
   // meciuri gratuite”. Membru = toate meciurile de azi (ora RO) cu probabilități; vizitator = cele 5 gratuite, ca înainte.
   const Mm = (typeof window !== "undefined") ? window.PoseidonMembers : null;
   const aziRO0 = new Date().toLocaleDateString("sv-SE", { timeZone: "Europe/Bucharest" });
   let free;
   if (Mm && Mm.MEMBERS_API && Mm.tier() && PRED_SURSA === "membru") {
-    free = data.matches.filter(m => !isLocked(m) && (m.match_date || "").slice(0, 10) === aziRO0 && m.prob_over_1_5 != null);
-    if (free.length < 2) free = data.matches.filter(m => !isLocked(m) && (m.match_date || "").slice(0, 10) >= azi && m.prob_over_1_5 != null).slice(0, 60);
+    free = data.matches.filter(m => !isLocked(m) && ziRO(m.match_date) === aziRO0 && m.prob_over_1_5 != null);
+    if (free.length < 2) free = data.matches.filter(m => !isLocked(m) && ziRO(m.match_date) >= azi && m.prob_over_1_5 != null).slice(0, 60);
     free.sort((a, b) => (b.prob_over_1_5 || 0) - (a.prob_over_1_5 || 0)); free = free.slice(0, 12);   // cele mai sigure 40, ca lista manuală să rămână parcurgibilă
   } else {
-    free = data.matches.filter(m => m.free && m.match_date.slice(0, 10) >= azi);
+    free = data.matches.filter(m => m.free && ziRO(m.match_date) >= azi);
     if (free.length < 2) free = data.matches.filter(m => m.free);   // pauze: iau tot ce e liber
   }
   SIM.free = free;
   // 2 oct 2026 — „toate cele {n} meciuri ale zilei” = doar ziua curentă (ora României), nu fereastra de 7 zile
   const aziRO = new Date().toLocaleDateString("sv-SE", { timeZone: "Europe/Bucharest" });
-  SIM.nTotal = data.matches.filter(m => (m.match_date || "").slice(0, 10) === aziRO).length || data.matches.length;
+  SIM.nTotal = data.matches.filter(m => ziRO(m.match_date) === aziRO).length || data.matches.length;
   SIM.sel.clear();
 
   if (free.length < 2) {
@@ -706,6 +710,7 @@ async function renderSimulator() {
 
 /* ============== INDEX (predicții) ============== */
 async function renderIndex() {
+  const ziRO = iso => { try { return new Date(iso).toLocaleDateString("sv-SE", { timeZone: "Europe/Bucharest" }); } catch (e) { return String(iso || "").slice(0, 10); } };  // 24 oct 2026: ziua României (local, ca testele să poată rula funcția izolat)
   // F3 — încarc și calibration.json pt eligibilitatea per piață (badge data-driven).
   // Fallback grațios: dacă lipsește, MARKET_CERT={} → marketState cade pe PROMOTED (ca înainte).
   const [data, calib] = await Promise.all([loadPredictions(), fetchJSON(CALIB_URL)]);
@@ -721,7 +726,7 @@ async function renderIndex() {
   const matches = data.matches;
 
   // Populate filters
-  const days = [...new Set(matches.map(m => m.match_date.slice(0, 10)))].sort();
+  const days = [...new Set(matches.map(m => ziRO(m.match_date)))].sort();   // 24 oct 2026: zile pe ora României
   const leagues = [...new Set(matches.map(m => m.league))].sort();
   const countries = [...new Set(matches.map(m => m.country))].sort();
   const selDay = document.getElementById("filter-day");
@@ -797,7 +802,7 @@ async function renderIndex() {
 
     // 2 oct 2026 — cifra onestă: blocatele de AZI separat de cele din toată fereastra (7 zile); „2117 azi” era fereastra întreagă.
     const aziRO = new Date().toLocaleDateString("sv-SE", { timeZone: "Europe/Bucharest" });
-    const blocateAzi = blocate.filter(m => (m.match_date || "").slice(0, 10) === aziRO).length;
+    const blocateAzi = blocate.filter(m => ziRO(m.match_date) === aziRO).length;
     document.getElementById("match-count").textContent = blocate.length
       ? tt("freemium.count", "{free} predicții complete, gratuite. Alte {today} meciuri calculate de model pentru azi și {locked} meciuri în total pe următoarele 7 zile; le deblochezi pe toate cu Basic, 5 $/lună, intrând cu contul Patreon.")
           .replace("{free}", deschise.length).replace("{today}", nUnits(blocateAzi)).replace("{locked}", nUnits(blocate.length))
@@ -1059,20 +1064,17 @@ function renderMatch(m, filterMarket = "") {
     <div class="phase-row ft">
       <div class="phase-label">${tt("match.phase.ft", "Final · 90 min")}</div>
       <div class="markets-grid">
-        <div class="market uncal-market ${pick1x2 === "1" ? "pick" : ""} ${isFilteredMarket("1", filterMarket) ? "market-filtered" : ""}">
+        <div class="market ${pick1x2 === "1" ? "pick" : ""} ${isFilteredMarket("1", filterMarket) ? "market-filtered" : ""}">
           <span class="label">1</span>
           <span class="val ${pctClass(m.prob_home)}">${fmtPct(m.prob_home)}</span>
-          ${warnMark("raw")}
         </div>
-        <div class="market uncal-market ${pick1x2 === "X" ? "pick" : ""} ${isFilteredMarket("X", filterMarket) ? "market-filtered" : ""}">
+        <div class="market ${pick1x2 === "X" ? "pick" : ""} ${isFilteredMarket("X", filterMarket) ? "market-filtered" : ""}">
           <span class="label">X</span>
           <span class="val ${pctClass(m.prob_draw)}">${fmtPct(m.prob_draw)}</span>
-          ${warnMark("raw")}
         </div>
-        <div class="market uncal-market ${pick1x2 === "2" ? "pick" : ""} ${isFilteredMarket("2", filterMarket) ? "market-filtered" : ""}">
+        <div class="market ${pick1x2 === "2" ? "pick" : ""} ${isFilteredMarket("2", filterMarket) ? "market-filtered" : ""}">
           <span class="label">2</span>
           <span class="val ${pctClass(m.prob_away)}">${fmtPct(m.prob_away)}</span>
-          ${warnMark("raw")}
         </div>
         <div class="market ${isFilteredMarket("O1.5", filterMarket) ? "market-filtered" : ""}">
           <span class="label">O1.5</span>
@@ -1259,7 +1261,7 @@ async function renderIstoric() {
   // Cumulat per piață
   const cumHtml = (data.cumulated_markets || []).length
     ? `<table class="cumulat-table">
-        <thead><tr><th>Piață</th><th>N</th><th>WIN</th><th>LOSS</th><th>Hit %</th><th>Wlo 95%</th><th>Tier</th></tr></thead>
+        <thead><tr><th>Piață</th><th>N</th><th>WIN</th><th>LOSS</th><th>Hit %</th><th>Wlo 95%</th><th>Bază</th><th>Lift</th><th>Tier</th></tr></thead>
         <tbody>${data.cumulated_markets.map(m => {
           const tierClass = m.tier === "STRONG ROBUST" ? "tier-elite"
             : m.tier === "ROBUST" ? "tier-strong"
@@ -1274,6 +1276,8 @@ async function renderIstoric() {
             <td class="num-loss">${m.losses}</td>
             <td>${m.hit_pct.toFixed(1)}%</td>
             <td>${m.wlo_pct.toFixed(1)}%</td>
+            <td>${m.base_rate_pct != null ? m.base_rate_pct.toFixed(1) + "%" : "—"}</td>
+            <td>${m.lift_pp != null ? (m.lift_pp >= 0 ? "+" : "") + m.lift_pp.toFixed(1) + " pp" : "—"}</td>
             <td><span class="tier-badge ${tierClass}">${m.tier}</span></td>
           </tr>`;
         }).join("")}</tbody>

@@ -25,6 +25,7 @@ import subprocess
 import sys
 import urllib.request
 from datetime import datetime, timezone, timedelta
+from zoneinfo import ZoneInfo
 from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFont
@@ -181,7 +182,7 @@ def make_match_card(d: ImageDraw.ImageDraw, y_top: int, idx: int, pick: dict):
     d.text((90, box_top + 20), f"#{idx}", font=f_idx, fill=GOLD)
 
     # Ora
-    ts_local = pick["ts"].astimezone(timezone(timedelta(hours=3)))  # EEST
+    ts_local = pick["ts"].astimezone(ZoneInfo("Europe/Bucharest"))  # 24 oct 2026: nu +3 h fix (ora de iarnă e pe 25 oct 2026)
     ora = ts_local.strftime("%H:%M")
     f_ora = ImageFont.truetype(FONT_BOLD, 48)
     bbox = d.textbbox((0, 0), ora, font=f_ora)

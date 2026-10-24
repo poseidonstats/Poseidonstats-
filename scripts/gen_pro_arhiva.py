@@ -26,7 +26,7 @@ from pathlib import Path
 from zoneinfo import ZoneInfo
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from gen_pro_sample import LUNI, _data_ro, _inline, parseaza  # noqa: E402  (aceeași parsare ca exemplul de pe prima pagină)
+from gen_pro_sample import _data_ro, _inline, parseaza  # noqa: E402  (aceeași parsare ca exemplul de pe prima pagină)
 
 SITE = Path(__file__).resolve().parent.parent
 OUT = SITE / "analize"
@@ -68,23 +68,8 @@ def _norm(s: str) -> str:
     return re.sub(r"[^a-z0-9 ]", " ", s.lower()).strip()
 
 
-def evalueaza_pick(piata: str, gh: int, ga: int, home: str, away: str, hth: int | None = None, hta: int | None = None):
-    """True/False dacă pick-ul a ieșit; None dacă nu-l pot judeca din scor. Acoperă formulările reale din arhivă."""
-    p = piata.strip(); low = _norm(p); t = gh + ga
-    ht = (hth is not None and hta is not None)
-    pauza = bool(re.search(r"\b(ht|pauz|prima repriz|1st half|repriza 1)\b", low))
-    if pauza and not ht:
-        return None
-    g_h, g_a, tot = (hth, hta, hth + hta) if pauza else (gh, ga, t)
-    m = re.search(r"\b(?:o|over|peste|\+)\s*(\d)[.,\s]5\b", low) or re.search(r"\b(\d)[.,\s]5\s*\+", low)
-    if m and not re.search(r"\b(sub|under|u\d)", low):
-        return tot > int(m.group(1))
-    m = re.search(r"\b(?:u|under|sub)\s*(\d)[.,\s]5\b", low)
-    if m:
-        return tot <= int(m.group(1))
-    if re.search(r"\b(gg|btts|ambele|both teams)\b", low):
-        nu = bool(re.search(r"\b(nu|no)\b", low)) and not re.search(r"\bgg\s*(da|yes)\b", low)
-        return (g_h > 0 and g_a > 0) != nu
+def _componenta_rezultat(p: str, low: str, g_h: int, g_a: int, home: str, away: str):
+    """Componenta 1X2 / dublă șansă / scor exact a unui pick: True/False dacă e recunoscută, None dacă nu există."""
     semn = re.search(r"\((1|2|x)\)", p.lower())
     if semn and not re.search(r"\b(scor|exact)\b", low):
         return {"1": g_h > g_a, "2": g_a > g_h, "x": g_h == g_a}[semn.group(1)]
@@ -108,6 +93,38 @@ def evalueaza_pick(piata: str, gh: int, ga: int, home: str, away: str, hth: int 
     if m:
         return (g_h, g_a) == (int(m.group(1)), int(m.group(2)))
     return None
+
+
+def evalueaza_pick(piata: str, gh: int, ga: int, home: str, away: str, hth: int | None = None, hta: int | None = None):
+    """True/False dacă pick-ul a ieșit; None dacă nu-l pot judeca din scor. Acoperă formulările reale din arhivă.
+    24 oct 2026 (auditul Codex): un pick compus („X2 + O2.5”, „Entebbe câștigă și Sub 2.5”) iese DOAR dacă ies toate componentele
+    recunoscute (goluri peste/sub, GG, 1X2 / dublă șansă / scor exact); înainte se întorcea prima condiție pe goluri și Diegem – Termien 5-2
+    era „✅” pe „X2 + O2.5”. Liniile pe golurile unei singure echipe („primește sub 1,5”, „marchează 2+”) nu se judecă din total → neevaluabil."""
+    p = piata.strip(); low = _norm(p); t = gh + ga
+    ht = (hth is not None and hta is not None)
+    # 24 oct 2026: „pauz\b” nu prindea niciodată „pauză” (normalizat „pauza”) → pick-urile de pauză erau judecate pe scorul final
+    pauza = bool(re.search(r"\b(ht|pauz\w*|prima repriz\w*|first half|1st half|repriza 1)\b", low))
+    if pauza and not ht:
+        return None
+    if re.search(r"\b(primeste|primesc|incaseaza|concede|conceded)\b|\bmarcheaza\s+(\d|peste|cel putin|minim)|\bscores?\s+\d", low):
+        return None
+    g_h, g_a, tot = (hth, hta, hth + hta) if pauza else (gh, ga, t)
+    comp: list[bool] = []
+    for m in re.finditer(r"\b(?:o|over|peste|\+)\s*(\d)[.,\s]5\b", low):
+        comp.append(tot > int(m.group(1)))
+    for m in re.finditer(r"\b(\d)[.,\s]5\s*\+", low):
+        comp.append(tot > int(m.group(1)))
+    for m in re.finditer(r"\b(?:u|under|sub)\s*(\d)[.,\s]5\b", low):
+        comp.append(tot <= int(m.group(1)))
+    if re.search(r"\b(gg|btts|ambele|both teams)\b", low):
+        nu = bool(re.search(r"\b(nu|no)\b", low)) and not re.search(r"\bgg\s*(da|yes)\b", low)
+        comp.append((g_h > 0 and g_a > 0) != nu)
+    rez = _componenta_rezultat(p, low, g_h, g_a, home, away)
+    if rez is not None:
+        comp.append(rez)
+    if not comp:
+        return None
+    return all(comp)
 
 
 def wilson_lo(k: int, n: int, z: float = 1.96) -> float:

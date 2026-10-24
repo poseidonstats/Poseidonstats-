@@ -225,7 +225,7 @@ def html_ro(S: dict) -> str:
   <section>
     <h2>Ce faci cu statisticile astea</h2>
     <p>Trei lucruri, în ordinea importanței. Întâi, nicio cotă nu „se adeverește mai des decât spune casa” pe termen lung: tabelul 1 e dovada, pe {ns} de meciuri. Doi, calibrarea casei e foarte bună pe goluri și pe favoriți, deci cotele sunt o estimare onestă a șanselor, minus marja. Trei, dacă vrei probabilități fără marjă, pe toate meciurile zilei, calculate înainte de meci și verificate public după, pentru asta există <a href="index.html">POSEIDON</a>: 5 predicții complete gratuit pe zi, iar <a href="track-record.html">track record-ul</a> și <a href="track-record.html#dataset-section">datasetul</a> sunt publice.</p>
-    <p class="muted">Sursa: cotele de închidere ale unei case de pariuri licențiate în România, colectate zilnic din {S['de_la']}, cu rezultatele finale. Marja e scoasă prin metoda „putere” (favoritul e mai supraevaluat decât outsiderul). Actualizat {S['generat_la']}. Pagina nu conține și nu va conține linkuri către case de pariuri.</p>
+    <p class="muted">Sursa: cotele de închidere ale unei case de pariuri licențiate în România, colectate zilnic din {S['de_la']}, cu rezultatele finale. Marja e scoasă cu metoda „putere” la 1X2 (favoritul e mai supraevaluat decât outsiderul) și cu metoda Shin la piețele cu două fețe (peste/sub, ambele marchează). Actualizat {S['generat_la']}. Pagina nu conține și nu va conține linkuri către case de pariuri.</p>
   </section>
 
   <p class="pro-disclaimer">statistici informative · nu sfat de pariere · nu garanție · 18+</p>

@@ -105,3 +105,12 @@ def test_html_card_variante_pe_limba_cand_exista_traducere():
     h2 = G.html_card({**it, "analysis_en": en, "analysis_es": ""}, "2026-09-27", "2026-09-27T07:30:00", None, "", None)
     assert "data-lang-grup" in h2 and 'data-lang="en" hidden' in h2 and 'data-lang="es"' not in h2
     assert "EN-VERSION" in h2 and h2.count('class="pro-visible"') == 2 and 'data-i18n="arhiva.sect.verdict"' in h2
+
+
+def test_parserul_gaseste_picks_urile_si_in_traduceri():
+    """24 oct 2026 (audit): titlul „🎯 **Picks**” e tradus („Pronostici”, „Pilihan”) și parserul literal pierdea picks-urile."""
+    import gen_pro_sample as G
+    ro = "⚡ **Verdict:** x\n📊 **Context:** y\n🧮 **Model:** z\n🎯 **Picks**\n🔒 **Bază:** **Peste 1.5 — 88%.** a\n🎯 **Principal:** **Peste 2.5 — 70%.** b\n👁️ **De urmărit:** w\n*informativ*"
+    it = "⚡ **Verdetto:** x\n📊 **Contesto:** y\n🧮 **Modello:** z\n🎯 **Pronostici**\n🔒 **Base:** **Over 1.5 — 88%.** a\n🎯 **Principale:** **Over 2.5 — 70%.** b\n👁️ **Da seguire:** w\n*informativo*"
+    assert len(G.parseaza(ro)["picks"]) == 2 and len(G.parseaza(it)["picks"]) == 2
+    assert G.parseaza(it)["model"].startswith("z") and "Pronostici" not in G.parseaza(it)["model"]

@@ -130,6 +130,10 @@ $PY scripts/poseidon/build_public_json.py >> "$LOG" 2>&1
 # crapă, set -e + trap ERR opresc publish-ul — NU publicăm fullul din greșeală.
 $PY ~/poseidon-site/scripts/make_public_predictions.py >> "$LOG" 2>&1
 
+# 🆕 29 sept 2026 — AUDIT public (Brier / log loss / ECE / intervale / vs piață) pe track-record.html, din jurnalul înghețat; best-effort.
+# 24 oct 2026 (audit): rulează ÎNAINTEA rezumatului static, ca cifrele de pe prima pagină să fie cele din auditul de azi (erau cu o zi în urmă).
+$PY ~/poseidon-site/scripts/gen_audit.py >> "$LOG" 2>&1 || echo "[$(ts)] [WARN] gen_audit failed (auditul de ieri rămâne)" >> "$LOG"
+
 # 1b. 🆕 3 aug 2026 — conținut static zilnic (SEO): secțiunea „repere azi" în
 # index.html + lastmod la zi în sitemap.xml. Best-effort: un eșec aici nu
 # blochează publicarea datelor (secțiunea veche rămâne, datele merg).
@@ -154,8 +158,7 @@ if [ "$(TZ=Europe/Bucharest date +%u)" = "1" ]; then
     $PY ~/odds_decoder/scripts/build_sb_matched_ext.py >> "$LOG" 2>&1 || echo "[$(ts)] [WARN] build_sb_matched_ext failed (maparea veche rămâne)" >> "$LOG"
 fi
 
-# 🆕 29 sept 2026 — AUDIT public (Brier / log loss / ECE / intervale / vs piață) pe track-record.html, din jurnalul înghețat; best-effort.
-$PY ~/poseidon-site/scripts/gen_audit.py >> "$LOG" 2>&1 || echo "[$(ts)] [WARN] gen_audit failed (auditul de ieri rămâne)" >> "$LOG"
+# (auditul rulează mai sus, înaintea rezumatului static — 24 oct 2026)
 
 # 🆕 1 oct 2026 — „Statistici pariuri fotbal” (RO + EN) din cotele de închidere; best-effort.
 $PY ~/poseidon-site/scripts/gen_statistici_pariuri.py >> "$LOG" 2>&1 || echo "[$(ts)] [WARN] gen_statistici_pariuri failed (pagina de ieri rămâne)" >> "$LOG"
@@ -163,10 +166,7 @@ $PY ~/poseidon-site/scripts/gen_statistici_pariuri.py >> "$LOG" 2>&1 || echo "[$
 # 🆕 29 sept 2026 — DATASET public (data/dataset/jurnal_YYYY-MM.csv + index.json + platt_calibration.json + blocul „Date deschise" de pe track-record); best-effort.
 $PY ~/poseidon-site/scripts/gen_dataset.py >> "$LOG" 2>&1 || echo "[$(ts)] [WARN] gen_dataset failed (datasetul de ieri rămâne)" >> "$LOG"
 
-# 🆕 28 sept 2026 — zona de membri: datele plătite (toate meciurile + analizele Pro de ieri) în KV-ul worker-ului.
-# Best-effort: fără wrangler/token iese 0 cu mesaj; nu blochează publicarea site-ului.
-~/poseidon-members/scripts/upload_members_data.sh "$(TZ=Europe/Bucharest date -v-1d +%Y-%m-%d)" >> "$LOG" 2>&1 || true
-~/poseidon-members/scripts/upload_members_data.sh >> "$LOG" 2>&1 || true
+# (24 oct 2026, audit: upload-ul KV pentru membri s-a mutat DUPĂ gate-urile de sanitate — un gate picat nu mai lasă în KV date deja urcate.)
 
 # 2. Git add/commit/push
 cd ~/poseidon-site
@@ -206,6 +206,11 @@ NU s-a făcut push. index.html local e stricat de un generator; site-ul rămâne
     exit 1
 fi
 echo "[$(ts)] [GATE HTML] $HTML_OUT" >> "$LOG"
+
+# 🆕 28 sept 2026 — zona de membri: datele plătite (toate meciurile + analizele Pro de ieri) în KV-ul worker-ului.
+# 24 oct 2026 (audit): rulează abia după ce gate-urile au trecut. Best-effort: fără wrangler/token iese 0 cu mesaj; nu blochează publicarea.
+~/poseidon-members/scripts/upload_members_data.sh "$(TZ=Europe/Bucharest date -v-1d +%Y-%m-%d)" >> "$LOG" 2>&1 || true
+~/poseidon-members/scripts/upload_members_data.sh >> "$LOG" 2>&1 || true
 
 # (13 iun — R2: verificarea RC2 era COD MORT sub set -e; push eșuat → trap ERR.)
 # 15 oct 2026: și assets/i18n.json — gen_static_daily scrie acolo proof.metrici în 6 limbi; fără add, cifrele de pe site rămâneau cu o zi în urmă

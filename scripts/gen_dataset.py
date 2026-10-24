@@ -35,7 +35,10 @@ JURNAL_COLOANE = ["freeze_ts", "fixture_id", "match_date", "country", "league", 
                   "outcome_over_1_5", "outcome_over_2_5", "outcome_over_3_5", "outcome_btts", "outcome_ht_over_0_5", "outcome_ht_over_1_5", "outcome_1x2", "status", "resolved_ts",
                   "dayof_ts", "dayof_xg_home", "dayof_xg_away", "dayof_prob_home", "dayof_prob_draw", "dayof_prob_away", "dayof_prob_over_1_5", "dayof_prob_over_2_5",
                   "dayof_prob_over_3_5", "dayof_prob_btts", "dayof_prob_ht_over_0_5", "dayof_prob_ht_over_1_5", "dayof_mkt_p_o25", "dayof_sb_p_o25"]
-COLOANE = [RENUME.get(c, c) for c in JURNAL_COLOANE] + [f"close_p_{k}" for k in INCHIDERE] + ["close_hours_before_ko"]
+# 24 oct 2026 (auditul Codex): + snapshot-ul PUBLICAT — ce s-a afișat înaintea meciului și cu ce calibrare; auditul public se reface din ele
+PUB_COL = ["prob_home", "prob_draw", "prob_away", "prob_over_1_5", "prob_over_2_5", "prob_over_3_5", "prob_btts", "prob_ht_over_0_5", "prob_ht_over_1_5"]
+SNAPSHOT_COLOANE = ["pub_ts", "pub_sursa", "platt_versiune"] + [f"pub_{c}" for c in PUB_COL] + [f"cal_{c}" for c in PUB_COL]
+COLOANE = [RENUME.get(c, c) for c in JURNAL_COLOANE] + SNAPSHOT_COLOANE + [f"close_p_{k}" for k in INCHIDERE] + ["close_hours_before_ko"]
 DESCRIERI = {
     "freeze_ts": "momentul (UTC) la care predicția a fost înghețată și jurnalizată — înainte de meci", "fixture_id": "identificatorul meciului la furnizorul de date sportive",
     "match_date": "data și ora meciului (UTC), așa cum le avea furnizorul la rezolvare", "country": "țara competiției", "league": "competiția", "home_team": "gazde", "away_team": "oaspeți",
@@ -58,6 +61,13 @@ DESCRIERI = {
     "close_p_over_1_5": "închidere: peste 1,5", "close_p_over_2_5": "închidere: peste 2,5", "close_p_over_3_5": "închidere: peste 3,5", "close_p_btts": "închidere: ambele marchează",
     "close_p_ht_over_0_5": "închidere: gol în prima repriză", "close_p_ht_over_1_5": "închidere: peste 1,5 în prima repriză",
     "close_hours_before_ko": "câte ore înainte de start a fost luat prețul de închidere (ultimul disponibil)",
+    "pub_ts": "momentul (UTC) al snapshot-ului PUBLICAT: rularea din ziua meciului dacă a fost înainte de kickoff, altfel prima înghețare",
+    "pub_sursa": "dayof = snapshot-ul din ziua meciului; prima = prima înghețare", "platt_versiune": "data versiunii parametrilor Platt în vigoare la pub_ts (cu care s-a publicat)",
+    "pub_prob_home": "probabilitatea BRUTĂ a snapshot-ului publicat: gazde", "pub_prob_draw": "idem: egal", "pub_prob_away": "idem: oaspeți", "pub_prob_over_1_5": "idem: peste 1,5",
+    "pub_prob_over_2_5": "idem: peste 2,5", "pub_prob_over_3_5": "idem: peste 3,5", "pub_prob_btts": "idem: ambele marchează", "pub_prob_ht_over_0_5": "idem: gol în prima repriză", "pub_prob_ht_over_1_5": "idem: peste 1,5 în prima repriză",
+    "cal_prob_home": "probabilitatea PUBLICATĂ (calibrată cu platt_versiune, 1X2 renormalizat, gazde plafonate la 80 %): gazde", "cal_prob_draw": "idem: egal", "cal_prob_away": "idem: oaspeți",
+    "cal_prob_over_1_5": "publicată: peste 1,5", "cal_prob_over_2_5": "publicată: peste 2,5", "cal_prob_over_3_5": "publicată: peste 3,5", "cal_prob_btts": "publicată: ambele marchează",
+    "cal_prob_ht_over_0_5": "publicată: gol în prima repriză", "cal_prob_ht_over_1_5": "publicată: peste 1,5 în prima repriză",
 }
 
 
@@ -78,9 +88,14 @@ def randuri_publice(rows: list[dict], inchidere: dict[int, dict]) -> list[dict]:
     """Doar RESOLVED; coloanele jurnalului redenumite neutru; + cota de închidere unde există mapare. Fiecare rând are exact COLOANE."""
     out = []
     for r in rows:
-        if r.get("status") != "RESOLVED" or not _inghetat_inainte(r):   # 6 oct 2026: fără rândurile înghețate după kickoff (339, iunie)
+        # 24 oct 2026: rândurile vin deja filtrate (snapshot_publicat.filtru_integritate: înghețat înainte de kickoff, nereprogramat > 10 zile);
+        # pentru un jurnal brut (fără pub_ts) rămâne vechiul filtru pe freeze_ts
+        if r.get("status") != "RESOLVED" or ("pub_ts" not in r and not _inghetat_inainte(r)):
             continue
         d = {RENUME.get(c, c): (r.get(c) if r.get(c) is not None else "") for c in JURNAL_COLOANE}
+        for c in SNAPSHOT_COLOANE:
+            v = r.get(c)
+            d[c] = "" if v is None or v == "" else (_num(v) if c.startswith(("pub_prob", "cal_prob")) else v)
         try:
             c = inchidere.get(int(r.get("fixture_id") or -1)) or {}
         except ValueError:
@@ -112,7 +127,9 @@ def scrie(R: list[dict], out_dir: Path, azi: str | None = None) -> dict:
             w = csv.DictWriter(f, fieldnames=COLOANE); w.writeheader(); w.writerows(sorted(luni[luna], key=lambda r: (r.get("match_date") or "", r.get("fixture_id") or "")))
         fis.append({"fisier": nume, "luna": luna, "n": len(luni[luna])})
     idx = {"generat_la": datetime.now(RO).strftime("%Y-%m-%d %H:%M"), "n_total": len(R), "fisiere": fis, "coloane": COLOANE,
-           "nota": "Doar predicții rezolvate, înghețate înainte de meci. prob_* sunt brute; site-ul afișează Platt(prob_*) cu parametrii din platt_calibration.json. Utilizare liberă cu menționarea sursei: poseidonstats.com"}
+           "nota": "Doar predicții rezolvate, înghețate înainte de meci și nereprogramate la peste 10 zile. prob_* sunt brutul primei înghețări; cal_prob_* sunt probabilitățile PUBLICATE "
+                   "înaintea meciului (snapshot-ul din ziua meciului sau prima înghețare, vezi pub_sursa), calibrate cu versiunea Platt din platt_versiune; auditul de pe site se reface din cal_prob_*. "
+                   "Utilizare liberă cu menționarea sursei: poseidonstats.com"}
     (out_dir / "index.json").write_text(json.dumps(idx, ensure_ascii=False, indent=1), encoding="utf-8")
     return idx
 
@@ -127,14 +144,14 @@ def html_dataset(j: dict) -> str:
          '(Python 3, fără alte biblioteci): descarci fișierele într-un folder și rulezi <code>python3 gen_audit.py --public folderul_tau</code>.</p>',
          '  <ul class="dataset-files">']
     for f in j["fisiere"]:
-        L.append(f'    <li><a href="data/dataset/{f["fisier"]}" download>{f["fisier"]}</a> — ' + (f'<span data-i18n="ds.npred1">1 predicție</span>' if f["n"] == 1 else f'<span data-i18n="ds.npred" data-i18n-vars=\'{_v({"n": _mii(f["n"])})}\'>{_mii(f["n"])} predicții</span>') + '</li>')
-    L.append(f'    <li data-i18n="ds.index"><a href="data/dataset/index.json">index.json</a> — lista fișierelor și schema · <a href="data/dataset/platt_calibration.json">platt_calibration.json</a> — parametrii de calibrare cu care site-ul afișează probabilitățile</li>')
+        L.append(f'    <li><a href="data/dataset/{f["fisier"]}" download>{f["fisier"]}</a> — ' + ('<span data-i18n="ds.npred1">1 predicție</span>' if f["n"] == 1 else f'<span data-i18n="ds.npred" data-i18n-vars=\'{_v({"n": _mii(f["n"])})}\'>{_mii(f["n"])} predicții</span>') + '</li>')
+    L.append('    <li data-i18n="ds.index"><a href="data/dataset/index.json">index.json</a> — lista fișierelor și schema · <a href="data/dataset/platt_calibration.json">platt_calibration.json</a> — parametrii de calibrare cu care site-ul afișează probabilitățile</li>')
     L.append('  </ul>')
     L.append('  <details><summary data-i18n="ds.schema">Schema coloanelor</summary><div class="table-wrap"><table class="audit-table"><thead><tr><th data-i18n="ds.th.col">coloană</th><th data-i18n="ds.th.ce">ce conține</th></tr></thead><tbody>')
     for c in j["coloane"]:
         L.append(f'    <tr><td><code>{c}</code></td><td data-i18n="ds.col.{c}">{DESCRIERI.get(c, "")}</td></tr>')
     L.append('  </tbody></table></div></details>')
-    L.append('  <p class="muted" data-i18n="ds.note">Probabilitățile <code>prob_*</code> sunt cele brute, înghețate; pe site le vezi după calibrarea Platt per piață (pantă sub 1), cu parametrii publicați mai sus și refăcuți săptămânal. '
+    L.append('  <p class="muted" data-i18n="ds.note">Probabilitățile <code>prob_*</code> sunt brutul primei înghețări; <code>cal_prob_*</code> sunt cele publicate înaintea meciului (snapshot-ul din ziua meciului sau prima înghețare), cu calibrarea Platt în vigoare atunci (<code>platt_versiune</code>); auditul se reface din ele. '
              'Utilizare liberă, cu menționarea sursei: poseidonstats.com. Informativ, nu sfat de pariere, 18+.</p>')
     L.append('</section>')
     return "\n".join(L)
@@ -153,7 +170,7 @@ def injecteaza(html: str, bloc: str) -> str:
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter); ap.add_argument("--dry-run", action="store_true"); a = ap.parse_args()
-    rows = list(csv.DictReader(open(GA.JURNAL, newline="", encoding="utf-8"))); inc = GA.incarca_inchidere(); R = randuri_publice(rows, inc)
+    rows = GA.randuri_snapshot_complet(); inc = GA.incarca_inchidere(); R = randuri_publice(rows, inc)   # 24 oct 2026: aceleași rânduri ca auditul
     cu_close = sum(1 for r in R if r["close_p_over_2_5"] != "")
     print(f"[gen_dataset] {len(R)} predicții rezolvate · {cu_close} cu cotă de închidere · {len({r['match_date'][:7] for r in R})} luni")
     if a.dry_run:

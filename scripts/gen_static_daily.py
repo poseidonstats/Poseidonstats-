@@ -29,6 +29,18 @@ from pathlib import Path
 # opusul a ce vrea să demonstreze blocul.
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from _leagues_public import is_public_league
+from zoneinfo import ZoneInfo
+
+
+def zi_ro(iso: str) -> str:
+    """Ziua României (AAAA-LL-ZZ) a unui moment ISO UTC („2026-10-24T21:30:00Z” → „2026-10-25”); fără dată validă → primele 10 caractere."""
+    try:
+        t = datetime.fromisoformat(str(iso).replace("Z", "+00:00"))
+        if t.tzinfo is None:
+            t = t.replace(tzinfo=timezone.utc)
+        return t.astimezone(ZoneInfo("Europe/Bucharest")).date().isoformat()
+    except ValueError:
+        return str(iso)[:10]
 
 SITE = Path.home() / "poseidon-site"
 PRED = SITE / "data" / "predictions.json"
@@ -94,7 +106,8 @@ def todays_picks(limit: int = 3) -> tuple[list[str], int, int]:
     n_today = 0
     n_respinse = 0
     for m in matches:
-        if not str(m.get("match_date", "")).startswith(today):
+        # 24 oct 2026 (audit): match_date e UTC („…Z”); „azi” e ziua României — altfel prima pagină număra ziua UTC (1.353 contra 1.290 pe 24 oct)
+        if zi_ro(m.get("match_date", "")) != today:
             continue
         n_today += 1
         if not m.get("calibrated"):

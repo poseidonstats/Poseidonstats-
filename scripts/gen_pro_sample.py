@@ -46,12 +46,24 @@ def _sectiune(text: str, marker: str, urmatoarele: tuple[str, ...]) -> str:
     return s.strip()
 
 
+def _titlu_picks(text: str) -> str:
+    """Rândul-titlu al secțiunii de picks: „🎯 **Picks**” în română, dar traducerile îl scriu „Pronostici”, „Pilihan”, „Pronósticos”, „Pronostics”
+    (24 oct 2026, audit: parserul literal „🎯 **Picks” pierdea picks-urile din variantele traduse). Titlul = primul rând „🎯 **…**” fără „:” (pick-ul
+    Principal e „🎯 **Principal:**”)."""
+    for linie in text.splitlines():
+        t = linie.strip()
+        if re.match(r"^🎯 \*\*[^:*]+\*\*\s*$", t):
+            return t[:t.index("**", 5) + 2] if "**" in t[5:] else t
+    return "🎯 **Picks"
+
+
 def parseaza(text: str) -> dict:
-    p = {"verdict": _sectiune(text, "⚡", ("📊", "🧮", "🎯 **Picks", "👁️")),
-         "context": _sectiune(text, "📊", ("🧮", "🎯 **Picks", "👁️")),
-         "model": _sectiune(text, "🧮", ("🎯 **Picks", "👁️")),
+    tp = _titlu_picks(text)
+    p = {"verdict": _sectiune(text, "⚡", ("📊", "🧮", tp, "👁️")),
+         "context": _sectiune(text, "📊", ("🧮", tp, "👁️")),
+         "model": _sectiune(text, "🧮", (tp, "👁️")),
          "urmarit": _sectiune(text, "👁️", ("*informativ",))}
-    i = text.find("🎯 **Picks"); j = text.find("👁️", i) if i >= 0 else -1
+    i = text.find(tp); j = text.find("👁️", i) if i >= 0 else -1
     bloc = text[i:j if j >= 0 else len(text)] if i >= 0 else ""
     p["picks"] = [l.strip() for l in bloc.splitlines()[1:] if l.strip() and l.strip()[0] in "🔒🎯💎"]
     return p
