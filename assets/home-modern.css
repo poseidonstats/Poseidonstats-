@@ -466,11 +466,12 @@ body.home-modern.tier-pro #exemplu-pro, body.home-modern.tier-basic #exemplu-pro
   .home-modern .dashboard-chart-heading > span { display: none; }
   .home-modern .dashboard-table-scroll { width: 100%; min-width: 0; max-width: 100%; }
   .home-modern .dashboard-table { width: 100%; min-width: 0; max-width: 100%; table-layout: fixed; }
-  .home-modern .dashboard-table .dashboard-col-time { width: 42px; }
+  .home-modern .dashboard-table .dashboard-col-time { width: 48px; }
   .home-modern .dashboard-table .dashboard-col-match { width: auto; }
-  .home-modern .dashboard-table .dashboard-col-prob { width: 36px; }
+  .home-modern .dashboard-table .dashboard-col-prob { width: 56px; }
   .home-modern .dashboard-table .dashboard-col-access { width: 110px; }
   .home-modern .dashboard-table :is(th, td) { padding: 5px; min-width: 0; overflow: hidden; }
+  .home-modern .dashboard-table td:first-child, .home-modern .dashboard-table td.dashboard-prob { overflow: visible; white-space: nowrap; text-overflow: clip; }
   .home-modern .dashboard-table td:nth-child(2) { width: auto; max-width: 0; }
   .home-modern .dashboard-team > a, .home-modern .dashboard-table td small { display: block; width: 100%; min-width: 0; max-width: 100%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
   .home-modern .dashboard-table td :is(small, .dashboard-match-league) { margin-top: 2px; font-size: 12px; line-height: 1.3; }

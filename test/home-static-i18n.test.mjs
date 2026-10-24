@@ -124,7 +124,7 @@ test('homepage market filters use translated labels and homepage assets use thei
     for (const language of languages) assert(dictionary[language][key]);
   }
   assert(html.includes('assets/app.js?v=20261023-modern2'));
-  assert(html.includes('assets/home-modern.css?v=20261024-reference1'));
+  assert(html.includes('assets/home-modern.css?v=20261024-reference2'));
   assert(html.includes('assets/home-dashboard.js?v=20261024-reference1'));
 });
 
