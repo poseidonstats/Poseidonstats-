@@ -33,9 +33,22 @@
   }
   function isPublic(match) { return match.free === true && match.locked !== true; }
   function probability(value) { return finite(value) && value >= 0 && value <= 1 ? value : null; }
-  function selectRows(data, day, league = '', limit = 7) {
+  function normalizeSearch(value) {
+    return String(value == null ? '' : value).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/\s+/g,' ').trim();
+  }
+  function leagueChoices(data, day, selected = '') {
+    availableDays(data);
+    const available = [...new Set(data.matches.filter(m => dayOf(m.match_date) === day).map(m => m.league).filter(Boolean))].sort((a,b) => a.localeCompare(b));
+    const familiar = ['Liga I','Premier League','La Liga','Serie A','Bundesliga','Ligue 1','Eredivisie','Championship','2. Bundesliga'];
+    const shortlist = [...familiar.filter(league => available.includes(league)),...available.filter(league => !familiar.includes(league))].slice(0,6);
+    if (selected && available.includes(selected) && !shortlist.includes(selected)) shortlist.splice(Math.min(shortlist.length,5),1,selected);
+    return {available,shortlist};
+  }
+  function selectRows(data, day, league = '', limit = 7, search = '') {
     availableDays(data); // Validate the export before displaying any values.
-    const matching = data.matches.filter(m => dayOf(m.match_date) === day && (!league || m.league === league));
+    const query = normalizeSearch(search);
+    const matching = data.matches.filter(m => dayOf(m.match_date) === day && (!league || m.league === league) &&
+      (!query || normalizeSearch(m.home_team).includes(query) || normalizeSearch(m.away_team).includes(query)));
     matching.sort((a, b) => Number(isPublic(b)) - Number(isPublic(a)) || Date.parse(a.match_date) - Date.parse(b.match_date));
     return {
       total: matching.length,
@@ -112,7 +125,24 @@
       `<text x="${left}" y="${height-5}" fill="currentColor" font-size="12">${escapeHTML(date(points[0].date))}</text><text x="${width-right}" y="${height-5}" text-anchor="end" fill="currentColor" font-size="12">${escapeHTML(date(points[points.length-1].date))}</text></svg>` +
       `<p class="dashboard-chart-caption">${escapeHTML(tr('dashboard.chart.total', {n:num(max)}))} · ${escapeHTML(tr('dashboard.chart.partialday'))}: ○</p>`;
   }
+  function openTargetDetails(doc, fragment, scroll = false) {
+    let id;
+    try { id = decodeURIComponent(String(fragment || '').replace(/^#/,'')); } catch (_) { return null; }
+    if (!id) return null;
+    const target = doc.getElementById(id);
+    if (!target) return null;
+    for (let node = target; node; node = node.parentElement) {
+      if (node.tagName === 'DETAILS') node.open = true;
+    }
+    if (id === 'exemplu-pro' && target.querySelector) {
+      const sample = target.querySelector('details');
+      if (sample) sample.open = true;
+    }
+    if (scroll && target.scrollIntoView) target.scrollIntoView({block:'start'});
+    return target;
+  }
   function revealMatch(doc, source) {
+    openTargetDetails(doc,'#matches');
     const reset = doc.getElementById('filter-reset');
     if (reset) reset.click();
     // Original full-card filters use UTC dates; the dashboard displays Bucharest time.
@@ -187,6 +217,27 @@
     if (tier === 'basic') return {href:'analize/index.html',key:'dashboard.analysis.readarchive',sample:false};
     return {href:'#exemplu-pro',key:'dashboard.analysis.read',sample:true};
   }
+  function renderProSummary(doc, tr, lang, tier) {
+    const head = doc.querySelector('#exemplu-pro .pro-card-head');
+    if (!head) return `<p>${escapeHTML(tr('dashboard.data.unavailable'))}</p>`;
+    const card = head.closest('.pro-card');
+    if (!card) return `<p>${escapeHTML(tr('dashboard.data.unavailable'))}</p>`;
+    const selection = chooseAnalysisLanguage(lang,Array.from(card.querySelectorAll('[data-lang]'),el => el.getAttribute('data-lang')));
+    const body = selection.language ? card.querySelector(`[data-lang="${selection.language}"]`) : null;
+    const paragraphs = body ? Array.from(body.querySelectorAll('.pro-visible p')) : [];
+    const compact = (value, limit) => {
+      const text = String(value || '').replace(/\s+/g,' ').trim();
+      return text.length > limit ? text.slice(0,limit).replace(/\s+\S*$/,'') + '…' : text;
+    };
+    const title = head.textContent.split(' · ')[0].trim();
+    const metadata = head.textContent.slice(title.length).replace(/^\s*·\s*/,'').trim();
+    const notice = analysisLanguageNotice(selection,tr), action = analysisAction(tier);
+    return `<article class="dashboard-pro-summary"><span class="dashboard-analysis-meta">${escapeHTML(tr('dashboard.analysis.sample'))}</span><h3>${escapeHTML(title)}</h3><p class="dashboard-analysis-meta">${escapeHTML(metadata)}</p>` +
+      (notice ? `<p class="dashboard-analysis-language">${escapeHTML(notice)}</p>` : '') +
+      (paragraphs[1] ? `<p class="dashboard-pro-context">${escapeHTML(compact(paragraphs[1].textContent,180))}</p>` : '') +
+      `<p class="dashboard-analysis-excerpt">${escapeHTML(paragraphs[0] ? compact(paragraphs[0].textContent,220) : tr('dashboard.data.unavailable'))}</p>` +
+      `<a class="dashboard-analysis-link" href="${escapeHTML(action.href)}"${action.sample ? ' data-dashboard-analysis' : ''}>${escapeHTML(tr(action.key))} →</a></article>`;
+  }
   function membershipTier(body) {
     const classes = body && body.classList;
     if (!classes || !classes.contains('is-member')) return null;
@@ -212,6 +263,9 @@
     let predictions = null, history = null, audit = null, archive = null;
     const dateSelect = doc.getElementById('dashboard-date');
     const leagues = doc.getElementById('dashboard-leagues');
+    const leagueMenu = doc.getElementById('dashboard-league-menu');
+    const search = doc.getElementById('dashboard-search');
+    const clearSearch = doc.getElementById('dashboard-search-clear');
     const table = doc.getElementById('dashboard-predictions');
     const status = doc.getElementById('dashboard-table-status');
     let selectedLeague = '';
@@ -253,21 +307,32 @@
       });
     }
     function renderLeagues() {
-      if (!leagues || !predictions) return;
+      if (!leagues && !leagueMenu) return;
       const day = dateSelect && dateSelect.value;
-      const available = [...new Set(predictions.matches.filter(m => dayOf(m.match_date) === day).map(m => m.league).filter(Boolean))].sort((a,b) => a.localeCompare(b,locale(doc)));
+      let available = [], shortlist = [];
+      try { ({available,shortlist} = leagueChoices(predictions,day,selectedLeague)); } catch (_) { /* Table reports unavailable exports. */ }
       if (!available.includes(selectedLeague)) selectedLeague = '';
       const tr = translator();
-      leagues.innerHTML = ['',...available].map(league => `<button type="button" data-dashboard-league="${escapeHTML(league)}" aria-pressed="${league===selectedLeague}">${escapeHTML(league || tr('dashboard.leagues.all'))}</button>`).join('');
+      if (leagues) leagues.innerHTML = ['',...shortlist].map(league => `<button type="button" data-dashboard-league="${escapeHTML(league)}" aria-pressed="${league===selectedLeague}">${escapeHTML(league || tr('dashboard.leagues.all'))}</button>`).join('');
+      if (leagueMenu) {
+        leagueMenu.innerHTML = ['',...available].map(league => `<option value="${escapeHTML(league)}">${escapeHTML(league || tr('dashboard.leagues.all'))}</option>`).join('');
+        leagueMenu.value = selectedLeague;
+        leagueMenu.disabled = !available.length;
+      }
     }
     function renderTable() {
       if (!table) return;
       const tr = translator();
       try {
-        const selection = selectRows(predictions,dateSelect ? dateSelect.value : '',selectedLeague,5);
-        table.innerHTML = selection.rows.length ? renderRows(selection.rows,tr,locale(doc)) : `<tr><td colspan="6">${escapeHTML(tr('dashboard.table.empty'))}</td></tr>`;
+        const query = search ? search.value : '';
+        const selection = selectRows(predictions,dateSelect ? dateSelect.value : '',selectedLeague,5,query);
+        if (search) search.disabled = false;
+        if (clearSearch) clearSearch.disabled = !normalizeSearch(query);
+        table.innerHTML = selection.rows.length ? renderRows(selection.rows,tr,locale(doc)) : `<tr><td colspan="6">${escapeHTML(tr(normalizeSearch(query) ? 'simplify.search.empty' : 'dashboard.table.empty'))}</td></tr>`;
         if (status) status.textContent = tr('dashboard.table.count', {shown:selection.rows.length,total:selection.total,free:selection.free}) + ' · ' + tr('dashboard.table.timezone') + ' · ' + tr('dashboard.table.rawnote');
       } catch (_) {
+        if (search) search.disabled = true;
+        if (clearSearch) clearSearch.disabled = true;
         table.innerHTML = `<tr><td colspan="6">${escapeHTML(tr('dashboard.data.unavailable'))}</td></tr>`;
         if (status) status.textContent = tr('dashboard.table.error');
       }
@@ -283,8 +348,9 @@
     }
     function renderAnalyses() {
       const target = doc.getElementById('dashboard-analyses');
-      if (!target) return;
       const tr = translator(), lang = doc.documentElement.lang;
+      doc.querySelectorAll('[data-dashboard-pro-summary]').forEach(element => {element.innerHTML = renderProSummary(doc,tr,lang,membershipTier(doc.body));});
+      if (!target) return;
       const action = analysisAction(membershipTier(doc.body));
       const cards = [];
       const head = doc.querySelector('#exemplu-pro .pro-card-head');
@@ -310,12 +376,17 @@
     }
     function render() {decorateLanguageSelector(doc,translator());decorateMemberLogin(doc,translator());ensureProofNotice(doc,translator());renderDates();renderLeagues();renderTable();renderMetrics();renderAnalyses();}
     if (dateSelect) dateSelect.addEventListener('change', () => {selectedLeague='';renderLeagues();renderTable();});
+    if (search) search.addEventListener('input',renderTable);
+    if (clearSearch) clearSearch.addEventListener('click',() => {if (search) {search.value='';renderTable();search.focus && search.focus();}});
+    if (leagueMenu) leagueMenu.addEventListener('change',() => {selectedLeague=leagueMenu.value;renderLeagues();renderTable();});
     if (leagues) leagues.addEventListener('click', event => {
       const button = event.target.closest('[data-dashboard-league]');
       if (!button) return;
       selectedLeague = button.getAttribute('data-dashboard-league');renderLeagues();renderTable();
     });
     doc.addEventListener('click', event => {
+      const fragment = event.target.closest('a[href^="#"]');
+      if (fragment) openTargetDetails(doc,fragment.getAttribute('href'));
       const match = event.target.closest('[data-dashboard-fixture]');
       if (match && predictions) {
         const source = predictions.matches.find(m => String(m.fixture_id) === match.getAttribute('data-dashboard-fixture'));
@@ -324,17 +395,24 @@
         }
       }
       const sample = event.target.closest('[data-dashboard-analysis]');
-      if (sample) {const detail=doc.querySelector('#exemplu-pro details');if(detail) detail.open=true;}
+      if (sample) {openTargetDetails(doc,'#exemplu-pro');const detail=doc.querySelector('#exemplu-pro details');if(detail) detail.open=true;}
     });
     doc.addEventListener('change', event => {if(event.target.matches('.lang-select')) setTimeout(render,0);});
-    if (doc.defaultView && doc.defaultView.addEventListener) doc.defaultView.addEventListener('resize',renderCharts);
+    const view = doc.defaultView;
+    if (view && view.addEventListener) {
+      view.addEventListener('resize',renderCharts);
+      view.addEventListener('hashchange',() => openTargetDetails(doc,view.location && view.location.hash,true));
+    }
+    const evidence = doc.getElementById('dashboard-evidence-details');
+    if (evidence) evidence.addEventListener('toggle',() => {if (evidence.open) renderCharts();});
     observeMembership(doc.body, renderAnalyses);
     render();
+    openTargetDetails(doc,view && view.location && view.location.hash,true);
     try {
       const response = await fetch('analize/index.html',{credentials:'omit'});
       if (response.ok) archive = new DOMParser().parseFromString(await response.text(),'text/html');
     } catch (_) { /* Current real sample remains available if the archive cannot load. */ }
     renderAnalyses();
   }
-  return {escapeHTML,dayOf,availableDays,chooseDay,isPublic,selectRows,extractMetrics,cumulativeResolved,renderRows,renderChart,revealMatch,chooseAnalysisLanguage,analysisLanguageNotice,decorateLanguageSelector,watchLanguageSelector,decorateMemberLogin,watchMemberLogin,ensureProofNotice,analysisAction,membershipTier,observeMembership,mount};
+  return {escapeHTML,dayOf,availableDays,chooseDay,isPublic,normalizeSearch,leagueChoices,selectRows,extractMetrics,cumulativeResolved,renderRows,renderChart,openTargetDetails,revealMatch,chooseAnalysisLanguage,analysisLanguageNotice,decorateLanguageSelector,watchLanguageSelector,decorateMemberLogin,watchMemberLogin,ensureProofNotice,analysisAction,renderProSummary,membershipTier,observeMembership,mount};
 });

@@ -433,14 +433,15 @@ test('explicit synthetic public fixture preserves finite probabilities when dail
   assert.deepEqual(selected.rows[0].probabilities,[.6,.25,.15]);
 });
 
-test('early plan comparison preserves truthful entitlements, exact reviewed checkouts and existing anchors', () => {
+test('demonstration and honest evidence precede truthful plans and activation', () => {
   const html=readFileSync(new URL('../index.html',import.meta.url),'utf8');
   const hero=html.indexOf('<div class="dashboard-hero">');
   const plans=html.indexOf('<section class="conversion-plans" id="abonament"');
-  const features=html.indexOf('<div class="dashboard-feature-strip">');
-  const dashboardIndex=html.indexOf('<section class="dashboard-grid"');
-  assert(hero >= 0 && hero < plans && plans < features && features < dashboardIndex);
-  const strip=html.slice(plans,features);
+  const dashboardIndex=html.indexOf('id="dashboard"');
+  const evidence=html.indexOf('<section class="simplify-evidence">');
+  const activation=html.indexOf('<section class="simplify-activation">');
+  assert(hero >= 0 && hero < dashboardIndex && dashboardIndex < evidence && evidence < plans && plans < activation);
+  const strip=html.slice(plans,activation);
   assert.match(strip,/conversion-plan-free[\s\S]*conversion-price">\$0</);
   assert.match(strip,/conversion-plan-basic[\s\S]*conversion-price">\$5 /);
   assert.match(strip,/conversion-plan-pro[\s\S]*conversion-price">\$20 /);
@@ -500,4 +501,55 @@ test('conversion member visibility, privacy script order and numeric display con
   assert.match(css,/\.dashboard-col-time \{ width: 48px; \}/);
   assert.match(css,/\.dashboard-col-prob \{ width: 56px; \}/);
   assert.match(css,/td\.dashboard-prob \{ overflow: visible; white-space: nowrap; text-overflow: clip; \}/);
+  assert.match(css,/\.home-modern \.simplify-demo \.dashboard-table th:nth-child\(2\),\s*\.home-modern \.simplify-demo \.dashboard-table td\.dashboard-team \{ text-align: left; \}/);
+  assert.match(css,/body\.home-modern \.salt-meciuri \{ display: none; \}/);
+});
+
+test('long original content and metric mounts remain reachable inside named closed disclosures', () => {
+  const html=readFileSync(new URL('../index.html',import.meta.url),'utf8');
+  const stack=[],ranges=[];
+  for (const match of html.matchAll(/<details\b[^>]*>|<\/details\s*>/g)) {
+    if (match[0].startsWith('</')) {
+      const opening=stack.pop();assert(opening,'balanced details close');ranges.push({...opening,end:match.index+match[0].length});
+    } else stack.push({tag:match[0],start:match.index});
+  }
+  assert.equal(stack.length,0,'all details are balanced');
+  const disclosure=id=>{
+    const found=ranges.filter(item=>item.tag.includes(`id="${id}"`));assert.equal(found.length,1,id);
+    assert.doesNotMatch(found[0].tag,/\sopen(?:\s|=|>)/,`${id} starts closed`);
+    const body=html.slice(found[0].start,found[0].end);assert.match(body,/<summary[^>]*data-i18n="simplify\.[^"]+"/);return body;
+  };
+  const metrics=disclosure('dashboard-evidence-details');
+  assert.equal((metrics.match(/\bdata-dashboard-kpis\b/g)||[]).length,2);
+  assert.equal((metrics.match(/\bdata-dashboard-chart\b/g)||[]).length,2);
+  assert(metrics.includes('id="dashboard-track-summary"'));
+  const full=disclosure('full-predictions-details');
+  for (const id of ['filter-day','filter-market','filter-league','filter-reset','match-count','matches']) assert(full.includes(`id="${id}"`),id);
+  const legacy=disclosure('legacy-information-details');
+  for (const name of ['PRO_SAMPLE_CARD','PRO_TODAY_LIST','PROOF_STATIC','DAILY_STATIC','LEAGUES_LINKS']) {
+    assert(legacy.includes(`<!-- ${name}_START -->`));assert(legacy.includes(`<!-- ${name}_END -->`));
+  }
+  for (const id of ['exemplu-pro','dovada','repere-azi','abonament-detalii','intrebari','dashboard-analyses']) assert(legacy.includes(`id="${id}"`),id);
+  assert(disclosure('discord-access-details').includes('id="acces"'));
+  assert.match(html,/<div data-dashboard-pro-summary><\/div>/);
+  assert.match(html,/<a href="https:\/\/poseidon-members\.poseidonstats\.workers\.dev\/login"[^>]*class="gold-button simplify-activation-login"[^>]*data-conversion="login"/);
+  const login=html.match(/<a[^>]*class="gold-button simplify-activation-login"[^>]*>/)[0];assert(!login.includes('members-login'));
+});
+
+test('search, league choice, honest copy and activation labels are complete without rewriting existing translations', () => {
+  const html=readFileSync(new URL('../index.html',import.meta.url),'utf8');
+  const original=JSON.parse(execFileSync('git',['show','HEAD:assets/i18n.json'],{encoding:'utf8',cwd:new URL('..',import.meta.url)}));
+  const keys=Object.keys(i18n.ro).filter(key=>key.startsWith('simplify.')).sort();assert(keys.length>=19);
+  for (const lang of ['ro','en','es','it','fr','id']) {
+    assert.deepEqual(Object.keys(i18n[lang]).filter(key=>key.startsWith('simplify.')).sort(),keys);
+    for (const [key,value] of Object.entries(original[lang])) assert.equal(i18n[lang][key],value,`${lang}.${key}`);
+    for (const key of keys) {
+      assert(i18n[lang][key].trim(),`${lang}.${key}`);
+      const tags=text=>text.match(/<\/?[^>]+>/g)||[];
+      assert.deepEqual(tags(i18n[lang][key]),tags(i18n.ro[key]),`${lang}.${key}`);
+    }
+  }
+  assert.match(html,/<input id="dashboard-search" type="search"[^>]*data-i18n-attr="placeholder:simplify.search.placeholder,aria-label:simplify.search.label"/);
+  assert.match(html,/<button id="dashboard-search-clear" type="button" data-i18n="simplify.search.clear"/);
+  assert.match(html,/<select id="dashboard-league-menu"[^>]*data-i18n-attr="aria-label:simplify.leagues.label"/);
 });

@@ -124,10 +124,10 @@ test('homepage market filters use translated labels and homepage assets use thei
     for (const language of languages) assert(dictionary[language][key]);
   }
   assert(html.includes('assets/app.js?v=20261024-conversion1'));
-  assert(html.includes('assets/home-modern.css?v=20261024-conversion1'));
+  assert(html.includes('assets/home-modern.css?v=20261024-simplification1'));
   assert(html.includes('assets/members.js?v=20261024-conversion1'));
   assert(html.includes('assets/conversion.js?v=20261024-conversion1'));
-  assert(html.includes('assets/home-dashboard.js?v=20261024-reference1'));
+  assert(html.includes('assets/home-dashboard.js?v=20261024-simplification1'));
 });
 
 test('historical proof notice stays singular, translates on rerender, and links to the current audit', () => {
