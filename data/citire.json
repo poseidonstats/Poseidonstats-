@@ -201,44 +201,74 @@
   }
  },
  "test": {
+  "estimator": "proxy: λ doar din profilurile pe 20 de meciuri pe teren (backtest), nu formula completă din producție",
+  "validare_formula_completa": "pe un eșantion de 3189 meciuri din TEST 2026-04-01 → 2026-10-23 (backtest_formula_psg_2026-10-23.md, 24 oct 2026, fără soccerstats): direcția 46,3 % (mereu 1: 43,1), AUC 0,627, BSS 1X2 +0,039; familia 22,3 (fix 21,2); intervalul 62,7 (1-3 fix 62,2); cifrele de mai jos rămân ale variantei simplificate (proxy), pe tot testul",
   "familia": {
+   "set": "TEST",
+   "perioada": "2026-04-01 → 2026-10-23",
+   "n": 75996,
    "hit": 20.5,
    "fix": 19.4,
-   "n": 75996,
+   "estimator": "proxy: λ doar din profilurile pe 20 de meciuri pe teren (backtest), nu formula completă din producție",
    "sursa": "/Users/andreeastratulat/odds_decoder/data/rapoarte/backtest_propuneri_psg_2026-10-23.md",
    "nota": "scorul exact e unul din cele două scoruri ale familiei; „fix” = „1-1 sau 1-0” la toate meciurile"
   },
   "directia": {
-   "hit": 48.1,
+   "set": "TEST",
+   "perioada": "2026-04-01 → 2026-10-23",
    "n": 75996,
+   "hit": 48.1,
+   "estimator": "proxy: λ doar din profilurile pe 20 de meciuri pe teren (backtest), nu formula completă din producție",
    "sursa": "/Users/andreeastratulat/odds_decoder/data/rapoarte/backtest_propuneri_psg_2026-10-23.md",
-   "nota": "argmax 1 / X / 2 pe grila Poisson"
+   "nota": "argmax 1 / X / 2 pe grila Poisson; baza naturală e „mereu victoria gazdei”, nu 50 %: nu e măsurată în acest raport"
   },
   "interval": {
-   "hit": [
-    60.8,
-    62.7
-   ],
-   "fix": [
-    58.5,
-    60.7
-   ],
-   "sursa": "/Users/andreeastratulat/odds_decoder/data/rapoarte/backtest_propuneri_psg_2026-10-23.md",
-   "nota": "totalul de goluri în moda ± 1; „fix” = 1-3 la toate"
+   "set": "TEST",
+   "perioada": "2026-04-01 → 2026-10-20",
+   "n": 75430,
+   "hit": 60.8,
+   "fix": 58.5,
+   "estimator": "proxy: λ doar din profilurile pe 20 de meciuri pe teren (backtest), nu formula completă din producție",
+   "sursa": "/Users/andreeastratulat/odds_decoder/data/rapoarte/analiza_psg_backtest_2026-10-20.md",
+   "train": {
+    "set": "TRAIN",
+    "n": 100866,
+    "hit": 62.7,
+    "fix": 60.7
+   },
+   "nota": "totalul de goluri în moda ± 1; „fix” = 1-3 la toate; TRAIN e doar pentru comparație, nu e performanță pe test"
   },
   "deschide": {
-   "pana_la_pauza": 75.9,
-   "echipa_65": 62.6,
-   "mereu_gazda": 60.0,
+   "set": "TEST",
+   "perioada": "2026-04-01 → 2026-10-23",
+   "pana_la_pauza": {
+    "hit": 75.9,
+    "n": 12816
+   },
+   "echipa_65": {
+    "hit": 62.6,
+    "n": 3150
+   },
+   "sub_65": {
+    "hit": 54.5,
+    "n": 10582
+   },
+   "estimator": "proxy: λ doar din profilurile pe 20 de meciuri pe teren (backtest), nu formula completă din producție",
    "sursa": "/Users/andreeastratulat/odds_decoder/data/rapoarte/backtest_propuneri_psg_2026-10-23.md",
-   "nota": "primul gol până la pauză; echipa spusă doar de la 65 %, față de „mereu gazda”"
+   "nota": "primul gol până la pauză (meciuri cu gol și minute); echipa spusă doar de la 65 %"
   },
   "p00_pauza": {
+   "set": "TEST",
+   "perioada": "2026-04-01 → 2026-10-20",
+   "n": 75430,
    "bss": 0.013,
-   "baza": 28.8,
-   "sursa": "/Users/andreeastratulat/odds_decoder/data/rapoarte/backtest_propuneri_psg_2026-10-23.md",
-   "nota": "e^(−λ_R1) față de rata de bază"
+   "medie_prezisa": 28.5,
+   "medie_reala": 27.7,
+   "baza_bss": "rata de 0-0 la pauză din TRAIN (29,1 %)",
+   "estimator": "proxy: λ doar din profilurile pe 20 de meciuri pe teren (backtest), nu formula completă din producție",
+   "sursa": "/Users/andreeastratulat/odds_decoder/data/rapoarte/analiza_psg_backtest_2026-10-20.md",
+   "nota": "e^(−λ_R1), Brier skill față de rata din train"
   }
  },
- "nota": "Citire din echipe (forțe ajustate, profilurile pe 20 de meciuri pe teren, xG; sezonul soccerstats doar la cine deschide), nu din preț. Numerele de test sunt pe 75.996 meciuri, split temporal; fiecare citire intră în bilanțul de a doua zi, cu rezultatele din API-Football."
+ "nota": "Citire din echipe (forțe ajustate, profilurile pe 20 de meciuri pe teren, xG; sezonul soccerstats doar la cine deschide), nu din preț. Numerele de test sunt pe o variantă simplificată a formulei (λ doar din profiluri), split temporal, fiecare cu N-ul ei; formula completă e verificată separat, pe un eșantion de 3.189 meciuri din test (backtest_formula_psg_2026-10-23.md). Fiecare citire intră în bilanțul de a doua zi, cu rezultatele din API-Football."
 }

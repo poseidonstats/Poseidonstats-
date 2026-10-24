@@ -700,7 +700,7 @@
     "citire.oaspetele": "oaspeții",
     "citire.oricare": "oricare, {p} % gazda",
     "citire.p00": "0-0 la pauză",
-    "citire.nota": "Citire din echipe, nu din preț. Pe test ({n} meciuri): scorul exact din familie {fam} %, intervalul de goluri {int} %, direcția {dir} %. Fiecare citire intră în bilanțul de a doua zi.",
+    "citire.nota": "Citire din echipe, nu din preț. Numerele de test sunt pe o variantă simplificată a formulei: scorul exact din familie {fam} % (N {n_fam}), intervalul de goluri {int} % (N {n_int}), direcția {dir} % (N {n_dir}); formula completă e verificată separat, pe un eșantion mai mic. Fiecare citire intră în bilanțul de a doua zi.",
     "citire.source": "Context separat · formule_psg"
   },
   "en": {
@@ -1404,7 +1404,7 @@
     "citire.oaspetele": "away side",
     "citire.oricare": "either side, {p} % home",
     "citire.p00": "0-0 at half-time",
-    "citire.nota": "A reading from the teams, not from the price. On the test set ({n} matches): exact score within the family {fam} %, goals interval {int} %, direction {dir} %. Every reading goes into the next day's tally.",
+    "citire.nota": "A reading from the teams, not from the price. Test figures are for a simplified variant of the formula: exact score within the family {fam} % (N {n_fam}), goals interval {int} % (N {n_int}), direction {dir} % (N {n_dir}); the full formula is checked separately, on a smaller sample. Every reading goes into the next day's tally.",
     "citire.source": "Separate context · formule_psg"
   },
   "es": {
@@ -2108,7 +2108,7 @@
     "citire.oaspetele": "el visitante",
     "citire.oricare": "cualquiera, {p} % el local",
     "citire.p00": "0-0 al descanso",
-    "citire.nota": "Una lectura a partir de los equipos, no del precio. En el conjunto de prueba ({n} partidos): marcador exacto dentro de la familia {fam} %, intervalo de goles {int} %, dirección {dir} %. Cada lectura entra en el balance del día siguiente.",
+    "citire.nota": "Una lectura a partir de los equipos, no del precio. Las cifras de prueba son de una variante simplificada de la fórmula: marcador exacto dentro de la familia {fam} % (N {n_fam}), intervalo de goles {int} % (N {n_int}), dirección {dir} % (N {n_dir}); la fórmula completa se verifica por separado, en una muestra más pequeña. Cada lectura entra en el balance del día siguiente.",
     "citire.source": "Contexto separado · formule_psg"
   },
   "it": {
@@ -2812,7 +2812,7 @@
     "citire.oaspetele": "gli ospiti",
     "citire.oricare": "una delle due, {p} % casa",
     "citire.p00": "0-0 all'intervallo",
-    "citire.nota": "Una lettura dalle squadre, non dal prezzo. Sul set di test ({n} partite): risultato esatto nella famiglia {fam} %, intervallo di gol {int} %, direzione {dir} %. Ogni lettura entra nel bilancio del giorno dopo.",
+    "citire.nota": "Una lettura dalle squadre, non dal prezzo. Le cifre di test riguardano una variante semplificata della formula: risultato esatto nella famiglia {fam} % (N {n_fam}), intervallo di gol {int} % (N {n_int}), direzione {dir} % (N {n_dir}); la formula completa è verificata separatamente, su un campione più piccolo. Ogni lettura entra nel bilancio del giorno dopo.",
     "citire.source": "Contesto separato · formule_psg"
   },
   "fr": {
@@ -3516,7 +3516,7 @@
     "citire.oaspetele": "les visiteurs",
     "citire.oricare": "l'une ou l'autre, {p} % domicile",
     "citire.p00": "0-0 à la mi-temps",
-    "citire.nota": "Une lecture à partir des équipes, pas du prix. Sur le jeu de test ({n} matchs) : score exact dans la famille {fam} %, intervalle de buts {int} %, direction {dir} %. Chaque lecture entre dans le bilan du lendemain.",
+    "citire.nota": "Une lecture à partir des équipes, pas du prix. Les chiffres de test portent sur une variante simplifiée de la formule : score exact dans la famille {fam} % (N {n_fam}), intervalle de buts {int} % (N {n_int}), direction {dir} % (N {n_dir}) ; la formule complète est vérifiée séparément, sur un échantillon plus petit. Chaque lecture entre dans le bilan du lendemain.",
     "citire.source": "Contexte distinct · formule_psg"
   },
   "id": {
@@ -4220,7 +4220,7 @@
     "citire.oaspetele": "tim tamu",
     "citire.oricare": "salah satu, {p} % tuan rumah",
     "citire.p00": "0-0 saat turun minum",
-    "citire.nota": "Bacaan dari tim, bukan dari harga. Pada set uji ({n} pertandingan): skor tepat dalam keluarga {fam} %, rentang gol {int} %, arah {dir} %. Setiap bacaan masuk ke rekap keesokan harinya.",
+    "citire.nota": "Bacaan dari tim, bukan dari harga. Angka uji berasal dari varian formula yang disederhanakan: skor tepat dalam keluarga {fam} % (N {n_fam}), rentang gol {int} % (N {n_int}), arah {dir} % (N {n_dir}); formula lengkap diperiksa secara terpisah, pada sampel yang lebih kecil. Setiap bacaan masuk ke rekap keesokan harinya.",
     "citire.source": "Konteks terpisah · formule_psg"
   }
 }

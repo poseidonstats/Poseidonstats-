@@ -39,12 +39,19 @@
       parti.push(`<span class="citire-rand">${T("citire.deschide", "Deschide scorul")}: <b>${cine}</b></span>`);
     }
     if (c.p00_pauza != null) parti.push(`<span class="citire-rand">${T("citire.p00", "0-0 la pauză")}: <b>${c.p00_pauza} %</b></span>`);
+    // 24 oct 2026: fiecare metrică cu N-ul ei (familia și direcția N 75.996, intervalul N 75.430), o singură cifră pe TEST (nu „60,8-62,7”,
+    // care amesteca testul cu antrenarea) și eticheta „variantă simplificată a formulei” — cifrele vin din backtest-ul proxy, nu din formula completă
     const t = testNr || {};
-    const nota = T("citire.nota", "Citire din echipe, nu din preț. Pe test ({n} meciuri): scorul exact din familie {fam} %, intervalul de goluri {int} %, direcția {dir} %. Fiecare citire intră în bilanțul de a doua zi.")
-      .replace("{n}", t.familia && t.familia.n ? nr(t.familia.n) : "–")
-      .replace("{fam}", t.familia ? nr(t.familia.hit, 1) : "–")
-      .replace("{int}", t.interval && t.interval.hit ? `${nr(t.interval.hit[0])}-${nr(t.interval.hit[1])}` : "–")
-      .replace("{dir}", t.directia ? nr(t.directia.hit) : "–");
+    const nN = m => (m && Number.isFinite(Number(m.n)) && Number(m.n) > 0 ? nr(m.n) : "–");
+    const hit1 = (m, d = 0) => {
+      if (!m) return "–";
+      const h = Array.isArray(m.hit) ? m.hit[0] : m.hit;
+      return Number.isFinite(Number(h)) ? nr(h, d) : "–";
+    };
+    const nota = T("citire.nota", "Citire din echipe, nu din preț. Numerele de test sunt pe o variantă simplificată a formulei: scorul exact din familie {fam} % (N {n_fam}), intervalul de goluri {int} % (N {n_int}), direcția {dir} % (N {n_dir}); formula completă e verificată separat, pe un eșantion mai mic. Fiecare citire intră în bilanțul de a doua zi.")
+      .replace("{n_fam}", nN(t.familia)).replace("{fam}", hit1(t.familia, 1))
+      .replace("{n_int}", nN(t.interval)).replace("{int}", hit1(t.interval, 1))
+      .replace("{n_dir}", nN(t.directia)).replace("{dir}", hit1(t.directia, 1));
     return `<div class="citire"><p class="citire-source">${esc(T("citire.source", "Context separat · formule_psg"))}</p><span class="citire-titlu">${T("citire.titlu", "Propunerea noastră")}</span>`
       + parti.join('<span class="citire-sep">·</span>') + `<span class="citire-nota">${nota}</span></div>`;
   }
