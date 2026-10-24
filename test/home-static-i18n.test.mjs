@@ -128,7 +128,7 @@ test('homepage market filters use translated labels and homepage assets use thei
   assert(html.includes('assets/members.js?v=20261024-conversion1'));
   assert(html.includes('assets/conversion.js?v=20261024-conversion1'));
   assert(html.includes('assets/home-dashboard.js?v=20261024-home-reading1'));
-  assert(html.includes('assets/citire.js?v=20261024-home-reading1'));
+  assert(html.includes('assets/citire.js?v=20261024-reading-frozen1'));
 });
 
 test('historical proof notice stays singular, translates on rerender, and links to the current audit', () => {

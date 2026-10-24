@@ -68,7 +68,7 @@
     };
     const generated = stamp(DATE.generated_at), kickoff = c && stamp(c.ko_utc), now = Date.now();
     if (!valid(c) || !Array.isArray(c.echipe) || c.echipe.length !== 2 || c.echipe[0] !== identity.home_team || c.echipe[1] !== identity.away_team
-        || c.ko_utc !== identity.match_date || !Number.isFinite(kickoff) || now >= kickoff || !Number.isFinite(generated) || generated > now || now - generated > 86400000
+        || c.ko_utc !== identity.match_date || !Number.isFinite(kickoff) || generated >= kickoff || !Number.isFinite(generated) || generated > now || now - generated > 86400000
         || typeof c.versiune !== "string" || !c.versiune.startsWith("formule_psg ")) return "";
     return html(c, DATE.test);
   }

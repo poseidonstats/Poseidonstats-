@@ -104,7 +104,8 @@ test('HOME rejects stale/future/naive timestamps, malformed mapping and non-fixt
     {generated_at:'2026-10-24T08:00:00'},{generated_at:'2026-02-31T08:00:00Z'},{meciuri:[reading]}]) {
     const invalid=incarca('en',{...data,...bad},now);await invalid.incarca();assert.equal(invalid.dashboardRow(identity),'');
   }
-  C.setClock(Date.parse(identity.match_date));assert.equal(C.dashboardRow(identity),'');
+  C.setClock(Date.parse(identity.match_date));assert(C.dashboardRow(identity).includes('Our reading'));
+  C.setClock(Date.parse(data.generated_at)+86400001);assert.equal(C.dashboardRow(identity),'','the 24-hour freshness limit still applies');
 });
 
 test('homepage handles data-before/render-before order, language and filtered rerenders without duplicates',async()=>{
@@ -140,6 +141,32 @@ test('homepage handles data-before/render-before order, language and filtered re
       assert.equal(readings().length,options.fixture||options.kickoff||options.locked?0:1);
     }
     render();callback();assert.equal(children.indexOf(readings()[0]),1,'reading needs no quote or selection function');
-    C.setClock(Date.parse(identity.match_date));callback();assert.equal(readings().length,0,'started fixtures lose an existing home reading');
+    const frozen=readings()[0].content;
+    C.setClock(Date.parse(identity.match_date));callback();assert.equal(readings().length,1,'a pre-kickoff reading remains visible at kickoff');
+    assert.equal(readings()[0].content,frozen);
+    render();callback();callback();assert.equal(readings().length,1,'post-kickoff rerenders preserve one frozen reading');
+    assert.equal(readings()[0].content,frozen);
+  }
+});
+
+test('frozen Hertha and Magdeburg pre-kickoff readings are identical at 14:44, while late generation is rejected',async()=>{
+  // Frozen public records from 24 October; this regression never reads a changing daily export.
+  const common={familia:['1-1','2-1'],directia:'1',n:[20,20],versiune:'formule_psg 23 oct 2026',ko_utc:'2026-10-24T11:00:00Z'};
+  const data={generated_at:'2026-10-24T12:19:02+03:00',test:testNr,meciuri:{
+    '1576210':{...common,echipe:['Hertha Berlin','Arminia Bielefeld'],p1x2:[57,22,21],goluri:{interval:[2,4],cel_mai_probabil:3,p_interval:62},deschide:{echipa:null,p:63},p00_pauza:31},
+    '1576212':{...common,echipe:['FC Magdeburg','Karlsruher SC'],p1x2:[54,22,24],goluri:{interval:[2,4],cel_mai_probabil:3,p_interval:61},deschide:{echipa:null,p:59},p00_pauza:26}
+  }};
+  const before=Date.parse('2026-10-24T13:59:59+03:00'),after=Date.parse('2026-10-24T14:44:00+03:00');
+  const identities=Object.entries(data.meciuri).map(([fid,r])=>({fixture_id:Number(fid),home_team:r.echipe[0],away_team:r.echipe[1],match_date:r.ko_utc,locked:false}));
+  for(const language of ['ro','en','es','it','fr','id']) {
+    const C=incarca(language,data,before);await C.incarca();
+    const frozen=identities.map(identity=>C.dashboardRow(identity));
+    assert(frozen.every(html=>html.includes('1-1')&&html.includes('2-1')));
+    C.setClock(after);
+    assert.deepEqual(identities.map(identity=>C.dashboardRow(identity)),frozen);
+    for(const generated_at of ['2026-10-24T11:00:00Z','2026-10-24T11:00:01Z']) {
+      const late=incarca(language,{...data,generated_at},after);await late.incarca();
+      for(const identity of identities) assert.equal(late.dashboardRow(identity),'');
+    }
   }
 });
