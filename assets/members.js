@@ -28,16 +28,24 @@
       return p && p.exp > now && (p.tier === "basic" || p.tier === "pro") ? p.tier : null;
     } catch { return null; }
   }
-  async function incarcaPredictii({ api, token, publicUrl, fetchImpl, sterge }) {
+  async function incarcaPredictii({ api, token, publicUrl, fetchImpl, sterge, onAccess }) {
     const f = fetchImpl || ((u, o) => fetch(u, o));
+    const report = detail => { try { if (onAccess) onAccess(detail); } catch {} };
     let eroare = null;
     if (api && token) {
+      let responseReceived = false;
       try {
         const r = await f(api + "/api/predictions", { headers: { authorization: "Bearer " + token }, cache: "no-store" });
-        if (r.ok) return { sursa: "membru", data: await r.json() };
+        responseReceived = true;
+        if (r.ok) {
+          const data = await r.json();
+          if (r.status === 200) report({ outcome: "verified", status: 200 });
+          return { sursa: "membru", data };
+        }
         if (r.status === 401 || r.status === 403) sterge && sterge();
         eroare = r.status;                                   // 6 oct 2026: 404/5xx la un membru valid NU mai cade tăcut pe public
-      } catch (e) { console.warn("[membri] API indisponibil, cad pe public", e); eroare = "rețea"; }
+        report({ outcome: "failure", status: r.status });
+      } catch (e) { console.warn("[membri] API indisponibil, cad pe public", e); eroare = "rețea"; report({ outcome: "failure", status: responseReceived ? "invalid-response" : "network" }); }
     }
     try {
       const r = await f(publicUrl, { cache: "no-cache" });
@@ -82,7 +90,8 @@
   const api = {
     MEMBERS_API, tokenDinUrl, captureaza, tierDinToken, incarcaPredictii, textBara, textNone,
     tier: () => tierDinToken(token()),
-    incarca: (publicUrl) => incarcaPredictii({ api: MEMBERS_API, token: token(), publicUrl, sterge }),
+    incarca: (publicUrl) => incarcaPredictii({ api: MEMBERS_API, token: token(), publicUrl, sterge,
+      onAccess: detail => { if (root.PoseidonConversion) root.PoseidonConversion.access(detail); } }),
   };
   if (typeof window !== "undefined") { root.PoseidonMembers = api; document.addEventListener("DOMContentLoaded", init); }
   if (typeof module !== "undefined" && module.exports) module.exports = { tokenDinUrl, captureaza, tierDinToken, incarcaPredictii, textBara, textNone };

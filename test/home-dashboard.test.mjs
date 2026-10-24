@@ -375,7 +375,7 @@ test('new dashboard and header links avoid member-hidden intro targets', () => {
   const marketAnchor=Array.from(newUI.matchAll(/<a\b[^>]*>/g),m=>m[0]).find(tag=>/data-i18n="dashboard\.track\.market"/.test(tag));
   assert(marketAnchor);
   assert.match(marketAnchor,/href="track-record\.html"/);
-  const allowed=new Set(['dashboard','dashboard-analyses','abonament','matches','intrebari']);
+  const allowed=new Set(['dashboard','dashboard-analyses','abonament','abonament-detalii','matches','intrebari']);
   const introStart=html.indexOf('<section class="intro">');
   assert(introStart >= 0);
   let depth=0,introEnd=-1;
@@ -386,6 +386,13 @@ test('new dashboard and header links avoid member-hidden intro targets', () => {
   assert(introEnd > introStart);
   for (const match of newUI.matchAll(/<a\b[^>]*\bhref="#([^"]+)"[^>]*>/g)) {
     const id=match[1];
+    if (id === 'exemplu-pro') {
+      assert.match(match[0], /class="conversion-visitor-proof"/);
+      const css=readFileSync(new URL('../assets/home-modern.css',import.meta.url),'utf8');
+      assert.match(css,/body\.home-modern\.tier-basic[^{}]*\.conversion-visitor-proof[^{}]*\{ display: none; \}/);
+      assert.match(css,/body\.home-modern\.tier-pro \.conversion-plans \{ display: none; \}/);
+      continue;
+    }
     assert(allowed.has(id),`new fragment #${id} must stay in the member-visible set`);
     const target=Array.from(html.matchAll(/<[a-z][^>]*\bid="([^"]+)"[^>]*>/g)).find(m=>m[1]===id);
     assert(target,`target #${id} exists`);
@@ -424,4 +431,73 @@ test('explicit synthetic public fixture preserves finite probabilities when dail
   assert.equal(selected.free,1);
   assert.equal(selected.rows[0].locked,false);
   assert.deepEqual(selected.rows[0].probabilities,[.6,.25,.15]);
+});
+
+test('early plan comparison preserves truthful entitlements, exact reviewed checkouts and existing anchors', () => {
+  const html=readFileSync(new URL('../index.html',import.meta.url),'utf8');
+  const hero=html.indexOf('<div class="dashboard-hero">');
+  const plans=html.indexOf('<section class="conversion-plans" id="abonament"');
+  const features=html.indexOf('<div class="dashboard-feature-strip">');
+  const dashboardIndex=html.indexOf('<section class="dashboard-grid"');
+  assert(hero >= 0 && hero < plans && plans < features && features < dashboardIndex);
+  const strip=html.slice(plans,features);
+  assert.match(strip,/conversion-plan-free[\s\S]*conversion-price">\$0</);
+  assert.match(strip,/conversion-plan-basic[\s\S]*conversion-price">\$5 /);
+  assert.match(strip,/conversion-plan-pro[\s\S]*conversion-price">\$20 /);
+  for (const [tier,rid] of [['basic','28975826'],['pro','28975836']]) {
+    const tag=Array.from(strip.matchAll(/<a\b[^>]*>/g),m=>m[0]).find(tag=>tag.includes(`data-conversion-tier="${tier}"`));
+    assert(tag);
+    assert(tag.includes(`href="https://www.patreon.com/checkout/PoseidonPredictions?rid=${rid}"`));
+    assert(tag.includes(`plan-btn-${tier}`));
+    assert(tag.includes('data-conversion="plan-outbound"'));
+    assert(tag.includes('data-conversion-source="planstrip"'));
+  }
+  assert.match(strip,/<a href="#dashboard"[^>]*data-i18n="conversion.free.cta"/);
+  assert.match(strip,/<a href="#exemplu-pro"[^>]*data-dashboard-analysis/);
+  assert.match(strip,/<a href="analize\/index.html" class="conversion-member-proof"/);
+  assert.match(html,/<section class="plans" id="abonament-detalii" data-conversion-view="pricing">/);
+  for (const id of ['abonament','abonament-detalii','exemplu-pro','dashboard']) assert.equal((html.match(new RegExp(`\\bid="${id}"`,'g'))||[]).length,1,id);
+});
+
+test('conversion labels are complete in six languages and legacy dictionary values stay unchanged', () => {
+  const original=JSON.parse(execFileSync('git',['show','HEAD:assets/i18n.json'],{encoding:'utf8',cwd:new URL('..',import.meta.url)}));
+  const keys=Object.keys(i18n.ro).filter(key=>key.startsWith('conversion.')).sort();
+  assert(keys.length >= 14);
+  const tokens=text=>({variables:(text.match(/\{\w+\}/g)||[]).sort(),tags:text.match(/<\/?[^>]+>/g)||[]});
+  for (const lang of ['ro','en','es','it','fr','id']) {
+    for (const [key,value] of Object.entries(original[lang])) assert.equal(i18n[lang][key],value,`${lang}.${key}`);
+    assert.deepEqual(Object.keys(i18n[lang]).filter(key=>key.startsWith('conversion.')).sort(),keys);
+    for (const key of keys) {
+      assert(i18n[lang][key].trim(),`${lang}.${key}`);
+      assert.deepEqual(tokens(i18n[lang][key]),tokens(i18n.ro[key]),`${lang}.${key}`);
+    }
+    assert.match(i18n[lang]['conversion.free.body'],/5/);
+    assert.match(i18n[lang]['conversion.note'],/\bUSD\b/);
+  }
+});
+
+test('conversion member visibility, privacy script order and numeric display contracts are retained', () => {
+  const html=readFileSync(new URL('../index.html',import.meta.url),'utf8');
+  const css=readFileSync(new URL('../assets/home-modern.css',import.meta.url),'utf8');
+  const scripts=Array.from(html.matchAll(/<script\b[^>]*\bsrc="([^"]+)"[^>]*>/g),m=>({tag:m[0],src:m[1],index:m.index}));
+  const bootstrap=scripts.find(script=>script.src.startsWith('assets/conversion.js?'));
+  const counter=scripts.find(script=>script.src==='//gc.zgo.at/count.js');
+  assert(bootstrap && counter && bootstrap.index < counter.index);
+  assert.doesNotMatch(bootstrap.tag,/\b(?:async|defer)\b/);
+  const privacy=counter.tag.match(/data-goatcounter-settings='([^']+)'/)?.[1];
+  assert(privacy,'static analytics safety defaults survive a failed conversion-module load');
+  assert.deepEqual(JSON.parse(privacy),{no_onload:true,no_events:true});
+  const member=scripts.find(script=>script.src.startsWith('assets/members.js?'));
+  const app=scripts.find(script=>script.src.startsWith('assets/app.js?'));
+  assert(member.index < app.index);
+  assert.match(css,/body\.home-modern\.tier-pro \.conversion-plans \{ display: none; \}/);
+  assert.match(css,/body\.home-modern\.tier-basic[^{}]*\.conversion-plan-free[^{}]*\.conversion-plan-basic[^{}]*\{ display: none; \}/);
+  assert.match(css,/body\.home-modern\.tier-basic[^{}]*\.conversion-member-proof[^{}]*\{ display: inline; \}/);
+  assert.match(css,/body\.home-modern\.tier-pro #abonament-detalii[^{}]*\.support-cta[^{}]*\{ display: none; \}/);
+  assert.match(css,/\.dashboard-hero-evidence \{ display: none; \}/);
+  assert.equal((html.match(/\bdata-dashboard-kpis\b/g)||[]).length,2);
+  assert.equal((html.match(/\bdata-dashboard-chart\b/g)||[]).length,2);
+  assert.match(css,/\.dashboard-col-time \{ width: 48px; \}/);
+  assert.match(css,/\.dashboard-col-prob \{ width: 56px; \}/);
+  assert.match(css,/td\.dashboard-prob \{ overflow: visible; white-space: nowrap; text-overflow: clip; \}/);
 });

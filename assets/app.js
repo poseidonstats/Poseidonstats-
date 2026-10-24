@@ -164,6 +164,8 @@ function _gcEvent(nume) {
   try { if (window.goatcounter && window.goatcounter.count) window.goatcounter.count({ path: nume, title: nume, event: true }); } catch (e) {}
 }
 function _instaleazaUrmarireClicuri() {
+  if (window.PoseidonConversion) { window.PoseidonConversion.mount(); return; }
+  if (document.querySelector('script[src^="assets/conversion.js"]')) return; // local funnel failed: keep homepage tracking closed
   document.addEventListener("click", (ev) => {
     const a = ev.target.closest && ev.target.closest("a"); if (!a) return;
     const h = a.getAttribute("href") || ""; const c = a.className || "";
@@ -391,8 +393,9 @@ function rezumatExemplu(clasa = "") {
   </div>`;
 }
 function puneRezumatInCaseta() {
-  const grid = document.querySelector("#abonament .plan-grid"); if (!grid) return;
-  document.querySelectorAll("#abonament .plans-exemplu").forEach(e => e.remove());
+  const grid = document.querySelector("#abonament-detalii .plan-grid") || document.querySelector("#abonament .plan-grid"); if (!grid) return;
+  const section = grid.closest ? grid.closest("section") : null;
+  (section || document).querySelectorAll(section ? ".plans-exemplu" : "#abonament-detalii .plans-exemplu, #abonament .plans-exemplu").forEach(e => e.remove());
   const h = rezumatExemplu("plans-exemplu"); if (h) grid.insertAdjacentHTML("beforebegin", h);
 }
 

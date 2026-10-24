@@ -14,12 +14,13 @@
 <link rel="canonical" href="https://poseidonstats.com/">
 <meta property="og:type" content="website">
 <link rel="stylesheet" href="assets/style.css">
-<link rel="stylesheet" href="assets/home-modern.css?v=20261024-reference2">
+<link rel="stylesheet" href="assets/home-modern.css?v=20261024-conversion1">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#1e3a8a">
 <link rel="apple-touch-icon" href="assets/icon-192.png">
 <script>if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js");</script>
-<script data-goatcounter="https://poseidonstats.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<script src="assets/conversion.js?v=20261024-conversion1"></script>
+<script data-goatcounter="https://poseidonstats.goatcounter.com/count" data-goatcounter-settings='{"no_onload":true,"no_events":true}' async src="//gc.zgo.at/count.js"></script>
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -148,11 +149,11 @@ Statistici informative. Modelul poate greși. Verifică sursa. 18+.
     <p class="tagline" data-i18n="tagline">Probabilități publicate înainte de meci · <strong>track record verificabil</strong> · dataset public</p>
     <nav aria-label="Navigare principală" data-i18n-attr="aria-label:dashboard.nav.label">
       <a href="index.html" class="active" data-i18n="dashboard.nav.home">Acasă</a>
-      <a href="#dashboard" data-i18n="nav.predictii">Predicții</a>
-      <a href="analize/index.html" data-i18n="nav.analize">Analize</a>
-      <a href="track-record.html" data-i18n="nav.trackrecord">Track record</a>
-      <a href="metodologie.html" data-i18n="nav.metodologie">Metodologie</a>
-      <a class="patreon" href="#abonament" data-i18n="nav.abonamente">Abonamente</a>
+      <a href="#dashboard" data-i18n="nav.predictii" data-conversion="predictions" data-conversion-source="header">Predicții</a>
+      <a href="analize/index.html" data-i18n="nav.analize" data-conversion="analyses" data-conversion-source="header">Analize</a>
+      <a href="track-record.html" data-i18n="nav.trackrecord" data-conversion="track-record" data-conversion-source="header">Track record</a>
+      <a href="metodologie.html" data-i18n="nav.metodologie" data-conversion="methodology" data-conversion-source="header">Metodologie</a>
+      <a class="patreon" href="#abonament" data-i18n="nav.abonamente" data-conversion="plan-intent" data-conversion-source="header">Abonamente</a>
       <details class="nav-more"><summary data-i18n="dashboard.nav.more">Mai mult</summary><div>
         <a href="predictii/index.html" data-i18n="nav.ligi">Pe ligi</a>
         <a href="simulator.html" data-i18n="nav.simulator">Simulator</a>
@@ -179,8 +180,8 @@ Statistici informative. Modelul poate greși. Verifică sursa. 18+.
       </svg>
       <div class="dashboard-hero-copy">
         <h1 data-i18n="dashboard.hero.title">Statistici avansate<br>pentru <span>decizii corecte</span></h1>
-        <p data-i18n="dashboard.hero.sub">Analize pe baza datelor, probabilități reale și un track record verificabil. Fără pronosticuri subiective. Doar statistici.</p>
-        <div class="dashboard-hero-actions"><a href="#dashboard" class="gold-button" data-i18n="hero.cta.primary">Vezi predicțiile de azi</a><a href="metodologie.html" class="outline-button" data-i18n="nav.metodologie">Metodologie</a></div>
+        <p data-i18n="conversion.hero.sub">Cifre clare. Context verificat. Predicții publicate înainte de meci.</p>
+        <div class="dashboard-hero-actions"><a href="#dashboard" class="gold-button" data-i18n="hero.cta.primary" data-conversion="predictions" data-conversion-source="hero">Vezi predicțiile de azi</a><a href="metodologie.html" class="outline-button" data-i18n="nav.metodologie">Metodologie</a></div>
       </div>
       <div class="dashboard-hero-evidence">
         <div class="dashboard-kpis" data-dashboard-kpis aria-live="polite"></div>
@@ -190,6 +191,34 @@ Statistici informative. Modelul poate greși. Verifică sursa. 18+.
         </div>
       </div>
     </div>
+    <section class="conversion-plans" id="abonament" aria-labelledby="conversion-plans-title" data-conversion-view="planstrip">
+      <div class="conversion-plans-heading">
+        <h2 id="conversion-plans-title"><span class="conversion-visitor-title" data-i18n="conversion.plans.title">Alege accesul potrivit</span><span class="conversion-member-title" data-i18n="conversion.plans.membertitle">Mai mult context cu Pro</span></h2>
+        <a href="#abonament-detalii" data-i18n="conversion.details" data-conversion="plan-intent" data-conversion-source="planstrip">Compară toate beneficiile</a>
+      </div>
+      <div class="conversion-plan-grid">
+        <article class="conversion-plan conversion-plan-free">
+          <div class="conversion-plan-head"><h3 data-i18n="conversion.free.name">Gratuit</h3><div class="conversion-price">$0</div></div>
+          <p data-i18n="conversion.free.body">5 predicții complete pe zi și tot track record-ul. Fără cont.</p>
+          <a href="#dashboard" class="conversion-plan-cta" data-i18n="conversion.free.cta" data-conversion="predictions" data-conversion-source="planstrip">Vezi gratuit</a>
+        </article>
+        <article class="conversion-plan conversion-plan-basic">
+          <div class="conversion-plan-head"><h3>Basic</h3><div class="conversion-price">$5 <span data-i18n="plans.per">/ lună</span></div></div>
+          <p data-i18n="conversion.basic.body">Toate predicțiile și simulatorul. Pentru cine vrea cifrele.</p>
+          <a href="https://www.patreon.com/checkout/PoseidonPredictions?rid=28975826" target="_blank" rel="noopener" class="conversion-plan-cta plan-btn-basic" data-i18n="conversion.basic.cta" data-conversion="plan-outbound" data-conversion-tier="basic" data-conversion-source="planstrip">Alege Basic</a>
+        </article>
+        <article class="conversion-plan conversion-plan-pro">
+          <div class="conversion-plan-head"><h3>Pro</h3><div class="conversion-price">$20 <span data-i18n="plans.per">/ lună</span></div></div>
+          <p data-i18n="conversion.pro.body">Tot Basic + analize scrise: formă, absențe, context și capcane.</p>
+          <a href="https://www.patreon.com/checkout/PoseidonPredictions?rid=28975836" target="_blank" rel="noopener" class="conversion-plan-cta plan-btn-pro" data-i18n="conversion.pro.cta" data-conversion="plan-outbound" data-conversion-tier="pro" data-conversion-source="planstrip">Alege Pro</a>
+        </article>
+      </div>
+      <div class="conversion-proof-row">
+        <a href="#exemplu-pro" class="conversion-visitor-proof" data-dashboard-analysis data-i18n="conversion.sample" data-conversion="sample" data-conversion-source="planstrip">Citește o analiză completă</a>
+        <a href="analize/index.html" class="conversion-member-proof" data-i18n="conversion.sample.member" data-conversion="analyses" data-conversion-source="planstrip">Vezi analizele verificate</a>
+        <p data-i18n="conversion.note">Prețuri în USD · Plată prin Patreon · anulezi oricând.</p>
+      </div>
+    </section>
     <div class="dashboard-feature-strip">
       <a href="#dashboard"><span class="feature-icon" aria-hidden="true"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="16" cy="16" r="12"/><path d="m16 10 6 4-2 7h-8l-2-7 6-4Zm0-6v6M5 12l5 2m12 0 5-2M9 26l3-5m8 0 3 5"/></svg></span><span><strong data-i18n="nav.predictii">Predicții</strong><small data-i18n="dashboard.features.predictions">Probabilități calibrate</small></span></a>
       <a href="#dashboard-analyses"><span class="feature-icon" aria-hidden="true"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4h11l6 6v18H8zM19 4v7h6M12 15h9M12 19h9M12 23h6"/></svg></span><span><strong data-i18n="nav.analize">Analize</strong><small data-i18n="dashboard.features.analyses">Context și argumente</small></span></a>
@@ -199,7 +228,7 @@ Statistici informative. Modelul poate greși. Verifică sursa. 18+.
     </div>
   </section>
 
-  <section class="dashboard-grid" id="dashboard">
+  <section class="dashboard-grid" id="dashboard" data-conversion-view="dashboard">
     <div class="dashboard-column dashboard-prediction-panel">
       <div class="dashboard-panel-heading"><h2 data-i18n="dashboard.predictions.title">Predicțiile zilei</h2><label class="dashboard-date-wrap"><span data-i18n="filters.day">Zi:</span><select id="dashboard-date" aria-label="Zi:" data-i18n-attr="aria-label:filters.day"></select></label></div>
       <div class="dashboard-league-tabs" id="dashboard-leagues"></div>
@@ -272,7 +301,7 @@ Statistici informative. Modelul poate greși. Verifică sursa. 18+.
 
 
   <!-- Exemplul Pro — PRIMUL pe pagină (2 oct 2026, Andreea). 6 oct: ÎN AFARA markerilor PROOF_STATIC/DAILY_STATIC — pe 3 oct gen_static_daily l-a șters pentru că era între markeri. -->
-  <section class="pro-sample" id="exemplu-pro">
+  <section class="pro-sample" id="exemplu-pro" data-conversion-view="sample">
     <h2 data-i18n="pro.h2">Exemplu de analiză Pro</h2>
     <p class="pro-sample-intro" data-i18n="pro.intro">Pe site vezi <strong>cifrele</strong>. Abonații Pro primesc, pe site și pe Discord, și <strong>de ce</strong> — context real (clasament, formă, H2H, absențe) reconciliat cu modelul, cu capcanele marcate. Mai jos, analiza de azi, completă, publicată înainte de meci. Rezultatul și verificarea pick-urilor apar a doua zi, în arhivă:</p>
 
@@ -372,7 +401,7 @@ Statistici informative. Modelul poate greși. Verifică sursa. 18+.
       <p data-i18n="plans.get.after"><strong>A doua zi nu rescriem analiza.</strong> Punem scorul real lângă ce am spus înainte de meci și arătăm unde modelul și contextul au avut dreptate, unde au greșit și unde rezultatul a fost zgomot. <a href="analize/index.html">Toate analizele de până ieri, verificate</a>. Nu promitem profit, nu vindem „ponturi sigure”. Dacă vrei doar probabilitățile, Basic e suficient. Dacă vrei să înțelegi de ce o probabilitate merită sau nu atenție, Pro e pentru tine.</p>
       <h3 data-i18n="plans.day.h">O zi în Pro</h3>
       <div data-i18n="plans.day.list"><ol><li><strong>05:30</strong> — predicțiile zilei sunt generate și înghețate.</li><li><strong>07:30</strong> — apar analizele scrise pentru meciurile alese, pe site (cu contul Patreon) și pe Discord.</li><li><strong>În analiză</strong> — model + context + contradicții + capcane + pick-uri cu probabilitate.</li><li><strong>A doua zi</strong> — scorul final și verificarea analizei, public.</li></ol></div>
-      <p class="plans-steps pro-cta-inline"><a href="https://patreon.com/PoseidonPredictions" target="_blank" rel="noopener" class="plan-btn plan-btn-pro" data-i18n="plans.pro.btn">Alege Pro — $20/lună</a> <a href="https://patreon.com/PoseidonPredictions" target="_blank" rel="noopener" class="plan-btn plan-btn-basic" data-i18n="plans.basic.btn">Alege Basic — $5/lună</a></p>
+      <p class="plans-steps pro-cta-inline"><a href="https://www.patreon.com/checkout/PoseidonPredictions?rid=28975836" target="_blank" rel="noopener" class="plan-btn plan-btn-pro" data-i18n="plans.pro.btn" data-conversion="plan-outbound" data-conversion-tier="pro" data-conversion-source="legacy">Alege Pro — $20/lună</a> <a href="https://www.patreon.com/checkout/PoseidonPredictions?rid=28975826" target="_blank" rel="noopener" class="plan-btn plan-btn-basic" data-i18n="plans.basic.btn" data-conversion="plan-outbound" data-conversion-tier="basic" data-conversion-source="legacy">Alege Basic — $5/lună</a></p>
     </div>
     </details>
     <p class="pro-disclaimer" data-i18n="pro.disclaimer">Exemplu real, pe date înghețate. Statistic · informativ · nu sfat de pariere · 18+</p>
@@ -547,7 +576,7 @@ Statistici informative. Modelul poate greși. Verifică sursa. 18+.
   <section id="pro-analize" class="pro-analize"></section>
 
   <!-- Abonamente — ce primești concret pe fiecare tier -->
-  <section class="plans" id="abonament">
+  <section class="plans" id="abonament-detalii" data-conversion-view="pricing">
     <h2 data-i18n="plans.h2">Pro: analiza scrisă a fiecărui meci — cifra, contextul verificat și capcanele</h2>
     <p class="plans-lead" data-i18n="plans.lead"><strong>Pro, 20 $ pe lună</strong>: în fiecare dimineață, analizele scrise ale zilei — clasament, formă, H2H, absențe verificate, reconcilierea model–realitate și piețele alese, cu capcanele marcate. Mai sus ai analiza de azi, completă, publicată înainte de meci; verificarea ei apare mâine în arhivă. Dacă vrei doar cifrele, toate meciurile zilei (~2.000 pe săptămână) sunt la <strong>Basic, 5 $ pe lună</strong>. 5 predicții complete pe zi și track record-ul rămân gratuite.</p>
     <p class="plans-free" data-i18n="plans.free">🆓 <strong>Gratuit, fără cont:</strong> 5 predicții complete în fiecare zi, istoricul zi cu zi și track record-ul integral — inclusiv meciurile pe care le-am ratat. Fără reclame.</p>
@@ -567,7 +596,7 @@ Statistici informative. Modelul poate greși. Verifică sursa. 18+.
           <li data-i18n="plans.pro.f3">Context real verificat: clasament, formă, H2H, absențe</li>
           <li data-i18n="plans.pro.f4">Reconcilierea model–realitate, cu capcanele marcate explicit</li>
         </ul>
-        <a href="https://patreon.com/PoseidonPredictions" target="_blank" rel="noopener" class="plan-btn plan-btn-pro" data-i18n="plans.pro.btn">Alege Pro — $20/lună</a>
+        <a href="https://www.patreon.com/checkout/PoseidonPredictions?rid=28975836" target="_blank" rel="noopener" class="plan-btn plan-btn-pro" data-i18n="plans.pro.btn" data-conversion="plan-outbound" data-conversion-tier="pro" data-conversion-source="legacy">Alege Pro — $20/lună</a>
       </div>
 
       <div class="plan">
@@ -580,7 +609,7 @@ Statistici informative. Modelul poate greși. Verifică sursa. 18+.
           <li data-i18n="plans.basic.f3">Acces la comunitate (#anunturi, #discutii)</li>
           <li class="no" data-i18n="plans.basic.f4">Fără analizele scrise per meci</li>
         </ul>
-        <a href="https://patreon.com/PoseidonPredictions" target="_blank" rel="noopener" class="plan-btn plan-btn-basic" data-i18n="plans.basic.btn">Alege Basic — $5/lună</a>
+        <a href="https://www.patreon.com/checkout/PoseidonPredictions?rid=28975826" target="_blank" rel="noopener" class="plan-btn plan-btn-basic" data-i18n="plans.basic.btn" data-conversion="plan-outbound" data-conversion-tier="basic" data-conversion-source="legacy">Alege Basic — $5/lună</a>
       </div>
     </div>
     <p class="plans-steps" data-i18n="plans.steps"><strong>Cum funcționează:</strong> 1. alegi Pro sau Basic pe Patreon · 2. apeși „Intră cu Patreon” pe site · 3. accesul se deschide pe loc. Discordul îl conectezi din Patreon, dacă vrei alertele. Anulezi oricând; accesul rămâne până la sfârșitul perioadei plătite.</p>
@@ -698,8 +727,8 @@ Statistici informative. Modelul poate greși. Verifică sursa. 18+.
   </div>
 </footer>
 
-<script src="assets/members.js?v=202610150800"></script>
-<script src="assets/app.js?v=20261023-modern2"></script>
+<script src="assets/members.js?v=20261024-conversion1"></script>
+<script src="assets/app.js?v=20261024-conversion1"></script>
 <script src="assets/home-dashboard.js?v=20261024-reference1"></script>
 </body>
 </html>
