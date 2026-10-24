@@ -48,7 +48,7 @@
       const h = Array.isArray(m.hit) ? m.hit[0] : m.hit;
       return Number.isFinite(Number(h)) ? nr(h, d) : "–";
     };
-    const nota = T("citire.nota", "Citire din echipe, nu din preț. Numerele de test sunt pe o variantă simplificată a formulei: scorul exact din familie {fam} % (N {n_fam}), intervalul de goluri {int} % (N {n_int}), direcția {dir} % (N {n_dir}); formula completă e verificată separat, pe un eșantion mai mic. Fiecare citire intră în bilanțul de a doua zi.")
+    const nota = T("citire.nota", "Citire din echipe, nu din preț. Numerele de test sunt pe o variantă simplificată a formulei: scorul exact din familie {fam} % (N {n_fam}), intervalul de goluri {int} % (N {n_int}), direcția {dir} % (N {n_dir}); formula completă are deocamdată doar un diagnostic pe un eșantion mai mic, nu o validare finală. Fiecare citire intră în bilanțul de a doua zi.")
       .replace("{n_fam}", nN(t.familia)).replace("{fam}", hit1(t.familia, 1))
       .replace("{n_int}", nN(t.interval)).replace("{int}", hit1(t.interval, 1))
       .replace("{n_dir}", nN(t.directia)).replace("{dir}", hit1(t.directia, 1));
