@@ -1036,7 +1036,7 @@ function renderMatch(m, filterMarket = "") {
     ? `<span class="free-tag">${tt("freemium.tag", "GRATUIT AZI")}</span>` : "";
 
   const lead = picks.length ? `<div class="match-lead"><span class="lead-pct">${fmtPct(picks[0][1])}</span><span class="lead-mk">${esc(picks[0][0])}</span></div>` : `<div class="match-lead"><span class="lead-pct">${fmtPct(Math.max(m.prob_home, m.prob_draw, m.prob_away))}</span><span class="lead-mk">${pick1x2}</span></div>`;
-  return `<div class="match ${m.calibrated ? "" : "uncalibrated"} ${m.free ? "match-free" : ""}">
+  return `<div class="match ${m.calibrated ? "" : "uncalibrated"} ${m.free ? "match-free" : ""}" data-fid="${m.fixture_id}">
     <div class="match-header" role="button" tabindex="0">
       ${lead}
       <div class="match-title">

@@ -669,7 +669,19 @@
     "conversion.sample": "Citește o analiză completă",
     "conversion.sample.member": "Vezi analizele verificate",
     "conversion.note": "Prețuri în USD · Plată prin Patreon · anulezi oricând.",
-    "conversion.details": "Compară toate beneficiile"
+    "conversion.details": "Compară toate beneficiile",
+    "citire.titlu": "Propunerea noastră",
+    "citire.scor": "Scor",
+    "citire.sau": "sau",
+    "citire.directia": "Direcția",
+    "citire.goluri": "Goluri",
+    "citire.cel_mai_probabil": "cel mai probabil {n}",
+    "citire.deschide": "Deschide scorul",
+    "citire.gazda": "gazda",
+    "citire.oaspetele": "oaspeții",
+    "citire.oricare": "oricare, {p} % gazda",
+    "citire.p00": "0-0 la pauză",
+    "citire.nota": "Citire din echipe, nu din preț. Pe test ({n} meciuri): scorul exact din familie {fam} %, intervalul de goluri {int} %, direcția {dir} %. Fiecare citire intră în bilanțul de a doua zi."
   },
   "en": {
     "lang.name": "English",
@@ -1341,7 +1353,19 @@
     "conversion.sample": "Read a complete analysis",
     "conversion.sample.member": "View reviewed analyses",
     "conversion.note": "Prices in USD · Payment via Patreon · cancel anytime.",
-    "conversion.details": "Compare all benefits"
+    "conversion.details": "Compare all benefits",
+    "citire.titlu": "Our reading",
+    "citire.scor": "Score",
+    "citire.sau": "or",
+    "citire.directia": "Direction",
+    "citire.goluri": "Goals",
+    "citire.cel_mai_probabil": "most likely {n}",
+    "citire.deschide": "Opens the scoring",
+    "citire.gazda": "home side",
+    "citire.oaspetele": "away side",
+    "citire.oricare": "either side, {p} % home",
+    "citire.p00": "0-0 at half-time",
+    "citire.nota": "A reading from the teams, not from the price. On the test set ({n} matches): exact score within the family {fam} %, goals interval {int} %, direction {dir} %. Every reading goes into the next day's tally."
   },
   "es": {
     "lang.name": "Español",
@@ -2013,7 +2037,19 @@
     "conversion.sample": "Lee un análisis completo",
     "conversion.sample.member": "Ver análisis revisados",
     "conversion.note": "Precios en USD · Pago a través de Patreon · cancela cuando quieras.",
-    "conversion.details": "Compara todos los beneficios"
+    "conversion.details": "Compara todos los beneficios",
+    "citire.titlu": "Nuestra lectura",
+    "citire.scor": "Marcador",
+    "citire.sau": "o",
+    "citire.directia": "Dirección",
+    "citire.goluri": "Goles",
+    "citire.cel_mai_probabil": "lo más probable {n}",
+    "citire.deschide": "Abre el marcador",
+    "citire.gazda": "el local",
+    "citire.oaspetele": "el visitante",
+    "citire.oricare": "cualquiera, {p} % el local",
+    "citire.p00": "0-0 al descanso",
+    "citire.nota": "Una lectura a partir de los equipos, no del precio. En el conjunto de prueba ({n} partidos): marcador exacto dentro de la familia {fam} %, intervalo de goles {int} %, dirección {dir} %. Cada lectura entra en el balance del día siguiente."
   },
   "it": {
     "lang.name": "Italiano",
@@ -2685,7 +2721,19 @@
     "conversion.sample": "Leggi un’analisi completa",
     "conversion.sample.member": "Vedi le analisi verificate",
     "conversion.note": "Prezzi in USD · Pagamento tramite Patreon · annulla quando vuoi.",
-    "conversion.details": "Confronta tutti i vantaggi"
+    "conversion.details": "Confronta tutti i vantaggi",
+    "citire.titlu": "La nostra lettura",
+    "citire.scor": "Risultato",
+    "citire.sau": "o",
+    "citire.directia": "Direzione",
+    "citire.goluri": "Gol",
+    "citire.cel_mai_probabil": "più probabile {n}",
+    "citire.deschide": "Sblocca il risultato",
+    "citire.gazda": "la squadra di casa",
+    "citire.oaspetele": "gli ospiti",
+    "citire.oricare": "una delle due, {p} % casa",
+    "citire.p00": "0-0 all'intervallo",
+    "citire.nota": "Una lettura dalle squadre, non dal prezzo. Sul set di test ({n} partite): risultato esatto nella famiglia {fam} %, intervallo di gol {int} %, direzione {dir} %. Ogni lettura entra nel bilancio del giorno dopo."
   },
   "fr": {
     "lang.name": "Français",
@@ -3357,7 +3405,19 @@
     "conversion.sample": "Lire une analyse complète",
     "conversion.sample.member": "Voir les analyses vérifiées",
     "conversion.note": "Prix en USD · Paiement via Patreon · résiliez à tout moment.",
-    "conversion.details": "Comparer tous les avantages"
+    "conversion.details": "Comparer tous les avantages",
+    "citire.titlu": "Notre lecture",
+    "citire.scor": "Score",
+    "citire.sau": "ou",
+    "citire.directia": "Direction",
+    "citire.goluri": "Buts",
+    "citire.cel_mai_probabil": "le plus probable {n}",
+    "citire.deschide": "Ouvre le score",
+    "citire.gazda": "l'équipe à domicile",
+    "citire.oaspetele": "les visiteurs",
+    "citire.oricare": "l'une ou l'autre, {p} % domicile",
+    "citire.p00": "0-0 à la mi-temps",
+    "citire.nota": "Une lecture à partir des équipes, pas du prix. Sur le jeu de test ({n} matchs) : score exact dans la famille {fam} %, intervalle de buts {int} %, direction {dir} %. Chaque lecture entre dans le bilan du lendemain."
   },
   "id": {
     "lang.name": "Bahasa Indonesia",
@@ -4029,6 +4089,18 @@
     "conversion.sample": "Baca analisis lengkap",
     "conversion.sample.member": "Lihat analisis yang telah dievaluasi",
     "conversion.note": "Harga dalam USD · Pembayaran melalui Patreon · batalkan kapan saja.",
-    "conversion.details": "Bandingkan semua manfaat"
+    "conversion.details": "Bandingkan semua manfaat",
+    "citire.titlu": "Bacaan kami",
+    "citire.scor": "Skor",
+    "citire.sau": "atau",
+    "citire.directia": "Arah",
+    "citire.goluri": "Gol",
+    "citire.cel_mai_probabil": "paling mungkin {n}",
+    "citire.deschide": "Membuka skor",
+    "citire.gazda": "tuan rumah",
+    "citire.oaspetele": "tim tamu",
+    "citire.oricare": "salah satu, {p} % tuan rumah",
+    "citire.p00": "0-0 saat turun minum",
+    "citire.nota": "Bacaan dari tim, bukan dari harga. Pada set uji ({n} pertandingan): skor tepat dalam keluarga {fam} %, rentang gol {int} %, arah {dir} %. Setiap bacaan masuk ke rekap keesokan harinya."
   }
 }

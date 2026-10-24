@@ -1292,3 +1292,11 @@ h2, h3 { letter-spacing: -0.01em; }
 .daily-static { background: #fff !important; border: 1px solid var(--line) !important; border-left: 4px solid var(--navy-2) !important; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
 .daily-static h2, .daily-static h3 { color: var(--navy-2) !important; }
 .market .val.low { color: var(--muted); }
+
+/* „Propunerea noastră” (24 oct 2026): citirea din echipe, mereu vizibilă sub antetul cardului liber; tema site-ului e întunecată (home-modern.css) */
+.citire { margin: 0 14px 10px; padding: 10px 12px; border: 1px solid rgba(201, 162, 39, 0.45); border-left: 3px solid #c9a227; border-radius: 10px; background: rgba(201, 162, 39, 0.08); font-size: 13px; line-height: 1.5; }
+.citire-titlu { font-weight: 700; color: #f1c75b; margin-right: 8px; }
+.citire-rand { color: #e5e7eb; }
+.citire-rand b { font-weight: 600; color: #ffffff; }
+.citire-sep { color: #6b7280; margin: 0 6px; }
+.citire-nota { display: block; margin-top: 6px; font-size: 11px; color: #9ca3af; }
