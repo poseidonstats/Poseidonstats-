@@ -14,7 +14,7 @@
 <link rel="canonical" href="https://poseidonstats.com/">
 <meta property="og:type" content="website">
 <link rel="stylesheet" href="assets/style.css">
-<link rel="stylesheet" href="assets/home-modern.css?v=20261024-conversion1">
+<link rel="stylesheet" href="assets/home-modern.css?v=20261024-simplification1">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#1e3a8a">
 <link rel="apple-touch-icon" href="assets/icon-192.png">
@@ -168,8 +168,7 @@ Statistici informative. Modelul poate greși. Verifică sursa. 18+.
 
 <main class="container">
 
-  <section class="dashboard-opening">
-    <div class="dashboard-hero">
+  <section class="dashboard-opening"><div class="dashboard-hero">
       <svg class="stadium-scene" viewBox="0 0 1440 460" preserveAspectRatio="xMidYMid slice" aria-hidden="true" fill="none">
         <path d="M-100 130Q720-200 1540 130M-100 160Q720-165 1540 160M-100 190Q720-130 1540 190" stroke="#6889a1" stroke-width="2" opacity=".35"/>
         <path d="M-70 390Q720 130 1510 390M-70 410Q720 150 1510 410M-70 430Q720 170 1510 430M-70 450Q720 190 1510 450" stroke="#70869a" stroke-width="10" stroke-dasharray="2 12" opacity=".22"/>
@@ -179,19 +178,56 @@ Statistici informative. Modelul poate greși. Verifică sursa. 18+.
         <ellipse cx="720" cy="410" rx="90" ry="23" stroke="#517d71" opacity=".3"/>
       </svg>
       <div class="dashboard-hero-copy">
-        <h1 data-i18n="dashboard.hero.title">Statistici avansate<br>pentru <span>decizii corecte</span></h1>
-        <p data-i18n="conversion.hero.sub">Cifre clare. Context verificat. Predicții publicate înainte de meci.</p>
+        <h1 data-i18n="simplify.hero.title">Vezi probabilitățile.<br><span>Înțelege contextul.</span></h1>
+        <p data-i18n="simplify.hero.sub">5 predicții complete gratuite pe zi. Analizele Pro adaugă forma, absențele și capcanele din spatele cifrelor.</p>
         <div class="dashboard-hero-actions"><a href="#dashboard" class="gold-button" data-i18n="hero.cta.primary" data-conversion="predictions" data-conversion-source="hero">Vezi predicțiile de azi</a><a href="metodologie.html" class="outline-button" data-i18n="nav.metodologie">Metodologie</a></div>
       </div>
-      <div class="dashboard-hero-evidence">
+
+    </div></section>
+
+  <section class="dashboard-grid simplify-demo" id="dashboard" data-conversion-view="dashboard">
+<div class="dashboard-column dashboard-prediction-panel">
+      <div class="dashboard-panel-heading"><h2 data-i18n="simplify.demo.title">Încearcă predicțiile</h2><label class="dashboard-date-wrap"><span data-i18n="filters.day">Zi:</span><select id="dashboard-date" aria-label="Zi:" data-i18n-attr="aria-label:filters.day"></select></label></div>
+      <div class="dashboard-demo-controls">
+        <label for="dashboard-search" data-i18n="simplify.search.label">Caută o echipă</label>
+        <div class="dashboard-search-control"><input id="dashboard-search" type="search" autocomplete="off" placeholder="Numele echipei" aria-label="Caută o echipă" data-i18n-attr="placeholder:simplify.search.placeholder,aria-label:simplify.search.label"><button id="dashboard-search-clear" type="button" data-i18n="simplify.search.clear">Șterge</button></div>
+        <label for="dashboard-league-menu" data-i18n="simplify.leagues.label">Ligă</label>
+        <select id="dashboard-league-menu" aria-label="Ligă" data-i18n-attr="aria-label:simplify.leagues.label"></select>
+      </div>
+      <div class="dashboard-league-tabs" id="dashboard-leagues"></div>
+      <div class="dashboard-table-scroll"><table class="dashboard-table"><colgroup><col class="dashboard-col-time"><col class="dashboard-col-match"><col class="dashboard-col-prob"><col class="dashboard-col-prob"><col class="dashboard-col-prob"><col class="dashboard-col-access"></colgroup><thead><tr><th data-i18n="dashboard.table.time">Ora</th><th data-i18n="dashboard.table.match">Meci</th><th>1</th><th>X</th><th>2</th><th data-i18n="dashboard.table.access">Acces</th></tr></thead><tbody id="dashboard-predictions"></tbody></table></div>
+      <p class="dashboard-status" id="dashboard-table-status" role="status"></p>
+      <a href="#matches" class="dashboard-text-link" data-i18n="dashboard.predictions.all">Vezi toate predicțiile</a>
+    </div>
+    <div class="dashboard-column dashboard-analysis-panel simplify-pro-demo">
+      <div class="dashboard-panel-heading"><h2 data-i18n="simplify.pro.title">Cum arată o analiză Pro</h2></div>
+      <div data-dashboard-pro-summary></div>
+    </div>
+  </section>
+
+  <section class="simplify-evidence">
+    <div class="dashboard-panel-heading"><h2 data-i18n="simplify.evidence.title">Verifică și ce nu a mers</h2><a href="track-record.html" data-i18n="simplify.evidence.link" data-conversion="track-record" data-conversion-source="dashboard">Auditul complet</a></div>
+    <p class="simplify-evidence-note" data-i18n="simplify.evidence.note">Istoricul rezultatelor este public, inclusiv ratările. Verifică perioadele și eșantioanele din audit.</p>
+
+    <details class="simplify-disclosure" id="dashboard-evidence-details">
+      <summary data-i18n="simplify.metrics.title">Surse, eșantioane și grafice</summary>
+      <div class="simplify-disclosure-body"><div class="dashboard-track-summary" id="dashboard-track-summary"></div><div class="dashboard-hero-evidence simplify-duplicate-metrics">
         <div class="dashboard-kpis" data-dashboard-kpis aria-live="polite"></div>
         <div class="dashboard-chart-panel">
           <div class="dashboard-chart-heading"><h2 data-i18n="dashboard.chart.title">Selecții rezolvate · jurnal recent</h2><span data-i18n="dashboard.chart.note">Jurnal public · date parțiale marcate</span></div>
           <div class="dashboard-chart" data-dashboard-chart></div>
         </div>
-      </div>
-    </div>
-    <section class="conversion-plans" id="abonament" aria-labelledby="conversion-plans-title" data-conversion-view="planstrip">
+      </div><div class="dashboard-column dashboard-record-panel">
+      <div class="dashboard-panel-heading"><h2 data-i18n="dashboard.track.title">Track record</h2><a href="track-record.html" data-i18n="dashboard.track.all">Vezi detalii</a></div>
+      <div class="dashboard-kpis" data-dashboard-kpis aria-live="polite"></div>
+      <div class="dashboard-record-tabs"><a class="active" href="track-record.html" data-i18n="dashboard.chart.title">Selecții rezolvate · jurnal recent</a><a href="track-record.html" data-i18n="dashboard.track.market">Piețe verificate</a></div>
+      <div class="dashboard-chart-panel"><div class="dashboard-chart-heading"><h3 data-i18n="dashboard.chart.title">Selecții rezolvate · jurnal recent</h3></div><div class="dashboard-chart" data-dashboard-chart></div></div>
+
+    </div></div>
+    </details>
+  </section>
+
+<section class="conversion-plans" id="abonament" aria-labelledby="conversion-plans-title" data-conversion-view="planstrip">
       <div class="conversion-plans-heading">
         <h2 id="conversion-plans-title"><span class="conversion-visitor-title" data-i18n="conversion.plans.title">Alege accesul potrivit</span><span class="conversion-member-title" data-i18n="conversion.plans.membertitle">Mai mult context cu Pro</span></h2>
         <a href="#abonament-detalii" data-i18n="conversion.details" data-conversion="plan-intent" data-conversion-source="planstrip">Compară toate beneficiile</a>
@@ -219,50 +255,77 @@ Statistici informative. Modelul poate greși. Verifică sursa. 18+.
         <p data-i18n="conversion.note">Prețuri în USD · Plată prin Patreon · anulezi oricând.</p>
       </div>
     </section>
-    <div class="dashboard-feature-strip">
-      <a href="#dashboard"><span class="feature-icon" aria-hidden="true"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="16" cy="16" r="12"/><path d="m16 10 6 4-2 7h-8l-2-7 6-4Zm0-6v6M5 12l5 2m12 0 5-2M9 26l3-5m8 0 3 5"/></svg></span><span><strong data-i18n="nav.predictii">Predicții</strong><small data-i18n="dashboard.features.predictions">Probabilități calibrate</small></span></a>
-      <a href="#dashboard-analyses"><span class="feature-icon" aria-hidden="true"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4h11l6 6v18H8zM19 4v7h6M12 15h9M12 19h9M12 23h6"/></svg></span><span><strong data-i18n="nav.analize">Analize</strong><small data-i18n="dashboard.features.analyses">Context și argumente</small></span></a>
-      <a href="track-record.html"><span class="feature-icon" aria-hidden="true"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 27V17h5v10M14 27V11h5v16M23 27V5h5v22M5 12l8-5 7 2 7-6"/></svg></span><span><strong data-i18n="nav.trackrecord">Track record</strong><small data-i18n="dashboard.features.record">Rezultate transparente</small></span></a>
-      <a href="metodologie.html"><span class="feature-icon" aria-hidden="true"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m13 3-1 4-3 2-4-1-2 5 3 3v3l-3 3 3 5 4-1 3 2 1 3h5l1-4 3-2 4 1 2-5-3-3v-3l3-3-3-5-4 1-3-2-1-3z"/><circle cx="16" cy="17" r="5"/></svg></span><span><strong data-i18n="nav.metodologie">Metodologie</strong><small data-i18n="dashboard.features.method">Cum funcționează modelul</small></span></a>
-      <a href="#abonament"><span class="feature-icon" aria-hidden="true"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m4 9 7 7 5-11 5 11 7-7-3 18H7L4 9Zm3 14h18"/><circle cx="4" cy="7" r="1"/><circle cx="16" cy="4" r="1"/><circle cx="28" cy="7" r="1"/></svg></span><span><strong data-i18n="nav.abonamente">Abonamente</strong><small data-i18n="dashboard.features.plans">Alege planul potrivit</small></span></a>
-    </div>
+
+  <section class="simplify-activation">
+    <h2 data-i18n="simplify.activation.title">Plătești pe Patreon. Revii și intri aici.</h2>
+    <p data-i18n="simplify.activation.body">După alegerea abonamentului, revino pe site și intră cu același cont Patreon. Discordul este opțional.</p>
+    <a href="https://poseidon-members.poseidonstats.workers.dev/login" class="gold-button simplify-activation-login" data-i18n="simplify.activation.login" data-conversion="login" data-conversion-source="planstrip">Intră cu Patreon</a>
   </section>
 
-  <section class="dashboard-grid" id="dashboard" data-conversion-view="dashboard">
-    <div class="dashboard-column dashboard-prediction-panel">
-      <div class="dashboard-panel-heading"><h2 data-i18n="dashboard.predictions.title">Predicțiile zilei</h2><label class="dashboard-date-wrap"><span data-i18n="filters.day">Zi:</span><select id="dashboard-date" aria-label="Zi:" data-i18n-attr="aria-label:filters.day"></select></label></div>
-      <div class="dashboard-league-tabs" id="dashboard-leagues"></div>
-      <div class="dashboard-table-scroll"><table class="dashboard-table"><colgroup><col class="dashboard-col-time"><col class="dashboard-col-match"><col class="dashboard-col-prob"><col class="dashboard-col-prob"><col class="dashboard-col-prob"><col class="dashboard-col-access"></colgroup><thead><tr><th data-i18n="dashboard.table.time">Ora</th><th data-i18n="dashboard.table.match">Meci</th><th>1</th><th>X</th><th>2</th><th data-i18n="dashboard.table.access">Acces</th></tr></thead><tbody id="dashboard-predictions"></tbody></table></div>
-      <p class="dashboard-status" id="dashboard-table-status" role="status"></p>
-      <a href="#matches" class="dashboard-text-link" data-i18n="dashboard.predictions.all">Vezi toate predicțiile</a>
-    </div>
-    <div class="dashboard-column dashboard-analysis-panel">
-      <div class="dashboard-panel-heading"><h2 data-i18n="dashboard.analyses.title">Analize Pro</h2><a href="analize/index.html" data-i18n="dashboard.analyses.all">Vezi toate</a></div>
-      <div id="dashboard-analyses"></div>
-    </div>
-    <div class="dashboard-column dashboard-record-panel">
-      <div class="dashboard-panel-heading"><h2 data-i18n="dashboard.track.title">Track record</h2><a href="track-record.html" data-i18n="dashboard.track.all">Vezi detalii</a></div>
-      <div class="dashboard-kpis" data-dashboard-kpis aria-live="polite"></div>
-      <div class="dashboard-record-tabs"><a class="active" href="track-record.html" data-i18n="dashboard.chart.title">Selecții rezolvate · jurnal recent</a><a href="track-record.html" data-i18n="dashboard.track.market">Piețe verificate</a></div>
-      <div class="dashboard-chart-panel"><div class="dashboard-chart-heading"><h3 data-i18n="dashboard.chart.title">Selecții rezolvate · jurnal recent</h3></div><div class="dashboard-chart" data-dashboard-chart></div></div>
-      <div class="dashboard-track-summary" id="dashboard-track-summary"></div>
-    </div>
-  </section>
+<section id="pro-analize" class="pro-analize"></section>
 
-  <section class="dashboard-benefits">
-    <h2 data-i18n="dashboard.why.title">De ce PoseidonStats?</h2>
-    <div class="dashboard-benefit-grid">
-      <div class="dashboard-benefit"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 27V17h5v10M14 27V11h5v16M23 27V5h5v22M5 12l8-5 7 2 7-6"/></svg><span><strong data-i18n="nav.metodologie">Metodologie</strong><small data-i18n="dashboard.features.method">Cum funcționează modelul</small></span></div>
-      <div class="dashboard-benefit"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m16 3 11 5v8c0 6-5 11-11 14C10 27 5 22 5 16V8l11-5Z"/><path d="m10 16 4 4 8-9"/></svg><span><strong data-i18n="nav.trackrecord">Track record</strong><small data-i18n="dashboard.features.record">Rezultate transparente</small></span></div>
-      <div class="dashboard-benefit"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 4h11l6 6v18H8zM19 4v7h6M12 15h9M12 19h9M12 23h6"/></svg><span><strong data-i18n="nav.analize">Analize</strong><small data-i18n="dashboard.features.analyses">Context și argumente</small></span></div>
-      <div class="dashboard-benefit"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="15" cy="17" r="11"/><circle cx="15" cy="17" r="6"/><path d="m15 17 12-12M21 5h6v6"/></svg><span><strong data-i18n="support.noads">Zero reclame</strong><small data-i18n="support.noads.desc">Zero link-uri către case de pariuri. Strict informativ.</small></span></div>
-      <a href="metodologie.html" class="gold-button" data-i18n="nav.metodologie">Metodologie</a>
-    </div>
-  </section>
+  <details class="simplify-disclosure simplify-full-predictions" id="full-predictions-details">
+    <summary data-i18n="simplify.full.title">Toate predicțiile și filtrele</summary>
+    <div class="simplify-disclosure-body"><section class="filters">
+    <label><span data-i18n="filters.day">Zi:</span>
+      <select id="filter-day"><option value="" data-i18n="filters.allday">Toate zilele</option></select>
+    </label>
+    <label><span data-i18n="filters.market">Piață:</span>
+      <select id="filter-market">
+        <option value="" data-i18n="filters.allmarket">Toate piețele</option>
+        <option value="over_1_5">Over 1.5</option>
+        <option value="over_2_5">Over 2.5</option>
+        <option value="over_3_5">Over 3.5</option>
+        <option value="under_2_5">Under 2.5</option>
+        <option value="under_3_5">Under 3.5</option>
+        <option value="btts" data-i18n="filters.market.btts">BTTS Da</option>
+        <option value="ht_over_0_5">HT Over 0.5</option>
+        <option value="ht_over_1_5">HT Over 1.5</option>
+        <option value="1x2" data-i18n="filters.market.1x2">1X2 (Home / Away)</option>
+        <option value="dc_1x" data-i18n="filters.market.dc_1x">Dublă șansă 1X</option>
+        <option value="dc_x2" data-i18n="filters.market.dc_x2">Dublă șansă X2</option>
+        <option value="dc_12" data-i18n="filters.market.dc_12">Dublă șansă 12</option>
+      </select>
+    </label>
+    <label><span data-i18n="filters.minprob">Prob. minimă:</span>
+      <select id="filter-minprob">
+        <option value="0" data-i18n="filters.minprob.all">Orice</option>
+        <option value="0.65">≥ 65%</option>
+        <option value="0.70" selected>≥ 70%</option>
+        <option value="0.75">≥ 75%</option>
+        <option value="0.80">≥ 80%</option>
+        <option value="0.85">≥ 85%</option>
+      </select>
+    </label>
+    <label><span data-i18n="filters.league">Ligă:</span>
+      <select id="filter-league"><option value="" data-i18n="filters.allleague">Toate ligile</option></select>
+    </label>
+    <label><span data-i18n="filters.country">Țară:</span>
+      <select id="filter-country"><option value="" data-i18n="filters.allcountry">Toate țările</option></select>
+    </label>
+    <label><span data-i18n="filters.sort">Sortare:</span>
+      <select id="filter-sort">
+        <option value="time" data-i18n="filters.sort.time">Oră (cronologic)</option>
+        <option value="prob_desc" data-i18n="filters.sort.probdesc">Probabilitate (mare → mică)</option>
+        <option value="league" data-i18n="filters.sort.league">Ligă (A → Z)</option>
+      </select>
+    </label>
+    <label class="cb">
+      <input type="checkbox" id="filter-calibrated-only"> <span data-i18n="filters.calibratedonly">Doar ligi calibrate</span>
+    </label>
+    <label class="cb">
+      <input type="checkbox" id="filter-calibrated-markets"> <span data-i18n="filters.calibratedmarkets">Doar piețe calibrate</span>
+    </label>
+    <button type="button" id="filter-reset" class="filter-reset" data-i18n="filters.reset">Resetează filtrele</button>
+  </section><p class="filter-note muted" data-i18n="filters.note">
+    Filtrele ajută la navigare prin date. Cifrele afișate sunt cele calibrate empiric.
+    Fiecare predicție e individuală — site-ul nu combină meciuri și nu face recomandări de joc.
+  </p><div id="match-count" class="match-count"></div><div id="matches"></div></div>
+  </details>
 
-  <div class="dashboard-detail-heading"><h2 data-i18n="dashboard.details.title">Date complete și transparență</h2><p data-i18n="dashboard.details.sub">Predicții, analize și verificări publice, în forma lor originală.</p></div>
-
-  <section class="intro">
+  <details class="simplify-disclosure simplify-legacy" id="legacy-information-details">
+    <summary data-i18n="simplify.legacy.title">Exemplul complet, rezultate și explicații</summary>
+    <div class="simplify-disclosure-body"><div class="dashboard-detail-heading"><h2 data-i18n="dashboard.details.title">Date complete și transparență</h2><p data-i18n="dashboard.details.sub">Predicții, analize și verificări publice, în forma lor originală.</p></div><section class="intro">
     <details class="legacy-explainer">
       <summary data-i18n="hero.title">Predicții fotbal azi — calculate de un model, verificate public</summary>
       <div class="legacy-explainer-body">
@@ -271,7 +334,7 @@ Statistici informative. Modelul poate greși. Verifică sursa. 18+.
         <div class="legacy-links"><a href="#repere-azi" data-i18n="hero.cta.primary">Vezi predicțiile de azi</a><a href="track-record.html" data-i18n="hero.cta.secondary">Vezi ce s-a adeverit</a></div>
       </div>
     </details>
-  <!-- DAILY_STATIC_START -->
+<!-- DAILY_STATIC_START -->
   <section class="daily-static" id="repere-azi">
     <h2 data-i18n="repere.h2" data-i18n-vars='{"data":"<span data-date=\"2026-10-24\">24 octombrie 2026</span>"}'>Predicții fotbal azi — <span data-date="2026-10-24">24 octombrie 2026</span></h2>
     <p data-i18n="repere.p" data-i18n-vars='{"n":"1353"}'>Repere calibrate din cele 1353 meciuri analizate azi de model (lista completă, cu filtre, mai jos):</p>
@@ -307,7 +370,7 @@ Statistici informative. Modelul poate greși. Verifică sursa. 18+.
 
     <details class="home-analysis-disclosure">
       <summary><span data-i18n="oferta.exemplu">Vezi exemplul de analiză ↓</span></summary>
-    <!-- PRO_SAMPLE_CARD_START -->
+<!-- PRO_SAMPLE_CARD_START -->
     <div class="pro-card">
       <div class="pro-card-head">Adana Demirspor – İnegöl Kafkas Gençlik · 2. Lig (Turkey) · <span data-date="2026-10-24">24 octombrie 2026</span> · <strong data-i18n="pro.card.publicata" data-i18n-vars='{"ora":"07:25"}'>publicată la 07:25, înainte de meci</strong></div>
 <div data-lang-grup><div data-lang="ro">
@@ -377,7 +440,7 @@ Statistici informative. Modelul poate greși. Verifică sursa. 18+.
     </div>
     <p class="pro-ieri" data-i18n="pro.ieri.cu" data-i18n-vars='{"meci": "Baťov – Strání", "scor": "0-6", "baza": "<span data-i18n=\"pro.ieri.baza.da\" data-i18n-vars=&#39;{\"b\":\"Peste 1,5 goluri\"}&#39;> — bază <strong>Peste 1,5 goluri</strong> ✅ a ieșit</span>", "zi": "2026-10-23", "fid": "1579277"}'>Ieri, aici: <strong>Baťov – Strání</strong>, 0-6 — bază <strong>Peste 1,5 goluri</strong> ✅ a ieșit. <a href="analize/2026-10-23.html#m1579277">Verificarea de a doua zi →</a></p>
     <!-- PRO_SAMPLE_CARD_END -->
-    <!-- PRO_TODAY_LIST_START -->
+<!-- PRO_TODAY_LIST_START -->
     <div class="pro-today">
       <p class="pro-today-head" data-i18n="pro.today.head" data-i18n-vars='{"n":"11"}'>🔒 <strong>Încă 11 analize azi în Pro</strong>, cu context verificat (clasament, formă, H2H, absențe) — pe site și pe Discord, dimineața.</p>
       <ul class="pro-today-list">
@@ -412,7 +475,7 @@ Statistici informative. Modelul poate greși. Verifică sursa. 18+.
     <p class="pro-disclaimer" data-i18n="pro.disclaimer">Exemplu real, pe date înghețate. Statistic · informativ · nu sfat de pariere · 18+</p>
   </section>
 
-  <!-- PROOF_STATIC_START -->
+<!-- PROOF_STATIC_START -->
   <section class="proof" id="dovada">
     <h2 data-i18n="proof.h2">Ce s-a adeverit, din predicții înghețate</h2>
     <p class="proof-lead" data-i18n="proof.lead">Jurnal deschis din 2 iunie 2026. Fiecare predicție e înghețată la generare (05:30), publicată înainte de meci și comparată apoi cu rezultatul real. Nu ștergem nimic retroactiv.</p>
@@ -464,73 +527,7 @@ Statistici informative. Modelul poate greși. Verifică sursa. 18+.
       <a href="track-record.html">track record</a> pentru tabelul complet de calibrare.
     </div>
     </details>
-  </section>
-
-  <section class="filters">
-    <label><span data-i18n="filters.day">Zi:</span>
-      <select id="filter-day"><option value="" data-i18n="filters.allday">Toate zilele</option></select>
-    </label>
-    <label><span data-i18n="filters.market">Piață:</span>
-      <select id="filter-market">
-        <option value="" data-i18n="filters.allmarket">Toate piețele</option>
-        <option value="over_1_5">Over 1.5</option>
-        <option value="over_2_5">Over 2.5</option>
-        <option value="over_3_5">Over 3.5</option>
-        <option value="under_2_5">Under 2.5</option>
-        <option value="under_3_5">Under 3.5</option>
-        <option value="btts" data-i18n="filters.market.btts">BTTS Da</option>
-        <option value="ht_over_0_5">HT Over 0.5</option>
-        <option value="ht_over_1_5">HT Over 1.5</option>
-        <option value="1x2" data-i18n="filters.market.1x2">1X2 (Home / Away)</option>
-        <option value="dc_1x" data-i18n="filters.market.dc_1x">Dublă șansă 1X</option>
-        <option value="dc_x2" data-i18n="filters.market.dc_x2">Dublă șansă X2</option>
-        <option value="dc_12" data-i18n="filters.market.dc_12">Dublă șansă 12</option>
-      </select>
-    </label>
-    <label><span data-i18n="filters.minprob">Prob. minimă:</span>
-      <select id="filter-minprob">
-        <option value="0" data-i18n="filters.minprob.all">Orice</option>
-        <option value="0.65">≥ 65%</option>
-        <option value="0.70" selected>≥ 70%</option>
-        <option value="0.75">≥ 75%</option>
-        <option value="0.80">≥ 80%</option>
-        <option value="0.85">≥ 85%</option>
-      </select>
-    </label>
-    <label><span data-i18n="filters.league">Ligă:</span>
-      <select id="filter-league"><option value="" data-i18n="filters.allleague">Toate ligile</option></select>
-    </label>
-    <label><span data-i18n="filters.country">Țară:</span>
-      <select id="filter-country"><option value="" data-i18n="filters.allcountry">Toate țările</option></select>
-    </label>
-    <label><span data-i18n="filters.sort">Sortare:</span>
-      <select id="filter-sort">
-        <option value="time" data-i18n="filters.sort.time">Oră (cronologic)</option>
-        <option value="prob_desc" data-i18n="filters.sort.probdesc">Probabilitate (mare → mică)</option>
-        <option value="league" data-i18n="filters.sort.league">Ligă (A → Z)</option>
-      </select>
-    </label>
-    <label class="cb">
-      <input type="checkbox" id="filter-calibrated-only"> <span data-i18n="filters.calibratedonly">Doar ligi calibrate</span>
-    </label>
-    <label class="cb">
-      <input type="checkbox" id="filter-calibrated-markets"> <span data-i18n="filters.calibratedmarkets">Doar piețe calibrate</span>
-    </label>
-    <button type="button" id="filter-reset" class="filter-reset" data-i18n="filters.reset">Resetează filtrele</button>
-  </section>
-
-  <p class="filter-note muted" data-i18n="filters.note">
-    Filtrele ajută la navigare prin date. Cifrele afișate sunt cele calibrate empiric.
-    Fiecare predicție e individuală — site-ul nu combină meciuri și nu face recomandări de joc.
-  </p>
-
-
-
-  <div id="match-count" class="match-count"></div>
-
-  <div id="matches"></div>
-
-  <!-- LEAGUES_LINKS_START -->
+  </section><!-- LEAGUES_LINKS_START -->
   <section class="ligi-links">
     <h2 data-i18n="ligilinks.h2">Predicții pe ligi</h2>
     <p data-i18n="ligilinks.p" data-i18n-vars='{"z":"7"}'>Fiecare campionat urmărit are pagina lui: meciurile următoare cu probabilitățile
@@ -577,11 +574,8 @@ Statistici informative. Modelul poate greși. Verifică sursa. 18+.
     <a href="statistici-pariuri.html">statistici pariuri: cât de des se adeveresc cotele</a></p>
   </section>
   <!-- LEAGUES_LINKS_END -->
-
-  <section id="pro-analize" class="pro-analize"></section>
-
-  <!-- Abonamente — ce primești concret pe fiecare tier -->
-  <section class="plans" id="abonament-detalii" data-conversion-view="pricing">
+      <section class="simplify-archive"><h2 data-i18n="nav.analize">Analize</h2><div id="dashboard-analyses"></div></section>
+<section class="plans" id="abonament-detalii" data-conversion-view="pricing">
     <h2 data-i18n="plans.h2">Pro: analiza scrisă a fiecărui meci — cifra, contextul verificat și capcanele</h2>
     <p class="plans-lead" data-i18n="plans.lead"><strong>Pro, 20 $ pe lună</strong>: în fiecare dimineață, analizele scrise ale zilei — clasament, formă, H2H, absențe verificate, reconcilierea model–realitate și piețele alese, cu capcanele marcate. Mai sus ai analiza de azi, completă, publicată înainte de meci; verificarea ei apare mâine în arhivă. Dacă vrei doar cifrele, toate meciurile zilei (~2.000 pe săptămână) sunt la <strong>Basic, 5 $ pe lună</strong>. 5 predicții complete pe zi și track record-ul rămân gratuite.</p>
     <p class="plans-free" data-i18n="plans.free">🆓 <strong>Gratuit, fără cont:</strong> 5 predicții complete în fiecare zi, istoricul zi cu zi și track record-ul integral — inclusiv meciurile pe care le-am ratat. Fără reclame.</p>
@@ -619,38 +613,22 @@ Statistici informative. Modelul poate greși. Verifică sursa. 18+.
     </div>
     <p class="plans-steps" data-i18n="plans.steps"><strong>Cum funcționează:</strong> 1. alegi Pro sau Basic pe Patreon · 2. apeși „Intră cu Patreon” pe site · 3. accesul se deschide pe loc. Discordul îl conectezi din Patreon, dacă vrei alertele. Anulezi oricând; accesul rămâne până la sfârșitul perioadei plătite.</p>
     <p class="plans-foot" data-i18n="plans.foot">Plata e procesată de Patreon; pe pagina lor alegi tier-ul cu numele de mai sus, apoi apeși „Intră cu Patreon” pe site și accesul se deschide pe loc. Anulezi oricând, din contul tău Patreon. Nu stocăm date de card. 18+.</p>
-  </section>
-
-  <!-- Pași de acces Discord -->
-  <section class="steps" id="acces">
-    <h2 data-i18n="steps.h2">Cum ajungi pe Discord, în 4 pași</h2>
-    <div class="steps-grid">
-      <div class="step">
-        <span class="step-num">1</span>
-        <strong data-i18n="steps.1.t">Alegi tier-ul pe Patreon</strong>
-        <span data-i18n="steps.1.d">Pe patreon.com/PoseidonPredictions selectezi 💎 Pro sau ⭐ Basic și finalizezi plata.</span>
-      </div>
-      <div class="step">
-        <span class="step-num">2</span>
-        <strong data-i18n="steps.2.t">Conectezi Discord</strong>
-        <span data-i18n="steps.2.d">În Patreon: Settings → Apps → Connect Discord. Fără pasul ăsta, rolul nu se poate acorda.</span>
-      </div>
-      <div class="step">
-        <span class="step-num">3</span>
-        <strong data-i18n="steps.3.t">Primești rolul automat</strong>
-        <span data-i18n="steps.3.d">Patreon te trimite pe serverul POSEIDON și îți atribuie singur rolul potrivit tier-ului.</span>
-      </div>
-      <div class="step">
-        <span class="step-num">4</span>
-        <strong data-i18n="steps.4.t">Se deschid canalele</strong>
-        <span data-i18n="steps.4.d">Basic vede #alerte-zilnice. Pro vede și #analize-pro. Alerta vine dimineața, după publicare.</span>
-      </div>
+  </section><div class="dashboard-feature-strip">
+      <a href="#dashboard"><span class="feature-icon" aria-hidden="true"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="16" cy="16" r="12"/><path d="m16 10 6 4-2 7h-8l-2-7 6-4Zm0-6v6M5 12l5 2m12 0 5-2M9 26l3-5m8 0 3 5"/></svg></span><span><strong data-i18n="nav.predictii">Predicții</strong><small data-i18n="dashboard.features.predictions">Probabilități calibrate</small></span></a>
+      <a href="#dashboard-analyses"><span class="feature-icon" aria-hidden="true"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4h11l6 6v18H8zM19 4v7h6M12 15h9M12 19h9M12 23h6"/></svg></span><span><strong data-i18n="nav.analize">Analize</strong><small data-i18n="dashboard.features.analyses">Context și argumente</small></span></a>
+      <a href="track-record.html"><span class="feature-icon" aria-hidden="true"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 27V17h5v10M14 27V11h5v16M23 27V5h5v22M5 12l8-5 7 2 7-6"/></svg></span><span><strong data-i18n="nav.trackrecord">Track record</strong><small data-i18n="dashboard.features.record">Rezultate transparente</small></span></a>
+      <a href="metodologie.html"><span class="feature-icon" aria-hidden="true"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m13 3-1 4-3 2-4-1-2 5 3 3v3l-3 3 3 5 4-1 3 2 1 3h5l1-4 3-2 4 1 2-5-3-3v-3l3-3-3-5-4 1-3-2-1-3z"/><circle cx="16" cy="17" r="5"/></svg></span><span><strong data-i18n="nav.metodologie">Metodologie</strong><small data-i18n="dashboard.features.method">Cum funcționează modelul</small></span></a>
+      <a href="#abonament"><span class="feature-icon" aria-hidden="true"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m4 9 7 7 5-11 5 11 7-7-3 18H7L4 9Zm3 14h18"/><circle cx="4" cy="7" r="1"/><circle cx="16" cy="4" r="1"/><circle cx="28" cy="7" r="1"/></svg></span><span><strong data-i18n="nav.abonamente">Abonamente</strong><small data-i18n="dashboard.features.plans">Alege planul potrivit</small></span></a>
+    </div><section class="dashboard-benefits">
+    <h2 data-i18n="dashboard.why.title">De ce PoseidonStats?</h2>
+    <div class="dashboard-benefit-grid">
+      <div class="dashboard-benefit"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 27V17h5v10M14 27V11h5v16M23 27V5h5v22M5 12l8-5 7 2 7-6"/></svg><span><strong data-i18n="nav.metodologie">Metodologie</strong><small data-i18n="dashboard.features.method">Cum funcționează modelul</small></span></div>
+      <div class="dashboard-benefit"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m16 3 11 5v8c0 6-5 11-11 14C10 27 5 22 5 16V8l11-5Z"/><path d="m10 16 4 4 8-9"/></svg><span><strong data-i18n="nav.trackrecord">Track record</strong><small data-i18n="dashboard.features.record">Rezultate transparente</small></span></div>
+      <div class="dashboard-benefit"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 4h11l6 6v18H8zM19 4v7h6M12 15h9M12 19h9M12 23h6"/></svg><span><strong data-i18n="nav.analize">Analize</strong><small data-i18n="dashboard.features.analyses">Context și argumente</small></span></div>
+      <div class="dashboard-benefit"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="15" cy="17" r="11"/><circle cx="15" cy="17" r="6"/><path d="m15 17 12-12M21 5h6v6"/></svg><span><strong data-i18n="support.noads">Zero reclame</strong><small data-i18n="support.noads.desc">Zero link-uri către case de pariuri. Strict informativ.</small></span></div>
+      <a href="metodologie.html" class="gold-button" data-i18n="nav.metodologie">Metodologie</a>
     </div>
-    <p class="steps-foot" data-i18n="steps.foot">Rolul se pierde automat dacă abonamentul expiră sau îl anulezi — nimic de dezinstalat. Dacă rolul nu apare în câteva minute, scrie la <a href="mailto:contact@poseidonstats.com">contact@poseidonstats.com</a>.</p>
-  </section>
-
-  <!-- FAQ (sincron cu JSON-LD FAQPage din <head>) -->
-  <section class="faq" id="intrebari">
+  </section><section class="faq" id="intrebari">
     <h2 data-i18n="faq.h2">Întrebări frecvente</h2>
     <details class="faq-item">
       <summary data-i18n="faq.q1">Ce primesc gratuit și ce e cu plată?</summary>
@@ -684,10 +662,7 @@ Statistici informative. Modelul poate greși. Verifică sursa. 18+.
       <summary data-i18n="faq.q8">Pe ce ligi funcționează cel mai bine?</summary>
       <div class="faq-answer" data-i18n="faq.a8">Pe ligile unde calibrarea per-ligă e validată — marcate <span class="ok-tag">✓ calibrat</span> pe site și listate în track record. Pe restul, probabilitățile rămân calibrate global, dar marcăm explicit <span class="warn-tag">⚠️ ligă necalibrată</span>. Tabelul complet, cu bias per ligă, e public.</div>
     </details>
-  </section>
-
-  <!-- Suport section — JOS, după ce vizitatorul a văzut valoarea (mutat 11 iun) -->
-  <section class="support-cta">
+  </section><section class="support-cta">
     <div class="support-icon">🔱</div>
     <h2 data-i18n="support.h2">Susține POSEIDON</h2>
     <p class="support-tagline" data-i18n="support.tagline">Track record-ul și <strong>5 predicții pe zi</strong> rămân gratuite și fără reclame, pentru toată lumea.</p>
@@ -720,7 +695,38 @@ Statistici informative. Modelul poate greși. Verifică sursa. 18+.
     <p class="support-contact">
       <span data-i18n="support.contact">📧 Întrebări, colaborări, feedback:</span> <a href="mailto:contact@poseidonstats.com">contact@poseidonstats.com</a>
     </p>
-  </section>
+  </section></div>
+  </details>
+
+  <details class="simplify-disclosure" id="discord-access-details">
+    <summary data-i18n="simplify.discord.title">Discord — opțional</summary>
+    <div class="simplify-disclosure-body"><section class="steps" id="acces">
+    <h2 data-i18n="steps.h2">Cum ajungi pe Discord, în 4 pași</h2>
+    <div class="steps-grid">
+      <div class="step">
+        <span class="step-num">1</span>
+        <strong data-i18n="steps.1.t">Alegi tier-ul pe Patreon</strong>
+        <span data-i18n="steps.1.d">Pe patreon.com/PoseidonPredictions selectezi 💎 Pro sau ⭐ Basic și finalizezi plata.</span>
+      </div>
+      <div class="step">
+        <span class="step-num">2</span>
+        <strong data-i18n="steps.2.t">Conectezi Discord</strong>
+        <span data-i18n="steps.2.d">În Patreon: Settings → Apps → Connect Discord. Fără pasul ăsta, rolul nu se poate acorda.</span>
+      </div>
+      <div class="step">
+        <span class="step-num">3</span>
+        <strong data-i18n="steps.3.t">Primești rolul automat</strong>
+        <span data-i18n="steps.3.d">Patreon te trimite pe serverul POSEIDON și îți atribuie singur rolul potrivit tier-ului.</span>
+      </div>
+      <div class="step">
+        <span class="step-num">4</span>
+        <strong data-i18n="steps.4.t">Se deschid canalele</strong>
+        <span data-i18n="steps.4.d">Basic vede #alerte-zilnice. Pro vede și #analize-pro. Alerta vine dimineața, după publicare.</span>
+      </div>
+    </div>
+    <p class="steps-foot" data-i18n="steps.foot">Rolul se pierde automat dacă abonamentul expiră sau îl anulezi — nimic de dezinstalat. Dacă rolul nu apare în câteva minute, scrie la <a href="mailto:contact@poseidonstats.com">contact@poseidonstats.com</a>.</p>
+  </section></div>
+  </details>
 
 </main>
 
@@ -734,6 +740,6 @@ Statistici informative. Modelul poate greși. Verifică sursa. 18+.
 
 <script src="assets/members.js?v=20261024-conversion1"></script>
 <script src="assets/app.js?v=20261024-conversion1"></script>
-<script src="assets/home-dashboard.js?v=20261024-reference1"></script>
+<script src="assets/home-dashboard.js?v=20261024-simplification1"></script>
 </body>
 </html>
