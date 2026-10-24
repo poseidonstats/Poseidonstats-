@@ -573,7 +573,7 @@
     "plans.glosar": "xG în analizele POSEIDON = golurile așteptate de modelul nostru pentru fiecare echipă, calibrat pe meciurile trecute, nu xG din șuturi.",
     "dashboard.nav.home": "Acasă",
     "dashboard.nav.more": "Mai mult",
-    "dashboard.hero.title": "Statistici avansate<br>pentru <span>decizii informate</span>",
+    "dashboard.hero.title": "Statistici avansate<br>pentru <span>decizii corecte</span>",
     "dashboard.hero.sub": "Analize pe baza datelor, probabilități reale și un track record verificabil. Fără pronosticuri subiective. Doar statistici.",
     "dashboard.chart.title": "Selecții rezolvate · jurnal recent",
     "dashboard.chart.note": "Jurnal public · date parțiale marcate",
@@ -651,7 +651,11 @@
     "match.phase.ht": "Prima repriză",
     "match.score.ht": "Scor HT",
     "proof.previous.note": "Această secțiune păstrează un rezumat publicat anterior. Auditul curent este disponibil în Track record.",
-    "proof.previous.link": "Vezi auditul curent"
+    "proof.previous.link": "Vezi auditul curent",
+    "dashboard.sources.title": "Surse și eșantioane",
+    "dashboard.illustration": "Ilustrație",
+    "dashboard.why.title": "De ce PoseidonStats?",
+    "dashboard.nav.login": "Autentificare"
   },
   "en": {
     "lang.name": "English",
@@ -1227,7 +1231,7 @@
     "plans.glosar": "xG in POSEIDON analyses = our model's expected goals for each team, calibrated on past matches, not shot-based xG.",
     "dashboard.nav.home": "Home",
     "dashboard.nav.more": "More",
-    "dashboard.hero.title": "Advanced statistics<br>for <span>informed decisions</span>",
+    "dashboard.hero.title": "Advanced statistics<br>for <span>correct decisions</span>",
     "dashboard.hero.sub": "Data-based analysis, real probabilities and a verifiable track record. No subjective forecasts. Just statistics.",
     "dashboard.chart.title": "Settled selections · recent journal",
     "dashboard.chart.note": "Public journal · partial dates marked",
@@ -1305,7 +1309,11 @@
     "match.phase.ht": "First half",
     "match.score.ht": "HT score",
     "proof.previous.note": "This section retains a previously published summary. The current audit is available in Track record.",
-    "proof.previous.link": "View current audit"
+    "proof.previous.link": "View current audit",
+    "dashboard.sources.title": "Sources and samples",
+    "dashboard.illustration": "Illustration",
+    "dashboard.why.title": "Why PoseidonStats?",
+    "dashboard.nav.login": "Sign in"
   },
   "es": {
     "lang.name": "Español",
@@ -1881,7 +1889,7 @@
     "plans.glosar": "xG en los análisis de POSEIDON = los goles esperados de nuestro modelo para cada equipo, calibrado con partidos pasados, no el xG por disparos.",
     "dashboard.nav.home": "Inicio",
     "dashboard.nav.more": "Más",
-    "dashboard.hero.title": "Estadísticas avanzadas<br>para <span>decisiones informadas</span>",
+    "dashboard.hero.title": "Estadísticas avanzadas<br>para <span>decisiones correctas</span>",
     "dashboard.hero.sub": "Análisis basados en datos, probabilidades reales y un historial verificable. Sin pronósticos subjetivos. Solo estadísticas.",
     "dashboard.chart.title": "Selecciones evaluadas · registro reciente",
     "dashboard.chart.note": "Registro público · fechas parciales marcadas",
@@ -1959,7 +1967,11 @@
     "match.phase.ht": "Primera parte",
     "match.score.ht": "Marcador al descanso",
     "proof.previous.note": "Esta sección conserva un resumen publicado anteriormente. La auditoría actual está disponible en el historial.",
-    "proof.previous.link": "Ver auditoría actual"
+    "proof.previous.link": "Ver auditoría actual",
+    "dashboard.sources.title": "Fuentes y muestras",
+    "dashboard.illustration": "Ilustración",
+    "dashboard.why.title": "¿Por qué PoseidonStats?",
+    "dashboard.nav.login": "Entrar"
   },
   "it": {
     "lang.name": "Italiano",
@@ -2535,7 +2547,7 @@
     "plans.glosar": "xG nelle analisi POSEIDON = i gol attesi del nostro modello per ogni squadra, calibrato sulle partite passate, non l'xG dai tiri.",
     "dashboard.nav.home": "Home",
     "dashboard.nav.more": "Altro",
-    "dashboard.hero.title": "Statistiche avanzate<br>per <span>decisioni consapevoli</span>",
+    "dashboard.hero.title": "Statistiche avanzate<br>per <span>decisioni corrette</span>",
     "dashboard.hero.sub": "Analisi basate sui dati, probabilità reali e risultati verificabili. Nessun pronostico soggettivo. Solo statistiche.",
     "dashboard.chart.title": "Selezioni valutate · registro recente",
     "dashboard.chart.note": "Registro pubblico · date parziali indicate",
@@ -2613,7 +2625,11 @@
     "match.phase.ht": "Primo tempo",
     "match.score.ht": "Risultato primo tempo",
     "proof.previous.note": "Questa sezione conserva un riepilogo pubblicato in precedenza. La verifica attuale è disponibile nei risultati.",
-    "proof.previous.link": "Vedi la verifica attuale"
+    "proof.previous.link": "Vedi la verifica attuale",
+    "dashboard.sources.title": "Fonti e campioni",
+    "dashboard.illustration": "Illustrazione",
+    "dashboard.why.title": "Perché PoseidonStats?",
+    "dashboard.nav.login": "Accedi"
   },
   "fr": {
     "lang.name": "Français",
@@ -3189,7 +3205,7 @@
     "plans.glosar": "xG dans les analyses POSEIDON = les buts attendus de notre modèle pour chaque équipe, calibré sur les matchs passés, pas le xG des tirs.",
     "dashboard.nav.home": "Accueil",
     "dashboard.nav.more": "Plus",
-    "dashboard.hero.title": "Statistiques avancées<br>pour des <span>décisions éclairées</span>",
+    "dashboard.hero.title": "Statistiques avancées<br>pour <span>des décisions correctes</span>",
     "dashboard.hero.sub": "Analyses fondées sur les données, probabilités réelles et historique vérifiable. Sans pronostics subjectifs. Des statistiques.",
     "dashboard.chart.title": "Sélections évaluées · journal récent",
     "dashboard.chart.note": "Journal public · dates partielles signalées",
@@ -3267,7 +3283,11 @@
     "match.phase.ht": "Première mi-temps",
     "match.score.ht": "Score à la mi-temps",
     "proof.previous.note": "Cette section conserve un résumé publié précédemment. L’audit actuel est disponible dans l’historique.",
-    "proof.previous.link": "Voir l’audit actuel"
+    "proof.previous.link": "Voir l’audit actuel",
+    "dashboard.sources.title": "Sources et échantillons",
+    "dashboard.illustration": "Illustration",
+    "dashboard.why.title": "Pourquoi PoseidonStats ?",
+    "dashboard.nav.login": "Connexion"
   },
   "id": {
     "lang.name": "Bahasa Indonesia",
@@ -3843,7 +3863,7 @@
     "plans.glosar": "xG dalam analisis POSEIDON = gol yang diharapkan model kami untuk setiap tim, dikalibrasi pada pertandingan lalu, bukan xG dari tembakan.",
     "dashboard.nav.home": "Beranda",
     "dashboard.nav.more": "Lainnya",
-    "dashboard.hero.title": "Statistik mendalam<br>untuk <span>keputusan berbasis informasi</span>",
+    "dashboard.hero.title": "Statistik mendalam<br>untuk <span>keputusan yang tepat</span>",
     "dashboard.hero.sub": "Analisis berbasis data, probabilitas nyata, dan rekam jejak yang dapat diverifikasi. Tanpa prediksi subjektif. Hanya statistik.",
     "dashboard.chart.title": "Pilihan terselesaikan · jurnal terbaru",
     "dashboard.chart.note": "Jurnal publik · tanggal parsial ditandai",
@@ -3921,6 +3941,10 @@
     "match.phase.ht": "Babak pertama",
     "match.score.ht": "Skor babak pertama",
     "proof.previous.note": "Bagian ini mempertahankan ringkasan yang diterbitkan sebelumnya. Audit terkini tersedia di Rekam jejak.",
-    "proof.previous.link": "Lihat audit terkini"
+    "proof.previous.link": "Lihat audit terkini",
+    "dashboard.sources.title": "Sumber dan sampel",
+    "dashboard.illustration": "Ilustrasi",
+    "dashboard.why.title": "Mengapa PoseidonStats?",
+    "dashboard.nav.login": "Masuk"
   }
 }

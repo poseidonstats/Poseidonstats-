@@ -74,8 +74,8 @@ test('public real rows preserve exact probabilities and prioritize free chronolo
   }
 });
 
-test('locked preview stays identity-only even if an explicitly locked fixture contains numeric fields', () => {
-  const fixture = { matches:[{fixture_id:1,match_date:'2026-10-23T14:00:00Z',home_team:'<script>alert(1)</script>',away_team:'A & B',league:'League',locked:true,free:true,prob_home:.999,prob_draw:.001,prob_away:0}] };
+test('locked preview stays identity-only and preserves escaped full hover identities', () => {
+  const fixture = { matches:[{fixture_id:1,match_date:'2026-10-23T14:00:00Z',home_team:'<script>alert(1)</script>',away_team:'A & B',country:'C <D>',league:'L "x"',locked:true,free:true,prob_home:.999,prob_draw:.001,prob_away:0}] };
   const rows = dashboard.selectRows(fixture,'2026-10-23').rows;
   assert.deepEqual(rows[0].probabilities,[null,null,null]);
   const html = dashboard.renderRows(rows,tr,'en-GB');
@@ -84,6 +84,20 @@ test('locked preview stays identity-only even if an explicitly locked fixture co
   assert.match(html,/A &amp; B/);
   assert.equal((html.match(/>—<\/td>/g)||[]).length,3);
   assert.match(html,/dashboard-lock/);
+  assert(html.includes('title="&lt;script&gt;alert(1)&lt;/script&gt; – A &amp; B"'));
+  assert(html.includes('title="C &lt;D&gt; · L &quot;x&quot;"'));
+});
+
+test('compact chart layouts retain full data descriptions and readable undistorted SVG labels', () => {
+  const points=[{date:'2026-10-21',resolved:10,cumulative:10,partial:false},{date:'2026-10-22',resolved:20,cumulative:30,partial:true}];
+  for (const width of [560,340]) {
+    const html=dashboard.renderChart(points,tr,'en-GB',`chart-${width}`,{width,height:95});
+    assert(html.includes(`viewBox="0 0 ${width} 95"`));
+    assert(html.includes('preserveAspectRatio="xMidYMid meet"'));
+    assert(html.includes('font-size="12"'));
+    assert(html.includes('21 Oct – 22 Oct. 30.'));
+    assert.match(html,/Partial days/);
+  }
 });
 
 test('Bucharest date boundaries and absent-current-day fallback use available dates', () => {
@@ -128,16 +142,71 @@ test('fixture links reset legacy filters before selecting source UTC date, leagu
   assert.equal(calls.length,4);
 });
 
-test('all six dictionaries preserve every original value and fully translate new dashboard keys', () => {
+test('all six dictionaries preserve original values except the explicitly authorized hero title and fully translate new dashboard keys', () => {
   const original = JSON.parse(execFileSync('git',['show','HEAD:assets/i18n.json'],{encoding:'utf8',cwd:new URL('..',import.meta.url)}));
+  const heroTitles = {
+    ro:'Statistici avansate<br>pentru <span>decizii corecte</span>',
+    en:'Advanced statistics<br>for <span>correct decisions</span>',
+    es:'Estadísticas avanzadas<br>para <span>decisiones correctas</span>',
+    it:'Statistiche avanzate<br>per <span>decisioni corrette</span>',
+    fr:'Statistiques avancées<br>pour <span>des décisions correctes</span>',
+    id:'Statistik mendalam<br>untuk <span>keputusan yang tepat</span>'
+  };
   const keys = Object.keys(i18n.ro).filter(key => key.startsWith('dashboard.')).sort();
   assert(keys.length >= 47);
   for (const lang of ['ro','en','es','it','fr','id']) {
-    for (const [key,value] of Object.entries(original[lang])) assert.equal(i18n[lang][key],value,`${lang}.${key}`);
+    for (const [key,value] of Object.entries(original[lang])) {
+      if (key !== 'dashboard.hero.title') assert.equal(i18n[lang][key],value,`${lang}.${key}`);
+    }
+    assert.equal(i18n[lang]['dashboard.hero.title'],heroTitles[lang]);
     assert.deepEqual(Object.keys(i18n[lang]).filter(key => key.startsWith('dashboard.')).sort(),keys);
     for (const key of keys) assert.equal(typeof i18n[lang][key],'string');
+    for (const key of ['dashboard.sources.title','dashboard.illustration','dashboard.why.title','dashboard.nav.login']) assert(i18n[lang][key]?.trim(),`${lang}.${key}`);
     assert.match(i18n[lang]['dashboard.kpi.hit'], /Over 1.5 ≥75%/);
     assert(i18n[lang]['dashboard.table.rawnote'].startsWith('1/X/2'));
+  }
+});
+
+test('compact KPI disclosure and right-side summaries preserve each real source sample', async () => {
+  const kpis = [{innerHTML:''},{innerHTML:''}], summary = {innerHTML:''};
+  const charts=[{innerHTML:'',clientWidth:334},{innerHTML:'',clientWidth:334}];
+  let resize;
+  const doc = {
+    documentElement:{lang:'en'},
+    defaultView:{innerWidth:390,addEventListener:(type,callback)=>{if(type==='resize') resize=callback;}},
+    querySelector:selector => selector === '[data-dashboard-kpis]' ? kpis[0] : null,
+    querySelectorAll:selector => selector === '[data-dashboard-kpis]' ? kpis : selector === '[data-dashboard-chart]' ? charts : [],
+    getElementById:id => id === 'dashboard-track-summary' ? summary : null,
+    addEventListener:()=>{}
+  };
+  const previousFetch=globalThis.fetch, previousT=globalThis.t;
+  globalThis.fetch=async path => path === 'analize/index.html' ? {ok:false} : {ok:true,json:async()=>({'data/predictions.json':predictions,'data/history.json':history,'data/audit.json':audit})[path]};
+  globalThis.t=tr;
+  try {
+    await dashboard.mount(doc);
+    const record=history.cumulated_markets.find(m => m.name === 'Over 1.5');
+    const brierSample=audit.piete.find(m => m.cheie === 'over_1_5');
+    const num=n=>new Intl.NumberFormat('en-GB').format(n);
+    for (const panel of kpis) {
+      assert.equal((panel.innerHTML.match(/class="dashboard-kpi"/g)||[]).length,4);
+      const details=panel.innerHTML.match(/<details class="dashboard-kpi-context dashboard-source-context">([\s\S]*?)<\/details>/)?.[1];
+      assert(details,'source/sample disclosure remains available beside compact values');
+      assert(details.includes(tr('dashboard.sources.title')));
+      for (const value of [audit.de_la,audit.pana_la,audit.generat_la,`N=${num(record.n)}`,`Wlo 95%=${num(record.wlo_pct)}%`,`N=${num(brierSample.n)}`,tr('dashboard.kpi.lower')]) assert(details.includes(value),value);
+      for (const path of ['data/audit.json','data/history.json']) assert(details.includes(`href="${path}"`));
+      assert.doesNotMatch(panel.innerHTML.split('<details')[0],/<small>/,'compact cards defer their notes to the disclosure');
+    }
+    assert.equal((summary.innerHTML.match(/class="dashboard-market-summary"/g)||[]).length,3);
+    for (const value of [num(record.n),`${num(record.wlo_pct)}%`,num(brierSample.n),audit.generat_la]) assert(summary.innerHTML.includes(value),value);
+    assert(summary.innerHTML.includes(tr('dashboard.track.context').replace('{date}',audit.generat_la)));
+    assert(charts.every(chart=>chart.innerHTML.includes('viewBox="0 0 334 160"')),'mobile charts keep viewport-matched label sizing');
+    doc.defaultView.innerWidth=1440;charts[0].clientWidth=560;charts[1].clientWidth=340;
+    resize();
+    assert(charts[0].innerHTML.includes('viewBox="0 0 560 95"'));
+    assert(charts[1].innerHTML.includes('viewBox="0 0 340 95"'));
+  } finally {
+    globalThis.fetch=previousFetch;
+    if (previousT === undefined) delete globalThis.t; else globalThis.t=previousT;
   }
 });
 
@@ -252,8 +321,41 @@ test('language switcher gets translated attribute-only labels, including late-cr
   assert.equal(attrs['data-i18n'],undefined);
 });
 
-test('dashboard translations keep informed/evaluated terminology and preserve markup and placeholders', () => {
-  assert.equal(i18n.id['dashboard.hero.title'],'Statistik mendalam<br>untuk <span>keputusan berbasis informasi</span>');
+test('concise login decoration preserves destination and full accessible labels after late insertion and language changes', () => {
+  const attributes={href:'https://members.invalid/login','data-i18n':'members.login'};
+  let visible=tr('members.login'), textWrites=0, inserted=false, callback, watched, options;
+  const link={
+    getAttribute:key=>attributes[key],
+    setAttribute:(key,value)=>{attributes[key]=value;},
+    get textContent() {return visible;},
+    set textContent(value) {visible=value;textWrites++;}
+  };
+  const bar={};
+  const doc={querySelectorAll:selector=>selector === '.members-login' && inserted ? [link] : [],getElementById:id=>id === 'members-bar' ? bar : null};
+  class ObserverStub {constructor(cb) {callback=cb;} observe(target,opts) {watched=target;options=opts;}}
+  let language='en';
+  const translate=key=>i18n[language][key];
+  dashboard.watchMemberLogin(doc,translate,ObserverStub);
+  assert.equal(watched,bar);
+  assert.deepEqual(options,{childList:true,subtree:true});
+  inserted=true;callback();
+  assert.equal(attributes.href,'https://members.invalid/login');
+  assert.equal(visible,'Sign in');
+  assert.equal(attributes['data-i18n'],'dashboard.nav.login');
+  assert.equal(attributes['data-i18n-attr'],'aria-label:members.login,title:members.login');
+  assert.equal(attributes['aria-label'],i18n.en['members.login']);
+  assert.equal(attributes.title,i18n.en['members.login']);
+  callback();
+  assert.equal(textWrites,1,'an unchanged label cannot trigger an observer text-mutation loop');
+  language='fr';dashboard.decorateMemberLogin(doc,translate);
+  assert.equal(visible,'Connexion');
+  assert.equal(attributes['aria-label'],i18n.fr['members.login']);
+  assert.equal(attributes.title,i18n.fr['members.login']);
+  assert.equal(attributes.href,'https://members.invalid/login');
+});
+
+test('dashboard translations keep correct-decision/evaluated terminology and preserve markup and placeholders', () => {
+  assert.equal(i18n.id['dashboard.hero.title'],'Statistik mendalam<br>untuk <span>keputusan yang tepat</span>');
   for (const [lang,words] of [['es',['Predicciones evaluadas','Selecciones evaluadas']],['it',['Previsioni valutate','Selezioni valutate']],['fr',['Prédictions évaluées','Sélections évaluées']]]) {
     assert.equal(i18n[lang]['dashboard.kpi.resolved'],words[0]);
     assert(i18n[lang]['dashboard.chart.title'].startsWith(words[1]));

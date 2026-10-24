@@ -86,14 +86,14 @@
       const date = new Date(row.match_date);
       const time = new Intl.DateTimeFormat(loc, {timeZone:TIMEZONE, hour:'2-digit', minute:'2-digit', hour12:false}).format(date);
       return `<tr><td><time datetime="${escapeHTML(row.match_date)}">${escapeHTML(time)}</time></td>` +
-        `<td class="dashboard-team"><a href="#matches" data-dashboard-fixture="${escapeHTML(row.fixture_id)}">${escapeHTML(row.home)} <span aria-hidden="true">–</span> ${escapeHTML(row.away)}</a><small>${escapeHTML(row.country)} · ${escapeHTML(row.league)}</small></td>` +
+        `<td class="dashboard-team"><a href="#matches" data-dashboard-fixture="${escapeHTML(row.fixture_id)}" title="${escapeHTML(`${row.home} – ${row.away}`)}">${escapeHTML(row.home)} <span aria-hidden="true">–</span> ${escapeHTML(row.away)}</a><small title="${escapeHTML(`${row.country} · ${row.league}`)}">${escapeHTML(row.country)} · ${escapeHTML(row.league)}</small></td>` +
         row.probabilities.map(v => `<td class="dashboard-prob">${escapeHTML(pct(v))}</td>`).join('') +
         `<td><span class="${row.locked ? 'dashboard-lock' : 'dashboard-free'}">${row.locked ? '🔒 ' : ''}${escapeHTML(tr(row.locked ? 'dashboard.access.locked' : 'dashboard.access.free'))}</span></td></tr>`;
     }).join('');
   }
-  function renderChart(points, tr, loc, id) {
+  function renderChart(points, tr, loc, id, layout = {}) {
     if (!points.length) return `<p class="muted">${escapeHTML(tr('dashboard.data.unavailable'))}</p>`;
-    const width = 480, height = 180, left = 40, top = 14, bottom = 28, right = 12;
+    const width = layout.width || 480, height = layout.height || 180, left = 40, top = 14, bottom = 28, right = 12;
     const max = points[points.length - 1].cumulative;
     const firstTime = Date.parse(points[0].date), span = Date.parse(points[points.length - 1].date) - firstTime;
     const x = point => left + (span ? (Date.parse(point.date) - firstTime) / span : 0) * (width - left - right);
@@ -103,13 +103,13 @@
     const date = d => new Intl.DateTimeFormat(loc, {day:'numeric', month:'short', timeZone:TIMEZONE}).format(new Date(d + 'T12:00:00Z'));
     const partial = points.filter(p => p.partial).map(p => date(p.date)).join(', ');
     const description = `${tr('dashboard.chart.title')}. ${date(points[0].date)} – ${date(points[points.length - 1].date)}. ${num(max)}. ${partial ? tr('dashboard.chart.partial', {dates:partial}) : ''}`;
-    return `<svg class="dashboard-chart" viewBox="0 0 ${width} ${height}" preserveAspectRatio="none" role="img" aria-labelledby="${id}"><title id="${id}">${escapeHTML(description)}</title>` +
+    return `<svg class="dashboard-chart" viewBox="0 0 ${width} ${height}" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="${id}"><title id="${id}">${escapeHTML(description)}</title>` +
       `<defs><linearGradient id="${id}-fill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#d7b56d" stop-opacity=".28"/><stop offset="100%" stop-color="#d7b56d" stop-opacity="0"/></linearGradient></defs>` +
-      [0, .5, 1].map(r => { const yy = height - bottom - r * (height - top - bottom); return `<line x1="${left}" y1="${yy}" x2="${width-right}" y2="${yy}" stroke="currentColor" opacity=".12"/><text x="${left-7}" y="${yy+4}" text-anchor="end" fill="currentColor" font-size="10">${escapeHTML(num(max*r))}</text>`; }).join('') +
+      [0, .5, 1].map(r => { const yy = height - bottom - r * (height - top - bottom); return `<line x1="${left}" y1="${yy}" x2="${width-right}" y2="${yy}" stroke="currentColor" opacity=".12"/><text x="${left-7}" y="${yy+4}" text-anchor="end" fill="currentColor" font-size="12">${escapeHTML(num(max*r))}</text>`; }).join('') +
       `<polygon points="${left},${height-bottom} ${line} ${x(points[points.length-1])},${height-bottom}" fill="url(#${id}-fill)"/>` +
       `<polyline points="${line}" fill="none" stroke="#d7b56d" stroke-width="2.5" stroke-linejoin="round"/>` +
       points.map(p => `<circle cx="${x(p)}" cy="${y(p)}" r="${p.partial?3:2}" fill="${p.partial?'#101c2c':'#d7b56d'}" stroke="#d7b56d" stroke-width="1.5"><title>${escapeHTML(`${date(p.date)}: ${num(p.cumulative)}${p.partial?' · '+tr('dashboard.chart.partialday'):''}`)}</title></circle>`).join('') +
-      `<text x="${left}" y="${height-5}" fill="currentColor" font-size="11">${escapeHTML(date(points[0].date))}</text><text x="${width-right}" y="${height-5}" text-anchor="end" fill="currentColor" font-size="11">${escapeHTML(date(points[points.length-1].date))}</text></svg>` +
+      `<text x="${left}" y="${height-5}" fill="currentColor" font-size="12">${escapeHTML(date(points[0].date))}</text><text x="${width-right}" y="${height-5}" text-anchor="end" fill="currentColor" font-size="12">${escapeHTML(date(points[points.length-1].date))}</text></svg>` +
       `<p class="dashboard-chart-caption">${escapeHTML(tr('dashboard.chart.total', {n:num(max)}))} · ${escapeHTML(tr('dashboard.chart.partialday'))}: ○</p>`;
   }
   function revealMatch(doc, source) {
@@ -145,6 +145,26 @@
     if (!nav) return null;
     const observer = new Observer(() => {if (decorateLanguageSelector(doc,tr)) observer.disconnect();});
     observer.observe(nav,{childList:true,subtree:true});
+    return observer;
+  }
+  function decorateMemberLogin(doc, tr) {
+    const links = doc.querySelectorAll('.members-login');
+    links.forEach(link => {
+      const concise = tr('dashboard.nav.login'), full = tr('members.login');
+      link.setAttribute('data-i18n','dashboard.nav.login');
+      link.setAttribute('data-i18n-attr','aria-label:members.login,title:members.login');
+      link.setAttribute('aria-label',full);
+      link.setAttribute('title',full);
+      if (link.textContent !== concise) link.textContent = concise;
+    });
+    return links.length;
+  }
+  function watchMemberLogin(doc, tr, Observer = typeof MutationObserver === 'function' ? MutationObserver : null) {
+    decorateMemberLogin(doc,tr);
+    const bar = doc.getElementById('members-bar');
+    if (!bar || !Observer) return null;
+    const observer = new Observer(() => decorateMemberLogin(doc,tr));
+    observer.observe(bar,{childList:true,subtree:true});
     return observer;
   }
   function ensureProofNotice(doc, tr) {
@@ -187,6 +207,7 @@
     if (!doc.querySelector('[data-dashboard-kpis]')) return;
     if (typeof i18nGata === 'function') await i18nGata();
     watchLanguageSelector(doc,translator());
+    watchMemberLogin(doc,translator());
     ensureProofNotice(doc,translator());
     let predictions = null, history = null, audit = null, archive = null;
     const dateSelect = doc.getElementById('dashboard-date');
@@ -208,17 +229,28 @@
         const labels = ['dashboard.kpi.resolved','dashboard.kpi.hit','dashboard.kpi.brier','dashboard.kpi.markets'];
         const values = [num(metrics.resolved), metrics.hit == null ? '—' : `${num(metrics.hit)}%`, metrics.brier == null ? '—' : new Intl.NumberFormat(loc,{minimumFractionDigits:3,maximumFractionDigits:3}).format(metrics.brier), num(metrics.auditedMarkets)];
         const notes = [`${metrics.from} – ${metrics.to}`, `Over 1.5 · ≥75% · N=${num(metrics.n)} · Wlo 95%=${num(metrics.wlo)}%`, `Over 1.5 · N=${num(metrics.brierN)} · ${tr('dashboard.kpi.lower')}`, tr('dashboard.kpi.audit')];
-        const icons = ['▤','◎','⌁','▦'];
-        const markup = labels.map((label,i) => `<div class="dashboard-kpi"><span class="dashboard-kpi-icon" aria-hidden="true">${icons[i]}</span><strong class="dashboard-kpi-value">${escapeHTML(values[i])}</strong><span class="dashboard-kpi-label">${escapeHTML(tr(label))}</span><small>${escapeHTML(notes[i])}</small></div>`).join('');
+        const icons = ['M5 3h14v18H5zM8 7h8M8 11h8M8 15h5','M12 3a9 9 0 1 0 0 18a9 9 0 0 0 0-18M12 7a5 5 0 1 0 0 10a5 5 0 0 0 0-10M12 10v4M10 12h4','M4 4v16h16M7 15l4-5 4 2 5-7','M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z'];
+        const sources = ['data/audit.json','data/history.json','data/audit.json','data/audit.json'];
+        const context = `<details class="dashboard-kpi-context dashboard-source-context"><summary>${escapeHTML(tr('dashboard.sources.title'))}</summary><ul>` + labels.map((label,i) => `<li><strong>${escapeHTML(tr(label))}:</strong> ${escapeHTML(notes[i])} · <a href="${sources[i]}">${sources[i]}</a></li>`).join('') + `</ul><p>${escapeHTML(tr('dashboard.track.context', {date:metrics.generated}))}</p></details>`;
+        const markup = labels.map((label,i) => `<div class="dashboard-kpi"><span class="dashboard-kpi-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="${icons[i]}"/></svg></span><strong class="dashboard-kpi-value">${escapeHTML(values[i])}</strong><span class="dashboard-kpi-label">${escapeHTML(tr(label))}</span></div>`).join('') + context;
         doc.querySelectorAll('[data-dashboard-kpis]').forEach(el => {el.innerHTML = markup;});
         const summary = doc.getElementById('dashboard-track-summary');
-        if (summary) summary.textContent = tr('dashboard.track.context', {date:metrics.generated});
+        if (summary) summary.innerHTML = `<div class="dashboard-summary-cards">` + [['Over 1.5 · N',num(metrics.n)],['Wlo 95%',metrics.wlo == null ? '—' : `${num(metrics.wlo)}%`],['Brier · N',num(metrics.brierN)]].map(([label,value]) => `<div class="dashboard-market-summary"><span>${escapeHTML(label)}</span><strong>${escapeHTML(value)}</strong></div>`).join('') + `</div><p>${escapeHTML(tr('dashboard.track.context', {date:metrics.generated}))}</p>`;
       } catch (_) {
         doc.querySelectorAll('[data-dashboard-kpis]').forEach(el => {el.textContent = tr('dashboard.data.unavailable');});
       }
+      renderCharts();
+    }
+    function renderCharts() {
+      const tr = translator(), loc = locale(doc);
       let points = [];
       try { points = cumulativeResolved(history); } catch (_) { /* Unavailable stays explicit. */ }
-      doc.querySelectorAll('[data-dashboard-chart]').forEach((el,i) => {el.innerHTML = renderChart(points,tr,loc,`dashboard-chart-${i}`);});
+      const viewport = doc.defaultView;
+      const height = viewport && finite(viewport.innerWidth) && viewport.innerWidth <= 1180 ? 160 : 95;
+      doc.querySelectorAll('[data-dashboard-chart]').forEach((el,i) => {
+        const width = finite(el.clientWidth) && el.clientWidth > 0 ? el.clientWidth : i ? 340 : 560;
+        el.innerHTML = renderChart(points,tr,loc,`dashboard-chart-${i}`,{width,height});
+      });
     }
     function renderLeagues() {
       if (!leagues || !predictions) return;
@@ -264,7 +296,7 @@
         const excerpt = body && body.querySelector('.pro-visible p');
         const title = head.textContent.split(' · ')[0].trim();
         const metadata = head.textContent.slice(title.length).replace(/^\s*·\s*/, '').trim();
-        cards.push(`<article class="dashboard-analysis-card"><span class="dashboard-analysis-meta">${escapeHTML(tr('dashboard.analysis.sample'))}</span><h3 class="dashboard-analysis-title">${escapeHTML(title)}</h3><p class="dashboard-analysis-meta">${escapeHTML(metadata)}</p>${notice ? `<p class="dashboard-analysis-meta dashboard-analysis-language">${escapeHTML(notice)}</p>` : ''}<p class="dashboard-analysis-excerpt">${escapeHTML(excerpt ? excerpt.textContent : tr('dashboard.data.unavailable'))}</p><a class="dashboard-analysis-link" href="${escapeHTML(action.href)}"${action.sample ? ' data-dashboard-analysis' : ''}>${escapeHTML(tr(action.key))} →</a></article>`);
+        cards.push(`<article class="dashboard-analysis-card"><span class="dashboard-illustration dashboard-analysis-illustration">${escapeHTML(tr('dashboard.illustration'))}</span><span class="dashboard-analysis-meta">${escapeHTML(tr('dashboard.analysis.sample'))}</span><h3 class="dashboard-analysis-title">${escapeHTML(title)}</h3><p class="dashboard-analysis-meta">${escapeHTML(metadata)}</p>${notice ? `<p class="dashboard-analysis-meta dashboard-analysis-language">${escapeHTML(notice)}</p>` : ''}<p class="dashboard-analysis-excerpt">${escapeHTML(excerpt ? excerpt.textContent : tr('dashboard.data.unavailable'))}</p><a class="dashboard-analysis-link" href="${escapeHTML(action.href)}"${action.sample ? ' data-dashboard-analysis' : ''}>${escapeHTML(tr(action.key))} →</a></article>`);
       }
       if (archive) {
         const links = Array.from(archive.querySelectorAll('a[href]')).filter(a => /^\d{4}-\d{2}-\d{2}\.html$/.test(a.getAttribute('href'))).slice(0,2);
@@ -276,7 +308,7 @@
       }
       target.innerHTML = cards.join('') || `<p>${escapeHTML(tr('dashboard.data.unavailable'))}</p>`;
     }
-    function render() {decorateLanguageSelector(doc,translator());ensureProofNotice(doc,translator());renderDates();renderLeagues();renderTable();renderMetrics();renderAnalyses();}
+    function render() {decorateLanguageSelector(doc,translator());decorateMemberLogin(doc,translator());ensureProofNotice(doc,translator());renderDates();renderLeagues();renderTable();renderMetrics();renderAnalyses();}
     if (dateSelect) dateSelect.addEventListener('change', () => {selectedLeague='';renderLeagues();renderTable();});
     if (leagues) leagues.addEventListener('click', event => {
       const button = event.target.closest('[data-dashboard-league]');
@@ -295,6 +327,7 @@
       if (sample) {const detail=doc.querySelector('#exemplu-pro details');if(detail) detail.open=true;}
     });
     doc.addEventListener('change', event => {if(event.target.matches('.lang-select')) setTimeout(render,0);});
+    if (doc.defaultView && doc.defaultView.addEventListener) doc.defaultView.addEventListener('resize',renderCharts);
     observeMembership(doc.body, renderAnalyses);
     render();
     try {
@@ -303,5 +336,5 @@
     } catch (_) { /* Current real sample remains available if the archive cannot load. */ }
     renderAnalyses();
   }
-  return {escapeHTML,dayOf,availableDays,chooseDay,isPublic,selectRows,extractMetrics,cumulativeResolved,renderRows,renderChart,revealMatch,chooseAnalysisLanguage,analysisLanguageNotice,decorateLanguageSelector,watchLanguageSelector,ensureProofNotice,analysisAction,membershipTier,observeMembership,mount};
+  return {escapeHTML,dayOf,availableDays,chooseDay,isPublic,selectRows,extractMetrics,cumulativeResolved,renderRows,renderChart,revealMatch,chooseAnalysisLanguage,analysisLanguageNotice,decorateLanguageSelector,watchLanguageSelector,decorateMemberLogin,watchMemberLogin,ensureProofNotice,analysisAction,membershipTier,observeMembership,mount};
 });
