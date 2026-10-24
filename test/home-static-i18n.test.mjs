@@ -115,7 +115,7 @@ test('actual tooltip renderers translate raw/calibration/skill text and keep att
   }
 });
 
-test('homepage market filters use translated labels and both changed script URLs have the new version', () => {
+test('homepage market filters use translated labels and homepage assets use their expected release versions', () => {
   const html=readFileSync(new URL('../index.html',import.meta.url),'utf8');
   for (const market of ['btts','1x2','dc_1x','dc_x2','dc_12']) {
     const tag=Array.from(html.matchAll(/<option\b[^>]*>/g),m=>m[0]).find(value=>value.includes(`value="${market}"`));
@@ -124,7 +124,8 @@ test('homepage market filters use translated labels and both changed script URLs
     for (const language of languages) assert(dictionary[language][key]);
   }
   assert(html.includes('assets/app.js?v=20261023-modern2'));
-  assert(html.includes('assets/home-dashboard.js?v=20261023-modern2'));
+  assert(html.includes('assets/home-modern.css?v=20261024-reference1'));
+  assert(html.includes('assets/home-dashboard.js?v=20261024-reference1'));
 });
 
 test('historical proof notice stays singular, translates on rerender, and links to the current audit', () => {
