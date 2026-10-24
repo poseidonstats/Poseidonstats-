@@ -649,3 +649,25 @@ body.home-modern.tier-pro .simplify-activation { display: none; }
 .home-modern .simplify-demo .dashboard-table th:nth-child(2),
 .home-modern .simplify-demo .dashboard-table td.dashboard-team { text-align: left; }
 body.home-modern .salt-meciuri { display: none; }
+
+/* Approved HOME reading: visible context beneath the six original data cells. */
+.home-modern .dashboard-table .dashboard-reading-row > td { padding: 4px 8px 14px; white-space: normal; text-align: left; overflow: visible; }
+.home-modern .dashboard-reading-row .citire { margin: 0; padding: 12px; white-space: normal; overflow-wrap: anywhere; line-height: 1.65; border-left: 3px solid #c9a227; background: rgba(201, 162, 39, .08); }
+.home-modern .dashboard-reading-row .citire-titlu { display: block; margin: 0 0 6px; font-size: 14px; color: #e5d098; }
+.home-modern .dashboard-reading-row .citire-rand { color: #d0dee8; font-size: 13px; }
+.home-modern .dashboard-reading-row .citire-source { margin: 0 0 6px; font-size: 12px; }
+.home-modern .dashboard-reading-row .citire-nota { font-size: 12px; }
+@media (max-width: 600px) {
+  .home-modern .dashboard-table-scroll { width: 100%; min-width: 0; max-width: 100%; }
+  .home-modern .dashboard-table { width: 100%; min-width: 0; max-width: 100%; table-layout: fixed; }
+  .home-modern .dashboard-table .dashboard-col-time { width: 14%; }
+  .home-modern .dashboard-table .dashboard-col-match { width: 24.5%; }
+  .home-modern .dashboard-table .dashboard-col-prob { width: 13.5%; }
+  .home-modern .dashboard-table .dashboard-col-access { width: 21%; }
+  .home-modern .dashboard-table :is(th, td) { padding: 8px 2px; min-width: 0; }
+  .home-modern .dashboard-table td:nth-child(2) { width: auto; min-width: 0; max-width: none; }
+  .home-modern .dashboard-team > a, .home-modern .dashboard-table td small { display: block; width: 100%; min-width: 0; max-width: 100%; overflow: visible; white-space: normal; overflow-wrap: anywhere; text-overflow: clip; }
+  .home-modern .dashboard-table :is(.dashboard-free, .dashboard-lock) { max-width: 100%; white-space: normal; overflow-wrap: anywhere; padding: 2px 3px; }
+  .home-modern .dashboard-table td[colspan="6"] { min-width: 0; max-width: 100%; white-space: normal; }
+  .home-modern .dashboard-reading-row .citire { box-sizing: border-box; width: 100%; min-width: 0; max-width: 100%; }
+}

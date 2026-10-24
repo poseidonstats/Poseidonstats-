@@ -553,3 +553,27 @@ test('search, league choice, honest copy and activation labels are complete with
   assert.match(html,/<button id="dashboard-search-clear" type="button" data-i18n="simplify.search.clear"/);
   assert.match(html,/<select id="dashboard-league-menu"[^>]*data-i18n-attr="aria-label:simplify.leagues.label"/);
 });
+
+test('home reading identities are escaped on free rows even without an official selection, never on locked rows',()=>{
+  const free={fixture_id:123,match_date:'2099-10-24T14:00:00Z',home:'<Home> & "quoted"',away:'Away',country:'Germany',league:'Bundesliga',locked:false,selection:null,probabilities:[.4,.3,.3]};
+  const html=dashboard.renderRows([free],tr,'en-GB');
+  assert(html.includes('data-reading-fixture="123"') && html.includes('data-reading-free="true"'));
+  assert(html.includes('data-reading-home="&lt;Home&gt; &amp; &quot;quoted&quot;"'));
+  assert(!html.includes('<Home>') && !html.includes('dashboard-selection-row'));
+  assert.equal((html.match(/<td\b/g)||[]).length,6);
+  assert(!dashboard.renderRows([{...free,locked:true}],tr,'en-GB').includes('data-reading-'));
+  const source=readFileSync(new URL('../assets/home-dashboard.js',import.meta.url),'utf8');
+  for(const forbidden of ['mainPickForMatch','market_quotes','official_selection','dashboard-selection-row','observedQuoteText','formatMarketOdd']) assert(!source.includes(forbidden),forbidden);
+});
+
+test('mobile six-column table uses a complete width budget and lets reading text wrap inside its own cell',()=>{
+  const css=readFileSync(new URL('../assets/home-modern.css',import.meta.url),'utf8');
+  const mobile=css.slice(css.lastIndexOf('@media (max-width: 600px)'));
+  assert.match(mobile,/\.dashboard-table \{ width: 100%; min-width: 0; max-width: 100%; table-layout: fixed;/);
+  const width=name=>Number(mobile.match(new RegExp(`\\.dashboard-col-${name} \\{ width: ([\\d.]+)%;`))[1]);
+  assert.equal(width('time')+width('match')+3*width('prob')+width('access'),100);
+  assert.match(mobile,/td:nth-child\(2\) \{ width: auto; min-width: 0; max-width: none;/);
+  assert.match(mobile,/\.dashboard-team > a,[^{}]+\{[^}]*overflow: visible; white-space: normal; overflow-wrap: anywhere; text-overflow: clip;/);
+  assert.match(mobile,/\.dashboard-reading-row \.citire \{ box-sizing: border-box; width: 100%; min-width: 0; max-width: 100%;/);
+  assert.match(css,/\.dashboard-reading-row \.citire \{[^}]*overflow-wrap: anywhere;[^}]*border-left: 3px solid #c9a227;/);
+});

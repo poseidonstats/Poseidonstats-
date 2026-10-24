@@ -98,10 +98,14 @@
     return rows.map(row => {
       const date = new Date(row.match_date);
       const time = new Intl.DateTimeFormat(loc, {timeZone:TIMEZONE, hour:'2-digit', minute:'2-digit', hour12:false}).format(date);
-      return `<tr><td><time datetime="${escapeHTML(row.match_date)}">${escapeHTML(time)}</time></td>` +
+      const identity = {fixture_id:row.fixture_id,home_team:row.home,away_team:row.away,match_date:row.match_date,locked:row.locked};
+      const readingAPI = typeof window !== 'undefined' && window.POSEIDON_CITIRE;
+      const reading = !row.locked && readingAPI && typeof readingAPI.dashboardRow === 'function' ? readingAPI.dashboardRow(identity) : '';
+      const readingAttributes = row.locked ? '' : ` data-reading-fixture="${escapeHTML(row.fixture_id)}" data-reading-home="${escapeHTML(row.home)}" data-reading-away="${escapeHTML(row.away)}" data-reading-kickoff="${escapeHTML(row.match_date)}" data-reading-free="true"`;
+      return `<tr${readingAttributes}><td><time datetime="${escapeHTML(row.match_date)}">${escapeHTML(time)}</time></td>` +
         `<td class="dashboard-team"><a href="#matches" data-dashboard-fixture="${escapeHTML(row.fixture_id)}" title="${escapeHTML(`${row.home} – ${row.away}`)}">${escapeHTML(row.home)} <span aria-hidden="true">–</span> ${escapeHTML(row.away)}</a><small title="${escapeHTML(`${row.country} · ${row.league}`)}">${escapeHTML(row.country)} · ${escapeHTML(row.league)}</small></td>` +
         row.probabilities.map(v => `<td class="dashboard-prob">${escapeHTML(pct(v))}</td>`).join('') +
-        `<td><span class="${row.locked ? 'dashboard-lock' : 'dashboard-free'}">${row.locked ? '🔒 ' : ''}${escapeHTML(tr(row.locked ? 'dashboard.access.locked' : 'dashboard.access.free'))}</span></td></tr>`;
+        `<td><span class="${row.locked ? 'dashboard-lock' : 'dashboard-free'}">${row.locked ? '🔒 ' : ''}${escapeHTML(tr(row.locked ? 'dashboard.access.locked' : 'dashboard.access.free'))}</span></td></tr>${reading}`;
     }).join('');
   }
   function renderChart(points, tr, loc, id, layout = {}) {
