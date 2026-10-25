@@ -1,31 +1,31 @@
 {
- "generat_la": "2026-10-24 05:30",
- "n_total": 45286,
+ "generat_la": "2026-10-25 05:29",
+ "n_total": 46320,
  "fisiere": [
   {
    "fisier": "jurnal_2026-06.csv",
    "luna": "2026-06",
-   "n": 4678
+   "n": 4659
   },
   {
    "fisier": "jurnal_2026-07.csv",
    "luna": "2026-07",
-   "n": 6692
+   "n": 6669
   },
   {
    "fisier": "jurnal_2026-08.csv",
    "luna": "2026-08",
-   "n": 11620
+   "n": 11522
   },
   {
    "fisier": "jurnal_2026-09.csv",
    "luna": "2026-09",
-   "n": 12740
+   "n": 12613
   },
   {
    "fisier": "jurnal_2026-10.csv",
    "luna": "2026-10",
-   "n": 9556
+   "n": 10857
   }
  ],
  "coloane": [
@@ -79,6 +79,27 @@
   "dayof_prob_ht_over_1_5",
   "dayof_mkt_p_o25",
   "dayof_mkt_ro_p_o25",
+  "pub_ts",
+  "pub_sursa",
+  "platt_versiune",
+  "pub_prob_home",
+  "pub_prob_draw",
+  "pub_prob_away",
+  "pub_prob_over_1_5",
+  "pub_prob_over_2_5",
+  "pub_prob_over_3_5",
+  "pub_prob_btts",
+  "pub_prob_ht_over_0_5",
+  "pub_prob_ht_over_1_5",
+  "cal_prob_home",
+  "cal_prob_draw",
+  "cal_prob_away",
+  "cal_prob_over_1_5",
+  "cal_prob_over_2_5",
+  "cal_prob_over_3_5",
+  "cal_prob_btts",
+  "cal_prob_ht_over_0_5",
+  "cal_prob_ht_over_1_5",
   "close_p_home",
   "close_p_draw",
   "close_p_away",
@@ -90,5 +111,5 @@
   "close_p_ht_over_1_5",
   "close_hours_before_ko"
  ],
- "nota": "Doar predicții rezolvate, înghețate înainte de meci. prob_* sunt brute; site-ul afișează Platt(prob_*) cu parametrii din platt_calibration.json. Utilizare liberă cu menționarea sursei: poseidonstats.com"
+ "nota": "Doar predicții rezolvate, înghețate înainte de meci și nereprogramate la peste 10 zile. prob_* sunt brutul primei înghețări; cal_prob_* sunt probabilitățile PUBLICATE înaintea meciului (snapshot-ul din ziua meciului sau prima înghețare, vezi pub_sursa), calibrate cu versiunea Platt din platt_versiune; auditul de pe site se reface din cal_prob_*. Utilizare liberă cu menționarea sursei: poseidonstats.com"
 }
