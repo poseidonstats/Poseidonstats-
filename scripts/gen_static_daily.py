@@ -2,18 +2,17 @@
 """Conținut static zilnic pentru SEO — rulat de daily_publish.sh la fiecare publish.
 
 Face trei lucruri:
-  1. Rescrie secțiunea dintre markerii DAILY_STATIC din index.html cu top 3
-     picks calibrate ale zilei (text static în HTML — Google primește conținut
-     proaspăt zilnic, nu doar JSON încărcat din JS).
+  1. Rescrie secțiunea dintre markerii DAILY_STATIC din index.html cu numărul
+     meciurilor zilei și accesul la filtre. Vizitatorul alege piața; nu generăm
+     un pariu principal sau un clasament după probabilitate.
   2. Rescrie secțiunea dintre markerii PROOF_STATIC din index.html cu tabelul
      „ce s-a adeverit" din data/history.json (cumulated_markets) — dovada de
      conversie de pe homepage, statică pentru crawler și niciodată inventată.
   3. Actualizează <lastmod> în sitemap.xml pentru paginile cu changefreq daily
      (era înghețat la 2026-06-11 — semnal de site mort pentru crawler).
 
-Regulile de onestitate (CLAUDE.md): probabilități CALIBRATE, round(p*100),
-prag pick identic cu app.js (O1.5 ≥0.75, restul ≥0.65), MAX_PROB_DISPLAY=0.88
-(fără super-favoriți umflați ca exemple), fără echipe W/tineret/rezerve.
+26 oct 2026: rezumatul zilei nu mai selectează automat piețe. Tabelul istoric
+și cifrele lui rămân neschimbate.
 """
 from __future__ import annotations
 
@@ -23,12 +22,6 @@ import sys
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
-# Filtrul de ligi pentru AFIȘAJ PUBLIC vine din modulul UNIC — un singur loc, ca să
-# nu existe două liste care se depărtează (29 aug 2026). „Repere azi" e vitrina de pe
-# homepage: până acum scotea în față Hungary NB III / Czech 4. liga, adică exact
-# opusul a ce vrea să demonstreze blocul.
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-from _leagues_public import is_public_league
 from zoneinfo import ZoneInfo
 
 
@@ -64,25 +57,6 @@ TIER_CLASS = {
     "DROP": "tier-drop",
 }
 
-MAX_PROB_DISPLAY = 0.88
-EXCLUDE_TEAM = re.compile(
-    r"\b(II|III|B|C|Reserves?|U1[4-9]|U2[0-3]|W|Women|Ladies|Femenino|Femenil|Feminin)\b",
-    re.IGNORECASE,
-)
-EXCLUDE_LEAGUE = re.compile(r"women|femenil|femenino|feminin|ladies|w-league", re.IGNORECASE)
-
-# piață → (cheie JSON, prag pick — sincron cu pickBadge() din assets/app.js)
-MARKETS = [
-    ("Over 1.5 goluri", "prob_over_1_5", 0.75),
-    ("Over 2.5 goluri", "prob_over_2_5", 0.65),
-    ("Over 3.5 goluri", "prob_over_3_5", 0.65),
-    ("Victorie gazde", "prob_home", 0.65),
-    ("Victorie oaspeți", "prob_away", 0.65),
-    ("Ambele marchează", "prob_btts", 0.65),
-]
-PIATA_KEY = {"Over 1.5 goluri": "piata.o15", "Over 2.5 goluri": "piata.o25", "Over 3.5 goluri": "piata.o35",
-             "Victorie gazde": "piata.home", "Victorie oaspeți": "piata.away", "Ambele marchează": "piata.btts"}
-
 RO_MONTHS = ["", "ianuarie", "februarie", "martie", "aprilie", "mai", "iunie",
              "iulie", "august", "septembrie", "octombrie", "noiembrie", "decembrie"]
 
@@ -93,80 +67,21 @@ def bucharest_today() -> datetime:
     return datetime.now(timezone(timedelta(hours=3)))
 
 
-def todays_picks(limit: int = 3) -> tuple[list[str], int, int]:
-    """Returnează (repere, meciuri_azi, repere_respinse_de_filtrul_public).
-
-    Al treilea număr contează pentru onestitatea mesajului de rezervă: „niciun reper
-    peste praguri" ar fi FALS în zilele în care există repere, dar toate în ligi mici.
-    """
-    data = json.loads(PRED.read_text())
-    matches = data["matches"] if isinstance(data, dict) and "matches" in data else data
-    today = bucharest_today().date().isoformat()
-    picks = []
-    n_today = 0
-    n_respinse = 0
-    for m in matches:
-        # 24 oct 2026 (audit): match_date e UTC („…Z”); „azi” e ziua României — altfel prima pagină număra ziua UTC (1.353 contra 1.290 pe 24 oct)
-        if zi_ro(m.get("match_date", "")) != today:
-            continue
-        n_today += 1
-        if not m.get("calibrated"):
-            continue
-        home, away = str(m.get("home_team", "")), str(m.get("away_team", ""))
-        league = f"{m.get('country', '')} · {m.get('league', '')}"
-        if EXCLUDE_TEAM.search(home) or EXCLUDE_TEAM.search(away) or EXCLUDE_LEAGUE.search(league):
-            continue
-        if not is_public_league(m.get("country", ""), m.get("league", "")):
-            if any((m.get(k) is not None and prag <= m[k] <= MAX_PROB_DISPLAY)
-                   for _, k, prag in MARKETS):
-                n_respinse += 1
-            continue
-        for label, key, prag in MARKETS:
-            p = m.get(key)
-            if p is None or p < prag or p > MAX_PROB_DISPLAY:
-                continue
-            vars_ = json.dumps({"meci": f"{home} – {away}", "liga": league,
-                                "piata": f'<span data-i18n="{PIATA_KEY.get(label, "")}">{label}</span>', "p": str(round(p * 100))}, ensure_ascii=False)
-            picks.append((p, (home, away), f"<li data-i18n=\"repere.item\" data-i18n-vars='{vars_}'><strong>{home} – {away}</strong> ({league}): "
-                             f"{label} — <strong>{round(p * 100)}%</strong> calibrat</li>"))
-    picks.sort(key=lambda x: -x[0])
-    # un singur pick per meci (cel mai probabil), apoi top N
-    seen, out = set(), []
-    for p, match_key, html in picks:
-        if match_key in seen:
-            continue
-        seen.add(match_key)
-        out.append(html)
-        if len(out) >= limit:
-            break
-    return out, n_today, n_respinse
-
-
 def build_section() -> str:
     d = bucharest_today()
     date_ro = f"{d.day} {RO_MONTHS[d.month]} {d.year}"
-    picks, n_today, n_respinse = todays_picks()
+    data = json.loads(PRED.read_text())
+    matches = data["matches"] if isinstance(data, dict) and "matches" in data else data
+    # Numără aceeași zi RO ca înainte, fără selecție pe piață sau probabilitate.
+    n_today = sum(zi_ro(m.get("match_date", "")) == d.date().isoformat() for m in matches)
     lines = [
         START,
         '  <section class="daily-static" id="repere-azi">',
         f"    <h2 data-i18n=\"repere.h2\" data-i18n-vars='{{\"data\":\"<span data-date=\\\"{d.date().isoformat()}\\\">{date_ro}</span>\"}}'>Predicții fotbal azi — <span data-date=\"{d.date().isoformat()}\">{date_ro}</span></h2>",
     ]
-    if picks:
-        lines.append(f"    <p data-i18n=\"repere.p\" data-i18n-vars='{{\"n\":\"{n_today}\"}}'>Repere calibrate din cele {n_today} meciuri analizate azi de model "
-                     "(lista completă, cu filtre, mai jos):</p>")
-        lines.append("    <ul>")
-        lines += ["      " + p for p in picks]
-        lines.append("    </ul>")
-    elif n_respinse:
-        # Există repere, dar toate în competiții pe care nu le punem în vitrină.
-        # A scrie „niciun reper peste praguri" ar fi minciună prin omisiune.
-        lines.append(f"    <p>Modelul a analizat azi {n_today} meciuri. În campionatele mari nu "
-                     f"e azi niciun reper peste pragurile de afișare; cele "
-                     f"{n_respinse} care trec pragul sunt în competiții mici, pe care nu le "
-                     "scoatem în față. Lista completă, cu filtre, e mai jos.</p>")
-    else:
-        lines.append(f"    <p>Modelul a analizat azi {n_today} meciuri; niciun reper calibrat "
-                     "peste pragurile de afișare — lista completă mai jos.</p>")
+    lines.append(f"    <p data-i18n=\"repere.p\" data-i18n-vars='{{\"n\":\"{n_today}\"}}'>Modelul a analizat azi {n_today} meciuri. "
+                 "Alege meciul și piața care te interesează din lista completă.</p>")
+    lines.append('    <p><a href="#matches" data-i18n="repere.link">Vezi meciurile și filtrele</a></p>')
     lines.append('    <p class="pro-disclaimer" data-i18n="repere.disclaimer">probabilități calibrate empiric · informativ · '
                  "nu sfat de pariere · 18+</p>")
     lines.append("  </section>")

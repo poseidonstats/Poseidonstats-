@@ -13,8 +13,8 @@
 <meta property="og:url" content="https://poseidonstats.com/">
 <link rel="canonical" href="https://poseidonstats.com/">
 <meta property="og:type" content="website">
-<link rel="stylesheet" href="assets/style.css">
-<link rel="stylesheet" href="assets/home-modern.css?v=20261024-home-reading1">
+<link rel="stylesheet" href="assets/style.css?v=20261026-market-choice1">
+<link rel="stylesheet" href="assets/home-modern.css?v=20261026-market-choice1">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#1e3a8a">
 <link rel="apple-touch-icon" href="assets/icon-192.png">
@@ -337,11 +337,8 @@ Statistici informative. Modelul poate greși. Verifică sursa. 18+.
 <!-- DAILY_STATIC_START -->
   <section class="daily-static" id="repere-azi">
     <h2 data-i18n="repere.h2" data-i18n-vars='{"data":"<span data-date=\"2026-10-27\">27 octombrie 2026</span>"}'>Predicții fotbal azi — <span data-date="2026-10-27">27 octombrie 2026</span></h2>
-    <p data-i18n="repere.p" data-i18n-vars='{"n":"266"}'>Repere calibrate din cele 266 meciuri analizate azi de model (lista completă, cu filtre, mai jos):</p>
-    <ul>
-      <li data-i18n="repere.item" data-i18n-vars='{"meci": "Abha – Al-Faisaly FC", "liga": "Saudi-Arabia · Pro League", "piata": "<span data-i18n=\"piata.o15\">Over 1.5 goluri</span>", "p": "79"}'><strong>Abha – Al-Faisaly FC</strong> (Saudi-Arabia · Pro League): Over 1.5 goluri — <strong>79%</strong> calibrat</li>
-      <li data-i18n="repere.item" data-i18n-vars='{"meci": "Dinamo Zagreb – HNK Rijeka", "liga": "Croatia · HNL", "piata": "<span data-i18n=\"piata.o15\">Over 1.5 goluri</span>", "p": "79"}'><strong>Dinamo Zagreb – HNK Rijeka</strong> (Croatia · HNL): Over 1.5 goluri — <strong>79%</strong> calibrat</li>
-    </ul>
+    <p data-i18n="repere.p" data-i18n-vars='{"n":"266"}'>Modelul a analizat azi 266 meciuri. Alege meciul și piața care te interesează din lista completă.</p>
+    <p><a href="#matches" data-i18n="repere.link">Vezi meciurile și filtrele</a></p>
     <p class="pro-disclaimer" data-i18n="repere.disclaimer">probabilități calibrate empiric · informativ · nu sfat de pariere · 18+</p>
   </section>
   <!-- DAILY_STATIC_END -->
@@ -520,24 +517,9 @@ Statistici informative. Modelul poate greși. Verifică sursa. 18+.
     <h2 data-i18n="index.h2">Predicții pentru următoarele 7 zile</h2>
     <details class="home-guide">
       <summary data-i18n="faq.q2">De unde vin probabilitățile?</summary>
-    <div class="howto" data-i18n="index.howto">
-      <h3>Cum folosești POSEIDON (în 30 de secunde)</h3>
-      <p><strong>1. Caută eticheta verde ★</strong> de pe fiecare meci — acolo e piața pe care modelul o dă cu cea mai mare probabilitate (ex. „Over 1.5 85%" = șanse mari să fie minim 2 goluri). Stelele ⭐ arată cât de bun e modelul pe acea piață: ⭐ bun · ⭐⭐ foarte bun · ⭐⭐⭐ excelent.</p>
-      <p><strong>2. 🎯 Recomandarea noastră pentru cea mai mare acuratețe:</strong> sus, bifează <em>„Doar ligi calibrate"</em> și pune <em>Probabilitatea minimă la ≥80%</em>. La aceste setări, în istoricul nostru (65.000 meciuri reale) predicțiile s-au adeverit: Over 1.5 <strong>83%</strong>, dublă șansă 1X <strong>82%</strong>, Over 2.5 <strong>79%</strong> (acuratețe istorică, nu garanție).</p>
-      <p><strong>3. Vrei altă piață sau zi?</strong> Folosește filtrele de sus (zi, piață, ligă) ca să vezi doar meciurile care te interesează.</p>
-      <p class="howto-foot">Probabilități calibrate pe meciuri reale — informativ, nu garanție. 18+</p>
-    </div>
+    <div class="howto" data-i18n="index.howto"><h3>⚽ Cum folosești POSEIDON (în 30 de secunde)</h3><p><strong>1. Alege meciul și piața</strong> Folosește filtrele de sus pentru zi, piață și ligă ca să restrângi lista.</p><p><strong>2. Compară probabilitățile</strong> Citește estimările pentru piețele care te interesează. O probabilitate mai mare nu garantează rezultatul.</p><p><strong>3. Verifică datele și contextul</strong> Consultă detaliile meciului și marcajele de calibrare. Ține cont de informațiile lipsă înainte de a interpreta estimarea.</p><p class="howto-foot">Probabilități calibrate pe meciuri reale — informativ, nu garanție. 18+</p></div>
     <p data-i18n="index.intro">Model Poisson + Dixon-Coles + ratings Bayesian cu calibrare per-ligă. Predicțiile sunt înghețate la generare (05:30 zilnic) și verificabile post-meci.</p>
-    <div class="card-info" data-i18n="index.cardinfo.body">
-      <strong>Probabilități calibrate empiric.</strong> Cifrele sunt re-mapate pe un backtest de 65.436 meciuri
-      (ratings înghețate 31 dec 2025, zero leakage): când modelul brut zice „85%" pe un interval dar în istoric
-      s-a întâmplat 67%, afișăm <strong>67%</strong>, nu 85%. <strong>Toate piețele sunt calibrate empiric</strong>;
-      badge-ul <span class="pick-badge pick-strong" style="font-size:0.7rem;padding:2px 8px">★</span> și stelele ⭐
-      marchează piețele unde modelul are <em>skill dovedit</em> peste media statistică (vezi ghidul de sus).
-      Markerul <span class="warn-tag">⚠️ ligă necalibrată</span> = ligă unde calibrarea per-ligă nu e validată
-      separat (probabilitățile rămân calibrate global). Vezi <a href="istoric.html">istoric</a> sau
-      <a href="track-record.html">track record</a> pentru tabelul complet de calibrare.
-    </div>
+    <div class="card-info" data-i18n="index.cardinfo.body">Cifrele sunt re-mapate pe un backtest de 65.436 meciuri (ratings înghețate 31 dec 2025, zero leakage): când modelul brut zice „85%" pe un interval dar în istoric s-a întâmplat 67%, afișăm <strong>67%</strong>, nu 85%. <strong>Toate piețele sunt calibrate empiric</strong>. Compară probabilitățile pentru piețele care te interesează și verifică detaliile meciului, inclusiv informațiile lipsă. Markerul <span class="warn-tag">⚠️ ligă necalibrată</span> = ligă unde calibrarea per-ligă nu e validată separat (probabilitățile rămân calibrate global). Vezi <a href="istoric.html">istoric</a> sau <a href="track-record.html">track record</a> pentru tabelul complet de calibrare.</div>
     </details>
   </section><!-- LEAGUES_LINKS_START -->
   <section class="ligi-links">
@@ -751,7 +733,7 @@ Statistici informative. Modelul poate greși. Verifică sursa. 18+.
 </footer>
 
 <script src="assets/members.js?v=20261024-conversion1"></script>
-<script src="assets/app.js?v=20261024-conversion1"></script>
+<script src="assets/app.js?v=20261026-market-choice1"></script>
 <script src="assets/citire.js?v=20261024-onestitate3"></script>
 <script src="assets/home-dashboard.js?v=20261024-home-reading1"></script>
 </body>

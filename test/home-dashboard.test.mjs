@@ -12,6 +12,8 @@ const history = read('data/history.json');
 const audit = read('data/audit.json');
 const i18n = read('assets/i18n.json');
 const tr = key => i18n.en[key] || key;
+// 26 oct: Andreea a cerut scoaterea recomandării automate și a ghidului ei.
+const marketChoiceCopy = new Set(['index.howto', 'index.cardinfo.body', 'repere.p']);
 
 test('KPI values come directly from their distinct real source samples', () => {
   const metrics = dashboard.extractMetrics(audit, history);
@@ -142,7 +144,7 @@ test('fixture links reset legacy filters before selecting source UTC date, leagu
   assert.equal(calls.length,4);
 });
 
-test('all six dictionaries preserve original values except the explicitly authorized hero title and fully translate new dashboard keys', () => {
+test('all six dictionaries preserve original values except the explicitly authorized UI copy and fully translate dashboard keys', () => {
   const original = JSON.parse(execFileSync('git',['show','HEAD:assets/i18n.json'],{encoding:'utf8',cwd:new URL('..',import.meta.url)}));
   const heroTitles = {
     ro:'Statistici avansate<br>pentru <span>decizii corecte</span>',
@@ -156,7 +158,7 @@ test('all six dictionaries preserve original values except the explicitly author
   assert(keys.length >= 47);
   for (const lang of ['ro','en','es','it','fr','id']) {
     for (const [key,value] of Object.entries(original[lang])) {
-      if (key !== 'dashboard.hero.title') assert.equal(i18n[lang][key],value,`${lang}.${key}`);
+      if (key !== 'dashboard.hero.title' && !marketChoiceCopy.has(key)) assert.equal(i18n[lang][key],value,`${lang}.${key}`);
     }
     assert.equal(i18n[lang]['dashboard.hero.title'],heroTitles[lang]);
     assert.deepEqual(Object.keys(i18n[lang]).filter(key => key.startsWith('dashboard.')).sort(),keys);
@@ -466,7 +468,7 @@ test('conversion labels are complete in six languages and legacy dictionary valu
   assert(keys.length >= 14);
   const tokens=text=>({variables:(text.match(/\{\w+\}/g)||[]).sort(),tags:text.match(/<\/?[^>]+>/g)||[]});
   for (const lang of ['ro','en','es','it','fr','id']) {
-    for (const [key,value] of Object.entries(original[lang])) assert.equal(i18n[lang][key],value,`${lang}.${key}`);
+    for (const [key,value] of Object.entries(original[lang])) if (!marketChoiceCopy.has(key)) assert.equal(i18n[lang][key],value,`${lang}.${key}`);
     assert.deepEqual(Object.keys(i18n[lang]).filter(key=>key.startsWith('conversion.')).sort(),keys);
     for (const key of keys) {
       assert(i18n[lang][key].trim(),`${lang}.${key}`);
@@ -542,7 +544,7 @@ test('search, league choice, honest copy and activation labels are complete with
   const keys=Object.keys(i18n.ro).filter(key=>key.startsWith('simplify.')).sort();assert(keys.length>=19);
   for (const lang of ['ro','en','es','it','fr','id']) {
     assert.deepEqual(Object.keys(i18n[lang]).filter(key=>key.startsWith('simplify.')).sort(),keys);
-    for (const [key,value] of Object.entries(original[lang])) assert.equal(i18n[lang][key],value,`${lang}.${key}`);
+    for (const [key,value] of Object.entries(original[lang])) if (!marketChoiceCopy.has(key)) assert.equal(i18n[lang][key],value,`${lang}.${key}`);
     for (const key of keys) {
       assert(i18n[lang][key].trim(),`${lang}.${key}`);
       const tags=text=>text.match(/<\/?[^>]+>/g)||[];

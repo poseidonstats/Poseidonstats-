@@ -7,9 +7,7 @@ const HISTORY_URL = "data/history.json";
 const SCORECARD_URL = "data/scorecard.json";
 const I18N_URL = "assets/i18n.json";
 
-// 🆕 29 iun — scorecard skill per piață (din backtest OOS). Picks-urile (badge verde) se
-// extind data-driven la TOATE piețele cu tier=PICK, fiecare cu pragul + stelele ei de skill.
-// Fallback grațios: dacă scorecard.json lipsește → SCORECARD {} → picks cad pe cele 2 brand.
+// Scorecard skill per piață (din backtest OOS), folosit pentru contextul piețelor.
 let SCORECARD = {};                       // key -> card (label, tier, threshold, skill_stars, lift_pp, hit)
 const PICK_PROB = {                       // cheie scorecard -> probabilitatea din match
   "1x2_home":    m => m.prob_home,
@@ -1001,44 +999,11 @@ function renderMatch(m, filterMarket = "") {
     timeZone: "Europe/Bucharest"
   });
 
-  // 🆕 10 iun 2026 — Acumulator STRICT cu DOAR cele 2 piețe brand (Over 1.5 + HT Over 0.5).
-  // 🆕 11 iun 2026 — Coerență cu filtru: badge verde apare DOAR pe piața filtrată dacă e
-  //    una din cele 2 de încredere. Filtru pe altă piață → ZERO badge verde (corect, nu o
-  //    recomandăm). Filtru gol → ambele badge-uri ca înainte.
-  // Decizie pe baza calibration.json (TEST 65.250 meciuri):
-  //   - Over 1.5 ≥75%: bucket 70-80% drift +1.11pp, 80-90% -2.29pp ✅
-  //   - HT Over 0.5 ≥70%: bucket 70-80% drift -1.28pp, 80-90% -5.44pp ✅
-  // Filosofie: badge verde = "recomand cu încredere" (doar 2 piețe). Highlight auriu pe
-  // piața filtrată = "asta ai cerut, uite cifra reală". Niciodată badge de la o piață
-  // nefiltrată când există filtru activ.
-  // 🆕 29 iun — picks DATA-DRIVEN din scorecard: TOATE piețele tier=PICK, fiecare cu pragul
-  // + stelele ei de skill (lift OOS). Fallback grațios: SCORECARD gol → cele 2 brand (ca înainte).
-  const picks = [];
-  const pickKeys = Object.keys(SCORECARD).length
-    ? Object.values(SCORECARD).filter(c => c.tier === "PICK").map(c => c.key)
-    : ["over_1_5", "ht_over_0_5"];
-  for (const key of pickKeys) {
-    const c = SCORECARD[key];
-    const thr = c ? c.threshold : (key === "over_1_5" ? 0.75 : 0.70);
-    const fn = PICK_PROB[key];
-    if (!fn) continue;
-    if (filterMarket && PICK_FILTER[key] !== filterMarket) continue;  // coerență cu filtrul
-    const p = fn(m);
-    if (p == null || p < thr) continue;
-    picks.push([PICK_LABEL[key] || key, p, c ? c.skill_stars : 0]);
-  }
-  picks.sort((a, b) => b[1] - a[1]);
-  const pick1x2 = m.prob_home >= m.prob_draw && m.prob_home >= m.prob_away ? "1" : m.prob_away >= m.prob_draw ? "2" : "X";
-  const picksHtml = picks.map(([name, p, stars]) => pickBadge(name, p, stars)).join(" ");
-
-
   const freeTag = m.free
     ? `<span class="free-tag">${tt("freemium.tag", "GRATUIT AZI")}</span>` : "";
 
-  const lead = picks.length ? `<div class="match-lead"><span class="lead-pct">${fmtPct(picks[0][1])}</span><span class="lead-mk">${esc(picks[0][0])}</span></div>` : `<div class="match-lead"><span class="lead-pct">${fmtPct(Math.max(m.prob_home, m.prob_draw, m.prob_away))}</span><span class="lead-mk">${pick1x2}</span></div>`;
   return `<div class="match ${m.calibrated ? "" : "uncalibrated"} ${m.free ? "match-free" : ""}" data-fid="${m.fixture_id}">
     <div class="match-header" role="button" tabindex="0">
-      ${lead}
       <div class="match-title">
         <div class="match-teams"><span class="team home">${esc(m.home_team)}</span><span class="vs">vs</span><span class="team away">${esc(m.away_team)}</span></div>
         <div class="match-meta">
@@ -1047,7 +1012,6 @@ function renderMatch(m, filterMarket = "") {
           ${calibTag}${freeTag}
         </div>
       </div>
-      ${picksHtml ? `<div class="picks-row">${picksHtml}</div>` : ""}
       <span class="match-chev" aria-hidden="true"></span>
     </div>
     <div class="match-body">
@@ -1064,15 +1028,15 @@ function renderMatch(m, filterMarket = "") {
     <div class="phase-row ft">
       <div class="phase-label">${tt("match.phase.ft", "Final · 90 min")}</div>
       <div class="markets-grid">
-        <div class="market ${pick1x2 === "1" ? "pick" : ""} ${isFilteredMarket("1", filterMarket) ? "market-filtered" : ""}">
+        <div class="market ${isFilteredMarket("1", filterMarket) ? "market-filtered" : ""}">
           <span class="label">1</span>
           <span class="val ${pctClass(m.prob_home)}">${fmtPct(m.prob_home)}</span>
         </div>
-        <div class="market ${pick1x2 === "X" ? "pick" : ""} ${isFilteredMarket("X", filterMarket) ? "market-filtered" : ""}">
+        <div class="market ${isFilteredMarket("X", filterMarket) ? "market-filtered" : ""}">
           <span class="label">X</span>
           <span class="val ${pctClass(m.prob_draw)}">${fmtPct(m.prob_draw)}</span>
         </div>
-        <div class="market ${pick1x2 === "2" ? "pick" : ""} ${isFilteredMarket("2", filterMarket) ? "market-filtered" : ""}">
+        <div class="market ${isFilteredMarket("2", filterMarket) ? "market-filtered" : ""}">
           <span class="label">2</span>
           <span class="val ${pctClass(m.prob_away)}">${fmtPct(m.prob_away)}</span>
         </div>

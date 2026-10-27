@@ -123,8 +123,8 @@ test('homepage market filters use translated labels and homepage assets use thei
     assert.equal(key,`filters.market.${market}`);
     for (const language of languages) assert(dictionary[language][key]);
   }
-  assert(html.includes('assets/app.js?v=20261024-conversion1'));
-  assert(html.includes('assets/home-modern.css?v=20261024-home-reading1'));
+  assert(html.includes('assets/app.js?v=20261026-market-choice1'));
+  assert(html.includes('assets/home-modern.css?v=20261026-market-choice1'));
   assert(html.includes('assets/members.js?v=20261024-conversion1'));
   assert(html.includes('assets/conversion.js?v=20261024-conversion1'));
   assert(html.includes('assets/home-dashboard.js?v=20261024-home-reading1'));

@@ -381,14 +381,11 @@ body.home-modern.tier-pro #exemplu-pro, body.home-modern.tier-basic #exemplu-pro
   .home-modern .filter-reset { grid-column: 1 / -1; margin: 0; }
   .home-modern .filtre-toggle { background: #092131; border-color: #2d4c60; color: #f0cf76; min-height: 46px; font-size: 14px; }
   .home-modern .match { padding: 0; overflow: hidden; }
-  .home-modern .match-header { padding: 17px 13px; gap: 6px 9px; grid-template-columns: minmax(0, 1fr) auto 12px; }
+  .home-modern .match-header { padding: 17px 13px; gap: 6px 9px; grid-template-columns: minmax(0, 1fr) 12px; }
   .home-modern .match-teams { font-size: 16px; line-height: 1.5; }
   .home-modern .match-teams .team { white-space: normal; overflow: visible; overflow-wrap: anywhere; }
   .home-modern .match-meta .liga { white-space: normal; max-width: 100%; overflow: visible; }
   .home-modern .match-meta { gap: 6px; }
-  .home-modern .lead-pct { color: #8bdeb2; font-size: 28px; }
-  .home-modern .lead-mk { color: #a6bfce; font-size: 12px; }
-  .home-modern .picks-row { margin-top: 8px; gap: 5px; }
   .home-modern .pick-badge { padding: 5px 7px; }
   .home-modern .match-body { display: none; padding: 0 13px 14px; border-color: #22445a; }
   .home-modern .match.open .match-body { display: block; padding-top: 14px; }
