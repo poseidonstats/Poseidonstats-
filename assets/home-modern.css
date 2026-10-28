@@ -538,6 +538,8 @@ body.home-modern.tier-pro #exemplu-pro, body.home-modern.tier-basic #exemplu-pro
 .home-modern .conversion-proof-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 18px; margin-top: 12px; }
 .home-modern .conversion-proof-row a { font-size: 13px; font-weight: 600; }
 .home-modern .conversion-proof-row p { color: #a8bfce; font-size: 12px; margin: 0; }
+.home-modern .conversion-paypal { color: #a8bfce; font-size: 12px; margin: 8px 0 0; }
+.home-modern .plans-paypal { margin-top: 6px; }
 body.home-modern.tier-pro .conversion-plans { display: none; }
 body.home-modern.tier-basic .conversion-plan-free, body.home-modern.tier-basic .conversion-plan-basic,
 body.home-modern.tier-basic .conversion-visitor-title, body.home-modern.tier-basic .conversion-visitor-proof { display: none; }
