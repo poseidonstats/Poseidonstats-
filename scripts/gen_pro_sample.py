@@ -78,6 +78,22 @@ def piata_baza(picks: list[str]) -> str:
     return ""
 
 
+def piata_din_linie(linie: str) -> str:
+    """Piața unui rând de pick, în limba rândului (28 oct 2026, Andreea: „Avem o greșeală de traducere”): eticheta în bold de la început,
+    oricare ar fi limba („**Bază:**”, „**Base:**”, „**Base :**”), se scoate; piața e textul până la primul „ — ”. Merge și pe formatul vechi
+    „🔒 **Bază:** **Peste 1.5 goluri — 88%.** motiv”."""
+    rest = re.sub(r"^\W*\*\*[^*]+?\s?:\*\*\s*", "", linie.strip())
+    return re.split(r"\s+[—–·-]\s+", rest)[0].replace("**", "").strip(" .*")
+
+
+def baza_in_limba(text: str, rezerva: str) -> str:
+    """Piața de Bază din analiza unei limbi (rândul cu 🔒); fără traducere sau fără rând, rămâne piața din analiza românească."""
+    for linie in parseaza(text)["picks"] if text else []:
+        if linie.startswith("🔒"):
+            return piata_din_linie(linie) or rezerva
+    return rezerva
+
+
 def evalueaza(piata: str, gh: int, ga: int):
     """True/False dacă piața de Bază a ieșit; None dacă nu e o piață pe care o știu evalua din scor."""
     p = piata.strip(); t = gh + ga; low = p.lower()
@@ -159,11 +175,18 @@ def html_card(item: dict, zi: str, generat: str, scor: tuple[int, int] | None, b
     head = f"{H.escape(m['home'])} – {H.escape(m['away'])} · {H.escape(liga)}" + (f" ({H.escape(tara)})" if tara else "") + f" · <span data-date=\"{(m.get('date') or zi)[:10]}\">{_data_ro(m.get('date', zi))}</span>"
     head += (f" · <strong data-i18n=\"pro.card.rezfinal\" data-i18n-vars='{{\"s\":\"{scor[0]}-{scor[1]}\"}}'>rezultat final {scor[0]}-{scor[1]}</strong>" if scor
              else (f" · <strong data-i18n=\"pro.card.publicata\" data-i18n-vars='{{\"ora\":\"{ora}\"}}'>publicată la {ora}, înainte de meci</strong>" if ora else " · <strong data-i18n=\"pro.card.publicata0\">publicată înainte de meci</strong>"))
-    verif = ""
-    if scor and baza:
-        verif = {True: f"<span data-i18n=\"pro.card.verif.da\" data-i18n-vars='{{\"p\":\"{_inline(baza)}\"}}'>✅ Pick-ul de bază, <strong>{_inline(baza)}</strong>, a ieșit.</span>", False: f"<span data-i18n=\"pro.card.verif.nu\" data-i18n-vars='{{\"p\":\"{_inline(baza)}\"}}'>❌ Pick-ul de bază, <strong>{_inline(baza)}</strong>, nu a ieșit — publicăm și când greșim.</span>", None: f"Pick-ul de bază: <strong>{_inline(baza)}</strong>."}[ok]
-        verif = f'        <p class="pro-verificat">{verif} <a href="analize/{zi}.html#m{m.get("fixture_id")}">Verificarea completă →</a></p>\n'
-    def _corp(p: dict) -> str:
+    def _verif(b: str) -> str:
+        """Verdictul Bazei, cu piața în limba variantei (28 oct 2026: înainte, toate variantele primeau piața din analiza românească)."""
+        if not (scor and baza):
+            return ""
+        v = json.dumps({"p": _inline(b)}, ensure_ascii=False, separators=(",", ":")).replace("'", "&#39;")
+        s = {True: f"<span data-i18n=\"pro.card.verif.da\" data-i18n-vars='{v}'>✅ Pick-ul de bază, <strong>{_inline(b)}</strong>, a ieșit.</span>",
+             False: f"<span data-i18n=\"pro.card.verif.nu\" data-i18n-vars='{v}'>❌ Pick-ul de bază, <strong>{_inline(b)}</strong>, nu a ieșit — publicăm și când greșim.</span>",
+             None: f"<span data-i18n=\"pro.card.verif.neev\" data-i18n-vars='{v}'>Pick-ul de bază: <strong>{_inline(b)}</strong>.</span>"}[ok]
+        return f'        <p class="pro-verificat">{s} <a href="analize/{zi}.html#m{m.get("fixture_id")}" data-i18n="pro.card.verif.link">Verificarea completă →</a></p>\n'
+
+    def _corp(p: dict, b: str) -> str:
+        verif = _verif(b)
         picks = "".join(f"<li>{_inline(l)}</li>" for l in p["picks"])
         return "\n".join([
             '      <div class="pro-visible">',
@@ -175,12 +198,13 @@ def html_card(item: dict, zi: str, generat: str, scor: tuple[int, int] | None, b
             verif.rstrip("\n") if verif else '        <p class="muted" data-i18n="pro.card.maine">Rezultatul și verificarea pick-urilor apar mâine dimineață, în <a href="analize/index.html">arhiva analizelor</a>.</p>',
             '      </div>'])
     # 7 oct 2026: analiza în limba aleasă când există traduceri (analysis_en/es/it din traduce_analize.py); app.js arată varianta [data-lang]
-    variante = [f'<div data-lang="ro">\n{_corp(p)}\n</div>']
+    variante = [f'<div data-lang="ro">\n{_corp(p, baza)}\n</div>']
     for cod in ("en", "es", "it", "fr", "id"):  # 14 oct 2026: + fr, + id (traduce_analize.py)
-        pt = parseaza(item.get(f"analysis_{cod}") or "")
+        text = item.get(f"analysis_{cod}") or ""
+        pt = parseaza(text)
         if pt["verdict"] and pt["picks"]:
-            variante.append(f'<div data-lang="{cod}" hidden>\n{_corp(pt)}\n</div>')
-    corp = f'<div data-lang-grup>{"".join(variante)}</div>' if len(variante) > 1 else _corp(p)
+            variante.append(f'<div data-lang="{cod}" hidden>\n{_corp(pt, baza_in_limba(text, baza))}\n</div>')
+    corp = f'<div data-lang-grup>{"".join(variante)}</div>' if len(variante) > 1 else _corp(p, baza)
     return "\n".join([
         '<div class="pro-card">',
         f'      <div class="pro-card-head">{head}</div>',
@@ -195,10 +219,18 @@ def html_ieri(item: dict, zi: str, scor: tuple[int, int] | None, baza: str, ok) 
         return f'<p class="pro-ieri muted" data-i18n="pro.ieri.fara" data-i18n-vars=\'{{"meci":"{nume}","zi":"{zi}"}}\'>Ieri, aici: <strong>{nume}</strong> — rezultatul final nu e încă în bază; verificarea apare în <a href="analize/{zi}.html">arhiva zilei</a>.</p>'
     semn = {True: "✅ a ieșit", False: "❌ nu a ieșit", None: ""}[ok]
     cheie_b = {True: "pro.ieri.baza.da", False: "pro.ieri.baza.nu", None: "pro.ieri.baza.neev"}[ok]
-    baza_html = f" — bază <strong>{_inline(baza)}</strong> {semn}".rstrip() if baza else ""
-    import json as _j
-    vars_ = _j.dumps({"meci": nume, "scor": f"{scor[0]}-{scor[1]}", "baza": (f'<span data-i18n="{cheie_b}" data-i18n-vars=\'{{"b":"{_inline(baza)}"}}\'>{baza_html}</span>' if baza else ""), "zi": zi, "fid": str(m.get("fixture_id"))}, ensure_ascii=False).replace("'", "&#39;")
-    return f'<p class="pro-ieri" data-i18n="pro.ieri.cu" data-i18n-vars=\'{vars_}\'>Ieri, aici: <strong>{nume}</strong>, {scor[0]}-{scor[1]}' + baza_html + f'. <a href="analize/{zi}.html#m{m.get("fixture_id")}">Verificarea de a doua zi →</a></p>'
+
+    def _linie(b: str, atribut: str = "") -> str:
+        baza_html = f" — bază <strong>{_inline(b)}</strong> {semn}".rstrip() if b else ""
+        vb = json.dumps({"b": _inline(b)}, ensure_ascii=False, separators=(",", ":"))
+        vars_ = json.dumps({"meci": nume, "scor": f"{scor[0]}-{scor[1]}", "baza": (f'<span data-i18n="{cheie_b}" data-i18n-vars=\'{vb}\'>{baza_html}</span>' if b else ""), "zi": zi, "fid": str(m.get("fixture_id"))}, ensure_ascii=False).replace("'", "&#39;")
+        return f'<p class="pro-ieri"{atribut} data-i18n="pro.ieri.cu" data-i18n-vars=\'{vars_}\'>Ieri, aici: <strong>{nume}</strong>, {scor[0]}-{scor[1]}' + baza_html + f'. <a href="analize/{zi}.html#m{m.get("fixture_id")}">Verificarea de a doua zi →</a></p>'
+    # 28 oct 2026 (Andreea: „Avem o greșeală de traducere”): piața de Bază în limba fiecărei variante, din analiza tradusă; app.js arată varianta limbii
+    traduse = [(cod, baza_in_limba(item.get(f"analysis_{cod}") or "", "")) for cod in ("en", "es", "it", "fr", "id")]
+    traduse = [(cod, b) for cod, b in traduse if b]
+    if not baza or not traduse:
+        return _linie(baza)
+    return "<div data-lang-grup>" + _linie(baza, ' data-lang="ro"') + "".join(_linie(b, f' data-lang="{cod}" hidden') for cod, b in traduse) + "</div>"
 
 
 def injecteaza(html: str, card: str, ieri: str = "") -> str:
