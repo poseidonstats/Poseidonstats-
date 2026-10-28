@@ -1,23 +1,23 @@
 {
- "generated_at": "2026-10-26T05:50:04+02:00",
+ "generated_at": "2026-10-27T05:50:05+02:00",
  "zile": [
-  "2026-10-26"
+  "2026-10-27"
  ],
  "meciuri": {
-  "1584440": {
+  "1603035": {
    "echipe": [
-    "Beşiktaş",
-    "Başakşehir"
+    "Abha",
+    "Al-Faisaly FC"
    ],
    "familia": [
-    "1-0",
-    "1-1"
+    "1-1",
+    "0-1"
    ],
-   "directia": "1",
+   "directia": "2",
    "p1x2": [
-    60,
-    22,
-    19
+    34,
+    26,
+    40
    ],
    "goluri": {
     "interval": [
@@ -25,38 +25,38 @@
      3
     ],
     "cel_mai_probabil": 2,
-    "p_interval": 61
+    "p_interval": 64
    },
    "deschide": {
-    "echipa": "gazda",
-    "p": 67
+    "echipa": null,
+    "p": 45
    },
-   "p00_pauza": 23,
+   "p00_pauza": 28,
    "n": [
     20,
     20
    ],
    "versiune": "formule_psg 24 oct 2026",
-   "ko_utc": "2026-10-26T16:00:00Z",
-   "zi_ro": "2026-10-26",
-   "liga": "Süper Lig",
-   "tara": "Turkey",
-   "lam": 2.94
+   "ko_utc": "2026-10-27T12:40:00Z",
+   "zi_ro": "2026-10-27",
+   "liga": "Pro League",
+   "tara": "Saudi-Arabia",
+   "lam": 2.72
   },
-  "1548549": {
+  "1548547": {
    "echipe": [
-    "Istra 1961",
-    "HNK Hajduk Split"
+    "Dinamo Zagreb",
+    "HNK Rijeka"
    ],
    "familia": [
     "1-1",
-    "1-2"
+    "2-1"
    ],
-   "directia": "2",
+   "directia": "1",
    "p1x2": [
-    31,
-    24,
-    45
+    57,
+    22,
+    21
    ],
    "goluri": {
     "interval": [
@@ -68,97 +68,19 @@
    },
    "deschide": {
     "echipa": null,
-    "p": 42
+    "p": 53
    },
-   "p00_pauza": 24,
+   "p00_pauza": 22,
    "n": [
     20,
     20
    ],
    "versiune": "formule_psg 24 oct 2026",
-   "ko_utc": "2026-10-26T17:00:00Z",
-   "zi_ro": "2026-10-26",
+   "ko_utc": "2026-10-27T17:00:00Z",
+   "zi_ro": "2026-10-27",
    "liga": "HNL",
    "tara": "Croatia",
-   "lam": 2.96
-  },
-  "1584442": {
-   "echipe": [
-    "Galatasaray",
-    "Fenerbahçe"
-   ],
-   "familia": [
-    "1-1",
-    "2-1"
-   ],
-   "directia": "1",
-   "p1x2": [
-    44,
-    24,
-    33
-   ],
-   "goluri": {
-    "interval": [
-     2,
-     4
-    ],
-    "cel_mai_probabil": 3,
-    "p_interval": 61
-   },
-   "deschide": {
-    "echipa": null,
-    "p": 54
-   },
-   "p00_pauza": 24,
-   "n": [
-    20,
-    20
-   ],
-   "versiune": "formule_psg 24 oct 2026",
-   "ko_utc": "2026-10-26T18:30:00Z",
-   "zi_ro": "2026-10-26",
-   "liga": "Süper Lig",
-   "tara": "Turkey",
-   "lam": 3.06
-  },
-  "1552800": {
-   "echipe": [
-    "Paris Saint Germain",
-    "Lyon"
-   ],
-   "familia": [
-    "1-1",
-    "2-1"
-   ],
-   "directia": "1",
-   "p1x2": [
-    50,
-    24,
-    27
-   ],
-   "goluri": {
-    "interval": [
-     1,
-     3
-    ],
-    "cel_mai_probabil": 2,
-    "p_interval": 61
-   },
-   "deschide": {
-    "echipa": null,
-    "p": 54
-   },
-   "p00_pauza": 27,
-   "n": [
-    20,
-    20
-   ],
-   "versiune": "formule_psg 24 oct 2026",
-   "ko_utc": "2026-10-26T19:30:00Z",
-   "zi_ro": "2026-10-26",
-   "liga": "Ligue 1",
-   "tara": "France",
-   "lam": 2.93
+   "lam": 2.99
   }
  },
  "test": {
