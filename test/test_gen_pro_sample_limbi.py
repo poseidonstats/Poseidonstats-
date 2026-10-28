@@ -43,6 +43,9 @@ def test_piata_din_linie_in_orice_limba_si_in_formatul_vechi():
     assert S.piata_din_linie("🔒 **Base :** Plus de 1,5 buts — **88%**.") == "Plus de 1,5 buts"
     assert S.piata_din_linie("🔒 **Bază:** **Peste 1.5 goluri — 88%.** motivul") == "Peste 1.5 goluri"
     assert S.piata_din_linie("🎯 **Main:** 1X — **82%**. The leaders") == "1X"
+    # formatul din iulie–septembrie: eticheta și piața în același bold („**Siguranță: Peste 1.5 goluri — 70%.**”)
+    assert S.piata_din_linie("🔒 **Siguranță: Peste 1.5 goluri — 70%.** Cea mai mare probabilitate") == "Peste 1.5 goluri"
+    assert S.piata_din_linie("🔒 **Safe pick: Over 1.5 goals — 70%.** The highest probability") == "Over 1.5 goals"
 
 
 def test_cardul_pune_piata_de_baza_in_limba_fiecarei_variante():

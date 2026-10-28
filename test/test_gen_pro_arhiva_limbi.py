@@ -80,6 +80,18 @@ def test_lectia_se_traduce_pe_fraze_si_textul_romanesc_ramane_acelasi():
             assert text and sorted(re.findall(r"\{\w+\}", text)) == sorted(re.findall(r"\{\w+\}", ro)), (limba, cheie)
 
 
+def test_formatul_vechi_al_pickurilor_se_traduce_si_in_tabel():
+    """Analizele din iulie–septembrie au eticheta și piața în același bold: „🔒 **Siguranță: Peste 1.5 goluri — 70%.** motiv”."""
+    ro = RO.replace("🔒 **Bază:** Peste 1,5 goluri — **88%**. Bedford marchează acasă.", "🔒 **Siguranță: Peste 1.5 goluri — 70%.** Bedford marchează acasă.")
+    en = EN.replace("🔒 **Base:** Over 1.5 goals — **88%**. Bedford score at home.", "🔒 **Safe pick: Over 1.5 goals — 70%.** Bedford score at home.")
+    assert A.eticheta_din_linie("🔒 **Safe pick: Over 1.5 goals — 70%.** Bedford") == "Safe pick"
+    item = {**ITEM, "analysis": ro, "analysis_en": en}
+    html_en = A.html_analiza({**item, "analysis": en}, A.verifica(item, REZ), GENERAT, "en")
+    assert "<td>Safe pick</td><td>Over 1.5 goals</td><td>70%</td>" in html_en
+    romana = re.findall(r"\b(Peste|goluri|Bază|Siguranță)\b", _text_vizibil(html_en))
+    assert romana == [], romana
+
+
 def test_pagina_zilei_trimite_limba_fiecarei_variante():
     pagina = A.html_zi({"zi": "2026-10-27", "generat": GENERAT, "items": [ITEM]}, {1596968: REZ}, None, None)
     en = pagina[pagina.index('<div data-lang="en"'):]

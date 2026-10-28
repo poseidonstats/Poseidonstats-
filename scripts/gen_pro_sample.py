@@ -81,8 +81,9 @@ def piata_baza(picks: list[str]) -> str:
 def piata_din_linie(linie: str) -> str:
     """Piața unui rând de pick, în limba rândului (28 oct 2026, Andreea: „Avem o greșeală de traducere”): eticheta în bold de la început,
     oricare ar fi limba („**Bază:**”, „**Base:**”, „**Base :**”), se scoate; piața e textul până la primul „ — ”. Merge și pe formatul vechi
-    „🔒 **Bază:** **Peste 1.5 goluri — 88%.** motiv”."""
-    rest = re.sub(r"^\W*\*\*[^*]+?\s?:\*\*\s*", "", linie.strip())
+    „🔒 **Bază:** **Peste 1.5 goluri — 88%.** motiv” și pe cel din iulie–septembrie, cu eticheta și piața în același bold:
+    „🔒 **Siguranță: Peste 1.5 goluri — 70%.** motiv”."""
+    rest = re.sub(r"^\W*\*\*[^*:]+?\s?:(?:\*\*)?\s*", "", linie.strip())
     return re.split(r"\s+[—–·-]\s+", rest)[0].replace("**", "").strip(" .*")
 
 

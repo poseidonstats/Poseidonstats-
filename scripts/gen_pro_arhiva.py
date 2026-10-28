@@ -272,8 +272,9 @@ def _vars(d: dict) -> str:
 
 
 def eticheta_din_linie(linie: str) -> str:
-    """„🔒 **Base:** Over 1.5 goals — …” → „Base”: eticheta pick-ului, în limba rândului."""
-    m = re.match(r"^\W*\*\*([^*]+?)\s?:\*\*", linie.strip())
+    """„🔒 **Base:** Over 1.5 goals — …” sau, în formatul din iulie–septembrie, „🔒 **Safe pick: Over 1.5 goals — 70%.**” → eticheta
+    pick-ului, în limba rândului („Base”, „Safe pick”)."""
+    m = re.match(r"^\W*\*\*([^*:]+?)\s?:", linie.strip())
     return m.group(1).strip() if m else ""
 
 
