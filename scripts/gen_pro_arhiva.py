@@ -26,7 +26,7 @@ from pathlib import Path
 from zoneinfo import ZoneInfo
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from gen_pro_sample import _data_ro, _inline, parseaza  # noqa: E402  (aceeași parsare ca exemplul de pe prima pagină)
+from gen_pro_sample import _data_ro, _inline, parseaza, piata_din_linie  # noqa: E402  (aceeași parsare ca exemplul de pe prima pagină)
 
 SITE = Path(__file__).resolve().parent.parent
 OUT = SITE / "analize"
@@ -170,24 +170,35 @@ def verifica(item: dict, rez: dict | None) -> dict:
     v["p_rezultat"] = (semn, pr)
     baza = next((pk for pk in picks if pk["tip"] == "Bază"), None); princ = next((pk for pk in picks if pk["tip"] == "Principal"), None)
     ev = [pk for pk in picks if pk.get("ok") is not None]
-    frz = []
+    # 28 oct 2026 (Andreea: „Avem o greșeală de traducere”): fiecare frază a lecției are cheia ei în i18n.json, ca să se traducă în pagină;
+    # textul românesc rămâne identic în v["lectie"]
+    frz: list[tuple[str, dict[str, str], str]] = []
+
+    def fraza(cheie: str, text: str, **variabile) -> None:
+        frz.append((f"arhiva.lectie.{cheie}", {k: str(x) for k, x in variabile.items()}, text))
     if ev and all(pk["ok"] for pk in ev):
-        frz.append("Modelul și contextul au mers în aceeași direcție, iar rezultatul le-a confirmat.")
+        fraza("confirmat", "Modelul și contextul au mers în aceeași direcție, iar rezultatul le-a confirmat.")
     elif baza and baza.get("ok") and princ and princ.get("ok") is False:
-        frz.append(f"Cifra de bază a ținut; pick-ul principal ({princ['prob']}%) nu — rezultatul a căzut în cei {100 - princ['prob']}% pe care analiza îi declara." if princ.get("prob") else "Cifra de bază a ținut; pick-ul principal nu a ieșit.")
+        if princ.get("prob"):
+            fraza("principal", f"Cifra de bază a ținut; pick-ul principal ({princ['prob']}%) nu — rezultatul a căzut în cei {100 - princ['prob']}% pe care analiza îi declara.",
+                  p=princ["prob"], r=100 - princ["prob"])
+        else:
+            fraza("principal0", "Cifra de bază a ținut; pick-ul principal nu a ieșit.")
     elif baza and baza.get("ok") is False:
         if v["model_goluri"] and re.search(r"(?i)peste|over|sub|under|\bo\d|\bu\d", baza["piata"]):
-            a, b = v["model_goluri"]; frz.append(f"Modelul a {'supra' if a > b else 'sub'}estimat golurile: aștepta {a:.1f}, au fost {b}.")
+            a, b = v["model_goluri"]
+            fraza("supra" if a > b else "sub", f"Modelul a {'supra' if a > b else 'sub'}estimat golurile: aștepta {a:.1f}, au fost {b}.", a=f"{a:.1f}", b=b)
         else:
-            frz.append("Pick-ul de bază, cel cu probabilitatea cea mai mare din analiză, nu a ieșit.")
+            fraza("baza", "Pick-ul de bază, cel cu probabilitatea cea mai mare din analiză, nu a ieșit.")
     elif ev:
-        frz.append("Rezultat amestecat: o parte din pick-uri au ieșit, o parte nu.")
+        fraza("amestecat", "Rezultat amestecat: o parte din pick-uri au ieșit, o parte nu.")
     else:
-        frz.append("Pick-urile nu pot fi judecate automat din scor.")
+        fraza("neev", "Pick-urile nu pot fi judecate automat din scor.")
     if pr is not None:
-        frz.append(f"Rezultatului care s-a produs ({semn}) modelul îi dădea {pr}% înainte de meci.")
-    frz.append("Probabilitățile nu se modifică retroactiv.")
-    v["lectie"] = " ".join(frz)
+        fraza("rezultat", f"Rezultatului care s-a produs ({semn}) modelul îi dădea {pr}% înainte de meci.", s=semn, p=pr)
+    fraza("retro", "Probabilitățile nu se modifică retroactiv.")
+    v["lectie"] = " ".join(text for _, _, text in frz)
+    v["lectie_fraze"] = frz
     return v
 
 
@@ -255,20 +266,52 @@ def _p(s: str) -> str:
     return "<br>".join(_inline(x) for x in s.split("\n") if x.strip())
 
 
-def html_analiza(item: dict, v: dict, generat: str) -> str:
+def _vars(d: dict) -> str:
+    """Variabilele unui element [data-i18n] ca JSON valid în atributul cu apostrofuri (valorile pot conține HTML)."""
+    return json.dumps(d, ensure_ascii=False).replace("'", "&#39;")
+
+
+def eticheta_din_linie(linie: str) -> str:
+    """„🔒 **Base:** Over 1.5 goals — …” → „Base”: eticheta pick-ului, în limba rândului."""
+    m = re.match(r"^\W*\*\*([^*]+?)\s?:\*\*", linie.strip())
+    return m.group(1).strip() if m else ""
+
+
+def html_analiza(item: dict, v: dict, generat: str, lang: str = "ro") -> str:
+    """Analiza unei zile din arhivă. `item["analysis"]` e textul în limba variantei; `v` e verificarea făcută pe analiza românească.
+    28 oct 2026 (Andreea: „Avem o greșeală de traducere”): variantele traduse iau pick-urile și rândurile tabelului din textul tradus,
+    etichetele cifrelor modelului și frazele lecției au chei în i18n.json."""
     m = item["match"]; p = parseaza(item["analysis"]); rez = v["rez"]
     liga = H.escape(m.get("league", "")) + (f" ({H.escape(m['country'])})" if m.get("country") else "")
     scor = f"<strong data-i18n=\"arhiva.rezfinal\" data-i18n-vars='{{\"s\":\"{rez['gh']}-{rez['ga']}\"}}'>rezultat final {rez['gh']}-{rez['ga']}</strong>" if rez else "<em data-i18n=\"arhiva.fararez\">fără rezultat final în bază</em>"
     ora = generat[11:16] if len(generat) >= 16 else ""
-    cifre = f"1 {m.get('p_home')}% · X {m.get('p_draw')}% · 2 {m.get('p_away')}% · Peste 1.5 {m.get('over15')}% · Peste 2.5 {m.get('over25')}% · GG {m.get('btts')}% · scor probabil {H.escape(str(m.get('score', '')))}"
-    picks_html = "".join(f"<li>{H.escape(pk['tip'])}: <strong>{_inline(pk['piata'])}</strong>" + (f" — {pk['prob']}%" if pk.get("prob") is not None else "") + (f" — {_inline(pk['motiv'])}" if pk.get("motiv") else "") + "</li>" for pk in v["picks"])
+    def _et(cheie: str, text: str) -> str:
+        return f'<span data-i18n="{cheie}">{text}</span>'
+    cifre = (f"1 {m.get('p_home')}% · X {m.get('p_draw')}% · 2 {m.get('p_away')}% · {_et('ligi.tm.o15', 'Peste 1.5')} {m.get('over15')}% · "
+             f"{_et('ligi.tm.o25', 'Peste 2.5')} {m.get('over25')}% · {_et('arhiva.cifre.gg', 'GG')} {m.get('btts')}% · "
+             f"{_et('arhiva.cifre.scor', 'scor probabil')} {H.escape(str(m.get('score', '')))}")
+    # pick-urile din textul tradus, pe tip (emoji): fiecare tip apare o dată într-o analiză; rândul „fără pick curajos” nu are pereche în verificare
+    traduse: dict[str, tuple[str, str]] = {}
+    if lang != "ro":
+        for linie in p["picks"]:
+            if linie[:1] in TIP and linie[:1] not in traduse:
+                traduse[linie[:1]] = (eticheta_din_linie(linie), piata_din_linie(linie))
+    emoji = {nume: e for e, nume in TIP.items()}
+    if traduse:
+        picks_html = "".join(f"<li>{_inline(linie)}</li>" for linie in p["picks"])
+    else:
+        picks_html = "".join(f"<li>{H.escape(pk['tip'])}: <strong>{_inline(pk['piata'])}</strong>" + (f" — {pk['prob']}%" if pk.get("prob") is not None else "") + (f" — {_inline(pk['motiv'])}" if pk.get("motiv") else "") + "</li>" for pk in v["picks"])
     ver = ""
     if rez:
         rand = []
         for pk in v["picks"]:
             ok = pk.get("ok"); semn = '<span data-i18n="arhiva.semn.da">✅ a ieșit</span>' if ok else ('<span data-i18n="arhiva.semn.nu">❌ nu a ieșit</span>' if ok is False else '<span data-i18n="arhiva.semn.neev">– neevaluabil din scor</span>')
-            rand.append(f"<tr><td>{H.escape(pk['tip'])}</td><td>{_inline(pk['piata'])}</td><td>{'' if pk.get('prob') is None else str(pk['prob']) + '%'}</td><td>{semn}</td></tr>")
+            tip, piata = traduse.get(emoji.get(pk["tip"], ""), ("", ""))
+            tip_html, piata_html = (H.escape(tip), _inline(piata)) if tip and piata else (H.escape(pk["tip"]), _inline(pk["piata"]))
+            rand.append(f"<tr><td>{tip_html}</td><td>{piata_html}</td><td>{'' if pk.get('prob') is None else str(pk['prob']) + '%'}</td><td>{semn}</td></tr>")
         mg = v["model_goluri"]; pr = v["p_rezultat"]
+        lectie = " ".join((f"<span data-i18n=\"{cheie}\" data-i18n-vars='{_vars(var)}'>{H.escape(text)}</span>" if var else f'<span data-i18n="{cheie}">{H.escape(text)}</span>')
+                          for cheie, var, text in v.get("lectie_fraze") or []) or H.escape(v["lectie"])
         extra = []
         if mg:
             extra.append(f"<span data-i18n=\"arhiva.goluri\" data-i18n-vars='{{\"a\":\"{mg[0]:.1f}\",\"b\":\"{mg[1]}\"}}'>Goluri: modelul aștepta <strong>{mg[0]:.1f}</strong>, au fost <strong>{mg[1]}</strong>.</span>")
@@ -279,13 +322,13 @@ def html_analiza(item: dict, v: dict, generat: str) -> str:
         <h4 data-i18n="arhiva.verif.h" data-i18n-vars='{{"scor":"{rez['gh']}-{rez['ga']}{f" ({rez['hth']}-{rez['hta']})" if rez.get('hth') is not None else ''}"}}'>Verificarea de a doua zi · {rez['gh']}-{rez['ga']}{f" (pauză {rez['hth']}-{rez['hta']})" if rez.get('hth') is not None else ''}</h4>
         <div class="table-wrap"><table class="audit-table"><thead><tr><th data-i18n="arhiva.th.pick">Pick</th><th data-i18n="arhiva.th.piata">Piața</th><th data-i18n="arhiva.th.anuntat">Anunțat</th><th data-i18n="arhiva.th.rezultat">Rezultat</th></tr></thead><tbody>{''.join(rand) or '<tr><td colspan="4">Analiza nu are pick-uri în formatul standard.</td></tr>'}</tbody></table></div>
         <p>{' '.join(extra)}</p>
-        <p class="pro-lectie"><strong data-i18n="arhiva.lectia">Lecția:</strong> {H.escape(v['lectie'])}</p>
+        <p class="pro-lectie"><strong data-i18n="arhiva.lectia">Lecția:</strong> {lectie}</p>
       </div>"""
     return f"""
     <article class="pro-card pro-card-full" id="m{m['fixture_id']}">
       <div class="pro-card-head">{H.escape(m['home'])} – {H.escape(m['away'])} · {liga} · <span data-date="{m.get('date', '')[:10]}">{_data_ro(m.get('date', ''))}</span> · {scor}</div>
       <div class="pro-visible">
-        <p class="muted" data-i18n="arhiva.model.inainte" data-i18n-vars='{{"cifre":"{cifre}","ora":"{ora or "—"}"}}'>Model înainte de meci: {cifre}.{f' Analiza scrisă la {ora}, în dimineața meciului; reprodusă neschimbată.' if ora else ' Reprodusă neschimbată.'}</p>
+        <p class="muted" data-i18n="arhiva.model.inainte" data-i18n-vars='{_vars({"cifre": cifre, "ora": ora or "—"})}'>Model înainte de meci: {cifre}.{f' Analiza scrisă la {ora}, în dimineața meciului; reprodusă neschimbată.' if ora else ' Reprodusă neschimbată.'}</p>
         <p><strong data-i18n="arhiva.sect.verdict">Verdict:</strong> {_p(p['verdict'])}</p>
         <p><strong data-i18n="arhiva.sect.context">Context:</strong> {_p(p['context'])}</p>
         <p><strong data-i18n="arhiva.sect.model">Modelul vs realitate:</strong> {_p(p['model'])}</p>
@@ -377,7 +420,7 @@ def html_zi(z: dict, rez: dict, prev: str | None, nxt: str | None) -> str:
         var = [f'<div data-lang="ro">{ro}</div>']
         for cod in ("en", "es", "it", "fr", "id"):  # 14 oct 2026: + fr, + id
             if it.get(f"analysis_{cod}"):
-                var.append(f'<div data-lang="{cod}" hidden>{html_analiza({**it, "analysis": it[f"analysis_{cod}"]}, v, z["generat"])}</div>')
+                var.append(f'<div data-lang="{cod}" hidden>{html_analiza({**it, "analysis": it[f"analysis_{cod}"]}, v, z["generat"], cod)}</div>')
         return f'<div data-lang-grup>{"".join(var)}</div>' if len(var) > 1 else ro
     arts = "".join(_multi(it) for it in z["items"])
     nav = " · ".join(x for x in [f'<a href="{prev}.html">← <span data-date="{prev}">{_data_ro(prev)}</span></a>' if prev else "", '<a href="index.html" data-i18n="arhiva.toate">toate zilele</a>', f'<a href="{nxt}.html"><span data-date="{nxt}">{_data_ro(nxt)}</span> →</a>' if nxt else ""] if x)
