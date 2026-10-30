@@ -1,11 +1,11 @@
 {
- "generat_la": "2026-10-30 05:29",
- "n_total": 48455,
+ "generat_la": "2026-10-30 11:22",
+ "n_total": 48848,
  "fisiere": [
   {
    "fisier": "jurnal_2026-06.csv",
    "luna": "2026-06",
-   "n": 4659
+   "n": 5000
   },
   {
    "fisier": "jurnal_2026-07.csv",
@@ -15,17 +15,17 @@
   {
    "fisier": "jurnal_2026-08.csv",
    "luna": "2026-08",
-   "n": 11522
+   "n": 11524
   },
   {
    "fisier": "jurnal_2026-09.csv",
    "luna": "2026-09",
-   "n": 12613
+   "n": 12614
   },
   {
    "fisier": "jurnal_2026-10.csv",
    "luna": "2026-10",
-   "n": 12992
+   "n": 13041
   }
  ],
  "coloane": [
@@ -82,6 +82,15 @@
   "pub_ts",
   "pub_sursa",
   "platt_versiune",
+  "calibration_available",
+  "calibration_provenance",
+  "calibration_version_ts",
+  "evaluation_eligible",
+  "target90_eligible",
+  "target90_reason",
+  "target90_policy_version",
+  "target_ht_eligible",
+  "target_ht_reason",
   "pub_prob_home",
   "pub_prob_draw",
   "pub_prob_away",
@@ -111,5 +120,5 @@
   "close_p_ht_over_1_5",
   "close_hours_before_ko"
  ],
- "nota": "Doar predicții rezolvate, înghețate înainte de meci și nereprogramate la peste 10 zile. prob_* sunt brutul primei înghețări; cal_prob_* sunt probabilitățile PUBLICATE înaintea meciului (snapshot-ul din ziua meciului sau prima înghețare, vezi pub_sursa), calibrate cu versiunea Platt din platt_versiune; auditul de pe site se reface din cal_prob_*. Utilizare liberă cu menționarea sursei: poseidonstats.com"
+ "nota": "Arhivă descriptivă a rândurilor originale rezolvate. prob_* păstrează brutul înghețat; cal_prob_* este reconstrucția retrospectivă numai cu versiunile Platt arhivate disponibile la pub_ts. calibration_available/calibration_provenance/calibration_version_ts/evaluation_eligible declară cohorta: auditul calibrat folosește exclusiv rândurile verificate eligibile. target90_eligible/target90_reason/target90_policy_version verifică ținta FT; target_ht_eligible/target_ht_reason declară separat eligibilitatea HT. Scorurile și etichetele originale nu sunt rescrise. Nu este dovada exactă a paginii servite; lipsa provenienței istorice nu este reparată prin retimestampare. Utilizare liberă cu sursa poseidonstats.com"
 }

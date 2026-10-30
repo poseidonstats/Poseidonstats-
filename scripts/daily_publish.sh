@@ -16,6 +16,11 @@ LOG=~/poseidon-site/logs/publish.log
 mkdir -p ~/poseidon-site/logs
 
 PY=~/football_predictor/.venv/bin/python3
+# Același mutex ca self-heal/freeze/resolve; ținut pe întreaga publicare.
+LOCK_HELPER=~/football_predictor/scripts/poseidon/pipeline_lock.py
+if ! "$PY" "$LOCK_HELPER" --check-held; then
+    exec "$PY" "$LOCK_HELPER" --run /bin/bash "$0" "$@"
+fi
 ts() { date '+%Y-%m-%d %H:%M:%S'; }
 
 # Trimiterea Telegram trece prin helper-ul comun (citește ~/football_v7/.telegram_config.json).
@@ -49,21 +54,11 @@ echo "[$(ts)] === POSEIDON publish cycle ===" >> "$LOG"
 # (incident 11 iun: alertă ✅ pe date de ieri, site stale în ziua de start Mondial).
 # Guard (b) ar fi blocat la fel (CSV scris de self-heal cu secunde înainte).
 # Marker POSEIDON_FROM_SELF_HEAL=1 → ambele guard-uri se sar, cu urmă explicită în log.
-LOCKDIR=/tmp/poseidon_pipeline.lock.d
 CSV=~/football_predictor/data/poisson_advanced_predictions.csv
 
 if [ "$POSEIDON_FROM_SELF_HEAL" = "1" ]; then
     echo "[$(ts)] [BYPASS] guards bypassed: called from self-heal (parent PID $PPID)" >> "$LOG"
 else
-    # (a) Lock activ → self-heal rulează simultan → SKIP
-    if [ -d "$LOCKDIR" ]; then
-        PID_OWNER=$(cat "$LOCKDIR/pid" 2>/dev/null || echo "")
-        if [ -n "$PID_OWNER" ] && kill -0 "$PID_OWNER" 2>/dev/null; then
-            echo "[$(ts)] [SKIP] Self-heal activ (PID $PID_OWNER) — publish-ul self-heal va termina lanțul" >> "$LOG"
-            exit 0
-        fi
-    fi
-
     # (b) CSV proaspăt <45 min → self-heal tocmai a publicat → SKIP (evită dublu commit)
     # 🆕 13 iun — R1: SKIP doar dacă publish-ul e CONFIRMAT (marker E2E scris de
     # self-heal). CSV proaspăt FĂRĂ marker = self-heal a crăpat între predict și

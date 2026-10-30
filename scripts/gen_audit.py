@@ -10,6 +10,7 @@ Fără mapare → cade pe cota de la ora predicției (peste 2,5: mkt_p_o25). Sur
 citibil de Google și de asistenții AI. Spus pe șleau: calibrat față de rata de bază; nu bate piața.
 Uz: gen_audit.py [--dry-run]                (chemat din daily_publish.sh)
     gen_audit.py --public data/dataset      (oricine: aceleași cifre, doar din fișierele descărcabile)"""
+
 from __future__ import annotations
 
 import argparse
@@ -23,7 +24,10 @@ from pathlib import Path
 from zoneinfo import ZoneInfo
 
 import sys
-sys.path.insert(0, str(Path.home() / "football_predictor" / "scripts" / "poseidon"))   # 24 oct 2026: snapshot-ul publicat (build_public_json)
+
+sys.path.insert(
+    0, str(Path.home() / "football_predictor" / "scripts" / "poseidon")
+)  # 24 oct 2026: snapshot-ul publicat (build_public_json)
 
 SITE = Path(__file__).resolve().parent.parent
 JURNAL = Path.home() / "football_predictor" / "data" / "poseidon_history.csv"
@@ -31,17 +35,45 @@ OUT_JSON = SITE / "data" / "audit.json"
 PAGINA = SITE / "track-record.html"
 START, END = "<!-- AUDIT_STATIC_START -->", "<!-- AUDIT_STATIC_END -->"
 RO = ZoneInfo("Europe/Bucharest")
-PIETE = [("over_1_5", "prob_over_1_5", "outcome_over_1_5", "Peste 1,5 goluri"), ("over_2_5", "prob_over_2_5", "outcome_over_2_5", "Peste 2,5 goluri"),
-         ("over_3_5", "prob_over_3_5", "outcome_over_3_5", "Peste 3,5 goluri"), ("btts", "prob_btts", "outcome_btts", "Ambele echipe marchează"),
-         ("ht_over_0_5", "prob_ht_over_0_5", "outcome_ht_over_0_5", "Gol în prima repriză"), ("ht_over_1_5", "prob_ht_over_1_5", "outcome_ht_over_1_5", "Peste 1,5 în prima repriză"),
-         ("home", "prob_home", "outcome_1x2", "Gazdele câștigă"), ("draw", "prob_draw", "outcome_1x2", "Egal"), ("away", "prob_away", "outcome_1x2", "Oaspeții câștigă")]
+PIETE = [
+    ("over_1_5", "prob_over_1_5", "outcome_over_1_5", "Peste 1,5 goluri"),
+    ("over_2_5", "prob_over_2_5", "outcome_over_2_5", "Peste 2,5 goluri"),
+    ("over_3_5", "prob_over_3_5", "outcome_over_3_5", "Peste 3,5 goluri"),
+    ("btts", "prob_btts", "outcome_btts", "Ambele echipe marchează"),
+    ("ht_over_0_5", "prob_ht_over_0_5", "outcome_ht_over_0_5", "Gol în prima repriză"),
+    ("ht_over_1_5", "prob_ht_over_1_5", "outcome_ht_over_1_5", "Peste 1,5 în prima repriză"),
+    ("home", "prob_home", "outcome_1x2", "Gazdele câștigă"),
+    ("draw", "prob_draw", "outcome_1x2", "Egal"),
+    ("away", "prob_away", "outcome_1x2", "Oaspeții câștigă"),
+]
 X12 = {"home": ("1",), "draw": ("X",), "away": ("2",)}
 MIN_N = 100
 PLATT = Path.home() / "football_predictor" / "data" / "platt_calibration.json"
-MAPARE = Path.home() / "odds_decoder" / "data" / "sbmap" / "sb_matched_odds.csv"     # fixture_id ↔ eveniment la casă (validat prin scor)
-MASTER = Path.home() / "odds_decoder" / "data" / "superbet_master.jsonl"             # open/close per eveniment, fără marjă (strat_corectie --construieste)
-INCHIDERE_KEY = {"ft_o15": "over_1_5", "ft_o25": "over_2_5", "ft_o35": "over_3_5", "gg": "btts", "ht_o05": "ht_over_0_5", "ht_o15": "ht_over_1_5"}
-PLATT_KEY = {"over_1_5": "over_1_5", "over_2_5": "over_2_5", "over_3_5": "over_3_5", "btts": "btts", "ht_over_0_5": "ht_over_0_5", "ht_over_1_5": "ht_over_1_5", "home": "1x2_home", "draw": "1x2_draw", "away": "1x2_away"}
+MAPARE = (
+    Path.home() / "odds_decoder" / "data" / "sbmap" / "sb_matched_odds.csv"
+)  # fixture_id ↔ eveniment la casă (validat prin scor)
+MASTER = (
+    Path.home() / "odds_decoder" / "data" / "superbet_master.jsonl"
+)  # open/close per eveniment, fără marjă (strat_corectie --construieste)
+INCHIDERE_KEY = {
+    "ft_o15": "over_1_5",
+    "ft_o25": "over_2_5",
+    "ft_o35": "over_3_5",
+    "gg": "btts",
+    "ht_o05": "ht_over_0_5",
+    "ht_o15": "ht_over_1_5",
+}
+PLATT_KEY = {
+    "over_1_5": "over_1_5",
+    "over_2_5": "over_2_5",
+    "over_3_5": "over_3_5",
+    "btts": "btts",
+    "ht_over_0_5": "ht_over_0_5",
+    "ht_over_1_5": "ht_over_1_5",
+    "home": "1x2_home",
+    "draw": "1x2_draw",
+    "away": "1x2_away",
+}
 
 
 def platt_params() -> dict:
@@ -55,7 +87,8 @@ def platt_params() -> dict:
 def aplica_platt(p: float, mp: dict | None) -> float:
     if not mp:
         return p
-    p = min(max(p, 1e-6), 1 - 1e-6); z = mp["a"] * math.log(p / (1 - p)) + mp["b"]
+    p = min(max(p, 1e-6), 1 - 1e-6)
+    z = mp["a"] * math.log(p / (1 - p)) + mp["b"]
     return 1 / (1 + math.exp(-z))
 
 
@@ -63,18 +96,40 @@ def wlo(k: int, n: int, z: float = 1.96) -> float:
     if n == 0:
         return 0.0
     p = k / n
-    return max(0.0, (p + z * z / (2 * n) - z * math.sqrt(p * (1 - p) / n + z * z / (4 * n * n))) / (1 + z * z / n))
+    return max(
+        0.0,
+        (p + z * z / (2 * n) - z * math.sqrt(p * (1 - p) / n + z * z / (4 * n * n)))
+        / (1 + z * z / n),
+    )
 
 
 def metrici(pairs: list[tuple[float, int]]) -> dict:
-    n = len(pairs); rata = sum(y for _, y in pairs) / n
-    brier = sum((p - y) ** 2 for p, y in pairs) / n; b0 = rata * (1 - rata)
-    ll = -sum(y * math.log(max(p, 1e-6)) + (1 - y) * math.log(max(1 - p, 1e-6)) for p, y in pairs) / n
+    n = len(pairs)
+    rata = sum(y for _, y in pairs) / n
+    brier = sum((p - y) ** 2 for p, y in pairs) / n
+    b0 = rata * (1 - rata)
+    ll = (
+        -sum(y * math.log(max(p, 1e-6)) + (1 - y) * math.log(max(1 - p, 1e-6)) for p, y in pairs)
+        / n
+    )
     b = defaultdict(list)
     for p, y in pairs:
         b[min(int(p * 10), 9)].append((p, y))
-    ece = sum(len(v) / n * abs(sum(p for p, _ in v) / len(v) - sum(y for _, y in v) / len(v)) for v in b.values()) * 100
-    return {"n": n, "rata": rata, "brier": brier, "bss": (1 - brier / b0) * 100 if b0 > 0 else 0.0, "log_loss": ll, "ece": ece}
+    ece = (
+        sum(
+            len(v) / n * abs(sum(p for p, _ in v) / len(v) - sum(y for _, y in v) / len(v))
+            for v in b.values()
+        )
+        * 100
+    )
+    return {
+        "n": n,
+        "rata": rata,
+        "brier": brier,
+        "bss": (1 - brier / b0) * 100 if b0 > 0 else 0.0,
+        "log_loss": ll,
+        "ece": ece,
+    }
 
 
 def intervale(pairs: list[tuple[float, int]], minim: int = MIN_N) -> list[dict]:
@@ -86,43 +141,67 @@ def intervale(pairs: list[tuple[float, int]], minim: int = MIN_N) -> list[dict]:
         v = b[k]
         if len(v) < minim:
             continue
-        spus = sum(p for p, _ in v) / len(v) * 100; iesit = sum(y for _, y in v) / len(v) * 100
-        out.append({"interval": f"{k * 10}–{k * 10 + 10} %", "n": len(v), "spus": round(spus, 1), "iesit": round(iesit, 1), "wlo": wlo(sum(y for _, y in v), len(v)) * 100, "dif": round(iesit - spus, 1)})
+        spus = sum(p for p, _ in v) / len(v) * 100
+        iesit = sum(y for _, y in v) / len(v) * 100
+        out.append(
+            {
+                "interval": f"{k * 10}–{k * 10 + 10} %",
+                "n": len(v),
+                "spus": round(spus, 1),
+                "iesit": round(iesit, 1),
+                "wlo": wlo(sum(y for _, y in v), len(v)) * 100,
+                "dif": round(iesit - spus, 1),
+            }
+        )
     return out
 
 
 def _solve(A: list[list[float]], b: list[float]) -> list[float]:
     """Gauss cu pivotare parțială pentru sisteme mici (≤ 3 necunoscute)."""
-    n = len(b); M = [row[:] + [b[i]] for i, row in enumerate(A)]
+    n = len(b)
+    M = [row[:] + [b[i]] for i, row in enumerate(A)]
     for c in range(n):
-        piv = max(range(c, n), key=lambda r: abs(M[r][c])); M[c], M[piv] = M[piv], M[c]
+        piv = max(range(c, n), key=lambda r: abs(M[r][c]))
+        M[c], M[piv] = M[piv], M[c]
         if abs(M[c][c]) < 1e-12:
             M[c][c] = 1e-12
         for r in range(n):
             if r != c:
-                f = M[r][c] / M[c][c]; M[r] = [a - f * bb for a, bb in zip(M[r], M[c])]
+                f = M[r][c] / M[c][c]
+                M[r] = [a - f * bb for a, bb in zip(M[r], M[c])]
     return [M[i][n] / M[i][i] for i in range(n)]
 
 
 def _logit(p: float) -> float:
-    p = min(max(p, 1e-6), 1 - 1e-6); return math.log(p / (1 - p))
+    p = min(max(p, 1e-6), 1 - 1e-6)
+    return math.log(p / (1 - p))
 
 
 def _logistic(X: list[list[float]], y: list[int], iters: int = 40) -> list[float]:
     """Regresie logistică prin Newton, fără dependențe: [b0, b1, …] pentru sigmoid(b0 + Σ bj·xj). Ridge 1e-6 doar pentru stabilitate."""
-    d = len(X[0]); w = [0.0] * (d + 1); lam = 1e-6
+    d = len(X[0])
+    w = [0.0] * (d + 1)
+    lam = 1e-6
     for _ in range(iters):
-        g = [0.0] * (d + 1); H = [[0.0] * (d + 1) for _ in range(d + 1)]
+        g = [0.0] * (d + 1)
+        H = [[0.0] * (d + 1) for _ in range(d + 1)]
         for xi, yi in zip(X, y):
-            z = w[0] + sum(wj * xj for wj, xj in zip(w[1:], xi)); z = max(min(z, 35.0), -35.0); pr = 1 / (1 + math.exp(-z))
-            v = (1.0,) + tuple(xi); r = pr - yi; sc = pr * (1 - pr)
+            z = w[0] + sum(wj * xj for wj, xj in zip(w[1:], xi))
+            z = max(min(z, 35.0), -35.0)
+            pr = 1 / (1 + math.exp(-z))
+            v = (1.0,) + tuple(xi)
+            r = pr - yi
+            sc = pr * (1 - pr)
             for a in range(d + 1):
-                g[a] += r * v[a]; Ha = H[a]
+                g[a] += r * v[a]
+                Ha = H[a]
                 for bb in range(d + 1):
                     Ha[bb] += sc * v[a] * v[bb]
         for a in range(d + 1):
-            g[a] += lam * w[a]; H[a][a] += lam
-        step = _solve(H, g); w = [wa - sa for wa, sa in zip(w, step)]
+            g[a] += lam * w[a]
+            H[a][a] += lam
+        step = _solve(H, g)
+        w = [wa - sa for wa, sa in zip(w, step)]
         if max(abs(sa) for sa in step) < 1e-7:
             break
     return w
@@ -130,24 +209,43 @@ def _logistic(X: list[list[float]], y: list[int], iters: int = 40) -> list[float
 
 def panta_intercept(pairs: list[tuple[float, int]]) -> tuple[float, float]:
     """Calibrare Cox: y ~ sigmoid(a·logit(p) + b). a=1, b=0 = perfect calibrat; a<1 = prea încrezător; b>0 = subestimează."""
-    w = _logistic([[_logit(p)] for p, _ in pairs], [y for _, y in pairs]); return w[1], w[0]
+    w = _logistic([[_logit(p)] for p, _ in pairs], [y for _, y in pairs])
+    return w[1], w[0]
 
 
 def _prob(w: list[float], x: list[float]) -> float:
-    z = w[0] + sum(wj * xj for wj, xj in zip(w[1:], x)); z = max(min(z, 35.0), -35.0); return 1 / (1 + math.exp(-z))
+    z = w[0] + sum(wj * xj for wj, xj in zip(w[1:], x))
+    z = max(min(z, 35.0), -35.0)
+    return 1 / (1 + math.exp(-z))
 
 
 def _log_loss(P: list[float], Y: list[int]) -> float:
-    return -sum(y * math.log(max(p, 1e-6)) + (1 - y) * math.log(max(1 - p, 1e-6)) for p, y in zip(P, Y)) / len(Y)
+    return -sum(
+        y * math.log(max(p, 1e-6)) + (1 - y) * math.log(max(1 - p, 1e-6)) for p, y in zip(P, Y)
+    ) / len(Y)
 
 
 def test_informatie(tri: list[tuple[float, float, int, str]]) -> dict:
     """tri = (p_model, p_piață, y, data). Învață pe primele două treimi cronologic, testează pe ultima: piața singură vs piața + model."""
-    tri = sorted(tri, key=lambda t: t[3]); cut = len(tri) * 2 // 3; tr, te = tri[:cut], tri[cut:]
-    ytr = [t[2] for t in tr]; yte = [t[2] for t in te]
-    w1 = _logistic([[_logit(t[1])] for t in tr], ytr); w2 = _logistic([[_logit(t[0]), _logit(t[1])] for t in tr], ytr)
-    ll1 = _log_loss([_prob(w1, [_logit(t[1])]) for t in te], yte); ll2 = _log_loss([_prob(w2, [_logit(t[0]), _logit(t[1])]) for t in te], yte)
-    return {"n_train": len(tr), "n_test": len(te), "de_la_test": te[0][3][:10] if te else None, "ll_piata": ll1, "ll_piata_model": ll2, "castig_ll": ll1 - ll2, "coef_model": w2[1], "coef_piata": w2[2]}
+    tri = sorted(tri, key=lambda t: t[3])
+    cut = len(tri) * 2 // 3
+    tr, te = tri[:cut], tri[cut:]
+    ytr = [t[2] for t in tr]
+    yte = [t[2] for t in te]
+    w1 = _logistic([[_logit(t[1])] for t in tr], ytr)
+    w2 = _logistic([[_logit(t[0]), _logit(t[1])] for t in tr], ytr)
+    ll1 = _log_loss([_prob(w1, [_logit(t[1])]) for t in te], yte)
+    ll2 = _log_loss([_prob(w2, [_logit(t[0]), _logit(t[1])]) for t in te], yte)
+    return {
+        "n_train": len(tr),
+        "n_test": len(te),
+        "de_la_test": te[0][3][:10] if te else None,
+        "ll_piata": ll1,
+        "ll_piata_model": ll2,
+        "castig_ll": ll1 - ll2,
+        "coef_model": w2[1],
+        "coef_piata": w2[2],
+    }
 
 
 def incarca_inchidere(map_path: Path = MAPARE, master_path: Path = MASTER) -> dict[int, dict]:
@@ -157,7 +255,8 @@ def incarca_inchidere(map_path: Path = MAPARE, master_path: Path = MASTER) -> di
             eid_of = {int(r["fixture_id"]): int(r["sb_event_id"]) for r in csv.DictReader(f)}
     except (OSError, ValueError, KeyError):
         return {}
-    wanted = set(eid_of.values()); ev = {}
+    wanted = set(eid_of.values())
+    ev = {}
     try:
         with open(master_path, encoding="utf-8") as f:
             for line in f:
@@ -171,29 +270,45 @@ def incarca_inchidere(map_path: Path = MAPARE, master_path: Path = MASTER) -> di
         r = ev.get(eid)
         if not r:
             continue
-        c = r["close"]; d = {}
+        c = r["close"]
+        d = {}
         if "1x2" in c and all(k in c["1x2"] for k in ("p1", "px", "p2")):
             d["home"], d["draw"], d["away"] = c["1x2"]["p1"], c["1x2"]["px"], c["1x2"]["p2"]
         for k, ours in INCHIDERE_KEY.items():
             if k in c and c[k].get("p") is not None:
                 d[ours] = c[k]["p"]
         if d:
-            d["ore"] = r.get("ore_close"); out[fid] = d
+            d["ore"] = r.get("ore_close")
+            out[fid] = d
     return out
 
 
 def svg_fiabilitate(iv: list[dict], w: int = 240) -> str:
     """Diagrama de fiabilitate, SVG inline (fără JS): x = ce a spus modelul, y = ce s-a întâmplat, mărimea = N. Diagonala = calibrare perfectă."""
-    m = 26; s = w - 2 * m; X = lambda v: m + v / 100 * s; Y = lambda v: w - m - v / 100 * s; nmax = max((b["n"] for b in iv), default=1)
-    L = [f'<svg class="fiab" viewBox="0 0 {w} {w}" width="{w}" height="{w}" role="img" aria-label="diagramă de fiabilitate: orizontal ce a spus modelul, vertical ce s-a întâmplat">',
-         f'<rect x="{m}" y="{m}" width="{s}" height="{s}" fill="none" stroke="#cbd5e1"/>',
-         f'<line x1="{X(0):.0f}" y1="{Y(0):.0f}" x2="{X(100):.0f}" y2="{Y(100):.0f}" stroke="#94a3b8" stroke-dasharray="4 3"/>']
+    m = 26
+    s = w - 2 * m
+    def X(v):
+        return m + v / 100 * s
+
+    def Y(v):
+        return w - m - v / 100 * s
+    nmax = max((b["n"] for b in iv), default=1)
+    L = [
+        f'<svg class="fiab" viewBox="0 0 {w} {w}" width="{w}" height="{w}" role="img" aria-label="diagramă de fiabilitate: orizontal ce a spus modelul, vertical ce s-a întâmplat">',
+        f'<rect x="{m}" y="{m}" width="{s}" height="{s}" fill="none" stroke="#cbd5e1"/>',
+        f'<line x1="{X(0):.0f}" y1="{Y(0):.0f}" x2="{X(100):.0f}" y2="{Y(100):.0f}" stroke="#94a3b8" stroke-dasharray="4 3"/>',
+    ]
     for v in (0, 50, 100):
-        L.append(f'<text x="{X(v):.0f}" y="{w - 8}" font-size="9" text-anchor="middle" fill="#64748b">{v}</text><text x="{m - 4}" y="{Y(v) + 3:.0f}" font-size="9" text-anchor="end" fill="#64748b">{v}</text>')
+        L.append(
+            f'<text x="{X(v):.0f}" y="{w - 8}" font-size="9" text-anchor="middle" fill="#64748b">{v}</text><text x="{m - 4}" y="{Y(v) + 3:.0f}" font-size="9" text-anchor="end" fill="#64748b">{v}</text>'
+        )
     for b in iv:
         r = 3 + 8 * math.sqrt(b["n"] / nmax)
-        L.append(f'<circle cx="{X(b["spus"]):.1f}" cy="{Y(b["iesit"]):.1f}" r="{r:.1f}" fill="#1e3a8a" fill-opacity="0.75"><title>{b["interval"]}: modelul {b["spus"]} %, real {b["iesit"]} %, N={b["n"]}</title></circle>')
-    L.append('</svg>'); return "".join(L)
+        L.append(
+            f'<circle cx="{X(b["spus"]):.1f}" cy="{Y(b["iesit"]):.1f}" r="{r:.1f}" fill="#1e3a8a" fill-opacity="0.75"><title>{b["interval"]}: modelul {b["spus"]} %, real {b["iesit"]} %, N={b["n"]}</title></circle>'
+        )
+    L.append("</svg>")
+    return "".join(L)
 
 
 def _inchidere_din_rand(r: dict) -> dict | None:
@@ -201,14 +316,49 @@ def _inchidere_din_rand(r: dict) -> dict | None:
     d = {k: float(r[f"close_p_{k}"]) for k in PLATT_KEY if r.get(f"close_p_{k}") not in (None, "")}
     if not d:
         return None
-    d["ore"] = float(r["close_hours_before_ko"]) if r.get("close_hours_before_ko") not in (None, "") else None
+    d["ore"] = (
+        float(r["close_hours_before_ko"])
+        if r.get("close_hours_before_ko") not in (None, "")
+        else None
+    )
     return d
 
 
 def _inghetat_inainte(r: dict) -> bool:
     """True dacă înghețarea (freeze_ts, UTC) e strict înainte de kickoff (match_date, UTC). Fără una din date → se păstrează (comportament vechi)."""
-    f = str(r.get("freeze_ts") or "")[:19].replace("T", " "); m = str(r.get("match_date") or "")[:19].replace("T", " ")
+    f = str(r.get("freeze_ts") or "")[:19].replace("T", " ")
+    m = str(r.get("match_date") or "")[:19].replace("T", " ")
     return not (f and m) or f < m
+
+
+def _calibration_eligible(r: dict) -> bool:
+    """CSV bool explicit + versiune cunoscută <= snapshot < kickoff (fail closed).
+
+    Nu certifică blobul publicat sau întregul input istoric; doar proveniența
+    recalibrării reconstruite din versiunile arhivate disponibile.
+    """
+    if str(r.get("calibration_available", "")).strip().lower() not in ("true", "1"):
+        return False
+    if str(r.get("evaluation_eligible", "")).strip().lower() not in ("true", "1"):
+        return False
+    if str(r.get("target90_eligible", "")).strip().lower() not in ("true", "1"):
+        return False
+    if r.get("target90_policy_version") != "verified90-separate-ht-v1":
+        return False
+    if r.get("calibration_provenance") != "version_available":
+        return False
+    try:
+        from datetime import timezone
+
+        def stamp(key):
+            ts = datetime.fromisoformat(str(r[key]).replace("Z", "+00:00"))
+            if key == "calibration_version_ts" and ts.tzinfo is None:
+                raise ValueError("Fusul versiunii nu este cunoscut")
+            return ts.replace(tzinfo=timezone.utc) if ts.tzinfo is None else ts
+
+        return stamp("calibration_version_ts") <= stamp("pub_ts") < stamp("match_date")
+    except (KeyError, ValueError, TypeError):
+        return False
 
 
 def citeste_public(director: Path) -> tuple[list[dict], dict]:
@@ -217,13 +367,25 @@ def citeste_public(director: Path) -> tuple[list[dict], dict]:
     for f in sorted(Path(director).glob("jurnal_*.csv")):
         rows.extend(csv.DictReader(open(f, newline="", encoding="utf-8")))
     try:
-        pl = json.loads((Path(director) / "platt_calibration.json").read_text(encoding="utf-8"))["markets"]
+        pl = json.loads((Path(director) / "platt_calibration.json").read_text(encoding="utf-8"))[
+            "markets"
+        ]
     except (OSError, ValueError, KeyError):
         pl = {}
     return rows, pl
 
 
-COL_SNAPSHOT = ["prob_over_1_5", "prob_over_2_5", "prob_over_3_5", "prob_btts", "prob_ht_over_0_5", "prob_ht_over_1_5", "prob_home", "prob_draw", "prob_away"]
+COL_SNAPSHOT = [
+    "prob_over_1_5",
+    "prob_over_2_5",
+    "prob_over_3_5",
+    "prob_btts",
+    "prob_ht_over_0_5",
+    "prob_ht_over_1_5",
+    "prob_home",
+    "prob_draw",
+    "prob_away",
+]
 
 
 def randuri_snapshot() -> list[dict]:
@@ -231,25 +393,58 @@ def randuri_snapshot() -> list[dict]:
     meciului (ziua meciului sau prima înghețare) cu Platt-ul în vigoare atunci, 1X2 renormalizat și plafonat ca pe site; `pub_<col>` = brutul
     aceluiași snapshot. Filtrul de integritate (înghețat înainte de kickoff, nereprogramat la > 10 zile) e deja aplicat."""
     import build_public_json as BPJ
+
     _df, df_ok, _raport = BPJ._jurnal_publicat()
-    if df_ok is None:
+    if _df is None:
         return []
-    cols = ["fixture_id", "match_date", "freeze_ts", "status", "mkt_p_o25", "pub_ts", "pub_sursa", "platt_versiune",
-            "outcome_over_1_5", "outcome_over_2_5", "outcome_over_3_5", "outcome_btts", "outcome_ht_over_0_5", "outcome_ht_over_1_5", "outcome_1x2"]
+    cols = [
+        "fixture_id",
+        "match_date",
+        "freeze_ts",
+        "status",
+        "mkt_p_o25",
+        "pub_ts",
+        "pub_sursa",
+        "platt_versiune",
+        "calibration_available",
+        "calibration_provenance",
+        "calibration_version_ts",
+        "evaluation_eligible",
+        "target90_eligible", "target90_reason", "target90_policy_version",
+        "target_ht_eligible", "target_ht_reason",
+        "outcome_over_1_5",
+        "outcome_over_2_5",
+        "outcome_over_3_5",
+        "outcome_btts",
+        "outcome_ht_over_0_5",
+        "outcome_ht_over_1_5",
+        "outcome_1x2",
+    ]
     cols += [f"cal_{c}" for c in COL_SNAPSHOT] + [f"pub_{c}" for c in COL_SNAPSHOT]
-    d = df_ok[[c for c in cols if c in df_ok.columns]]
-    return [{k: ("" if v is None or (isinstance(v, float) and v != v) else v) for k, v in r.items()} for r in d.to_dict("records")]
+    resolved = _df[_df["status"] == "RESOLVED"]
+    d = resolved[[c for c in cols if c in resolved.columns]]
+    return [
+        {k: ("" if v is None or (isinstance(v, float) and v != v) else v) for k, v in r.items()}
+        for r in d.to_dict("records")
+    ]
 
 
 def randuri_snapshot_complet() -> list[dict]:
-    """Ca randuri_snapshot, dar cu TOATE coloanele jurnalului (pentru setul de date public)."""
+    """Originalele rezolvate cu toate coloanele, inclusiv proveniența/excluderile.
+
+    Rândurile neeligibile sunt păstrate pentru auditul brutului, nu certificate
+    drept probabilități publicate; auditul public reaplică explicit gate-ul.
+    """
     import build_public_json as BPJ
+
     _df, df_ok, _raport = BPJ._jurnal_publicat()
-    if df_ok is None:
+    if _df is None:
         return []
     out = []
-    for r in df_ok.to_dict("records"):
-        out.append({k: ("" if v is None or (isinstance(v, float) and v != v) else v) for k, v in r.items()})
+    for r in _df[_df["status"] == "RESOLVED"].to_dict("records"):
+        out.append(
+            {k: ("" if v is None or (isinstance(v, float) and v != v) else v) for k, v in r.items()}
+        )
     return out
 
 
@@ -258,12 +453,19 @@ def _y(oc: str, val: str, cheie: str) -> int | None:
         return None
     sv = str(val).strip()
     if oc == "outcome_1x2":
-        sv = {"1.0": "1", "2.0": "2"}.get(sv, sv).upper()   # 24 oct 2026: trei rânduri vechi aveau „1.0” / „2.0”
+        sv = {"1.0": "1", "2.0": "2"}.get(
+            sv, sv
+        ).upper()  # 24 oct 2026: trei rânduri vechi aveau „1.0” / „2.0”
         return 1 if sv in X12[cheie] else 0
     return 1 if sv in ("1", "1.0", "True", "true") else 0
 
 
-def audit(rows: list[dict], platt: dict | None = None, inchidere: dict[int, dict] | None = None, precalibrat: bool | None = None) -> dict:
+def audit(
+    rows: list[dict],
+    platt: dict | None = None,
+    inchidere: dict[int, dict] | None = None,
+    precalibrat: bool | None = None,
+) -> dict:
     """platt = parametrii (a, b) per piață aplicați peste probabilitățile BRUTE din jurnal; None = brut.
     precalibrat (24 oct 2026, auditul Codex): rândurile au DEJA probabilitatea publicată, calibrată cu Platt-ul în vigoare atunci (`cal_<col>`,
     din randuri_snapshot sau din setul de date public) și brutul ei (`pub_<col>`): nu se mai aplică Platt-ul curent retroactiv. Implicit: dacă
@@ -271,25 +473,60 @@ def audit(rows: list[dict], platt: dict | None = None, inchidere: dict[int, dict
     inchidere = fixture_id → probabilități de închidere ale pieței (incarca_inchidere); None/{} → cade pe cota de la ora predicției (mkt_p_o25)."""
     # 6 oct 2026 (audit rădăcină): rândurile cu freeze_ts DUPĂ kickoff ies din audit; integritatea „înghețat înainte de meci" e condiția.
     if precalibrat is None:
-        precalibrat = bool(rows) and "cal_prob_over_2_5" in rows[0]
-    R = [r for r in rows if r.get("status") == "RESOLVED" and (precalibrat or _inghetat_inainte(r))]; platt = platt or {}; inchidere = inchidere or {}
-    piete = []; vs = {}; ore = []
+        precalibrat = any("cal_prob_over_2_5" in r for r in rows)
+    # Un dataset legacy nu dovedește disponibilitatea calibratorului. Brutul
+    # poate fi descris separat fără parametri; Platt curent nu se aplică trecutului.
+    R = [
+        r
+        for r in rows
+        if r.get("status") == "RESOLVED"
+        and (_calibration_eligible(r) if precalibrat else (not platt and _inghetat_inainte(r)))
+    ]
+    platt = platt or {}
+    inchidere = inchidere or {}
+    eligibility = {
+        "input": len(rows),
+        "included": len(R),
+        "excluded": len(rows) - len(R),
+        "policy": "archived_calibrator_available_before_snapshot"
+        if precalibrat
+        else "raw_descriptive_only",
+        "original_published_blob_certified": False,
+        "target_policy": "verified90-separate-ht-v1",
+        "ht_included": sum(str(r.get("target_ht_eligible", "")).strip().lower() in ("true", "1") for r in R),
+    }
+    piete = []
+    vs = {}
+    ore = []
     for cheie, pc, oc, nume in PIETE:
-        mp = platt.get(PLATT_KEY[cheie]); pairs = []; brute = []; tri = []
+        mp = platt.get(PLATT_KEY[cheie])
+        pairs = []
+        brute = []
+        tri = []
         for r in R:
+            if oc.startswith("outcome_ht_") and precalibrat and str(r.get("target_ht_eligible", "")).strip().lower() not in ("true", "1"):
+                continue
             y = _y(oc, r.get(oc), cheie)
             if precalibrat:
                 p, pb = r.get(f"cal_{pc}"), r.get(f"pub_{pc}")
                 if p in (None, "") or y is None:
                     continue
-                pm = float(p); pairs.append((pm, y)); brute.append((float(pb) if pb not in (None, "") else pm, y))
+                pm = float(p)
+                pairs.append((pm, y))
+                brute.append((float(pb) if pb not in (None, "") else pm, y))
             else:
                 p = r.get(pc)
                 if p in (None, "") or y is None:
                     continue
-                pm = aplica_platt(float(p), mp); pairs.append((pm, y)); brute.append((float(p), y))
+                pm = aplica_platt(float(p), mp)
+                pairs.append((pm, y))
+                brute.append((float(p), y))
             try:
-                c = inchidere.get(int(r.get("fixture_id") or -1)) if inchidere else _inchidere_din_rand(r)
+                c = (
+                    inchidere.get(int(r.get("fixture_id") or -1))
+                    if inchidere
+                    else _inchidere_din_rand(r)
+                )
             except ValueError:
                 c = None
             if c and c.get(cheie) is not None:
@@ -298,26 +535,96 @@ def audit(rows: list[dict], platt: dict | None = None, inchidere: dict[int, dict
                     ore.append(float(c["ore"]))
         if len(pairs) < MIN_N:
             continue
-        m = metrici(pairs); mb = metrici(brute); a_, b_ = panta_intercept(pairs)
-        piete.append({"cheie": cheie, "nume": nume, **m, "bss_brut": mb["bss"], "ece_brut": mb["ece"], "panta": a_, "intercept": b_, "calibrat": bool(mp) or precalibrat, "intervale": intervale(pairs)})
+        m = metrici(pairs)
+        mb = metrici(brute)
+        a_, b_ = panta_intercept(pairs)
+        piete.append(
+            {
+                "cheie": cheie,
+                "nume": nume,
+                **m,
+                "bss_brut": mb["bss"],
+                "ece_brut": mb["ece"],
+                "panta": a_,
+                "intercept": b_,
+                "calibrat": bool(mp) or precalibrat,
+                "intervale": intervale(pairs),
+            }
+        )
         if len(tri) >= MIN_N:
-            mm = metrici([(p, y) for p, _, y, _ in tri]); mq = metrici([(q, y) for _, q, y, _ in tri])
-            vs[cheie] = {"nume": nume, "n": len(tri), "sursa": "inchidere", "bss_model": mm["bss"], "bss_piata": mq["bss"], "brier_model": mm["brier"], "brier_piata": mq["brier"],
-                         "ll_model": mm["log_loss"], "ll_piata": mq["log_loss"], "ece_model": mm["ece"], "ece_piata": mq["ece"], "informatie": test_informatie(tri),
-                         "de_la": min(t[3] for t in tri)[:10], "pana_la": max(t[3] for t in tri)[:10]}
+            mm = metrici([(p, y) for p, _, y, _ in tri])
+            mq = metrici([(q, y) for _, q, y, _ in tri])
+            vs[cheie] = {
+                "nume": nume,
+                "n": len(tri),
+                "sursa": "inchidere",
+                "bss_model": mm["bss"],
+                "bss_piata": mq["bss"],
+                "brier_model": mm["brier"],
+                "brier_piata": mq["brier"],
+                "ll_model": mm["log_loss"],
+                "ll_piata": mq["log_loss"],
+                "ece_model": mm["ece"],
+                "ece_piata": mq["ece"],
+                "informatie": test_informatie(tri),
+                "de_la": min(t[3] for t in tri)[:10],
+                "pana_la": max(t[3] for t in tri)[:10],
+            }
     ore_med = sorted(ore)[len(ore) // 2] if ore else None
-    mp25 = platt.get("over_2_5"); c25 = "cal_prob_over_2_5" if precalibrat else "prob_over_2_5"
-    pm = [((float(r[c25]) if precalibrat else aplica_platt(float(r[c25]), mp25)), float(r["mkt_p_o25"]), _y("outcome_over_2_5", r.get("outcome_over_2_5"), "over_2_5")) for r in R
-          if r.get("mkt_p_o25") not in (None, "") and r.get(c25) not in (None, "") and r.get("outcome_over_2_5") not in (None, "")]
+    mp25 = platt.get("over_2_5")
+    c25 = "cal_prob_over_2_5" if precalibrat else "prob_over_2_5"
+    pm = [
+        (
+            (float(r[c25]) if precalibrat else aplica_platt(float(r[c25]), mp25)),
+            float(r["mkt_p_o25"]),
+            _y("outcome_over_2_5", r.get("outcome_over_2_5"), "over_2_5"),
+        )
+        for r in R
+        if r.get("mkt_p_o25") not in (None, "")
+        and r.get(c25) not in (None, "")
+        and r.get("outcome_over_2_5") not in (None, "")
+    ]
     if not vs and len(pm) >= MIN_N:
-        mm = metrici([(p, y) for p, _, y in pm]); mp = metrici([(q, y) for _, q, y in pm])
-        vs["over_2_5"] = {"nume": "Peste 2,5 goluri", "n": len(pm), "sursa": "ora_predictiei", "bss_model": mm["bss"], "bss_piata": mp["bss"], "brier_model": mm["brier"], "brier_piata": mp["brier"],
-                          "ll_model": mm["log_loss"], "ll_piata": mp["log_loss"], "ece_model": mm["ece"], "ece_piata": mp["ece"]}
+        mm = metrici([(p, y) for p, _, y in pm])
+        mp = metrici([(q, y) for _, q, y in pm])
+        vs["over_2_5"] = {
+            "nume": "Peste 2,5 goluri",
+            "n": len(pm),
+            "sursa": "ora_predictiei",
+            "bss_model": mm["bss"],
+            "bss_piata": mp["bss"],
+            "brier_model": mm["brier"],
+            "brier_piata": mp["brier"],
+            "ll_model": mm["log_loss"],
+            "ll_piata": mp["log_loss"],
+            "ece_model": mm["ece"],
+            "ece_piata": mp["ece"],
+        }
     azi = datetime.now(RO).strftime("%Y-%m-%d")
-    zile = sorted({(r.get("match_date") or "")[:10] for r in R if r.get("match_date") and (r.get("match_date") or "")[:10] <= azi})  # API mută uneori data meciului după rezolvare
-    return {"generat_la": datetime.now(RO).strftime("%Y-%m-%d %H:%M"), "n_rezolvate": len(R), "de_la": zile[0] if zile else None, "pana_la": zile[-1] if zile else None, "piete": piete, "vs_piata": vs, "ore_inchidere_mediana": ore_med,
-            "calibrare": "platt_snapshot" if precalibrat else ("platt" if platt else "brut"),
-            "snapshot": {"dayof": sum(1 for r in R if r.get("pub_sursa") == "dayof"), "prima": sum(1 for r in R if r.get("pub_sursa") == "prima")} if precalibrat else None}
+    zile = sorted(
+        {
+            (r.get("match_date") or "")[:10]
+            for r in R
+            if r.get("match_date") and (r.get("match_date") or "")[:10] <= azi
+        }
+    )  # API mută uneori data meciului după rezolvare
+    return {
+        "generat_la": datetime.now(RO).strftime("%Y-%m-%d %H:%M"),
+        "n_rezolvate": len(R),
+        "de_la": zile[0] if zile else None,
+        "pana_la": zile[-1] if zile else None,
+        "piete": piete,
+        "vs_piata": vs,
+        "ore_inchidere_mediana": ore_med,
+        "eligibility": eligibility,
+        "calibrare": "platt_snapshot" if precalibrat else ("platt" if platt else "brut"),
+        "snapshot": {
+            "dayof": sum(1 for r in R if r.get("pub_sursa") == "dayof"),
+            "prima": sum(1 for r in R if r.get("pub_sursa") == "prima"),
+        }
+        if precalibrat
+        else None,
+    }
 
 
 def _f(x, d=1):
@@ -328,80 +635,131 @@ def _semn(x: float, d: int = 1) -> str:
     return ("+" if x >= 0 else "") + _f(x, d)
 
 
-
 def _pe_zi(a: dict) -> int:
     """Media de predicții rezolvate pe zi calendaristică a jurnalului (2 oct 2026 — cifra separată de cele 65.250 de calibrare)."""
     try:
         from datetime import date
-        d0 = date.fromisoformat(str(a.get("de_la"))[:10]); d1 = date.fromisoformat(str(a.get("pana_la"))[:10])
+
+        d0 = date.fromisoformat(str(a.get("de_la"))[:10])
+        d1 = date.fromisoformat(str(a.get("pana_la"))[:10])
         return round(a["n_rezolvate"] / max(1, (d1 - d0).days + 1))
     except Exception:
         return 0
 
+
 def _nume(p: dict) -> str:
     """Numele pieței ca span tradus (cheia după cod); fără cod cunoscut rămâne textul RO."""
     cod = p.get("cod") or next((c for c, _, _, nume in PIETE if nume == p.get("nume")), None)
-    return f'<span data-i18n="audit.piata.{cod}">{p["nume"]}</span>' if cod else str(p.get("nume", ""))
+    return (
+        f'<span data-i18n="audit.piata.{cod}">{p["nume"]}</span>' if cod else str(p.get("nume", ""))
+    )
 
 
 def _vars(o: dict) -> str:
     """JSON pentru data-i18n-vars într-un atribut cu ghilimele simple (apostroful din valori → &#39;)."""
     import json as _j
+
     return _j.dumps(o, ensure_ascii=False).replace("'", "&#39;")
 
 
 def html_audit(a: dict) -> str:
-    L = ['<section id="audit-section" class="audit">',
-         '  <h3 data-i18n="audit.h3">Audit statistic — jurnalul forward, cifrele complete</h3>',
-         f'  <p data-i18n="audit.p" data-i18n-vars=\'{{"de_la":"{a.get("de_la")}","pana_la":"{a.get("pana_la")}","n":"{a["n_rezolvate"]:,}","pe_zi":"{_pe_zi(a)}"}}\'>Calculat automat în fiecare dimineață din predicțiile înghețate la 05:30 (jurnal din {a.get("de_la")} până la {a.get("pana_la")}, {a["n_rezolvate"]:,} predicții rezolvate, în medie {_pe_zi(a)} pe zi). '
-         'Brier și log loss = cât de aproape sunt probabilitățile de realitate (mai mic = mai bine); BSS = câștigul față de „rata de bază" a evenimentului (0 = nimic peste a spune mereu media); '
-         'ECE = eroarea medie de calibrare pe intervale de 10 pp; pantă și intercept = calibrarea Cox (regresie logistică a rezultatului pe logit-ul probabilității: pantă 1 și intercept 0 = perfect calibrat, '
-         'pantă sub 1 = prea încrezător la extreme, intercept peste 0 = subestimează evenimentul). Cifrele sunt pe probabilitățile <strong>publicate</strong> înaintea fiecărui meci: snapshot-ul din ziua meciului (altfel prima înghețare), cu calibrarea Platt în vigoare atunci — '
-         'nimic nu se recalibrează după rezultat; intră doar predicțiile înghețate înainte de kickoff și nereprogramate la peste 10 zile. Coloana „BSS brut" = același snapshot fără calibrare. '
-         'Pe scurt: modelul este calibrat față de rata de bază, dar <strong>nu bate piața</strong> — vezi ultimul tabel.</p>',
-         '  <div class="table-wrap"><table class="audit-table"><thead><tr><th data-i18n="audit.th.piata">Piață</th><th>N</th><th data-i18n="audit.th.rata">Rata reală</th><th>Brier</th><th>BSS</th><th data-i18n="audit.th.bssbrut">BSS brut</th><th>log loss</th><th>ECE</th><th data-i18n="audit.th.panta">pantă</th><th data-i18n="audit.th.intercept">intercept</th></tr></thead><tbody>']
+    ft_n = a.get("eligibility", {}).get("included", 0)
+    ht_n = a.get("eligibility", {}).get("ht_included", 0)
+    target_vars = _vars({"ft": ft_n, "ht": ht_n})
+    L = [
+        '<section id="audit-section" class="audit">',
+        '  <h3 data-i18n="audit.h3">Audit statistic — jurnalul forward, cifrele complete</h3>',
+        f'<p data-i18n="audit.targetpolicy" data-i18n-vars=\'{target_vars}\'>FT90 verificat N={ft_n}; HT verificat separat N={ht_n}. Ținte necunoscute sau contradictorii sunt excluse fără rescrierea originalelor.</p>',
+        f'  <p data-i18n="audit.p" data-i18n-vars=\'{{"de_la":"{a.get("de_la")}","pana_la":"{a.get("pana_la")}","n":"{a["n_rezolvate"]:,}","pe_zi":"{_pe_zi(a)}"}}\'>Calculat automat în fiecare dimineață din predicțiile înghețate la 05:30 (jurnal din {a.get("de_la")} până la {a.get("pana_la")}, {a["n_rezolvate"]:,} predicții rezolvate, în medie {_pe_zi(a)} pe zi). '
+        'Brier și log loss = cât de aproape sunt probabilitățile de realitate (mai mic = mai bine); BSS = câștigul față de „rata de bază" a evenimentului (0 = nimic peste a spune mereu media); '
+        "ECE = eroarea medie de calibrare pe intervale de 10 pp; pantă și intercept = calibrarea Cox (regresie logistică a rezultatului pe logit-ul probabilității: pantă 1 și intercept 0 = perfect calibrat, "
+        "pantă sub 1 = prea încrezător la extreme, intercept peste 0 = subestimează evenimentul). Cifrele reconstruiesc retrospectiv probabilitățile din snapshot-ul brut "
+        'și numai versiunile Platt arhivate disponibile înaintea acelui snapshot. Rândurile fără această dovadă sunt excluse. Reconstrucția nu dovedește conținutul exact servit sau întregul input istoric. Coloana „BSS brut" = același snapshot fără calibrare. '
+        "Comparația cu prețul de închidere este descriptivă; o diferență mică de log loss nu demonstrează un avantaj predictiv general — vezi ultimul tabel.</p>",
+        '  <div class="table-wrap"><table class="audit-table"><thead><tr><th data-i18n="audit.th.piata">Piață</th><th>N</th><th data-i18n="audit.th.rata">Rata reală</th><th>Brier</th><th>BSS</th><th data-i18n="audit.th.bssbrut">BSS brut</th><th>log loss</th><th>ECE</th><th data-i18n="audit.th.panta">pantă</th><th data-i18n="audit.th.intercept">intercept</th></tr></thead><tbody>',
+    ]
     for p in a["piete"]:
-        L.append(f'    <tr><td>{_nume(p)}</td><td>{p["n"]}</td><td>{_f(p["rata"] * 100)} %</td><td>{_f(p["brier"], 4)}</td><td>{_semn(p["bss"])} %</td><td>{_semn(p["bss_brut"])} %</td><td>{_f(p["log_loss"], 4)}</td><td>{_f(p["ece"])} pp</td>'
-                 f'<td>{_f(p.get("panta", 1.0), 2)}</td><td>{_semn(p.get("intercept", 0.0), 2)}</td></tr>')
-    L.append('  </tbody></table></div>')
-    L.append('  <h4 data-i18n="audit.h4.intervale">Calibrarea pe intervale — când modelul spune X %, în câte cazuri s-a întâmplat (toate intervalele cu cel puțin 100 de predicții) + diagrama de fiabilitate</h4>')
+        L.append(
+            f"    <tr><td>{_nume(p)}</td><td>{p['n']}</td><td>{_f(p['rata'] * 100)} %</td><td>{_f(p['brier'], 4)}</td><td>{_semn(p['bss'])} %</td><td>{_semn(p['bss_brut'])} %</td><td>{_f(p['log_loss'], 4)}</td><td>{_f(p['ece'])} pp</td>"
+            f"<td>{_f(p.get('panta', 1.0), 2)}</td><td>{_semn(p.get('intercept', 0.0), 2)}</td></tr>"
+        )
+    L.append("  </tbody></table></div>")
+    L.append(
+        '  <h4 data-i18n="audit.h4.intervale">Calibrarea pe intervale — când modelul spune X %, în câte cazuri s-a întâmplat (toate intervalele cu cel puțin 100 de predicții) + diagrama de fiabilitate</h4>'
+    )
     for p in a["piete"]:
         if not p["intervale"]:
             continue
-        L.append(f'  <details><summary data-i18n="audit.sum" data-i18n-vars=\'{{"nume":"{_nume(p).replace(chr(34), "\\\"")}","n":"{p["n"]}"}}\'>{_nume(p)} — {p["n"]} predicții</summary><div class="fiab-wrap">{svg_fiabilitate(p["intervale"])}</div><div class="table-wrap"><table class="audit-table"><thead><tr><th data-i18n="audit.th.interval">interval</th><th>N</th><th data-i18n="audit.th.spus">modelul spunea</th><th data-i18n="audit.th.iesit">s-a întâmplat</th><th data-i18n="audit.th.wlo">Wilson 95 % jos</th><th data-i18n="audit.th.dif">diferență</th></tr></thead><tbody>')
+        summary_vars = _vars({"nume": _nume(p), "n": str(p["n"])})
+        L.append(
+            f'  <details><summary data-i18n="audit.sum" data-i18n-vars=\'{summary_vars}\'>{_nume(p)} — {p["n"]} predicții</summary><div class="fiab-wrap">{svg_fiabilitate(p["intervale"])}</div><div class="table-wrap"><table class="audit-table"><thead><tr><th data-i18n="audit.th.interval">interval</th><th>N</th><th data-i18n="audit.th.spus">modelul spunea</th><th data-i18n="audit.th.iesit">s-a întâmplat</th><th data-i18n="audit.th.wlo">Wilson 95 % jos</th><th data-i18n="audit.th.dif">diferență</th></tr></thead><tbody>'
+        )
         for b in p["intervale"]:
-            L.append(f'    <tr><td>{b["interval"]}</td><td>{b["n"]}</td><td>{_f(b["spus"])} %</td><td>{_f(b["iesit"])} %</td><td>{_f(b["wlo"])} %</td><td>{_semn(b["dif"])} pp</td></tr>')
-        L.append('  </tbody></table></div></details>')
+            L.append(
+                f"    <tr><td>{b['interval']}</td><td>{b['n']}</td><td>{_f(b['spus'])} %</td><td>{_f(b['iesit'])} %</td><td>{_f(b['wlo'])} %</td><td>{_semn(b['dif'])} pp</td></tr>"
+            )
+        L.append("  </tbody></table></div></details>")
     vs = a.get("vs_piata") or {}
     if vs and all(v.get("sursa") == "inchidere" for v in vs.values()):
-        zile = [v["de_la"] for v in vs.values()] + [v["pana_la"] for v in vs.values()]; ore = a.get("ore_inchidere_mediana")
-        L.append('  <h4 data-i18n="audit.h4.inchidere">Modelul față de cota de închidere a pieței — și testul „aduce modelul informație peste piață?"</h4>')
-        med = (f'<span data-i18n="audit.mediana" data-i18n-vars=\'{{"ore":"{_f(ore)}"}}\'> (mediana: {_f(ore)} ore înainte de start)</span>' if ore is not None else '')
-        L.append(f'  <p data-i18n="audit.p.inchidere" data-i18n-vars=\'{_vars({"med": med, "de_la": min(zile), "pana_la": max(zile)})}\'>Piața = ultimul preț disponibil înainte de start la o casă de pariuri licențiată în România, cu marja scoasă'
-                 + med + f', pe meciurile din jurnal la care maparea cu evenimentul casei a fost validată prin nume și scor final ({min(zile)} → {max(zile)}). '
-                 'Testul de informație: o regresie logistică a rezultatului pe logit-ul cotei și logit-ul modelului, învățată pe primele două treimi cronologic și testată pe ultima treime. '
-                 'Dacă adăugarea modelului nu scade log loss-ul pieței, modelul nu știe nimic în plus față de cotă.</p>')
-        L.append('  <div class="table-wrap"><table class="audit-table"><thead><tr><th data-i18n="audit.th.piata">Piață</th><th>N</th><th data-i18n="audit.th.bss_model">BSS model</th><th data-i18n="audit.th.bss_piata">BSS piață</th><th data-i18n="audit.th.ll_model">log loss model</th><th data-i18n="audit.th.ll_piata">log loss piață</th><th data-i18n="audit.th.ece_model">ECE model</th><th data-i18n="audit.th.ece_piata">ECE piață</th>'
-                 '<th data-i18n="audit.th.test_n">test: N</th><th data-i18n="audit.th.ll_piata">log loss piață</th><th data-i18n="audit.th.piata_model">piață + model</th><th data-i18n="audit.th.coef">coeficient model</th></tr></thead><tbody>')
+        zile = [v["de_la"] for v in vs.values()] + [v["pana_la"] for v in vs.values()]
+        ore = a.get("ore_inchidere_mediana")
+        L.append(
+            '  <h4 data-i18n="audit.h4.inchidere">Modelul față de cota de închidere a pieței — și testul „aduce modelul informație peste piață?"</h4>'
+        )
+        med = (
+            f'<span data-i18n="audit.mediana" data-i18n-vars=\'{{"ore":"{_f(ore)}"}}\'> (mediana: {_f(ore)} ore înainte de start)</span>'
+            if ore is not None
+            else ""
+        )
+        L.append(
+            f"  <p data-i18n=\"audit.p.inchidere\" data-i18n-vars='{_vars({'med': med, 'de_la': min(zile), 'pana_la': max(zile)})}'>Piața = ultimul preț disponibil înainte de start la o casă de pariuri licențiată în România, cu marja scoasă"
+            + med
+            + f", pe meciurile din jurnal la care maparea cu evenimentul casei a fost validată prin nume și scor final ({min(zile)} → {max(zile)}). "
+            "Testul de informație: o regresie logistică a rezultatului pe logit-ul cotei și logit-ul modelului, învățată pe primele două treimi cronologic și testată pe ultima treime. "
+            "Dacă adăugarea modelului nu scade log loss-ul pieței, modelul nu știe nimic în plus față de cotă.</p>"
+        )
+        L.append(
+            '  <div class="table-wrap"><table class="audit-table"><thead><tr><th data-i18n="audit.th.piata">Piață</th><th>N</th><th data-i18n="audit.th.bss_model">BSS model</th><th data-i18n="audit.th.bss_piata">BSS piață</th><th data-i18n="audit.th.ll_model">log loss model</th><th data-i18n="audit.th.ll_piata">log loss piață</th><th data-i18n="audit.th.ece_model">ECE model</th><th data-i18n="audit.th.ece_piata">ECE piață</th>'
+            '<th data-i18n="audit.th.test_n">test: N</th><th data-i18n="audit.th.ll_piata">log loss piață</th><th data-i18n="audit.th.piata_model">piață + model</th><th data-i18n="audit.th.coef">coeficient model</th></tr></thead><tbody>'
+        )
         for v in vs.values():
             t = v["informatie"]
-            L.append(f'    <tr><td>{_nume(v)}</td><td>{v["n"]}</td><td>{_semn(v["bss_model"])} %</td><td>{_semn(v["bss_piata"])} %</td><td>{_f(v["ll_model"], 4)}</td><td>{_f(v["ll_piata"], 4)}</td><td>{_f(v["ece_model"])} pp</td><td>{_f(v["ece_piata"])} pp</td>'
-                     f'<td>{t["n_test"]}</td><td>{_f(t["ll_piata"], 4)}</td><td>{_f(t["ll_piata_model"], 4)}</td><td>{_semn(t["coef_model"], 2)}</td></tr>')
-        L.append('  </tbody></table></div>')
+            L.append(
+                f"    <tr><td>{_nume(v)}</td><td>{v['n']}</td><td>{_semn(v['bss_model'])} %</td><td>{_semn(v['bss_piata'])} %</td><td>{_f(v['ll_model'], 4)}</td><td>{_f(v['ll_piata'], 4)}</td><td>{_f(v['ece_model'])} pp</td><td>{_f(v['ece_piata'])} pp</td>"
+                f"<td>{t['n_test']}</td><td>{_f(t['ll_piata'], 4)}</td><td>{_f(t['ll_piata_model'], 4)}</td><td>{_semn(t['coef_model'], 2)}</td></tr>"
+            )
+        L.append("  </tbody></table></div>")
         cmax = max(v["informatie"]["castig_ll"] for v in vs.values())
         nu = cmax < 0.002 and all(v["bss_piata"] >= v["bss_model"] for v in vs.values())
-        verdict = ('modelul <strong>nu aduce informație peste cota de închidere</strong>: adăugat peste cotă, schimbă log loss-ul cu cel mult ' + _f(cmax, 4) + ' pe piața cea mai favorabilă lui, iar piața singură are BSS mai mare pe toate piețele'
-                   if nu else 'pe unele piețe modelul adaugă ceva peste cotă (câștig de log loss până la ' + _f(cmax, 4) + ') — de urmărit în timp, nu e o promisiune')
-        v_html = f'<span data-i18n="{"audit.verdict.nu" if nu else "audit.verdict.da"}" data-i18n-vars=\'{_vars({"c": _f(cmax, 4)})}\'>{verdict}</span>'
-        L.append(f'  <p class="muted" data-i18n="audit.verdict.wrap" data-i18n-vars=\'{_vars({"v": v_html})}\'>Verdictul, în cuvinte: {v_html}. Îl publicăm exact așa. Predicțiile rămân informative, fără garanție.</p>')
+        verdict = (
+            "modelul <strong>nu aduce informație peste cota de închidere</strong>: adăugat peste cotă, schimbă log loss-ul cu cel mult "
+            + _f(cmax, 4)
+            + " pe piața cea mai favorabilă lui, iar piața singură are BSS mai mare pe toate piețele"
+            if nu
+            else "pe unele piețe modelul adaugă ceva peste cotă (câștig de log loss până la "
+            + _f(cmax, 4)
+            + ") — de urmărit în timp, nu e o promisiune"
+        )
+        v_html = f"<span data-i18n=\"{'audit.verdict.nu' if nu else 'audit.verdict.da'}\" data-i18n-vars='{_vars({'c': _f(cmax, 4)})}'>{verdict}</span>"
+        L.append(
+            f'  <p class="muted" data-i18n="audit.verdict.wrap" data-i18n-vars=\'{_vars({"v": v_html})}\'>Verdictul, în cuvinte: {v_html}. Îl publicăm exact așa. Predicțiile rămân informative, fără garanție.</p>'
+        )
     elif vs:
-        L.append('  <h4 data-i18n="audit.h4.piata">Modelul față de piață — pe meciurile la care avem cota casei la ora predicției</h4>')
-        L.append('  <div class="table-wrap"><table class="audit-table"><thead><tr><th data-i18n="audit.th.piata">Piață</th><th>N</th><th data-i18n="audit.th.bss_model">BSS model</th><th data-i18n="audit.th.bss_piata">BSS piață</th><th data-i18n="audit.th.brier_model">Brier model</th><th data-i18n="audit.th.brier_piata">Brier piață</th><th data-i18n="audit.th.ece_model">ECE model</th><th data-i18n="audit.th.ece_piata">ECE piață</th></tr></thead><tbody>')
+        L.append(
+            '  <h4 data-i18n="audit.h4.piata">Modelul față de piață — pe meciurile la care avem cota casei la ora predicției</h4>'
+        )
+        L.append(
+            '  <div class="table-wrap"><table class="audit-table"><thead><tr><th data-i18n="audit.th.piata">Piață</th><th>N</th><th data-i18n="audit.th.bss_model">BSS model</th><th data-i18n="audit.th.bss_piata">BSS piață</th><th data-i18n="audit.th.brier_model">Brier model</th><th data-i18n="audit.th.brier_piata">Brier piață</th><th data-i18n="audit.th.ece_model">ECE model</th><th data-i18n="audit.th.ece_piata">ECE piață</th></tr></thead><tbody>'
+        )
         for k, v in vs.items():
-            L.append(f'    <tr><td>{_nume(v)}</td><td>{v["n"]}</td><td>{_semn(v["bss_model"])} %</td><td>{_semn(v["bss_piata"])} %</td><td>{_f(v["brier_model"], 4)}</td><td>{_f(v["brier_piata"], 4)}</td><td>{_f(v["ece_model"])} pp</td><td>{_f(v["ece_piata"])} pp</td></tr>')
-        L.append('  </tbody></table></div>')
-        L.append('  <p class="muted" data-i18n="audit.p.piata">Piața (cota casei fără marjă) are un BSS mai mare decât modelul: modelul nu aduce informație peste cotă. Îl publicăm exact așa. Predicțiile rămân informative, fără garanție.</p>')
-    L.append('</section>')
+            L.append(
+                f"    <tr><td>{_nume(v)}</td><td>{v['n']}</td><td>{_semn(v['bss_model'])} %</td><td>{_semn(v['bss_piata'])} %</td><td>{_f(v['brier_model'], 4)}</td><td>{_f(v['brier_piata'], 4)}</td><td>{_f(v['ece_model'])} pp</td><td>{_f(v['ece_piata'])} pp</td></tr>"
+            )
+        L.append("  </tbody></table></div>")
+        L.append(
+            '  <p class="muted" data-i18n="audit.p.piata">Piața (cota casei fără marjă) are un BSS mai mare decât modelul: modelul nu aduce informație peste cotă. Îl publicăm exact așa. Predicțiile rămân informative, fără garanție.</p>'
+        )
+    L.append("</section>")
     return "\n".join(L)
 
 
@@ -418,20 +776,41 @@ def injecteaza(html: str, bloc: str) -> str:
 
 
 def main() -> None:
-    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter); ap.add_argument("--dry-run", action="store_true")
-    ap.add_argument("--public", metavar="DIR", help="reface auditul STRICT din fișierele publice (jurnal_*.csv + platt_calibration.json din DIR) și scrie JSON-ul la stdout; nu atinge site-ul")
+    ap = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
+    ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument(
+        "--public",
+        metavar="DIR",
+        help="reface auditul STRICT din fișierele publice (jurnal_*.csv + platt_calibration.json din DIR) și scrie JSON-ul la stdout; nu atinge site-ul",
+    )
     a = ap.parse_args()
     if a.public:
-        rows, pl = citeste_public(Path(a.public)); au = audit(rows, pl, None)
-        print(json.dumps(au, ensure_ascii=False, indent=1)); return
-    rows = randuri_snapshot()   # 24 oct 2026: snapshot-ul publicat, nu jurnalul brut + Platt-ul curent
-    pl = platt_params(); inc = incarca_inchidere(); au = audit(rows, pl, inc); h = html_audit(au)
+        rows, pl = citeste_public(Path(a.public))
+        au = audit(rows, pl, None)
+        print(json.dumps(au, ensure_ascii=False, indent=1))
+        return
+    rows = (
+        randuri_snapshot()
+    )  # 24 oct 2026: snapshot-ul publicat, nu jurnalul brut + Platt-ul curent
+    pl = platt_params()
+    inc = incarca_inchidere()
+    au = audit(rows, pl, inc)
+    h = html_audit(au)
     print(f"[gen_audit] snapshot publicat: {au.get('snapshot')}")
-    print(f"[gen_audit] cote de închidere mapate: {len(inc)} meciuri (mapare {MAPARE.name}, master {MASTER.name})")
-    print(f"[gen_audit] calibrare: {'Platt (' + str(len(pl)) + ' piețe)' if pl else 'BRUT — platt_calibration.json lipsește'}")
-    print(f"[gen_audit] {au['n_rezolvate']} predicții rezolvate · {len(au['piete'])} piețe · vs piață: {list(au['vs_piata'].keys())}")
+    print(
+        f"[gen_audit] cote de închidere mapate: {len(inc)} meciuri (mapare {MAPARE.name}, master {MASTER.name})"
+    )
+    print(
+        f"[gen_audit] calibrare: {'Platt (' + str(len(pl)) + ' piețe)' if pl else 'BRUT — platt_calibration.json lipsește'}"
+    )
+    print(
+        f"[gen_audit] {au['n_rezolvate']} predicții rezolvate · {len(au['piete'])} piețe · vs piață: {list(au['vs_piata'].keys())}"
+    )
     if a.dry_run:
-        print(h[:1500]); return
+        print(h[:1500])
+        return
     OUT_JSON.write_text(json.dumps(au, ensure_ascii=False, indent=1), encoding="utf-8")
     PAGINA.write_text(injecteaza(PAGINA.read_text(encoding="utf-8"), h), encoding="utf-8")
     print(f"[gen_audit] scris {OUT_JSON} + blocul din {PAGINA}")

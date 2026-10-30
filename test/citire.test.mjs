@@ -22,14 +22,17 @@ const citire = {
   familia: ['2-1', '1-1'], directia: '1', p1x2: [47, 27, 26], goluri: { interval: [2, 4], cel_mai_probabil: 3, p_interval: 61 },
   deschide: { echipa: 'gazda', p: 66 }, p00_pauza: 31, n: [20, 20],
 };
-const testNr = { familia: { hit: 20.5, n: 75996 }, directia: { hit: 48.1 }, interval: { hit: [60.8, 62.7] } };
+// Current scalar TEST schema: each metric carries its own cohort size; train rates are not mixed into it.
+const testNr = { familia: { hit: 20.5, n: 75996 }, directia: { hit: 48.1, n: 75996 }, interval: { hit: 60.8, n: 75430 } };
 
 test('blocul are familia, direcția cu cifrele, golurile, cine deschide și 0-0 la pauză, în română', () => {
   const C = incarca('ro');
   const html = C.html(citire, testNr);
   for (const frag of ['Propunerea noastră', '2-1 sau 1-1', '47 / 27 / 26', '2-4', 'cel mai probabil 3', 'gazda', '66', '0-0 la pauză', '31'])
     assert.ok(html.includes(frag), 'lipsește: ' + frag);
-  assert.ok(html.includes('20,5') && html.includes('48') && html.includes('61'), 'nota de onestitate fără cifrele din test');
+  const note=html.match(/class="citire-nota">([\s\S]*?)<\/span>/)?.[1] || '';
+  for(const metric of ['20,5','48,1','60,8','75.996','75.430']) assert.ok(note.includes(metric),'test metric/cohort missing: '+metric);
+  assert.ok(!note.includes('62,7'),'the training rate must not be shown as a test result');
   assert.ok(!/cot[aă]|odds|value|edge/i.test(html), 'blocul nu afișează cote sau limbaj de preț');
 });
 

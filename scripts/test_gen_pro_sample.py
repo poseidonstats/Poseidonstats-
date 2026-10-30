@@ -37,13 +37,13 @@ def test_parseaza_sectiunile():
     ("ESMTK peste 0.5 goluri", (1, 0), None), ("Egal", (1, 1), True),
 ])
 def test_evalueaza_piata(piata, scor, ok):
-    assert G.evalueaza(piata, *scor) is ok
+    assert G.evalueaza(piata, *scor, home="ESMTK", away="Dabas") is ok
 
 
 def test_alege_prefera_analiza_cu_baza_iesita_si_rezultat_cunoscut():
     items = [{"match": {"fixture_id": 1, "home": "A", "away": "B"}, "analysis": TEXT.replace("1X (ESMTK nu pierde)", "2 (B câștigă)")},
              {"match": {"fixture_id": 2, "home": "C", "away": "D"}, "analysis": TEXT},
-             {"match": {"fixture_id": 3, "home": "E", "away": "F"}, "analysis": TEXT}]
+             {"match": {"fixture_id": 3, "home": "ESMTK", "away": "Dabas"}, "analysis": TEXT}]
     rez = {1: (3, 0), 3: (2, 0)}                                     # fid 2 fără rezultat; fid 1 baza a picat; fid 3 baza a ieșit
     it, scor, baza, ok = G.alege(items, rez)
     assert it["match"]["fixture_id"] == 3 and scor == (2, 0) and baza == "1X (ESMTK nu pierde)" and ok is True

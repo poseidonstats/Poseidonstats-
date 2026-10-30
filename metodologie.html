@@ -101,12 +101,12 @@ Statistici informative. Modelul poate greși. Verifică sursa. 18+.
 
     <h3 data-i18n="metod.h3.2">2. Lambda per meci (xG estimat)</h3>
     <p data-i18n="metod.p.2a">Pentru un meci HOME vs AWAY:</p>
-    <pre>λ_home = attack_HOME × defense_AWAY × home_advantage × μ_league_calibrat
-λ_away = attack_AWAY × defense_HOME × μ_league_calibrat</pre>
-    <p data-i18n="metod.p.2b">Unde <code>μ_league_calibrat</code> = media ligii × scale per-ligă, calibrată empiric.</p>
+    <pre>λ_home = attack_HOME × defense_AWAY × home_advantage × μ_league
+λ_away = attack_AWAY × defense_HOME × μ_league</pre>
+    <p data-i18n="metod.p.2b">Unde <code>μ_league</code> este media folosită de model, fără multiplicator suplimentar de calibrare per ligă.</p>
 
-    <h3 data-i18n="metod.h3.3">3. Calibrare per-ligă (anti-bias)</h3>
-    <p data-i18n="metod.p.3">Modelul fără calibrare supra-estimează masiv ligile cu scor mare (Nordic +22%) și sub-estimează cele cu scor mic (Sud-America −22%). Soluție: un factor de scalare per ligă, derivat exclusiv pe TRAIN, cu <strong>shrinkage Bayesian</strong> spre o medie prudentă — aplicat mai puternic pe ligile cu sample mic, pentru a evita supra-fitarea.</p>
+    <h3 data-i18n="metod.h3.3">3. Calibrare activă</h3>
+    <p data-i18n="metod.p.3">Scalarea suplimentară per ligă este dezactivată (factor 1,0). Ratings și mediile competițiilor rămân în model; probabilitățile se corectează prin Platt per piață. Eticheta de ligă calibrată descrie un diagnostic de bias și eșantion, nu un multiplicator suplimentar.</p>
     <p data-i18n="metod.p.3platt"><strong>Din 12 iunie 2026</strong>, probabilitățile afișate sunt în plus calibrate per piață (corecție de pantă Platt pe logit, validată pe ferestre temporale separate ian–mar / apr–mai). Efect practic: pe piețele unde modelul era supra-încrezător, probabilitățile corectate sunt mai mici decât cele brute — unele piețe nu mai ating zona de 70%+ — iar probabilitatea pe victoria gazdelor e plafonată la 80%.</p>
 
     <h3 data-i18n="metod.h3.4">4. Simulare Monte Carlo (200k–1M iterații)</h3>
@@ -140,7 +140,7 @@ Statistici informative. Modelul poate greși. Verifică sursa. 18+.
 
 <footer>
   <div class="container">
-    <p><strong>POSEIDON</strong> — model statistic propriu, ratings Bayesian cu calibrare per-ligă.</p>
+    <p data-i18n="footer.title"><strong>POSEIDON</strong> — model statistic propriu, ratings Bayesian și calibrare Platt pe piață.</p>
     <p data-i18n="footer.disclaimer">⚠️ <strong>Informativ.</strong> NU sfat de pariere. NU garanție. Folosește responsabil. <strong>18+</strong>.</p>
     <p class="muted"><span data-i18n="footer.contact">Contact:</span> <a href="mailto:contact@poseidonstats.com">contact@poseidonstats.com</a> · <span data-i18n="footer.problem">Joc responsabil:</span> <a href="https://www.jocresponsabil.ro" target="_blank" rel="noopener">jocresponsabil.ro</a> · <a href="terms.html" data-i18n="footer.terms">Termeni și Condiții</a></p>
   </div>

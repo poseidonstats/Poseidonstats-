@@ -121,6 +121,10 @@ test('compact Pro demonstration uses only the actual generated sample, truthful 
     assert.equal(markup.includes('data-dashboard-analysis'),tier===null);
     assert(markup.length<2200,'summary does not clone the full generated analysis');
   }
+  const italian=dashboard.renderProSummary(doc,translate,'it',null);
+  assert(italian.includes(bodies.it.querySelector().textContent.slice(0,70)));
+  assert(!italian.includes('class="dashboard-analysis-language"'),'an existing Italian translation needs no fallback notice');
+  delete bodies.it; // Deliberately exercise the missing-language branch, independently of changing daily data.
   const fallback=dashboard.renderProSummary(doc,translate,'it',null);
   assert(fallback.includes('Analysis content is available in English.'));
   heading.textContent='<script>alert(1)</script> · original date';
