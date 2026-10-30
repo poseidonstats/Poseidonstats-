@@ -1360,34 +1360,57 @@ function _md(s) {
   // 7 oct 2026: analiza începe cu „## 💎 Meci · Ligă · dată” — titlul e deja în capul cardului, îl scoatem; alte „#” devin text simplu
   return String(s || "").trim().replace(/^#{1,6}\s[^\n]*\n?/, "").replace(/^#{1,6}\s+/gm, "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>").replace(/\n/g, "<br>");
 }
-async function renderProAnalize() {
+// 30 oct 2026: zi selectabilă în zona Pro; o cerere veche nu suprascrie ziua/limba curentă.
+let PRO_ZI = null;
+let PRO_CERERE = 0;
+async function renderProAnalize(zi) {
+  const cerere = ++PRO_CERERE;
   const M = (typeof window !== "undefined") ? window.PoseidonMembers : null;
   const el = document.getElementById("pro-analize");
-  if (!M || !M.MEMBERS_API || !el || M.tier() !== "pro") return;
+  if (!el) return;
+  if (!M || !M.MEMBERS_API || M.tier() !== "pro") { el.innerHTML = ""; return; }
+  const azi = ziRO(new Date().toISOString());
+  const valida = value => typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value)
+    && value <= azi && Number.isFinite(new Date(value + "T12:00:00Z").getTime())
+    && new Date(value + "T12:00:00Z").toISOString().slice(0, 10) === value;
+  const data = valida(zi) ? zi : valida(PRO_ZI) ? PRO_ZI : azi;
+  PRO_ZI = data;
+  await i18nGata();
+  if (cerere !== PRO_CERERE || M.tier() !== "pro") return;
+  const limba = LANG;
+  const activa = () => cerere === PRO_CERERE && LANG === limba && M.tier() === "pro";
   // 7 oct 2026: pentru Pro, analizele stau EXACT unde se uită membrul — în secțiunea „Exemplu Pro”, în locul listei cu lacăt
   // „Încă N analize azi în Pro” (Andreea, logată Pro, nu le-a găsit: secțiunea era după lista de 164 de meciuri).
   // 7 oct 2026 (Andreea): pentru Pro, analizele sunt PRIMA secțiune a paginii — înaintea exemplului și a listei; lista cu lacăt dispare
   const loc = document.querySelector(".pro-today"); if (loc) loc.remove();
   const prima = document.querySelector("main.container > section, main.container > *"); const main = document.querySelector("main.container");
   if (main && prima && prima !== el) main.insertBefore(el, prima);
-  el.innerHTML = `<h2>${tt("pro.azi.h2", "💎 Analizele tale Pro de azi")}</h2><p class="muted">…</p>`;
-  const azi = new Date().toLocaleDateString("sv-SE", { timeZone: "Europe/Bucharest" });
+  const dataText = new Intl.DateTimeFormat(_loc(), { day: "numeric", month: "long", year: "numeric" }).format(new Date(data + "T12:00:00Z"));
+  el.innerHTML = `<h2 data-i18n="pro.analize.h2">${tt("pro.analize.h2", "💎 Analizele tale Pro")}</h2>
+    <label for="pro-date"><span data-i18n="filters.day">${tt("filters.day", "Zi:")}</span> <input id="pro-date" type="date" value="${data}" max="${azi}"></label>
+    <p class="muted"><span data-date="${data}">${esc(dataText)}</span></p><div id="pro-content" aria-live="polite"><p class="muted">…</p></div>`;
+  el.querySelector("#pro-date").addEventListener("change", e => renderProAnalize(e.target.value));
+  const continut = el.querySelector("#pro-content");
   try {
-    const r = await fetch(`${M.MEMBERS_API}/api/analize/${azi}`, { headers: { authorization: "Bearer " + localStorage.getItem("poseidon_members_token") }, cache: "no-store" });
+    const r = await fetch(`${M.MEMBERS_API}/api/analize/${data}`, { headers: { authorization: "Bearer " + localStorage.getItem("poseidon_members_token") }, cache: "no-store" });
+    if (!activa()) return;
     if (!r.ok) {
       // 6 oct 2026: mesaj după oră și cod — „apar după 07:45” doar dimineața; după aceea e o problemă a noastră, spusă ca atare
       const oraRO = Number(new Date().toLocaleTimeString("en-GB", { timeZone: "Europe/Bucharest", hour: "2-digit", hour12: false }));
-      const msg = (r.status === 404 && oraRO < 8)
+      const msg = (r.status === 404 && data === azi && oraRO < 8)
         ? tt("pro.azi.devreme", "Analizele Pro de azi apar după 07:45. Până atunci: #analize-pro pe Discord.")
         : (r.status === 401 || r.status === 403)
           ? tt("pro.azi.sesiune", "Sesiunea a expirat — apasă „Intră cu Patreon” ca să vezi analizele.")
-          : tt("pro.azi.lipsa", "Analizele de azi nu s-au încărcat pe site (cod {cod}). Le găsești în #analize-pro pe Discord; noi reparăm aici.").replace("{cod}", r.status);
-      el.innerHTML = `<h2>${tt("pro.azi.h2", "💎 Analizele tale Pro de azi")}</h2><p class="muted">${msg}</p>`; return;
+          : tt("pro.zi.lipsa", "Analizele pentru această zi nu sunt disponibile pe site (cod {cod}).").replace("{cod}", r.status);
+      continut.innerHTML = `<p class="muted">${msg}</p>`; return;
     }
     const d = await r.json();
+    if (!activa()) return;
+    if (!d || !Array.isArray(d.items) || (d.date && d.date !== data)) throw new Error("Invalid Pro analyses response");
+    if (!d.items.length) { continut.innerHTML = `<p class="muted">${tt("pro.zi.gol", "Nu sunt analize Pro publicate pentru această zi.")}</p>`; return; }
     // 7 oct 2026: analiza în limba aleasă pe site (analysis_en/es/it din arhivă, traduse de traduce_analize.py); fără traducere → româna
-    const txt = it => (LANG !== "ro" && it[`analysis_${LANG}`]) || it.analysis;
-    const nota = (d.items || []).some(it => LANG !== "ro" && !it[`analysis_${LANG}`]) ? `<p class="muted">${tt("pro.azi.ro_only", "Traducerea apare în câteva minute; până atunci textul e în română.")}</p>` : "";
-    el.innerHTML = `<h2 data-i18n="pro.azi.h2">${tt("pro.azi.h2", "💎 Analizele tale Pro de azi")}</h2>${nota}` + (d.items || []).map(it => `<article class="pro-card pro-card-full"><div class="pro-card-head">💎 ${_md(it.match?.home)} – ${_md(it.match?.away)} · ${_md(it.match?.league)}</div><div class="pro-visible">${_md(txt(it))}</div></article>`).join("");
-  } catch (e) { console.warn("[membri] analize", e); el.innerHTML = `<h2>${tt("pro.azi.h2", "💎 Analizele tale Pro de azi")}</h2><p class="muted">${tt("pro.azi.retea", "Nu am putut contacta serverul membrilor. Reîncarcă pagina; analizele sunt și în #analize-pro pe Discord.")}</p>`; }
+    const txt = it => (limba !== "ro" && it[`analysis_${limba}`]) || it.analysis;
+    const nota = d.items.some(it => limba !== "ro" && !it[`analysis_${limba}`]) ? `<p class="muted">${tt("pro.azi.ro_only", "Traducerea apare în câteva minute; până atunci textul e în română.")}</p>` : "";
+    continut.innerHTML = nota + d.items.map(it => `<article class="pro-card pro-card-full"><div class="pro-card-head">💎 ${_md(it.match?.home)} – ${_md(it.match?.away)} · ${_md(it.match?.league)}</div><div class="pro-visible">${_md(txt(it))}</div></article>`).join("");
+  } catch (e) { if (!activa()) return; console.warn("[membri] analize", e); continut.innerHTML = `<p class="muted">${tt("pro.azi.retea", "Nu am putut contacta serverul membrilor. Reîncarcă pagina; analizele sunt și în #analize-pro pe Discord.")}</p>`; }
 }
