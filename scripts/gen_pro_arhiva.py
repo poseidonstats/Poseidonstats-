@@ -14,6 +14,7 @@ Uz: gen_pro_arhiva.py [--dry-run]   (chemat zilnic din daily_publish.sh după ge
 from __future__ import annotations
 
 import argparse
+import hashlib
 import html as H
 import json
 import math
@@ -355,16 +356,65 @@ def rezultate(fids: list[int], *, database: str | None = None) -> dict[int, dict
     return out
 
 
+def _recuperare(f: Path, d: dict) -> dict:
+    """Validează recuperarea separată; nu o promovează la publicare prematch.
+
+    Cache-ul original identificat prin hash rămâne read-only. O coliziune cu
+    arhiva canonică este refuzată, fără alegere implicită între două texte.
+    """
+    if (ARHIVA / f.name).exists():
+        raise ValueError(f"coliziune arhivă canonică/recuperată: {f.name}")
+    try:
+        if datetime.strptime(f.stem, "%Y-%m-%d").strftime("%Y-%m-%d") != f.stem:
+            raise ValueError("zi necanonică")
+        if (
+            d.get("date") != f.stem
+            or d.get("recovery_kind") != "existing_pre_kickoff_cache_only"
+            or d.get("recovery_of") != f"{f.stem}.dryrun.json"
+            or d.get("generated_at_timezone") != "Europe/Bucharest"
+            or not re.fullmatch(r"[0-9a-f]{64}", d.get("recovery_of_sha256", ""))
+        ):
+            raise ValueError("metadate incompatibile")
+        generated = PP.stamp(d.get("generated_at_utc"))
+        published = PP.stamp(d.get("published_at_utc"))
+        local = datetime.fromisoformat(d["generated_at"])
+        if (
+            local.tzinfo is not None
+            or local.date().isoformat() != f.stem
+            or generated is None
+            or published is None
+            or generated != local.replace(tzinfo=RO)
+            or published <= generated
+        ):
+            raise ValueError("cronologie invalidă")
+        original = ARHIVA / d["recovery_of"]
+        if hashlib.sha256(original.read_bytes()).hexdigest() != d["recovery_of_sha256"]:
+            raise ValueError("hash cache original diferit")
+    except (KeyError, TypeError, OSError, ValueError) as exc:
+        raise ValueError(f"recuperare invalidă {f.name}: {exc}") from exc
+    return {
+        key: d[key]
+        for key in (
+            "generated_at_utc", "published_at_utc", "recovery_kind",
+            "recovery_of", "recovery_of_sha256",
+        )
+    }
+
+
 def citeste_arhiva() -> list[dict]:
     zile = []
-    for f in sorted(ARHIVA.glob("????-??-??.json")):
+    canonice = sorted(ARHIVA.glob("????-??-??.json"))
+    recuperate = sorted((ARHIVA / "recuperate").glob("????-??-??.json"))
+    for f in canonice + recuperate:
         d = json.loads(f.read_text())
+        recovery = _recuperare(f, d) if f.parent.name == "recuperate" else None
         delivery = PP.citeste_livrari(f)
         items = [
             {
                 **it,
                 "_archive_excluded": bool(
-                    d.get("exclude_from_forward_test") or d.get("published_late")
+                    recovery is not None
+                    or d.get("exclude_from_forward_test") or d.get("published_late")
                 ),
                 "_deliveries": delivery,
             }
@@ -377,9 +427,10 @@ def citeste_arhiva() -> list[dict]:
                     "zi": d.get("date") or f.stem,
                     "generat": d.get("generated_at", ""),
                     "items": items,
+                    **({"_recovery": recovery} if recovery else {}),
                 }
             )
-    return zile
+    return sorted(zile, key=lambda z: z["zi"])
 
 
 # ----------------------------------------------------------------- verificare
@@ -652,6 +703,28 @@ def html_analiza(item: dict, v: dict, generat: str, lang: str = "ro") -> str:
     </article>"""
 
 
+def html_recuperare(recovery: dict | None) -> str:
+    """Notă vizibilă în șase limbi; ora publicării nu devine ora generării."""
+    if not recovery:
+        return ""
+    notices = {
+        "ro": "Publicată cu întârziere dintr-un cache existent. Nu intră în bilanțul prospectiv. Publicarea recuperării pentru membri, consemnată (UTC):",
+        "en": "Published late from an existing cache. Excluded from the prospective record. Recorded publication of the recovery to members (UTC):",
+        "es": "Publicada con retraso desde una caché existente. Excluida del balance prospectivo. Publicación de la recuperación para miembros, registrada (UTC):",
+        "it": "Pubblicata in ritardo da una cache esistente. Esclusa dal bilancio prospettico. Pubblicazione del recupero per i membri, registrata (UTC):",
+        "fr": "Publiée en retard depuis un cache existant. Exclue du bilan prospectif. Publication de la récupération pour les membres, enregistrée (UTC) :",
+        "id": "Diterbitkan terlambat dari cache yang sudah ada. Tidak termasuk dalam catatan prospektif. Publikasi pemulihan kepada anggota, tercatat (UTC):",
+    }
+    published = H.escape(recovery["published_at_utc"], quote=True)
+    variants = "".join(
+        f'<p class="muted" data-lang="{lang}" data-recovery-lang="{lang}"'
+        + (" hidden" if lang != "ro" else "")
+        + f'>{H.escape(text)} <time datetime="{published}">{published}</time></p>'
+        for lang, text in notices.items()
+    )
+    return '<div data-lang-grup data-pro-archive-kind="recovered-late">' + variants + "</div>"
+
+
 def bilant(zile: list[dict], rez: dict) -> tuple[dict, list[dict]]:
     """Cohortă prospectivă: prima analiză eligibilă per fixture, un pick per rol.
 
@@ -669,6 +742,7 @@ def bilant(zile: list[dict], rez: dict) -> tuple[dict, list[dict]]:
             "princ": [0, 0],
             "eligibile": 0,
             "excluderi": Counter(),
+            **({"_recovery": z["_recovery"]} if z.get("_recovery") else {}),
         }
         for z in zile
     ]
@@ -741,16 +815,21 @@ def html_index(zile: list[dict], tot: dict, pe_zi: list[dict], azi: str) -> str:
             if r["rez"]
             else ', <span data-i18n="arhiva.zi.nerez">rezultate încă nerezolvate</span>'
         )
-        + "</li>"
+        + html_recuperare(r.get("_recovery")) + "</li>"
         for r in reversed(pe_zi)
     )
     n_tot = sum(len(z["items"]) for z in zile)
     n_eligible = sum(r["eligibile"] for r in pe_zi)
     n_excluded = sum(sum(r["excluderi"].values()) for r in pe_zi)
+    intro_vars = _vars({
+        "n": str(n_tot),
+        "de_la": f'<span data-date="{zile[0]["zi"]}">{_data_ro(zile[0]["zi"])}</span>',
+    })
+    date_vars = _vars({"data": f'<span data-date="{azi}">{_data_ro(azi)}</span>'})
     corp = f"""
   <section class="intro">
     <h1 data-i18n="arhiva.h1">Analizele Pro, arhivate și verificate</h1>
-    <p data-i18n="arhiva.intro.descriptiv" data-i18n-vars='{{"n":"{n_tot}","de_la":"<span data-date=\"{zile[0]["zi"]}\">{_data_ro(zile[0]["zi"])}</span>"}}'>Aici sunt <strong>toate analizele Pro de până ieri</strong>, {n_tot} de la <span data-date="{zile[0]["zi"]}">{_data_ro(zile[0]["zi"])}</span>, reproduse din fișierele originale, plus <strong>verificarea de a doua zi</strong> făcută automat din scorul final. Inclusiv cele care au greșit. Analizele de azi sunt pentru membrii Pro, pe <a href="../index.html#abonament">site și Discord</a>.</p>
+    <p data-i18n="arhiva.intro.descriptiv" data-i18n-vars='{intro_vars}'>Aici sunt <strong>toate analizele Pro de până ieri</strong>, {n_tot} de la <span data-date="{zile[0]["zi"]}">{_data_ro(zile[0]["zi"])}</span>, reproduse din fișierele originale, plus <strong>verificarea de a doua zi</strong> făcută automat din scorul final. Inclusiv cele care au greșit. Analizele de azi sunt pentru membrii Pro, pe <a href="../index.html#abonament">site și Discord</a>.</p>
   </section>
 
   <section class="plans-pro-detail">
@@ -776,7 +855,7 @@ def html_index(zile: list[dict], tot: dict, pe_zi: list[dict], azi: str) -> str:
   </section>
 
   <section class="audit">
-    <h2 data-i18n="arhiva.bilant.h" data-i18n-vars='{{"data":"<span data-date=\"{azi}\">{_data_ro(azi)}</span>"}}'>Bilanțul pick-urilor, până la <span data-date="{azi}">{_data_ro(azi)}</span></h2>
+    <h2 data-i18n="arhiva.bilant.h" data-i18n-vars='{date_vars}'>Bilanțul pick-urilor, până la <span data-date="{azi}">{_data_ro(azi)}</span></h2>
     <p data-i18n="arhiva.bilant.prospectiv">Bilanț prospectiv: numai analize cu intrări și versiune identificate prin hash, start original UTC și livrare observată înainte de start. Prima analiză eligibilă per meci, apoi primul pick per rol; alegerea nu folosește rezultatul. Fiecare rol este calculat separat. N numără pick-urile evaluabile la 90 de minute, nu toate analizele din arhivă. „Anunțat” este media probabilităților; Wilson jos este limita inferioară 95 %, fără garanția independenței perfecte dintre meciuri.</p>
     <p class="muted" data-i18n="arhiva.bilant.cohorta" data-i18n-vars='{{"total":"{n_tot}","elig":"{n_eligible}","excl":"{n_excluded}"}}'>Arhivă descriptivă: {n_tot} analize. Eligibile prospectiv: {n_eligible}; excluse sau duplicate: {n_excluded}. Analizele vechi fără dovada originală de publicare rămân lizibile, în afara acestui bilanț.</p>
     <div class="table-wrap"><table class="audit-table"><thead><tr><th data-i18n="arhiva.th.pick">Pick</th><th>N</th><th data-i18n="arhiva.th.iesit">A ieșit</th><th data-i18n="arhiva.th.wlo">Wilson jos</th><th data-i18n="arhiva.th.anuntat">Anunțat</th><th data-i18n="arhiva.th.dif">Diferența</th></tr></thead><tbody>{rows}</tbody></table></div>
@@ -809,7 +888,9 @@ def html_zi(z: dict, rez: dict, prev: str | None, nxt: str | None) -> str:
                 )
         return f"<div data-lang-grup>{''.join(var)}</div>" if len(var) > 1 else ro
 
-    arts = "".join(_multi(it) for it in z["items"])
+    # Cu recuperare, nota de publicare este distinctă de textele originale.
+    # Fără recuperare concatenarea cu șirul gol păstrează corpul analizelor.
+    arts = html_recuperare(z.get("_recovery")) + "".join(_multi(it) for it in z["items"])
     nav = " · ".join(
         x
         for x in [
@@ -824,9 +905,12 @@ def html_zi(z: dict, rez: dict, prev: str | None, nxt: str | None) -> str:
         if x
     )
     n_rez = sum(1 for it in z["items"] if rez.get(it["match"]["fixture_id"]))
+    title_vars = _vars({
+        "data": f'<span data-date="{z["zi"]}">{_data_ro(z["zi"])}</span>',
+    })
     corp = f"""
   <section class="intro">
-    <h1 data-i18n="arhiva.zi.h1" data-i18n-vars='{{"data":"<span data-date=\"{z["zi"]}\">{_data_ro(z["zi"])}</span>"}}'>Analizele Pro din <span data-date="{z["zi"]}">{_data_ro(z["zi"])}</span></h1>
+    <h1 data-i18n="arhiva.zi.h1" data-i18n-vars='{title_vars}'>Analizele Pro din <span data-date="{z["zi"]}">{_data_ro(z["zi"])}</span></h1>
     <p data-i18n="arhiva.zi.descriptiv" data-i18n-vars='{{"n":"{len(z["items"])}","rez":"{n_rez}"}}'>{len(z["items"])} analize arhivate, reproduse neschimbate; {n_rez} cu rezultat final și verificarea de a doua zi. <a href="index.html">Ce e Pro și bilanțul tuturor pick-urilor →</a></p>
     <p class="muted">{nav}</p>
   </section>
