@@ -1,9 +1,88 @@
 {
- "generated_at": "2026-10-28T05:50:05+02:00",
+ "generated_at": "2026-10-29T05:50:02+02:00",
  "zile": [
-  "2026-10-28"
+  "2026-10-29"
  ],
- "meciuri": {},
+ "meciuri": {
+  "1603076": {
+   "echipe": [
+    "Al-Nassr",
+    "Al Kholood"
+   ],
+   "familia": [
+    "2-1",
+    "2-0"
+   ],
+   "directia": "1",
+   "p1x2": [
+    64,
+    20,
+    17
+   ],
+   "goluri": {
+    "interval": [
+     2,
+     4
+    ],
+    "cel_mai_probabil": 3,
+    "p_interval": 61
+   },
+   "deschide": {
+    "echipa": "gazda",
+    "p": 68
+   },
+   "p00_pauza": 14,
+   "n": [
+    20,
+    20
+   ],
+   "versiune": "formule_psg 24 oct 2026",
+   "ko_utc": "2026-10-29T18:00:00Z",
+   "zi_ro": "2026-10-29",
+   "liga": "Pro League",
+   "tara": "Saudi-Arabia",
+   "lam": 3.18
+  },
+  "1603077": {
+   "echipe": [
+    "Al Riyadh",
+    "Al-Qadisiyah FC"
+   ],
+   "familia": [
+    "0-2",
+    "1-2"
+   ],
+   "directia": "2",
+   "p1x2": [
+    17,
+    20,
+    64
+   ],
+   "goluri": {
+    "interval": [
+     2,
+     4
+    ],
+    "cel_mai_probabil": 3,
+    "p_interval": 61
+   },
+   "deschide": {
+    "echipa": "oaspetele",
+    "p": 71
+   },
+   "p00_pauza": 26,
+   "n": [
+    20,
+    20
+   ],
+   "versiune": "formule_psg 24 oct 2026",
+   "ko_utc": "2026-10-29T18:00:00Z",
+   "zi_ro": "2026-10-29",
+   "liga": "Pro League",
+   "tara": "Saudi-Arabia",
+   "lam": 3.13
+  }
+ },
  "test": {
   "estimator": "proxy: λ doar din profilurile pe 20 de meciuri pe teren (backtest), nu formula completă din producție",
   "validare_formula_completa": "NU există încă: doar un diagnostic descriptiv pe un eșantion de 3189 meciuri din TEST 2026-04-01 → 2026-10-23 (backtest_formula_psg_2026-10-23.md, 24 oct 2026; soccerstats lipsă la 3265 din 3301): direcția 46,3 % (mereu 1: 43,1), AUC 0,627, BSS 1X2 +0,039; familia 22,3 (fix 21,2); intervalul 62,7 (1-3 fix 62,2); validarea cere date neatinse / forward; cifrele de mai jos rămân ale variantei simplificate (proxy), pe tot testul",
