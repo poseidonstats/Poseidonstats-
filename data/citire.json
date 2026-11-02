@@ -1,101 +1,23 @@
 {
- "generated_at": "2026-10-31T05:50:05+02:00",
+ "generated_at": "2026-11-01T05:50:05+02:00",
  "zile": [
-  "2026-10-31"
+  "2026-11-01"
  ],
  "meciuri": {
-  "1555413": {
+  "1584448": {
    "echipe": [
-    "Grasshoppers",
-    "FC Vaduz"
-   ],
-   "familia": [
-    "1-1",
-    "1-2"
-   ],
-   "directia": "2",
-   "p1x2": [
-    34,
-    23,
-    44
-   ],
-   "goluri": {
-    "interval": [
-     2,
-     4
-    ],
-    "cel_mai_probabil": 3,
-    "p_interval": 60
-   },
-   "deschide": {
-    "echipa": null,
-    "p": 38
-   },
-   "p00_pauza": 18,
-   "n": [
-    20,
-    20
-   ],
-   "versiune": "formule_psg 24 oct 2026",
-   "ko_utc": "2026-10-31T17:00:00Z",
-   "zi_ro": "2026-10-31",
-   "liga": "Super League",
-   "tara": "Switzerland",
-   "lam": 3.39
-  },
-  "1490585": {
-   "echipe": [
-    "FC Cincinnati",
-    "Philadelphia Union"
-   ],
-   "familia": [
-    "2-2",
-    "2-1"
-   ],
-   "directia": "1",
-   "p1x2": [
-    40,
-    21,
-    39
-   ],
-   "goluri": {
-    "interval": [
-     3,
-     5
-    ],
-    "cel_mai_probabil": 4,
-    "p_interval": 55
-   },
-   "deschide": {
-    "echipa": null,
-    "p": 52
-   },
-   "p00_pauza": 21,
-   "n": [
-    20,
-    20
-   ],
-   "versiune": "formule_psg 24 oct 2026",
-   "ko_utc": "2026-10-31T18:00:00Z",
-   "zi_ro": "2026-10-31",
-   "liga": "Major League Soccer",
-   "tara": "USA",
-   "lam": 4.05
-  },
-  "1603074": {
-   "echipe": [
-    "Al-Hilal Saudi FC",
-    "Al-Fateh"
+    "Amed",
+    "Eyüpspor"
    ],
    "familia": [
     "2-0",
-    "2-1"
+    "3-0"
    ],
    "directia": "1",
    "p1x2": [
-    70,
-    17,
-    13
+    81,
+    13,
+    6
    ],
    "goluri": {
     "interval": [
@@ -107,7 +29,7 @@
    },
    "deschide": {
     "echipa": "gazda",
-    "p": 72
+    "p": 73
    },
    "p00_pauza": 21,
    "n": [
@@ -115,26 +37,26 @@
     20
    ],
    "versiune": "formule_psg 24 oct 2026",
-   "ko_utc": "2026-10-31T18:00:00Z",
-   "zi_ro": "2026-10-31",
-   "liga": "Pro League",
-   "tara": "Saudi-Arabia",
-   "lam": 3.36
+   "ko_utc": "2026-11-01T10:30:00Z",
+   "zi_ro": "2026-11-01",
+   "liga": "Süper Lig",
+   "tara": "Turkey",
+   "lam": 3.29
   },
-  "1490595": {
+  "1552808": {
    "echipe": [
-    "St. Louis City",
-    "San Diego"
+    "Strasbourg",
+    "Auxerre"
    ],
    "familia": [
-    "2-1",
-    "1-1"
+    "1-1",
+    "2-1"
    ],
    "directia": "1",
    "p1x2": [
-    61,
-    19,
-    20
+    50,
+    22,
+    28
    ],
    "goluri": {
     "interval": [
@@ -142,28 +64,67 @@
      4
     ],
     "cel_mai_probabil": 3,
-    "p_interval": 57
+    "p_interval": 60
    },
    "deschide": {
     "echipa": null,
-    "p": 56
+    "p": 58
    },
-   "p00_pauza": 17,
+   "p00_pauza": 21,
    "n": [
     20,
     20
    ],
    "versiune": "formule_psg 24 oct 2026",
-   "ko_utc": "2026-10-31T19:00:00Z",
-   "zi_ro": "2026-10-31",
-   "liga": "Major League Soccer",
-   "tara": "USA",
-   "lam": 3.72
+   "ko_utc": "2026-11-01T14:00:00Z",
+   "zi_ro": "2026-11-01",
+   "liga": "Ligue 1",
+   "tara": "France",
+   "lam": 3.34
   },
-  "1555416": {
+  "1575207": {
    "echipe": [
-    "FC Luzern",
-    "FC Sion"
+    "Union Berlin",
+    "1. FC Köln"
+   ],
+   "familia": [
+    "1-1",
+    "2-1"
+   ],
+   "directia": "1",
+   "p1x2": [
+    48,
+    24,
+    28
+   ],
+   "goluri": {
+    "interval": [
+     1,
+     3
+    ],
+    "cel_mai_probabil": 2,
+    "p_interval": 62
+   },
+   "deschide": {
+    "echipa": null,
+    "p": 59
+   },
+   "p00_pauza": 39,
+   "n": [
+    20,
+    20
+   ],
+   "versiune": "formule_psg 24 oct 2026",
+   "ko_utc": "2026-11-01T14:30:00Z",
+   "zi_ro": "2026-11-01",
+   "liga": "Bundesliga",
+   "tara": "Germany",
+   "lam": 2.89
+  },
+  "1555414": {
+   "echipe": [
+    "Lausanne",
+    "FC Thun"
    ],
    "familia": [
     "1-1",
@@ -171,9 +132,9 @@
    ],
    "directia": "2",
    "p1x2": [
-    37,
-    21,
-    42
+    36,
+    23,
+    41
    ],
    "goluri": {
     "interval": [
@@ -181,23 +142,62 @@
      4
     ],
     "cel_mai_probabil": 3,
-    "p_interval": 57
+    "p_interval": 61
    },
    "deschide": {
     "echipa": null,
-    "p": 52
+    "p": 47
    },
-   "p00_pauza": 27,
+   "p00_pauza": 23,
    "n": [
     20,
     20
    ],
    "versiune": "formule_psg 24 oct 2026",
-   "ko_utc": "2026-10-31T19:30:00Z",
-   "zi_ro": "2026-10-31",
+   "ko_utc": "2026-11-01T15:30:00Z",
+   "zi_ro": "2026-11-01",
    "liga": "Super League",
    "tara": "Switzerland",
-   "lam": 3.73
+   "lam": 3.27
+  },
+  "1575205": {
+   "echipe": [
+    "Eintracht Frankfurt",
+    "Hamburger SV"
+   ],
+   "familia": [
+    "1-1",
+    "2-1"
+   ],
+   "directia": "1",
+   "p1x2": [
+    50,
+    23,
+    26
+   ],
+   "goluri": {
+    "interval": [
+     1,
+     3
+    ],
+    "cel_mai_probabil": 2,
+    "p_interval": 60
+   },
+   "deschide": {
+    "echipa": null,
+    "p": 60
+   },
+   "p00_pauza": 25,
+   "n": [
+    20,
+    20
+   ],
+   "versiune": "formule_psg 24 oct 2026",
+   "ko_utc": "2026-11-01T16:30:00Z",
+   "zi_ro": "2026-11-01",
+   "liga": "Bundesliga",
+   "tara": "Germany",
+   "lam": 2.99
   }
  },
  "test": {
