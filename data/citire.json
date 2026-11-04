@@ -1,23 +1,23 @@
 {
- "generated_at": "2026-11-02T05:50:05+02:00",
+ "generated_at": "2026-11-03T05:50:05+02:00",
  "zile": [
-  "2026-11-02"
+  "2026-11-03"
  ],
  "meciuri": {
-  "1553213": {
+  "1563244": {
    "echipe": [
-    "Radomiak Radom",
-    "Slask Wroclaw"
+    "QPR",
+    "Burnley"
    ],
    "familia": [
-    "1-1",
-    "2-1"
+    "2-1",
+    "1-1"
    ],
    "directia": "1",
    "p1x2": [
-    42,
-    24,
-    35
+    59,
+    21,
+    20
    ],
    "goluri": {
     "interval": [
@@ -29,112 +29,34 @@
    },
    "deschide": {
     "echipa": null,
-    "p": 53
+    "p": 51
    },
-   "p00_pauza": 23,
+   "p00_pauza": 21,
    "n": [
     20,
     20
    ],
    "versiune": "formule_psg 24 oct 2026",
-   "ko_utc": "2026-11-02T17:00:00Z",
-   "zi_ro": "2026-11-02",
-   "liga": "Ekstraklasa",
-   "tara": "Poland",
-   "lam": 3.07
+   "ko_utc": "2026-11-03T19:45:00Z",
+   "zi_ro": "2026-11-03",
+   "liga": "Championship",
+   "tara": "England",
+   "lam": 3.18
   },
-  "1593346": {
+  "1563245": {
    "echipe": [
-    "Kalamata",
-    "Iraklis 1908"
+    "Watford",
+    "Lincoln"
    ],
    "familia": [
     "1-1",
-    "1-0"
-   ],
-   "directia": "1",
-   "p1x2": [
-    50,
-    24,
-    26
-   ],
-   "goluri": {
-    "interval": [
-     1,
-     3
-    ],
-    "cel_mai_probabil": 2,
-    "p_interval": 62
-   },
-   "deschide": {
-    "echipa": null,
-    "p": 46
-   },
-   "p00_pauza": 33,
-   "n": [
-    20,
-    20
-   ],
-   "versiune": "formule_psg 24 oct 2026",
-   "ko_utc": "2026-11-02T17:30:00Z",
-   "zi_ro": "2026-11-02",
-   "liga": "Super League 1",
-   "tara": "Greece",
-   "lam": 2.88
-  },
-  "1553214": {
-   "echipe": [
-    "Raków Częstochowa",
-    "Pogon Szczecin"
-   ],
-   "familia": [
-    "1-1",
-    "1-2"
+    "0-1"
    ],
    "directia": "2",
    "p1x2": [
-    30,
-    24,
-    46
-   ],
-   "goluri": {
-    "interval": [
-     1,
-     3
-    ],
-    "cel_mai_probabil": 2,
-    "p_interval": 62
-   },
-   "deschide": {
-    "echipa": null,
-    "p": 41
-   },
-   "p00_pauza": 30,
-   "n": [
-    20,
-    20
-   ],
-   "versiune": "formule_psg 24 oct 2026",
-   "ko_utc": "2026-11-02T19:30:00Z",
-   "zi_ro": "2026-11-02",
-   "liga": "Ekstraklasa",
-   "tara": "Poland",
-   "lam": 2.9
-  },
-  "1552803": {
-   "echipe": [
-    "Lorient",
-    "Stade Brestois 29"
-   ],
-   "familia": [
-    "1-1",
-    "1-0"
-   ],
-   "directia": "1",
-   "p1x2": [
-    46,
-    26,
-    28
+    31,
+    27,
+    42
    ],
    "goluri": {
     "interval": [
@@ -146,58 +68,19 @@
    },
    "deschide": {
     "echipa": null,
-    "p": 54
+    "p": 36
    },
-   "p00_pauza": 28,
+   "p00_pauza": 35,
    "n": [
     20,
     20
    ],
    "versiune": "formule_psg 24 oct 2026",
-   "ko_utc": "2026-11-02T19:45:00Z",
-   "zi_ro": "2026-11-02",
-   "liga": "Ligue 1",
-   "tara": "France",
-   "lam": 2.52
-  },
-  "1575529": {
-   "echipe": [
-    "Benfica",
-    "Alverca"
-   ],
-   "familia": [
-    "2-1",
-    "2-0"
-   ],
-   "directia": "1",
-   "p1x2": [
-    63,
-    20,
-    17
-   ],
-   "goluri": {
-    "interval": [
-     2,
-     4
-    ],
-    "cel_mai_probabil": 3,
-    "p_interval": 60
-   },
-   "deschide": {
-    "echipa": null,
-    "p": 63
-   },
-   "p00_pauza": 22,
-   "n": [
-    20,
-    20
-   ],
-   "versiune": "formule_psg 24 oct 2026",
-   "ko_utc": "2026-11-02T20:15:00Z",
-   "zi_ro": "2026-11-02",
-   "liga": "Primeira Liga",
-   "tara": "Portugal",
-   "lam": 3.29
+   "ko_utc": "2026-11-03T19:45:00Z",
+   "zi_ro": "2026-11-03",
+   "liga": "Championship",
+   "tara": "England",
+   "lam": 2.5
   }
  },
  "test": {
