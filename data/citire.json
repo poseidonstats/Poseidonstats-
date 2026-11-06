@@ -1,101 +1,62 @@
 {
- "generated_at": "2026-11-04T05:50:05+02:00",
+ "generated_at": "2026-11-05T05:50:01+02:00",
  "zile": [
-  "2026-11-04"
+  "2026-11-05"
  ],
  "meciuri": {
-  "1636324": {
+  "1636223": {
    "echipe": [
-    "Rennes",
-    "Olympiakos Piraeus"
+    "Bayer Leverkusen",
+    "Marseille"
    ],
    "familia": [
-    "1-1",
-    "1-0"
+    "2-1",
+    "1-1"
    ],
    "directia": "1",
    "p1x2": [
-    48,
-    25,
+    51,
+    21,
     27
    ],
    "goluri": {
     "interval": [
-     1,
-     3
+     2,
+     4
     ],
-    "cel_mai_probabil": 2,
-    "p_interval": 63
+    "cel_mai_probabil": 3,
+    "p_interval": 59
    },
    "deschide": {
     "echipa": null,
-    "p": 41
+    "p": 61
    },
-   "p00_pauza": 27,
+   "p00_pauza": 21,
    "n": [
     20,
     20
    ],
    "versiune": "formule_psg 24 oct 2026",
-   "ko_utc": "2026-11-04T15:30:00Z",
-   "zi_ro": "2026-11-04",
+   "ko_utc": "2026-11-05T20:00:00Z",
+   "zi_ro": "2026-11-05",
    "liga": "UEFA Europa League",
    "tara": "World",
-   "lam": 2.78
+   "lam": 3.5
   },
-  "1560043": {
+  "1636229": {
    "echipe": [
-    "Artis",
-    "Bohemians 1905"
+    "Benfica",
+    "Lech Poznan"
    ],
    "familia": [
-    "1-1",
-    "1-2"
-   ],
-   "directia": "2",
-   "p1x2": [
-    32,
-    24,
-    44
-   ],
-   "goluri": {
-    "interval": [
-     1,
-     3
-    ],
-    "cel_mai_probabil": 2,
-    "p_interval": 61
-   },
-   "deschide": {
-    "echipa": null,
-    "p": 44
-   },
-   "p00_pauza": 27,
-   "n": [
-    20,
-    20
-   ],
-   "versiune": "formule_psg 24 oct 2026",
-   "ko_utc": "2026-11-04T17:00:00Z",
-   "zi_ro": "2026-11-04",
-   "liga": "Czech Liga",
-   "tara": "Czech-Republic",
-   "lam": 2.94
-  },
-  "1563248": {
-   "echipe": [
-    "Cardiff",
-    "West Ham"
-   ],
-   "familia": [
-    "1-1",
-    "2-1"
+    "2-1",
+    "1-1"
    ],
    "directia": "1",
    "p1x2": [
-    45,
-    23,
-    32
+    61,
+    20,
+    19
    ],
    "goluri": {
     "interval": [
@@ -103,62 +64,23 @@
      4
     ],
     "cel_mai_probabil": 3,
-    "p_interval": 61
+    "p_interval": 60
    },
    "deschide": {
     "echipa": null,
-    "p": 51
+    "p": 40
    },
-   "p00_pauza": 23,
+   "p00_pauza": 24,
    "n": [
     20,
     20
    ],
    "versiune": "formule_psg 24 oct 2026",
-   "ko_utc": "2026-11-04T19:45:00Z",
-   "zi_ro": "2026-11-04",
-   "liga": "Championship",
-   "tara": "England",
-   "lam": 3.21
-  },
-  "1563250": {
-   "echipe": [
-    "Wrexham",
-    "Middlesbrough"
-   ],
-   "familia": [
-    "1-1",
-    "1-2"
-   ],
-   "directia": "2",
-   "p1x2": [
-    30,
-    24,
-    46
-   ],
-   "goluri": {
-    "interval": [
-     2,
-     4
-    ],
-    "cel_mai_probabil": 3,
-    "p_interval": 61
-   },
-   "deschide": {
-    "echipa": null,
-    "p": 37
-   },
-   "p00_pauza": 19,
-   "n": [
-    20,
-    20
-   ],
-   "versiune": "formule_psg 24 oct 2026",
-   "ko_utc": "2026-11-04T19:45:00Z",
-   "zi_ro": "2026-11-04",
-   "liga": "Championship",
-   "tara": "England",
-   "lam": 3.06
+   "ko_utc": "2026-11-05T20:00:00Z",
+   "zi_ro": "2026-11-05",
+   "liga": "UEFA Europa League",
+   "tara": "World",
+   "lam": 3.28
   }
  },
  "test": {
