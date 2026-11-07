@@ -1,62 +1,62 @@
 {
- "generated_at": "2026-11-05T05:50:01+02:00",
+ "generated_at": "2026-11-06T05:50:04+02:00",
  "zile": [
-  "2026-11-05"
+  "2026-11-06"
  ],
  "meciuri": {
-  "1636223": {
+  "1576231": {
    "echipe": [
-    "Bayer Leverkusen",
-    "Marseille"
+    "Dynamo Dresden",
+    "SpVgg Greuther Furth"
    ],
    "familia": [
-    "2-1",
-    "1-1"
+    "1-1",
+    "2-1"
    ],
    "directia": "1",
    "p1x2": [
-    51,
-    21,
+    49,
+    24,
     27
    ],
    "goluri": {
     "interval": [
-     2,
-     4
+     1,
+     3
     ],
-    "cel_mai_probabil": 3,
-    "p_interval": 59
+    "cel_mai_probabil": 2,
+    "p_interval": 61
    },
    "deschide": {
-    "echipa": null,
-    "p": 61
+    "echipa": "gazda",
+    "p": 70
    },
-   "p00_pauza": 21,
+   "p00_pauza": 25,
    "n": [
     20,
     20
    ],
    "versiune": "formule_psg 24 oct 2026",
-   "ko_utc": "2026-11-05T20:00:00Z",
-   "zi_ro": "2026-11-05",
-   "liga": "UEFA Europa League",
-   "tara": "World",
-   "lam": 3.5
+   "ko_utc": "2026-11-06T17:30:00Z",
+   "zi_ro": "2026-11-06",
+   "liga": "2. Bundesliga",
+   "tara": "Germany",
+   "lam": 2.9
   },
-  "1636229": {
+  "1561963": {
    "echipe": [
-    "Benfica",
-    "Lech Poznan"
+    "Rapid Vienna",
+    "Wolfsberger AC"
    ],
    "familia": [
-    "2-1",
-    "1-1"
+    "2-0",
+    "3-0"
    ],
    "directia": "1",
    "p1x2": [
-    61,
-    20,
-    19
+    75,
+    15,
+    9
    ],
    "goluri": {
     "interval": [
@@ -67,20 +67,98 @@
     "p_interval": 60
    },
    "deschide": {
-    "echipa": null,
-    "p": 40
+    "echipa": "gazda",
+    "p": 76
    },
-   "p00_pauza": 24,
+   "p00_pauza": 19,
    "n": [
     20,
     20
    ],
    "versiune": "formule_psg 24 oct 2026",
-   "ko_utc": "2026-11-05T20:00:00Z",
-   "zi_ro": "2026-11-05",
-   "liga": "UEFA Europa League",
-   "tara": "World",
-   "lam": 3.28
+   "ko_utc": "2026-11-06T18:30:00Z",
+   "zi_ro": "2026-11-06",
+   "liga": "Bundesliga",
+   "tara": "Austria",
+   "lam": 3.3
+  },
+  "1575218": {
+   "echipe": [
+    "Hamburger SV",
+    "Borussia Monchengladbach"
+   ],
+   "familia": [
+    "1-1",
+    "2-1"
+   ],
+   "directia": "1",
+   "p1x2": [
+    46,
+    24,
+    31
+   ],
+   "goluri": {
+    "interval": [
+     2,
+     4
+    ],
+    "cel_mai_probabil": 3,
+    "p_interval": 62
+   },
+   "deschide": {
+    "echipa": null,
+    "p": 58
+   },
+   "p00_pauza": 28,
+   "n": [
+    20,
+    20
+   ],
+   "versiune": "formule_psg 24 oct 2026",
+   "ko_utc": "2026-11-06T19:30:00Z",
+   "zi_ro": "2026-11-06",
+   "liga": "Bundesliga",
+   "tara": "Germany",
+   "lam": 3.04
+  },
+  "1552817": {
+   "echipe": [
+    "Toulouse",
+    "Strasbourg"
+   ],
+   "familia": [
+    "1-1",
+    "2-1"
+   ],
+   "directia": "1",
+   "p1x2": [
+    41,
+    25,
+    34
+   ],
+   "goluri": {
+    "interval": [
+     1,
+     3
+    ],
+    "cel_mai_probabil": 2,
+    "p_interval": 61
+   },
+   "deschide": {
+    "echipa": null,
+    "p": 50
+   },
+   "p00_pauza": 31,
+   "n": [
+    20,
+    20
+   ],
+   "versiune": "formule_psg 24 oct 2026",
+   "ko_utc": "2026-11-06T19:45:00Z",
+   "zi_ro": "2026-11-06",
+   "liga": "Ligue 1",
+   "tara": "France",
+   "lam": 2.91
   }
  },
  "test": {
