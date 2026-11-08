@@ -1,23 +1,62 @@
 {
- "generated_at": "2026-11-07T05:50:05+02:00",
+ "generated_at": "2026-11-08T05:50:00+02:00",
  "zile": [
-  "2026-11-07"
+  "2026-11-08"
  ],
  "meciuri": {
-  "1563254": {
+  "1555422": {
    "echipe": [
-    "Cardiff",
-    "Burnley"
+    "FC ST. Gallen",
+    "FC Lugano"
    ],
    "familia": [
-    "2-1",
+    "1-2",
     "1-1"
+   ],
+   "directia": "2",
+   "p1x2": [
+    27,
+    22,
+    52
+   ],
+   "goluri": {
+    "interval": [
+     2,
+     4
+    ],
+    "cel_mai_probabil": 3,
+    "p_interval": 60
+   },
+   "deschide": {
+    "echipa": null,
+    "p": 45
+   },
+   "p00_pauza": 23,
+   "n": [
+    20,
+    20
+   ],
+   "versiune": "formule_psg 24 oct 2026",
+   "ko_utc": "2026-11-08T13:00:00Z",
+   "zi_ro": "2026-11-08",
+   "liga": "Super League",
+   "tara": "Switzerland",
+   "lam": 3.42
+  },
+  "1575219": {
+   "echipe": [
+    "1. FC Köln",
+    "Bayer Leverkusen"
+   ],
+   "familia": [
+    "1-1",
+    "2-1"
    ],
    "directia": "1",
    "p1x2": [
-    61,
-    20,
-    19
+    41,
+    23,
+    36
    ],
    "goluri": {
     "interval": [
@@ -29,24 +68,24 @@
    },
    "deschide": {
     "echipa": null,
-    "p": 54
+    "p": 46
    },
-   "p00_pauza": 18,
+   "p00_pauza": 28,
    "n": [
     20,
     20
    ],
    "versiune": "formule_psg 24 oct 2026",
-   "ko_utc": "2026-11-07T15:00:00Z",
-   "zi_ro": "2026-11-07",
-   "liga": "Championship",
-   "tara": "England",
-   "lam": 3.22
+   "ko_utc": "2026-11-08T14:30:00Z",
+   "zi_ro": "2026-11-08",
+   "liga": "Bundesliga",
+   "tara": "Germany",
+   "lam": 3.26
   },
-  "1575214": {
+  "1555421": {
    "echipe": [
-    "VfB Stuttgart",
-    "Werder Bremen"
+    "Servette FC",
+    "FC Zurich"
    ],
    "familia": [
     "1-1",
@@ -54,8 +93,8 @@
    ],
    "directia": "1",
    "p1x2": [
-    52,
-    22,
+    51,
+    23,
     26
    ],
    "goluri": {
@@ -68,24 +107,63 @@
    },
    "deschide": {
     "echipa": null,
-    "p": 61
+    "p": 50
    },
-   "p00_pauza": 26,
+   "p00_pauza": 23,
    "n": [
     20,
     20
    ],
    "versiune": "formule_psg 24 oct 2026",
-   "ko_utc": "2026-11-07T17:30:00Z",
-   "zi_ro": "2026-11-07",
+   "ko_utc": "2026-11-08T15:30:00Z",
+   "zi_ro": "2026-11-08",
+   "liga": "Super League",
+   "tara": "Switzerland",
+   "lam": 3.14
+  },
+  "1575216": {
+   "echipe": [
+    "SC Freiburg",
+    "Union Berlin"
+   ],
+   "familia": [
+    "2-1",
+    "2-0"
+   ],
+   "directia": "1",
+   "p1x2": [
+    69,
+    17,
+    14
+   ],
+   "goluri": {
+    "interval": [
+     2,
+     4
+    ],
+    "cel_mai_probabil": 3,
+    "p_interval": 58
+   },
+   "deschide": {
+    "echipa": "gazda",
+    "p": 66
+   },
+   "p00_pauza": 25,
+   "n": [
+    20,
+    20
+   ],
+   "versiune": "formule_psg 24 oct 2026",
+   "ko_utc": "2026-11-08T16:30:00Z",
+   "zi_ro": "2026-11-08",
    "liga": "Bundesliga",
    "tara": "Germany",
-   "lam": 3.25
+   "lam": 3.57
   },
-  "1576227": {
+  "1552818": {
    "echipe": [
-    "Hertha Berlin",
-    "VfL Wolfsburg"
+    "Lens",
+    "Marseille"
    ],
    "familia": [
     "1-1",
@@ -93,9 +171,9 @@
    ],
    "directia": "1",
    "p1x2": [
-    53,
+    45,
     22,
-    25
+    33
    ],
    "goluri": {
     "interval": [
@@ -107,97 +185,19 @@
    },
    "deschide": {
     "echipa": null,
-    "p": 51
+    "p": 56
    },
-   "p00_pauza": 23,
+   "p00_pauza": 24,
    "n": [
     20,
     20
    ],
    "versiune": "formule_psg 24 oct 2026",
-   "ko_utc": "2026-11-07T19:30:00Z",
-   "zi_ro": "2026-11-07",
-   "liga": "2. Bundesliga",
-   "tara": "Germany",
-   "lam": 3.31
-  },
-  "1490600": {
-   "echipe": [
-    "Inter Miami",
-    "Charlotte"
-   ],
-   "familia": [
-    "2-1",
-    "1-1"
-   ],
-   "directia": "1",
-   "p1x2": [
-    55,
-    20,
-    25
-   ],
-   "goluri": {
-    "interval": [
-     2,
-     4
-    ],
-    "cel_mai_probabil": 3,
-    "p_interval": 56
-   },
-   "deschide": {
-    "echipa": null,
-    "p": 49
-   },
-   "p00_pauza": 16,
-   "n": [
-    20,
-    20
-   ],
-   "versiune": "formule_psg 24 oct 2026",
-   "ko_utc": "2026-11-07T21:00:00Z",
-   "zi_ro": "2026-11-07",
-   "liga": "Major League Soccer",
-   "tara": "USA",
-   "lam": 3.78
-  },
-  "1490606": {
-   "echipe": [
-    "Orlando City SC",
-    "New England Revolution"
-   ],
-   "familia": [
-    "1-1",
-    "2-1"
-   ],
-   "directia": "1",
-   "p1x2": [
-    44,
-    22,
-    34
-   ],
-   "goluri": {
-    "interval": [
-     2,
-     4
-    ],
-    "cel_mai_probabil": 3,
-    "p_interval": 59
-   },
-   "deschide": {
-    "echipa": null,
-    "p": 55
-   },
-   "p00_pauza": 19,
-   "n": [
-    20,
-    20
-   ],
-   "versiune": "formule_psg 24 oct 2026",
-   "ko_utc": "2026-11-07T21:00:00Z",
-   "zi_ro": "2026-11-07",
-   "liga": "Major League Soccer",
-   "tara": "USA",
-   "lam": 3.53
+   "ko_utc": "2026-11-08T19:45:00Z",
+   "zi_ro": "2026-11-08",
+   "liga": "Ligue 1",
+   "tara": "France",
+   "lam": 3.42
   }
  },
  "test": {
