@@ -1,59 +1,69 @@
 {
- "generated_at": "2026-11-09T04:10:05+00:00",
+ "generated_at": "2026-11-10T03:23:34+00:00",
  "days": [
   {
-   "date": "2026-11-09",
+   "date": "2026-11-10",
    "status": "in_progress",
    "matches": [
     {
-     "fixture_id": 1555204,
-     "time": "19:00",
-     "country": "Israel",
-     "league": "Liga Leumit",
-     "home": "Hapoel Kfar Saba",
-     "away": "Maccabi Bnei Raina",
-     "calibrated_lg": true,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 81,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null,
-     "snapshot": "dayof"
-    },
-    {
-     "fixture_id": 1555206,
-     "time": "19:00",
-     "country": "Israel",
-     "league": "Liga Leumit",
-     "home": "Ironi Modi'in",
-     "away": "Hapoel Acre",
-     "calibrated_lg": true,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 76,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null,
-     "snapshot": "dayof"
-    },
-    {
-     "fixture_id": 1596991,
+     "fixture_id": 1595993,
      "time": "21:45",
      "country": "England",
-     "league": "Non League Premier - Southern Central",
-     "home": "Redditch United",
-     "away": "Peterborough Sports",
+     "league": "Non League Premier - Isthmian",
+     "home": "Cray Wanderers",
+     "away": "Three Bridges",
+     "calibrated_lg": true,
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 88,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "Over 2.5",
+       "prob": 70,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null,
+     "snapshot": "dayof"
+    },
+    {
+     "fixture_id": 1596051,
+     "time": "21:45",
+     "country": "England",
+     "league": "Non League Premier - Isthmian",
+     "home": "Enfield Town",
+     "away": "Lewes",
+     "calibrated_lg": true,
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 86,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "Over 2.5",
+       "prob": 68,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null,
+     "snapshot": "dayof"
+    },
+    {
+     "fixture_id": 1596514,
+     "time": "21:45",
+     "country": "England",
+     "league": "Non League Premier - Northern",
+     "home": "Quorn",
+     "away": "Stockton Town",
      "calibrated_lg": true,
      "picks": [
       {
@@ -63,7 +73,43 @@
       },
       {
        "market": "Over 2.5",
-       "prob": 66,
+       "prob": 67,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null,
+     "snapshot": "dayof"
+    },
+    {
+     "fixture_id": 1596515,
+     "time": "21:45",
+     "country": "England",
+     "league": "Non League Premier - Northern",
+     "home": "Redcar Athletic",
+     "away": "Bamber Bridge",
+     "calibrated_lg": true,
+     "picks": [
+      {
+       "market": "1X",
+       "prob": 91,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "Over 1.5",
+       "prob": 87,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "1 (Home)",
+       "prob": 79,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "Over 2.5",
+       "prob": 70,
        "outcome": "PENDING"
       }
      ],
@@ -75,176 +121,11 @@
     }
    ],
    "totals": {
-    "picks": 4,
+    "picks": 10,
     "wins": 0,
     "losses": 0,
-    "pending": 4,
-    "locked_pending": 109
-   }
-  },
-  {
-   "date": "2026-10-30",
-   "status": "partial",
-   "matches": [
-    {
-     "fixture_id": 1549530,
-     "time": "02:30",
-     "country": "Peru",
-     "league": "Primera División",
-     "home": "FBC Melgar",
-     "away": "Comerciantes Unidos",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "1X",
-       "prob": 84,
-       "outcome": "WIN"
-      },
-      {
-       "market": "Over 1.5",
-       "prob": 79,
-       "outcome": "WIN"
-      }
-     ],
-     "ft_h": 1,
-     "ft_a": 1,
-     "ht_h": 1,
-     "ht_a": 0,
-     "snapshot": "prima"
-    },
-    {
-     "fixture_id": 1646885,
-     "time": "00:00",
-     "country": "Brazil",
-     "league": "Paulista - U20",
-     "home": "Guarani U20",
-     "away": "Corinthians U20",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 75,
-       "outcome": "LOSS"
-      }
-     ],
-     "ft_h": 1,
-     "ft_a": 0,
-     "ht_h": 0,
-     "ht_a": 0,
-     "snapshot": "dayof"
-    },
-    {
-     "fixture_id": 1492430,
-     "time": "00:30",
-     "country": "Brazil",
-     "league": "Serie A",
-     "home": "Atletico-MG",
-     "away": "Cruzeiro",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Under 3.5",
-       "prob": 72,
-       "outcome": "WIN"
-      }
-     ],
-     "ft_h": 0,
-     "ft_a": 1,
-     "ht_h": 0,
-     "ht_a": 1,
-     "snapshot": "dayof"
-    },
-    {
-     "fixture_id": 1492439,
-     "time": "01:00",
-     "country": "Brazil",
-     "league": "Serie A",
-     "home": "Vasco DA Gama",
-     "away": "Flamengo",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Under 3.5",
-       "prob": 73,
-       "outcome": "LOSS"
-      }
-     ],
-     "ft_h": 1,
-     "ft_a": 4,
-     "ht_h": 1,
-     "ht_a": 2,
-     "snapshot": "dayof"
-    },
-    {
-     "fixture_id": 1559685,
-     "time": "02:00",
-     "country": "Guatemala",
-     "league": "Liga Nacional",
-     "home": "Antigua GFC",
-     "away": "Deportivo San Pedro",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 77,
-       "outcome": "LOSS"
-      }
-     ],
-     "ft_h": 1,
-     "ft_a": 0,
-     "ht_h": 0,
-     "ht_a": 0,
-     "snapshot": "prima"
-    },
-    {
-     "fixture_id": 1492436,
-     "time": "02:30",
-     "country": "Brazil",
-     "league": "Serie A",
-     "home": "Gremio",
-     "away": "Atletico Paranaense",
-     "calibrated_lg": false,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 76,
-       "outcome": "WIN"
-      }
-     ],
-     "ft_h": 2,
-     "ft_a": 0,
-     "ht_h": 1,
-     "ht_a": 0,
-     "snapshot": "prima"
-    },
-    {
-     "fixture_id": 1647409,
-     "time": "03:00",
-     "country": "Nicaragua",
-     "league": "Primera Division",
-     "home": "UNAN Managua",
-     "away": "Walter Ferretti",
-     "calibrated_lg": true,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 80,
-       "outcome": "WIN"
-      }
-     ],
-     "ft_h": 1,
-     "ft_a": 1,
-     "ht_h": 0,
-     "ht_a": 0,
-     "snapshot": "prima"
-    }
-   ],
-   "totals": {
-    "picks": 8,
-    "wins": 5,
-    "losses": 3,
-    "pending": 0,
-    "locked_pending": 470
+    "pending": 10,
+    "locked_pending": 115
    }
   }
  ],
@@ -335,9 +216,9 @@
   }
  ],
  "integritate": {
-  "total": 59045,
+  "total": 59132,
   "pastrate": 39367,
-  "nerezolvate": 10197,
+  "nerezolvate": 10284,
   "inghetate_dupa_start": 344,
   "reprogramate_peste_prag": 1,
   "recalibrare_indisponibila": 8765,
