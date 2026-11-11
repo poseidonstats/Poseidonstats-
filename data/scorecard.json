@@ -1,12 +1,12 @@
 {
- "generated_at": "2026-11-10T04:10:06+00:00",
+ "generated_at": "2026-11-11T03:56:54+00:00",
  "source": "poseidon_history.csv forward, snapshot-ul publicat (ziua meciului sau prima înghețare) cu Platt-ul în vigoare atunci; doar rânduri înghețate înainte de kickoff; meciuri din 2026-06-01 → 2026-10-30",
  "nota": "praguri și tier neschimbate față de 29 iun; cifrele refăcute zilnic pe jurnalul forward (publicare_jurnal.construieste_scorecard, 24 oct 2026)",
  "markets": [
   {
    "key": "1x2_home",
    "label": "1 (Home)",
-   "n": 39367,
+   "n": 39366,
    "base_rate": 0.4415,
    "auc": 0.6478,
    "ece_cal": 0.0081,
@@ -22,7 +22,7 @@
   {
    "key": "1x2_draw",
    "label": "X (Draw)",
-   "n": 39367,
+   "n": 39366,
    "base_rate": 0.2287,
    "auc": 0.5734,
    "ece_cal": 0.0041,
@@ -38,7 +38,7 @@
   {
    "key": "1x2_away",
    "label": "2 (Away)",
-   "n": 39367,
+   "n": 39366,
    "base_rate": 0.3298,
    "auc": 0.6571,
    "ece_cal": 0.0067,
@@ -54,7 +54,7 @@
   {
    "key": "dc_1x",
    "label": "1X (dublă)",
-   "n": 39367,
+   "n": 39366,
    "base_rate": 0.6702,
    "auc": 0.6571,
    "ece_cal": 0.0067,
@@ -70,7 +70,7 @@
   {
    "key": "dc_x2",
    "label": "X2 (dublă)",
-   "n": 39367,
+   "n": 39366,
    "base_rate": 0.5585,
    "auc": 0.6478,
    "ece_cal": 0.0081,
@@ -86,7 +86,7 @@
   {
    "key": "dc_12",
    "label": "12 (dublă)",
-   "n": 39367,
+   "n": 39366,
    "base_rate": 0.7713,
    "auc": 0.5734,
    "ece_cal": 0.0041,
@@ -102,15 +102,15 @@
   {
    "key": "over_1_5",
    "label": "Over 1.5",
-   "n": 39367,
+   "n": 39366,
    "base_rate": 0.7831,
    "auc": 0.626,
    "ece_cal": 0.0079,
-   "brier": 0.164,
+   "brier": 0.1641,
    "logloss": 0.5057,
-   "hit_at_threshold": 0.8266,
+   "hit_at_threshold": 0.8265,
    "threshold": 0.75,
-   "n_picks": 25985,
+   "n_picks": 25984,
    "lift_pp": 4.3,
    "skill_stars": 0,
    "tier": "PICK"
@@ -118,7 +118,7 @@
   {
    "key": "over_2_5",
    "label": "Over 2.5",
-   "n": 39367,
+   "n": 39366,
    "base_rate": 0.5724,
    "auc": 0.6246,
    "ece_cal": 0.0116,
@@ -134,7 +134,7 @@
   {
    "key": "over_3_5",
    "label": "Over 3.5",
-   "n": 39367,
+   "n": 39366,
    "base_rate": 0.3605,
    "auc": 0.635,
    "ece_cal": 0.0132,
@@ -150,7 +150,7 @@
   {
    "key": "under_2_5",
    "label": "Under 2.5",
-   "n": 39367,
+   "n": 39366,
    "base_rate": 0.4276,
    "auc": 0.6246,
    "ece_cal": 0.0116,
@@ -166,7 +166,7 @@
   {
    "key": "under_3_5",
    "label": "Under 3.5",
-   "n": 39367,
+   "n": 39366,
    "base_rate": 0.6395,
    "auc": 0.635,
    "ece_cal": 0.0132,
@@ -182,7 +182,7 @@
   {
    "key": "btts",
    "label": "BTTS (GG)",
-   "n": 39367,
+   "n": 39366,
    "base_rate": 0.5487,
    "auc": 0.5699,
    "ece_cal": 0.0083,
@@ -198,7 +198,7 @@
   {
    "key": "ng",
    "label": "NG (no GG)",
-   "n": 39367,
+   "n": 39366,
    "base_rate": 0.4513,
    "auc": 0.5699,
    "ece_cal": 0.0083,

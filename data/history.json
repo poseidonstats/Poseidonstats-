@@ -1,27 +1,22 @@
 {
- "generated_at": "2026-11-10T04:10:06+00:00",
+ "generated_at": "2026-11-11T03:56:54+00:00",
  "days": [
   {
-   "date": "2026-11-10",
+   "date": "2026-11-11",
    "status": "in_progress",
    "matches": [
     {
-     "fixture_id": 1595993,
-     "time": "21:45",
-     "country": "England",
-     "league": "Non League Premier - Isthmian",
-     "home": "Cray Wanderers",
-     "away": "Three Bridges",
+     "fixture_id": 1579841,
+     "time": "15:30",
+     "country": "Belgium",
+     "league": "First Amateur Division",
+     "home": "Onhaye",
+     "away": "Habay-la-Neuve",
      "calibrated_lg": true,
      "picks": [
       {
        "market": "Over 1.5",
-       "prob": 88,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "Over 2.5",
-       "prob": 70,
+       "prob": 80,
        "outcome": "PENDING"
       }
      ],
@@ -32,43 +27,84 @@
      "snapshot": "dayof"
     },
     {
-     "fixture_id": 1596051,
-     "time": "21:45",
-     "country": "England",
-     "league": "Non League Premier - Isthmian",
-     "home": "Enfield Town",
-     "away": "Lewes",
+     "fixture_id": 1591074,
+     "time": "12:00",
+     "country": "Turkey",
+     "league": "3. Lig - Group 3",
+     "home": "Karaman Belediyespor",
+     "away": "Talasgücü Belediyespor",
      "calibrated_lg": true,
      "picks": [
+      {
+       "market": "X2",
+       "prob": 88,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "Over 1.5",
+       "prob": 83,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null,
+     "snapshot": "dayof"
+    },
+    {
+     "fixture_id": 1591078,
+     "time": "12:00",
+     "country": "Turkey",
+     "league": "3. Lig - Group 3",
+     "home": "Yeni Malatyaspor",
+     "away": "Kırıkkale Büyük Anadolu",
+     "calibrated_lg": true,
+     "picks": [
+      {
+       "market": "X2",
+       "prob": 87,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "Over 1.5",
+       "prob": 85,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "Over 2.5",
+       "prob": 66,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null,
+     "snapshot": "dayof"
+    },
+    {
+     "fixture_id": 1647357,
+     "time": "14:00",
+     "country": "World",
+     "league": "Friendlies",
+     "home": "Vietnam",
+     "away": "Chinese Taipei",
+     "calibrated_lg": true,
+     "picks": [
+      {
+       "market": "1X",
+       "prob": 92,
+       "outcome": "PENDING"
+      },
       {
        "market": "Over 1.5",
        "prob": 86,
        "outcome": "PENDING"
       },
       {
-       "market": "Over 2.5",
-       "prob": 68,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null,
-     "snapshot": "dayof"
-    },
-    {
-     "fixture_id": 1596514,
-     "time": "21:45",
-     "country": "England",
-     "league": "Non League Premier - Northern",
-     "home": "Quorn",
-     "away": "Stockton Town",
-     "calibrated_lg": true,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 85,
+       "market": "1 (Home)",
+       "prob": 80,
        "outcome": "PENDING"
       },
       {
@@ -84,32 +120,17 @@
      "snapshot": "dayof"
     },
     {
-     "fixture_id": 1596515,
+     "fixture_id": 1597462,
      "time": "21:45",
      "country": "England",
-     "league": "Non League Premier - Northern",
-     "home": "Redcar Athletic",
-     "away": "Bamber Bridge",
+     "league": "Non League Premier - Southern South",
+     "home": "Frome Town",
+     "away": "Plymouth Parkway",
      "calibrated_lg": true,
      "picks": [
       {
-       "market": "1X",
-       "prob": 91,
-       "outcome": "PENDING"
-      },
-      {
        "market": "Over 1.5",
-       "prob": 87,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "1 (Home)",
-       "prob": 79,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "Over 2.5",
-       "prob": 70,
+       "prob": 81,
        "outcome": "PENDING"
       }
      ],
@@ -121,11 +142,11 @@
     }
    ],
    "totals": {
-    "picks": 10,
+    "picks": 11,
     "wins": 0,
     "losses": 0,
-    "pending": 10,
-    "locked_pending": 115
+    "pending": 11,
+    "locked_pending": 217
    }
   }
  ],
@@ -141,7 +162,7 @@
    "wlo_pct": 70.1,
    "tier": "ROBUST",
    "base_rate_pct": 43.9,
-   "base_n": 34293,
+   "base_n": 34292,
    "lift_pp": 28.2
   },
   {
@@ -155,7 +176,7 @@
    "wlo_pct": 83.1,
    "tier": "STRONG ROBUST",
    "base_rate_pct": 67.3,
-   "base_n": 34293,
+   "base_n": 34292,
    "lift_pp": 16.9
   },
   {
@@ -169,21 +190,21 @@
    "wlo_pct": 83.1,
    "tier": "STRONG ROBUST",
    "base_rate_pct": 56.1,
-   "base_n": 34293,
+   "base_n": 34292,
    "lift_pp": 29.5
   },
   {
    "key": "over_1_5",
    "name": "Over 1.5",
    "threshold": 0.75,
-   "n": 21785,
-   "wins": 17913,
+   "n": 21784,
+   "wins": 17912,
    "losses": 3872,
    "hit_pct": 82.2,
    "wlo_pct": 81.7,
    "tier": "STRONG ROBUST",
    "base_rate_pct": 77.7,
-   "base_n": 34293,
+   "base_n": 34292,
    "lift_pp": 4.5
   },
   {
@@ -197,7 +218,7 @@
    "wlo_pct": 71.0,
    "tier": "ROBUST",
    "base_rate_pct": 56.3,
-   "base_n": 34293,
+   "base_n": 34292,
    "lift_pp": 15.9
   },
   {
@@ -211,19 +232,19 @@
    "wlo_pct": 74.7,
    "tier": "STRONG ROBUST",
    "base_rate_pct": 65.0,
-   "base_n": 34293,
+   "base_n": 34292,
    "lift_pp": 10.4
   }
  ],
  "integritate": {
-  "total": 59132,
-  "pastrate": 39367,
-  "nerezolvate": 10284,
+  "total": 59235,
+  "pastrate": 39366,
+  "nerezolvate": 10387,
   "inghetate_dupa_start": 344,
-  "reprogramate_peste_prag": 1,
+  "reprogramate_peste_prag": 2,
   "recalibrare_indisponibila": 8765,
   "tinta90_neeligibila": 371,
   "ht_eligibile": 38593
  },
- "note": "Cohortă calibrată eligibilă N=34293. Probabilitatea este reconstruită din snapshot-ul brut înghețat și versiunea Platt arhivată disponibilă la acel moment; cazurile cu disponibilitate necunoscută sunt excluse. Aceasta nu certifică blobul efectiv servit sau toate intrările istorice. Regulile de selecție sunt cele din scorecard; FT folosește ținta90 verificată; HT are eligibilitate și N separate. Baza este frecvența evenimentului în cohorta evaluată, iar lift = hit − bază."
+ "note": "Cohortă calibrată eligibilă N=34292. Probabilitatea este reconstruită din snapshot-ul brut înghețat și versiunea Platt arhivată disponibilă la acel moment; cazurile cu disponibilitate necunoscută sunt excluse. Aceasta nu certifică blobul efectiv servit sau toate intrările istorice. Regulile de selecție sunt cele din scorecard; FT folosește ținta90 verificată; HT are eligibilitate și N separate. Baza este frecvența evenimentului în cohorta evaluată, iar lift = hit − bază."
 }

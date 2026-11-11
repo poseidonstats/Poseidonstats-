@@ -1,17 +1,17 @@
 {
- "generated_at": "2026-11-10T04:10:06+00:00",
- "n_total": 59132,
- "n_resolved": 39367,
+ "generated_at": "2026-11-11T03:56:54+00:00",
+ "n_total": 59235,
+ "n_resolved": 39366,
  "n_ht_eligible": 38593,
- "n_pending": 8757,
+ "n_pending": 8860,
  "n_not_played": 796,
  "n_replayed_far": 731,
  "integritate": {
-  "total": 59132,
-  "pastrate": 39367,
-  "nerezolvate": 10284,
+  "total": 59235,
+  "pastrate": 39366,
+  "nerezolvate": 10387,
   "inghetate_dupa_start": 344,
-  "reprogramate_peste_prag": 1,
+  "reprogramate_peste_prag": 2,
   "recalibrare_indisponibila": 8765,
   "tinta90_neeligibila": 371,
   "ht_eligibile": 38593
@@ -39,7 +39,7 @@
     },
     {
      "range": "70–80%",
-     "n": 17776,
+     "n": 17775,
      "hit_pct": 76.25,
      "wlo_pct": 75.62,
      "diff_pp": 0.71,
@@ -68,9 +68,9 @@
    "buckets": [
     {
      "range": "50–60%",
-     "n": 14640,
+     "n": 14639,
      "hit_pct": 55.97,
-     "wlo_pct": 55.16,
+     "wlo_pct": 55.17,
      "diff_pp": 0.85,
      "low_sample": false
     },
@@ -158,8 +158,8 @@
    "buckets": [
     {
      "range": "50–60%",
-     "n": 23540,
-     "hit_pct": 55.59,
+     "n": 23539,
+     "hit_pct": 55.58,
      "wlo_pct": 54.95,
      "diff_pp": 0.79,
      "low_sample": false
