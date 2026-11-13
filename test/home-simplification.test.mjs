@@ -159,15 +159,57 @@ test('initial hash, hashchange and native fragment clicks reveal disclosures whi
   } finally {globalThis.fetch=priorFetch;}
 });
 
-test('opening initially closed evidence redraws charts at their actual available width',async()=>{
+async function withMountedCharts(journal, run) {
   const env=mountedDocument(),charts=[{innerHTML:'',clientWidth:0},{innerHTML:'',clientWidth:0}];
   const evidence=control();evidence.open=false;env.nodes['dashboard-evidence-details']=evidence;
   env.doc.querySelectorAll=selector=>selector==='[data-dashboard-chart]'?charts:[];
-  const priorFetch=globalThis.fetch;
-  globalThis.fetch=async path=>({ok:path!=='analize/index.html',json:async()=>({'data/predictions.json':predictions,'data/history.json':history,'data/audit.json':audit})[path]});
+  const priorFetch=globalThis.fetch,priorT=globalThis.t;
+  globalThis.t=translate;
+  globalThis.fetch=async path=>({ok:path!=='analize/index.html',json:async()=>({'data/predictions.json':predictions,'data/history.json':journal,'data/audit.json':audit})[path]});
   try {
-    await dashboard.mount(env.doc);assert(charts[0].innerHTML.includes('viewBox="0 0 560 160"'));
-    charts[0].clientWidth=368;charts[1].clientWidth=368;evidence.open=true;evidence.listeners.toggle();
+    await dashboard.mount(env.doc);
+    await run({...env,charts,evidence});
+  } finally {
+    globalThis.fetch=priorFetch;
+    if(priorT===undefined)delete globalThis.t;else globalThis.t=priorT;
+  }
+}
+
+// Synthetic UI-only journal: the layout check must not depend on daily settlement.
+// Removing the toggle/resize handlers must break these assertions.
+const chartJournal={cumulated_markets:[],days:[
+  {date:'2026-10-21',status:'complete',totals:{wins:6,losses:4,pending:0}},
+  {date:'2026-10-22',status:'partial',totals:{wins:12,losses:8,pending:3}}
+]};
+
+test('opening initially closed evidence redraws charts at their actual available width',async()=>{
+  await withMountedCharts(chartJournal,async({doc,charts,evidence,viewListeners})=>{
+    assert(charts[0].innerHTML.includes('viewBox="0 0 560 160"'));
+    assert(charts[1].innerHTML.includes('viewBox="0 0 340 160"'));
+    charts.forEach(chart=>{chart.clientWidth=368;});evidence.open=true;evidence.listeners.toggle();
     assert(charts.every(chart=>chart.innerHTML.includes('viewBox="0 0 368 160"')&&chart.innerHTML.includes('preserveAspectRatio="xMidYMid meet"')));
-  } finally {globalThis.fetch=priorFetch;}
+    charts.forEach(chart=>{chart.clientWidth=320;});viewListeners.resize();
+    assert(charts.every(chart=>chart.innerHTML.includes('viewBox="0 0 320 160"')));
+    doc.defaultView.innerWidth=1440;charts[0].clientWidth=560;charts[1].clientWidth=340;
+    viewListeners.resize();
+    assert(charts[0].innerHTML.includes('viewBox="0 0 560 95"'));
+    assert(charts[1].innerHTML.includes('viewBox="0 0 340 95"'));
+  });
 });
+
+for(const [label,days] of [
+  ['empty',[]],
+  ['pending-only',[{date:'2026-10-22',status:'in_progress',totals:{wins:0,losses:0,pending:12}}]]
+]) {
+  test(`${label} evidence stays explicitly unavailable after opening and resizing`,async()=>{
+    await withMountedCharts({cumulated_markets:[],days},async({charts,evidence,viewListeners})=>{
+      const assertUnavailable=()=>charts.forEach(chart=>{
+        assert(chart.innerHTML.includes(translate('dashboard.data.unavailable')));
+        assert.doesNotMatch(chart.innerHTML,/<svg\b/);
+      });
+      assertUnavailable();
+      charts.forEach(chart=>{chart.clientWidth=368;});evidence.open=true;evidence.listeners.toggle();
+      assertUnavailable();viewListeners.resize();assertUnavailable();
+    });
+  });
+}

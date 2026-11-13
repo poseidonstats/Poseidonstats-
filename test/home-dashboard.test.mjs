@@ -177,13 +177,10 @@ test('all six dictionaries preserve original values except the explicitly author
 
 test('compact KPI disclosure and right-side summaries preserve each real source sample', async () => {
   const kpis = [{innerHTML:''},{innerHTML:''}], summary = {innerHTML:''};
-  const charts=[{innerHTML:'',clientWidth:334},{innerHTML:'',clientWidth:334}];
-  let resize;
   const doc = {
     documentElement:{lang:'en'},
-    defaultView:{innerWidth:390,addEventListener:(type,callback)=>{if(type==='resize') resize=callback;}},
     querySelector:selector => selector === '[data-dashboard-kpis]' ? kpis[0] : null,
-    querySelectorAll:selector => selector === '[data-dashboard-kpis]' ? kpis : selector === '[data-dashboard-chart]' ? charts : [],
+    querySelectorAll:selector => selector === '[data-dashboard-kpis]' ? kpis : [],
     getElementById:id => id === 'dashboard-track-summary' ? summary : null,
     addEventListener:()=>{}
   };
@@ -207,11 +204,6 @@ test('compact KPI disclosure and right-side summaries preserve each real source 
     assert.equal((summary.innerHTML.match(/class="dashboard-market-summary"/g)||[]).length,3);
     for (const value of [num(record.n),`${num(record.wlo_pct)}%`,num(brierSample.n),audit.generat_la]) assert(summary.innerHTML.includes(value),value);
     assert(summary.innerHTML.includes(tr('dashboard.track.context').replace('{date}',audit.generat_la)));
-    assert(charts.every(chart=>chart.innerHTML.includes('viewBox="0 0 334 160"')),'mobile charts keep viewport-matched label sizing');
-    doc.defaultView.innerWidth=1440;charts[0].clientWidth=560;charts[1].clientWidth=340;
-    resize();
-    assert(charts[0].innerHTML.includes('viewBox="0 0 560 95"'));
-    assert(charts[1].innerHTML.includes('viewBox="0 0 340 95"'));
   } finally {
     globalThis.fetch=previousFetch;
     if (previousT === undefined) delete globalThis.t; else globalThis.t=previousT;
