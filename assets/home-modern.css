@@ -56,6 +56,10 @@ body.home-modern {
 .home-modern .dashboard-hero h1 span { color: var(--dash-gold); }
 .home-modern .dashboard-hero-copy > p { font-size: 14px; color: #d9e3eb; max-width: 610px; line-height: 1.55; margin-bottom: 16px; }
 .home-modern .dashboard-hero-actions { display: flex; flex-wrap: wrap; gap: 13px; }
+.home-modern .app-store-download { margin-top: 20px; padding: 0 0 13px; }
+.home-modern .app-store-badge { display: inline-block; vertical-align: top; border-radius: 7px; text-decoration: none; }
+.home-modern .app-store-badge img { display: block; height: 52px; width: auto; max-width: 100%; }
+.home-modern .app-store-badge:focus-visible { outline: 2px solid var(--dash-gold); outline-offset: 6px; }
 .home-modern :is(.gold-button, .outline-button) { display: inline-flex; align-items: center; justify-content: center; gap: 12px; min-height: 43px; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: 650; }
 .home-modern .gold-button { background: linear-gradient(#ffe68c, #e9b23e); border: 1px solid #ffdc75; color: #171b20; box-shadow: 0 3px 12px #0004; }
 .home-modern .gold-button::after { content: "→"; font-size: 20px; }
