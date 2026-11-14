@@ -1,79 +1,17 @@
 {
- "generated_at": "2026-11-13T04:10:07+00:00",
+ "generated_at": "2026-11-14T03:24:22+00:00",
  "days": [
   {
-   "date": "2026-11-13",
+   "date": "2026-11-14",
    "status": "in_progress",
    "matches": [
     {
-     "fixture_id": 1577828,
-     "time": "20:00",
-     "country": "Denmark",
-     "league": "3. Division",
-     "home": "FC Helsingor",
-     "away": "Holstebro",
-     "calibrated_lg": true,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 87,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "Over 2.5",
-       "prob": 69,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null,
-     "snapshot": "dayof"
-    },
-    {
-     "fixture_id": 1609962,
-     "time": "14:00",
-     "country": "Bosnia",
-     "league": "1st League - RS",
-     "home": "Drina Zvornik",
-     "away": "Velež Nevesinje",
-     "calibrated_lg": true,
-     "picks": [
-      {
-       "market": "1X",
-       "prob": 92,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "Over 1.5",
-       "prob": 87,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "1 (Home)",
-       "prob": 80,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "Over 2.5",
-       "prob": 69,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null,
-     "snapshot": "dayof"
-    },
-    {
-     "fixture_id": 1649542,
-     "time": "18:30",
+     "fixture_id": 1647638,
+     "time": "08:00",
      "country": "World",
      "league": "Friendlies",
-     "home": "Kuwait",
-     "away": "Syria",
+     "home": "Bahrain",
+     "away": "Yemen",
      "calibrated_lg": true,
      "picks": [
       {
@@ -89,33 +27,12 @@
      "snapshot": "dayof"
     },
     {
-     "fixture_id": 1649543,
-     "time": "18:30",
-     "country": "World",
-     "league": "Friendlies",
-     "home": "Poland U21",
-     "away": "Norway U21",
-     "calibrated_lg": true,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 82,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null,
-     "snapshot": "dayof"
-    },
-    {
-     "fixture_id": 1649576,
-     "time": "18:00",
-     "country": "Liberia",
-     "league": "LFA First Division",
-     "home": "BEA Mountain",
-     "away": "Paynesville",
+     "fixture_id": 1579183,
+     "time": "15:00",
+     "country": "Czech-Republic",
+     "league": "4. liga - Divizie E",
+     "home": "Nové Sady",
+     "away": "SK Krumvir",
      "calibrated_lg": true,
      "picks": [
       {
@@ -124,18 +41,91 @@
        "outcome": "PENDING"
       },
       {
+       "market": "Over 2.5",
+       "prob": 71,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null,
+     "snapshot": "dayof"
+    },
+    {
+     "fixture_id": 1581192,
+     "time": "15:00",
+     "country": "Germany",
+     "league": "Oberliga - Hessen",
+     "home": "Eintracht Stadtallendorf",
+     "away": "Hummetroth",
+     "calibrated_lg": true,
+     "picks": [
+      {
        "market": "1X",
-       "prob": 85,
+       "prob": 90,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "Over 1.5",
+       "prob": 88,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "1 (Home)",
+       "prob": 78,
        "outcome": "PENDING"
       },
       {
        "market": "Over 2.5",
        "prob": 71,
        "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null,
+     "snapshot": "dayof"
+    },
+    {
+     "fixture_id": 1582503,
+     "time": "15:30",
+     "country": "Germany",
+     "league": "Oberliga - Baden-Württemberg",
+     "home": "FC Holzhausen",
+     "away": "Türkspor Neckarsulm",
+     "calibrated_lg": true,
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 88,
+       "outcome": "PENDING"
       },
       {
-       "market": "1 (Home)",
-       "prob": 69,
+       "market": "Over 2.5",
+       "prob": 71,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null,
+     "snapshot": "dayof"
+    },
+    {
+     "fixture_id": 1648285,
+     "time": "17:00",
+     "country": "World",
+     "league": "Friendlies",
+     "home": "Palestine",
+     "away": "Iran",
+     "calibrated_lg": true,
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 80,
        "outcome": "PENDING"
       }
      ],
@@ -147,11 +137,11 @@
     }
    ],
    "totals": {
-    "picks": 12,
+    "picks": 10,
     "wins": 0,
     "losses": 0,
-    "pending": 12,
-    "locked_pending": 277
+    "pending": 10,
+    "locked_pending": 1240
    }
   }
  ],
@@ -242,9 +232,9 @@
   }
  ],
  "integritate": {
-  "total": 59457,
+  "total": 59777,
   "pastrate": 39366,
-  "nerezolvate": 10609,
+  "nerezolvate": 10929,
   "inghetate_dupa_start": 344,
   "reprogramate_peste_prag": 2,
   "recalibrare_indisponibila": 8765,
