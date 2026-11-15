@@ -1,48 +1,27 @@
 {
- "generated_at": "2026-11-14T04:10:05+00:00",
+ "generated_at": "2026-11-15T03:25:17+00:00",
  "days": [
   {
-   "date": "2026-11-14",
+   "date": "2026-11-15",
    "status": "in_progress",
    "matches": [
     {
-     "fixture_id": 1647638,
-     "time": "08:00",
+     "fixture_id": 1586133,
+     "time": "05:10",
      "country": "World",
      "league": "Friendlies",
-     "home": "Bahrain",
-     "away": "Yemen",
+     "home": "New Zealand",
+     "away": "India",
      "calibrated_lg": true,
      "picks": [
       {
        "market": "Over 1.5",
-       "prob": 82,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null,
-     "snapshot": "dayof"
-    },
-    {
-     "fixture_id": 1579183,
-     "time": "15:00",
-     "country": "Czech-Republic",
-     "league": "4. liga - Divizie E",
-     "home": "Nové Sady",
-     "away": "SK Krumvir",
-     "calibrated_lg": true,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 88,
+       "prob": 84,
        "outcome": "PENDING"
       },
       {
        "market": "Over 2.5",
-       "prob": 71,
+       "prob": 65,
        "outcome": "PENDING"
       }
      ],
@@ -50,35 +29,20 @@
      "ft_a": null,
      "ht_h": null,
      "ht_a": null,
-     "snapshot": "dayof"
+     "snapshot": "prima"
     },
     {
-     "fixture_id": 1581192,
-     "time": "15:00",
-     "country": "Germany",
-     "league": "Oberliga - Hessen",
-     "home": "Eintracht Stadtallendorf",
-     "away": "Hummetroth",
+     "fixture_id": 1647366,
+     "time": "14:00",
+     "country": "World",
+     "league": "Friendlies",
+     "home": "Kyrgyzstan",
+     "away": "Vietnam",
      "calibrated_lg": true,
      "picks": [
       {
-       "market": "1X",
-       "prob": 90,
-       "outcome": "PENDING"
-      },
-      {
        "market": "Over 1.5",
-       "prob": 88,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "1 (Home)",
-       "prob": 78,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "Over 2.5",
-       "prob": 71,
+       "prob": 76,
        "outcome": "PENDING"
       }
      ],
@@ -89,12 +53,12 @@
      "snapshot": "dayof"
     },
     {
-     "fixture_id": 1582503,
+     "fixture_id": 1581197,
      "time": "15:30",
      "country": "Germany",
-     "league": "Oberliga - Baden-Württemberg",
-     "home": "FC Holzhausen",
-     "away": "Türkspor Neckarsulm",
+     "league": "Oberliga - Hessen",
+     "home": "TuBa Pohlheim",
+     "away": "Rot-Weiß Walldorf",
      "calibrated_lg": true,
      "picks": [
       {
@@ -115,17 +79,22 @@
      "snapshot": "dayof"
     },
     {
-     "fixture_id": 1648285,
-     "time": "17:00",
-     "country": "World",
-     "league": "Friendlies",
-     "home": "Palestine",
-     "away": "Iran",
+     "fixture_id": 1580016,
+     "time": "16:00",
+     "country": "Belgium",
+     "league": "First Amateur Division",
+     "home": "Zelzate",
+     "away": "Spouwen-Mopertingen",
      "calibrated_lg": true,
      "picks": [
       {
        "market": "Over 1.5",
-       "prob": 80,
+       "prob": 87,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "Over 2.5",
+       "prob": 70,
        "outcome": "PENDING"
       }
      ],
@@ -137,11 +106,11 @@
     }
    ],
    "totals": {
-    "picks": 10,
+    "picks": 7,
     "wins": 0,
     "losses": 0,
-    "pending": 10,
-    "locked_pending": 1240
+    "pending": 7,
+    "locked_pending": 763
    }
   }
  ],
@@ -232,9 +201,9 @@
   }
  ],
  "integritate": {
-  "total": 59777,
+  "total": 60994,
   "pastrate": 39366,
-  "nerezolvate": 10929,
+  "nerezolvate": 12146,
   "inghetate_dupa_start": 344,
   "reprogramate_peste_prag": 2,
   "recalibrare_indisponibila": 8765,
