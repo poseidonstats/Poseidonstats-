@@ -1,48 +1,22 @@
 {
- "generated_at": "2026-11-15T03:25:17+00:00",
+ "generated_at": "2026-11-16T03:25:48+00:00",
  "days": [
   {
-   "date": "2026-11-15",
+   "date": "2026-11-16",
    "status": "in_progress",
    "matches": [
     {
-     "fixture_id": 1586133,
-     "time": "05:10",
+     "fixture_id": 1649547,
+     "time": "17:00",
      "country": "World",
      "league": "Friendlies",
-     "home": "New Zealand",
-     "away": "India",
+     "home": "Kosovo U21",
+     "away": "Luxembourg U21",
      "calibrated_lg": true,
      "picks": [
       {
        "market": "Over 1.5",
-       "prob": 84,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "Over 2.5",
-       "prob": 65,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null,
-     "snapshot": "prima"
-    },
-    {
-     "fixture_id": 1647366,
-     "time": "14:00",
-     "country": "World",
-     "league": "Friendlies",
-     "home": "Kyrgyzstan",
-     "away": "Vietnam",
-     "calibrated_lg": true,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 76,
+       "prob": 81,
        "outcome": "PENDING"
       }
      ],
@@ -53,21 +27,21 @@
      "snapshot": "dayof"
     },
     {
-     "fixture_id": 1581197,
-     "time": "15:30",
-     "country": "Germany",
-     "league": "Oberliga - Hessen",
-     "home": "TuBa Pohlheim",
-     "away": "Rot-Weiß Walldorf",
+     "fixture_id": 1649548,
+     "time": "19:15",
+     "country": "World",
+     "league": "Friendlies",
+     "home": "Italy U21",
+     "away": "Belgium U21",
      "calibrated_lg": true,
      "picks": [
       {
-       "market": "Over 1.5",
-       "prob": 88,
+       "market": "1X",
+       "prob": 82,
        "outcome": "PENDING"
       },
       {
-       "market": "Over 2.5",
+       "market": "Under 3.5",
        "prob": 71,
        "outcome": "PENDING"
       }
@@ -79,22 +53,38 @@
      "snapshot": "dayof"
     },
     {
-     "fixture_id": 1580016,
-     "time": "16:00",
-     "country": "Belgium",
-     "league": "First Amateur Division",
-     "home": "Zelzate",
-     "away": "Spouwen-Mopertingen",
+     "fixture_id": 1649022,
+     "time": "21:00",
+     "country": "World",
+     "league": "Friendlies",
+     "home": "Chile U20",
+     "away": "Mexico U20",
      "calibrated_lg": true,
      "picks": [
       {
        "market": "Over 1.5",
-       "prob": 87,
+       "prob": 77,
        "outcome": "PENDING"
-      },
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null,
+     "snapshot": "dayof"
+    },
+    {
+     "fixture_id": 1646121,
+     "time": "21:30",
+     "country": "World",
+     "league": "Friendlies",
+     "home": "England U21",
+     "away": "France U21",
+     "calibrated_lg": true,
+     "picks": [
       {
-       "market": "Over 2.5",
-       "prob": 70,
+       "market": "Over 1.5",
+       "prob": 80,
        "outcome": "PENDING"
       }
      ],
@@ -106,11 +96,11 @@
     }
    ],
    "totals": {
-    "picks": 7,
+    "picks": 5,
     "wins": 0,
     "losses": 0,
-    "pending": 7,
-    "locked_pending": 763
+    "pending": 5,
+    "locked_pending": 90
    }
   }
  ],
@@ -201,9 +191,9 @@
   }
  ],
  "integritate": {
-  "total": 60994,
+  "total": 61824,
   "pastrate": 39366,
-  "nerezolvate": 12146,
+  "nerezolvate": 12976,
   "inghetate_dupa_start": 344,
   "reprogramate_peste_prag": 2,
   "recalibrare_indisponibila": 8765,
