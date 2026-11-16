@@ -6,8 +6,29 @@ Regula aprobată de Andreea: selecția unui meci blocat devine publică abia dup
 (WIN/LOSS); înainte de meci rămân vizibile doar cele gratuite. Track record-ul rezolvat nu se atinge.
 """
 import copy
+from datetime import datetime, timedelta
 
-from make_public_predictions import reduce_history
+from make_public_predictions import RO, pick_free, reduce_history
+
+
+def test_completeaza_din_calibrate_azi_fara_sa_schimbe_prioritatea_bucketului():
+    today = datetime.now(RO).replace(hour=20).isoformat()
+    matches = [dict(fixture_id=i, match_date=today, calibrated=True,
+                    country="England", league="Premier League", prob_over_1_5=p)
+               for i, p in enumerate([.814, .742, .769, .797, .662, .634], 1)]
+    matches += [dict(matches[-1], fixture_id=7, calibrated=False, prob_over_1_5=.85),
+                dict(matches[-1], fixture_id=8, prob_over_1_5=.86,
+                     match_date=(datetime.now(RO)+timedelta(days=1)).isoformat())]
+    assert pick_free(matches) == {1, 2, 3, 4, 5}
+
+
+def test_nu_inventeaza_a_cincea_selectie_cand_lipsesc_datele_calibrate():
+    today = datetime.now(RO).isoformat()
+    matches = [dict(fixture_id=i, match_date=today, calibrated=True,
+                    country="England", league="Premier League", prob_over_1_5=.8)
+               for i in range(4)]
+    matches.append(dict(matches[0], fixture_id=5, prob_over_1_5=None))
+    assert pick_free(matches) == {0, 1, 2, 3}
 
 HIST = {
     "generated_at": "2026-10-18T05:28:00Z",

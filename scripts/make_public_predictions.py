@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """FREEMIUM (decizia Andreei 29 aug 2026): reduce predictions.json PUBLIC la
-4-5 meciuri gratuite pe zi; restul rămân DOAR ca listă (echipe/ligă/oră) cu
+5 meciuri gratuite pe zi, dacă există suficiente meciuri calibrate; restul rămân DOAR ca listă (echipe/ligă/oră) cu
 `locked: true`, FĂRĂ probabilități/xG/scoruri — nepublicate tehnic nicăieri.
 
 Fluxul (daily_publish.sh, imediat după build_public_json):
@@ -11,7 +11,9 @@ Fluxul (daily_publish.sh, imediat după build_public_json):
 Selecția FREE (ziua curentă Europe/Bucharest): calibrated + ligă publică
 (_leagues_public) + Over 1.5 în bucketul calibrat [0.70, 0.88), sortate
 descrescător, max 2 per ligă (diversitate). Fallback dacă nu se umplu 5:
-calibrate din orice ligă, același bucket. Track-record-ul rezolvat (history
+calibrate din orice ligă, același bucket. Dacă tot nu sunt cinci, completăm
+din calibratele aceleiași zile din afara bucketului, descrescător după O1.5.
+Aceasta este selecția accesului gratuit, nu modificarea predicțiilor. Track-record-ul rezolvat (history
 WIN/LOSS, forward) NU e atins — rămâne public integral, e dovada care vinde.
 
 18 oct 2026 (scurgere găsită la cartografierea pentru aplicația iOS, regula aprobată de
@@ -68,7 +70,10 @@ def pick_free(matches: list[dict]) -> set[int]:
         p = m.get("prob_over_1_5")
         return p is not None and PROB_LO <= p < PROB_HI
 
-    todays = [m for m in matches if is_today(m) and m.get("calibrated") and in_bucket(m)]
+    calibrated_today = [m for m in matches if is_today(m) and m.get("calibrated")
+                        and isinstance(m.get("prob_over_1_5"), (int, float))
+                        and 0 <= m["prob_over_1_5"] <= 1]
+    todays = [m for m in calibrated_today if in_bucket(m)]
     tier1 = [m for m in todays if is_public_league(m.get("country", ""), m.get("league", ""))]
     tier2 = [m for m in todays if m not in tier1]
 
@@ -92,7 +97,14 @@ def pick_free(matches: list[dict]) -> set[int]:
                     break
                 if m not in free:
                     free.append(m)
-    return {m["fixture_id"] for m in free}
+    # 16 nov 2026: numai patru meciuri în bucket, deși șase erau calibrate.
+    # Completăm accesul gratuit fără date brute, alte zile sau probabilități inventate.
+    free_ids = {m["fixture_id"] for m in free}
+    for m in sorted(calibrated_today, key=lambda x: -x["prob_over_1_5"]):
+        if len(free_ids) >= N_FREE:
+            break
+        free_ids.add(m["fixture_id"])
+    return free_ids
 
 
 def reduce_history(hist: dict, free_ids: set[int]) -> dict:

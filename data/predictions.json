@@ -433,8 +433,40 @@
    "league": "Friendlies",
    "home_team": "andorra",
    "away_team": "Azerbaijan",
+   "xg_home": 1.02,
+   "xg_away": 1.1,
+   "prob_home": 0.334,
+   "prob_draw": 0.3,
+   "prob_away": 0.365,
+   "prob_1x": 0.635,
+   "prob_x2": 0.666,
+   "prob_12": 0.7,
+   "prob_over_1_5": 0.662,
+   "prob_over_2_5": 0.411,
+   "prob_over_3_5": 0.204,
+   "prob_btts": 0.473,
+   "prob_ht_over_0_5": 0.647,
+   "prob_ht_over_1_5": 0.279,
+   "prob_ht_btts": 0.149,
+   "prob_ht_btts_calibrated": false,
+   "ht_prob_home": 0.244,
+   "ht_prob_draw": 0.476,
+   "ht_prob_away": 0.28,
+   "ht_top_score_h": 0,
+   "ht_top_score_a": 0,
+   "ht_top_score_prob": 0.38,
+   "xg_home_ht": 0.46,
+   "xg_away_ht": 0.51,
+   "prob_over_2_5_raw": 0.356,
+   "prob_btts_raw": 0.422,
+   "prob_home_raw": 0.331,
+   "prob_draw_raw": 0.302,
+   "prob_away_raw": 0.368,
+   "top_score_h": 1,
+   "top_score_a": 1,
+   "top_score_prob": 0.133,
    "calibrated": true,
-   "locked": true
+   "free": true
   },
   {
    "fixture_id": 1647670,
@@ -23802,8 +23834,8 @@
   }
  ],
  "freemium": {
-  "free": 4,
-  "locked": 2363,
+  "free": 5,
+  "locked": 2362,
   "policy": "5 meciuri gratuite pe zi; restul pe abonament (Patreon)."
  }
 }
