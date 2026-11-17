@@ -674,3 +674,68 @@ body.home-modern .salt-meciuri { display: none; }
   .home-modern .dashboard-table td[colspan="6"] { min-width: 0; max-width: 100%; white-space: normal; }
   .home-modern .dashboard-reading-row .citire { box-sizing: border-box; width: 100%; min-width: 0; max-width: 100%; }
 }
+
+/* 17 Nov 2026 — approved match report, shared by free and unlocked match cards. */
+.home-modern .match.match-report { padding: 0; overflow: hidden; border: 1px solid #2b4353; border-radius: 16px; background: #091b29; }
+.home-modern .match-report .match-header { padding: 24px; background: radial-gradient(ellipse at top right, #213b4c, #0b2030 75%); }
+.home-modern .match-report .match-title { width: 100%; min-width: 0; }
+.home-modern .match-report .match-teams { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; gap: 12px; font-size: 23px; line-height: 1.3; }
+.home-modern .match-report .team { white-space: normal; overflow-wrap: anywhere; }
+.home-modern .match-report .team.away { text-align: right; }
+.home-modern .match-report .vs { color: #94aebf; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; }
+.home-modern .match-report .match-meta { margin-top: 15px; display: flex; flex-wrap: wrap; gap: 9px; font-size: 12px; line-height: 1.5; }
+.home-modern .match-report .match-meta .liga { white-space: normal; width: 100%; }
+.home-modern .match-report .match-body { padding: 0; }
+.home-modern .match-report .report-tabs { display: flex; padding: 0 24px; gap: 6px; border-bottom: 1px solid #294453; background: #0c2130; }
+.home-modern .match-report .report-tabs button { flex: 1; min-width: 0; padding: 14px 5px; min-height: 48px; border: 0; border-bottom: 2px solid transparent; border-radius: 0; background: transparent; color: #b4c7d4; font: inherit; font-size: 13px; cursor: pointer; }
+.home-modern .match-report .report-tabs button[aria-selected="true"] { border-bottom-color: #dfc180; color: #dfc180; }
+.home-modern .match-report .report-tabs button:focus-visible { outline: 2px solid #dfc180; outline-offset: -4px; }
+.home-modern .match-report [hidden] { display: none !important; }
+.home-modern .match-report .report-panel { padding: 24px; }
+.home-modern .match-report .report-heading { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 12px; margin: 0 0 18px; }
+.home-modern .match-report h3 { color: #edf2f6; font-size: 16px; margin: 0; line-height: 1.4; font-weight: 600; }
+.home-modern .match-report .report-heading > span { color: #a5bdcc; font-size: 11px; }
+.home-modern .match-report .report-results { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 14px; }
+.home-modern .match-report .report-result.market { background: transparent; border: 0; border-radius: 5px; padding: 8px 4px; min-width: 0; }
+.home-modern .match-report .report-result .label { display: block; white-space: normal; overflow-wrap: anywhere; font-size: 12px; color: #bbccd7; }
+.home-modern .match-report .report-result .val { display: block; font-size: 27px; color: #edf2f6; margin-top: 7px; font-weight: 500; }
+.home-modern .match-report .report-split { display: flex; gap: 4px; height: 7px; border-radius: 5px; overflow: hidden; margin-top: 12px; }
+.home-modern .match-report .report-split span { background: #dec07d; }
+.home-modern .match-report .report-split span:nth-child(2) { background: #718c9f; }
+.home-modern .match-report .report-split span:nth-child(3) { background: #3f647d; }
+.home-modern .match-report .report-section { border-top: 1px solid #29414f; margin-top: 24px; padding-top: 22px; }
+.home-modern .match-report .report-xg { display: flex; justify-content: space-between; gap: 20px; }
+.home-modern .match-report .report-xg strong { font-size: 29px; font-weight: 500; color: #edf2f6; min-width: 0; }
+.home-modern .match-report .report-xg strong:last-child { text-align: right; }
+.home-modern .match-report .report-xg small { display: block; color: #a8c0cf; font-size: 12px; font-weight: 400; overflow-wrap: anywhere; }
+.home-modern .match-report .xg-bar { height: 7px; margin-top: 14px; border: 0; }
+.home-modern .match-report .xg-bar-h { background: #dec07d; }
+.home-modern .match-report .xg-bar-a { background: #3f647d; }
+.home-modern .match-report .xg-bar-labels { display: none; }
+.home-modern .match-report .report-note { color: #a8bfce; font-size: 12px; line-height: 1.6; margin: 10px 0 0; }
+.home-modern .match-report .report-score { display: flex; align-items: center; gap: 18px; border-radius: 12px; background: #102b3c; padding: 16px; margin-top: 18px; }
+.home-modern .match-report .report-score > strong { font-size: 31px; font-weight: 500; color: #dfc180; white-space: nowrap; }
+.home-modern .match-report .report-score > div { color: #bfcfda; font-size: 12px; line-height: 1.6; }
+.home-modern .match-report .report-score small { display: block; font-size: 14px; color: #edf2f6; }
+.home-modern .match-report .report-market.market { position: relative; text-align: left; border: 0; border-bottom: 1px solid #29414f; border-radius: 0; padding: 17px 0; background: transparent; }
+.home-modern .match-report .report-market-line { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding-right: 22px; }
+.home-modern .match-report .report-market .label { font-size: 14px; color: #c5d4df; }
+.home-modern .match-report .report-market .val { font-size: 25px; color: #edf2f6; font-weight: 500; }
+.home-modern .match-report .report-meter { height: 5px; border-radius: 4px; background: #263e4d; margin-top: 12px; overflow: hidden; }
+.home-modern .match-report .report-meter span { display: block; height: 100%; background: #dec07d; }
+.home-modern .match-report .raw-note { display: block; font-size: 12px; margin: 8px 0 0; color: #acc1cf; }
+.home-modern .match-report .report-dc { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.home-modern .match-report .report-dc .report-market-line { flex-wrap: wrap; gap: 5px; padding-right: 0; }
+.home-modern .match-report .report-foot { padding: 16px 24px; background: #061621; border-top: 1px solid #29414f; font-size: 11px; color: #a9bfce; line-height: 1.7; }
+.home-modern .match-report .report-foot > span { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.home-modern .match-report .report-foot p { margin: 10px 0 0; font-size: 12px; }
+@media(max-width:600px) {
+  .home-modern .match-report .match-header { padding: 20px 17px; }
+  .home-modern .match-report .match-teams { font-size: 19px; gap: 9px; }
+  .home-modern .match-report .match-body, .home-modern .match-report.open .match-body { padding: 0; }
+  .home-modern .match-report .report-panel { padding: 20px 17px; }
+  .home-modern .match-report .report-tabs { padding: 0 12px; gap: 0; }
+  .home-modern .match-report .report-foot { padding: 15px 17px; }
+}
+/* Keep the approved versus separator visible over the legacy mobile rule. */
+.home-modern .match-report .match-teams .vs { display: inline; }

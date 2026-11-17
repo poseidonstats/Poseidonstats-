@@ -78,9 +78,16 @@ test('actual match cards and accessibility labels translate static UI in all six
   let numbers;
   for (const language of languages) {
     const r=renderer(language),html=r.call('renderMatch(fixture)');
-    for (const key of ['match.calibrated','match.xg.label','match.xg.tip','match.xg.detail','match.score','match.phase.ft','match.phase.dc','match.phase.ht','match.score.ht','match.more']) {
+    for (const key of ['match.calibrated','match.phase.ft']) {
       assert(html.includes(dictionary[language][key]),`${language}.${key}`);
     }
+    // Approved report replaces the collapsed legacy market grid with three tabs.
+    const tabs={ro:['Prezentare','Goluri','Prima repriză'],en:['Overview','Goals','First half'],es:['Resumen','Goles','Primera parte'],it:['Panoramica','Gol','Primo tempo'],fr:['Vue d’ensemble','Buts','Première période'],id:['Ringkasan','Gol','Babak pertama']};
+    const renderedTabs=Array.from(html.matchAll(/<button type="button" role="tab"[^>]*>([^<]+)<\/button>/g),m=>m[1]);
+    assert.deepEqual(renderedTabs,tabs[language]);
+    assert.equal((html.match(/role="tabpanel"/g)||[]).length,3);
+    assert.equal((html.match(/aria-selected="true"/g)||[]).length,1);
+    for (const value of ['27%','21%','53%','84%','64%','43%','59%','78%','46%','1.30','1.96','1–1']) assert(html.includes(value),`${language} preserves ${value}`);
     const uncalibrated=r.call('renderMatch({...fixture,calibrated:false})');
     assert(uncalibrated.includes(dictionary[language]['match.uncalibrated']));
     const locked=r.call('renderLockedMatch({...fixture,locked:true})');
@@ -123,8 +130,8 @@ test('homepage market filters use translated labels and homepage assets use thei
     assert.equal(key,`filters.market.${market}`);
     for (const language of languages) assert(dictionary[language][key]);
   }
-  assert(html.includes('assets/app.js?v=20261030-pro-history1'));
-  assert(html.includes('assets/home-modern.css?v=20261113-app-store-badge'));
+  assert(html.includes('assets/app.js?v=20261117-reports'));
+  assert(html.includes('assets/home-modern.css?v=20261117-reports'));
   assert(html.includes('assets/members.js?v=20261024-conversion1'));
   assert(html.includes('assets/conversion.js?v=20261024-conversion1'));
   assert(html.includes('assets/home-dashboard.js?v=20261024-home-reading1'));

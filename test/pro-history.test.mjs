@@ -53,7 +53,7 @@ function harness({ language = 'ro', tier = 'pro', now = '2026-10-30T04:00:00Z', 
     actual('function t(key) {', 'function applyI18n()'),
     actual('function tt(key, fallbackRo) {', 'function honestEmptyHtml('),
     actual('function esc(s) {', '/* ============== TRACK RECORD'),
-    source.slice(source.indexOf('/* 28 sept 2026 — membrii Pro'))
+    source.slice(source.indexOf('/* Shared presentation for public sample'))
   ].join('\n'), context);
   return { context, requests, warnings, element: id => elements.get(id),
     render: date => { context.selected = date; return runInContext('renderProAnalize(selected)', context); },

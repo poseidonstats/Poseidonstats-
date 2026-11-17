@@ -209,7 +209,16 @@ if (typeof document !== "undefined") {
   document.addEventListener("click", (ev) => {
     if (window.innerWidth > 600) return;
     const h = ev.target.closest && ev.target.closest(".match-header"); if (!h || ev.target.closest("a, button")) return;
-    h.parentElement.classList.toggle("open");
+    const open = h.parentElement.classList.toggle("open");
+    h.setAttribute("aria-expanded", String(open));
+  });
+  document.addEventListener("keydown", (ev) => {
+    if (window.innerWidth > 600 || !["Enter", " "].includes(ev.key)) return;
+    const h = ev.target.closest && ev.target.closest(".match-header");
+    if (!h || ev.target.closest("a, button")) return;
+    ev.preventDefault();
+    const open = h.parentElement.classList.toggle("open");
+    h.setAttribute("aria-expanded", String(open));
   });
 }
 // 7 oct 2026 — pe telefon filtrele stau pliate sub un buton „Filtre ▾” (6 selectoare = un ecran întreg înainte de meciuri)
@@ -987,116 +996,92 @@ function isFilteredMarket(label, filterMarket) {
   return targets ? targets.includes(label) : false;
 }
 
+// 17 Nov 2026 — approved match report. Presentation only; no probability recalculation.
+const MATCH_REPORT_COPY = {
+  ro: ["Prezentare", "Goluri", "Prima repriză", "Analiza meciului", "Rezultat final", "Egal", "Goluri așteptate", "Estimarea modelului", "Scor individual probabil", "Dublă șansă", "Ambele marchează", "Peste", "Sub", "Goluri la pauză", "Rezultat la pauză", "Date indisponibile", "Probabilități estimate, nu rezultate garantate. 90 de minute, inclusiv timpul adițional.", "xG model, nu xG calculat din șuturi.", "Date & calibrare"],
+  en: ["Overview", "Goals", "First half", "Match analysis", "Match result", "Draw", "Expected goals", "Model estimate", "Most likely individual score", "Double chance", "Both teams to score", "Over", "Under", "First-half goals", "Half-time result", "Data unavailable", "Estimated probabilities, not guaranteed outcomes. 90 minutes, including stoppage time.", "Model expected goals, not shot-based xG.", "Data & calibration"],
+  es: ["Resumen", "Goles", "Primera parte", "Análisis del partido", "Resultado final", "Empate", "Goles esperados", "Estimación del modelo", "Marcador individual más probable", "Doble oportunidad", "Ambos marcan", "Más de", "Menos de", "Goles en la primera parte", "Resultado al descanso", "Datos no disponibles", "Probabilidades estimadas, no resultados garantizados. 90 minutos, incluido el descuento.", "Goles esperados del modelo, no xG basado en tiros.", "Datos y calibración"],
+  it: ["Panoramica", "Gol", "Primo tempo", "Analisi della partita", "Risultato finale", "Pareggio", "Gol attesi", "Stima del modello", "Singolo risultato più probabile", "Doppia chance", "Entrambe a segno", "Over", "Under", "Gol nel primo tempo", "Risultato all’intervallo", "Dati non disponibili", "Probabilità stimate, non risultati garantiti. 90 minuti, recupero incluso.", "Gol attesi dal modello, non xG basato sui tiri.", "Dati e calibrazione"],
+  fr: ["Vue d’ensemble", "Buts", "Première période", "Analyse du match", "Résultat final", "Nul", "Buts attendus", "Estimation du modèle", "Score individuel le plus probable", "Double chance", "Les deux équipes marquent", "Plus de", "Moins de", "Buts en première période", "Résultat à la pause", "Données indisponibles", "Probabilités estimées, sans résultat garanti. 90 minutes, temps additionnel inclus.", "Buts attendus du modèle, pas des xG calculés à partir des tirs.", "Données et calibration"],
+  id: ["Ringkasan", "Gol", "Babak pertama", "Analisis pertandingan", "Hasil akhir", "Seri", "Gol yang diharapkan", "Estimasi model", "Skor tunggal paling mungkin", "Peluang ganda", "Kedua tim mencetak gol", "Lebih dari", "Kurang dari", "Gol babak pertama", "Hasil babak pertama", "Data tidak tersedia", "Estimasi probabilitas, bukan jaminan hasil. 90 menit termasuk tambahan waktu.", "Gol yang diharapkan model, bukan xG berdasarkan tembakan.", "Data dan kalibrasi"]
+};
+let matchReportSequence = 0;
+function matchReportTab(filterMarket) {
+  if (filterMarket.startsWith("ht_")) return "half";
+  return /^(over_|under_|btts)/.test(filterMarket) ? "goals" : "overview";
+}
+function validMatchProbability(value) { return typeof value === "number" && Number.isFinite(value) && value >= 0 && value <= 1; }
+function matchReportComplement(value) { return validMatchProbability(value) ? 1 - value : null; }
+function matchReportProbability(value) { return validMatchProbability(value) ? fmtPct(value) : "—"; }
+function matchReportMeter(value) {
+  return validMatchProbability(value) ? `<div class="report-meter" aria-hidden="true"><span style="width:${value * 100}%"></span></div>` : "";
+}
+function selectMatchReportTab(button) {
+  const report = button.closest(".match-report");
+  if (!report) return;
+  report.querySelectorAll(".report-tabs [role=tab]").forEach(tab => {
+    const selected = tab === button;
+    tab.setAttribute("aria-selected", String(selected));
+    report.querySelectorAll(".report-panel").forEach(panel => {
+      if (panel.id === tab.getAttribute("aria-controls")) panel.hidden = !selected;
+    });
+  });
+}
+if (typeof document !== "undefined") {
+  document.addEventListener("click", ev => {
+    const tab = ev.target.closest && ev.target.closest(".report-tabs [role=tab]");
+    if (tab) selectMatchReportTab(tab);
+  });
+  document.addEventListener("keydown", ev => {
+    const tab = ev.target.closest && ev.target.closest(".report-tabs [role=tab]");
+    if (!tab || !["ArrowLeft", "ArrowRight", "Home", "End"].includes(ev.key)) return;
+    ev.preventDefault();
+    const tabs = Array.from(tab.parentElement.querySelectorAll("[role=tab]"));
+    const next = ev.key === "Home" ? tabs[0] : ev.key === "End" ? tabs[tabs.length - 1] : tabs[(tabs.indexOf(tab) + (ev.key === "ArrowRight" ? 1 : -1) + tabs.length) % tabs.length];
+    selectMatchReportTab(next); next.focus();
+  });
+}
 function renderMatch(m, filterMarket = "") {
+  if (isLocked(m)) return renderLockedMatch(m);
+  const c = MATCH_REPORT_COPY[LANG] || MATCH_REPORT_COPY.en;
+  const id = `match-report-${++matchReportSequence}`;
+  const active = matchReportTab(filterMarket);
   const calibTag = m.calibrated
     ? `<span class="ok-tag">${tt("match.calibrated", "calibrată")}</span>`
     : `<span class="warn-tag">${tt("match.uncalibrated", "ligă necalibrată")}</span>`;
-  // match_date e UTC (cu Z). Convertesc explicit la fusul orar Europe/Bucharest (ora RO).
-  const d = new Date(m.match_date);
-  const dateStr = d.toLocaleString(_loc(), {
-    weekday: "short", day: "2-digit", month: "short",
-    hour: "2-digit", minute: "2-digit",
-    timeZone: "Europe/Bucharest"
-  });
-
-  const freeTag = m.free
-    ? `<span class="free-tag">${tt("freemium.tag", "GRATUIT AZI")}</span>` : "";
-
-  return `<div class="match ${m.calibrated ? "" : "uncalibrated"} ${m.free ? "match-free" : ""}" data-fid="${m.fixture_id}">
-    <div class="match-header" role="button" tabindex="0">
-      <div class="match-title">
-        <div class="match-teams"><span class="team home">${esc(m.home_team)}</span><span class="vs">vs</span><span class="team away">${esc(m.away_team)}</span></div>
-        <div class="match-meta">
-          <span class="liga">${esc(m.country)} · ${esc(m.league)}</span>
-          <span class="when">${dateStr}</span>
-          ${calibTag}${freeTag}
-        </div>
-      </div>
-      <span class="match-chev" aria-hidden="true"></span>
-    </div>
-    <div class="match-body">
-    <div class="xg-section">
-      <div class="xg-label" title="${tt("match.xg.tip", "Poisson + Dixon-Coles + 200.000 simulări Monte Carlo")}">${tt("match.xg.label", "xG model")} <span class="xg-label-long">(${tt("match.xg.detail", "Poisson + Dixon-Coles + 200K simulări Monte Carlo")})</span></div>
-      ${xgBar(m.xg_home, m.xg_away)}
-      <div class="score-prob">
-        <span class="score-label">${tt("match.score", "Scor probabil")}</span>
-        <span class="score-val">${m.top_score_h}–${m.top_score_a}</span>
-        <span class="score-pct">(${fmtPct(m.top_score_prob)})</span>
-      </div>
-    </div>
-
-    <div class="phase-row ft">
-      <div class="phase-label">${tt("match.phase.ft", "Final · 90 min")}</div>
-      <div class="markets-grid">
-        <div class="market ${isFilteredMarket("1", filterMarket) ? "market-filtered" : ""}">
-          <span class="label">1</span>
-          <span class="val ${pctClass(m.prob_home)}">${fmtPct(m.prob_home)}</span>
-        </div>
-        <div class="market ${isFilteredMarket("X", filterMarket) ? "market-filtered" : ""}">
-          <span class="label">X</span>
-          <span class="val ${pctClass(m.prob_draw)}">${fmtPct(m.prob_draw)}</span>
-        </div>
-        <div class="market ${isFilteredMarket("2", filterMarket) ? "market-filtered" : ""}">
-          <span class="label">2</span>
-          <span class="val ${pctClass(m.prob_away)}">${fmtPct(m.prob_away)}</span>
-        </div>
-        <div class="market ${isFilteredMarket("O1.5", filterMarket) ? "market-filtered" : ""}">
-          <span class="label">O1.5</span>
-          <span class="val ${pctClass(m.prob_over_1_5)}">${fmtPct(m.prob_over_1_5)}</span>
-          ${marketCertMark("O1.5")}
-        </div>
-        <div class="market uncal-market ${isFilteredMarket("O2.5", filterMarket) ? "market-filtered" : ""}">
-          <span class="label">O2.5</span>
-          <span class="val ${pctClass(m.prob_over_2_5)}">${fmtPct(m.prob_over_2_5)}</span>
-          ${rawNote(m.prob_over_2_5_raw, m.prob_over_2_5)}
-          ${marketCertMark("O2.5")}
-        </div>
-        <div class="market uncal-market ${isFilteredMarket("O3.5", filterMarket) ? "market-filtered" : ""}">
-          <span class="label">O3.5</span>
-          <span class="val ${pctClass(m.prob_over_3_5)}">${fmtPct(m.prob_over_3_5)}</span>
-          ${marketCertMark("O3.5")}
-        </div>
-        <div class="market uncal-market ${isFilteredMarket("BTTS", filterMarket) ? "market-filtered" : ""}">
-          <span class="label">BTTS</span>
-          <span class="val ${pctClass(m.prob_btts)}">${fmtPct(m.prob_btts)}</span>
-          ${rawNote(m.prob_btts_raw, m.prob_btts)}
-          ${marketCertMark("BTTS")}
-        </div>
-      </div>
-    </div>
-
-    <details class="more-markets" ${(typeof window !== "undefined" && window.innerWidth > 600) ? "open" : ""}>
-    <summary class="more-markets-sum">${tt("match.more", "Mai multe piețe: dublă șansă, under, prima repriză")}</summary>
-    ${m.prob_1x != null ? `<div class="phase-row extra">
-      <div class="phase-label">${tt("match.phase.dc", "Dublă șansă & Under")}</div>
-      <div class="markets-grid">
-        <div class="market ${isFilteredMarket("1X", filterMarket) ? "market-filtered" : ""}"><span class="label">1X</span><span class="val ${pctClass(m.prob_1x)}">${fmtPct(m.prob_1x)}</span>${skillMark("dc_1x", m.prob_1x)}</div>
-        <div class="market ${isFilteredMarket("X2", filterMarket) ? "market-filtered" : ""}"><span class="label">X2</span><span class="val ${pctClass(m.prob_x2)}">${fmtPct(m.prob_x2)}</span>${skillMark("dc_x2", m.prob_x2)}</div>
-        <div class="market ${isFilteredMarket("12", filterMarket) ? "market-filtered" : ""}"><span class="label">12</span><span class="val ${pctClass(m.prob_12)}">${fmtPct(m.prob_12)}</span>${skillMark("dc_12", m.prob_12)}</div>
-        <div class="market uncal-market ${isFilteredMarket("U2.5", filterMarket) ? "market-filtered" : ""}"><span class="label">U2.5</span><span class="val ${pctClass(1 - m.prob_over_2_5)}">${fmtPct(1 - m.prob_over_2_5)}</span>${skillMark("under_2_5", 1 - m.prob_over_2_5)}</div>
-        <div class="market ${isFilteredMarket("U3.5", filterMarket) ? "market-filtered" : ""}"><span class="label">U3.5</span><span class="val ${pctClass(1 - m.prob_over_3_5)}">${fmtPct(1 - m.prob_over_3_5)}</span>${skillMark("under_3_5", 1 - m.prob_over_3_5)}</div>
-      </div>
-    </div>` : ""}
-
-    ${m.ht_prob_home != null ? `<div class="phase-row ht">
-      <div class="phase-label">${tt("match.phase.ht", "Prima repriză")} ${m.xg_home_ht ? `<span class="muted-xs">(xG ${m.xg_home_ht}–${m.xg_away_ht})</span>` : ""}</div>
-      <div class="markets-grid">
-        <div class="market uncal-market"><span class="label">1H</span><span class="val ${pctClass(m.ht_prob_home)}">${fmtPct(m.ht_prob_home)}</span>${warnMark("raw")}</div>
-        <div class="market uncal-market"><span class="label">XH</span><span class="val ${pctClass(m.ht_prob_draw)}">${fmtPct(m.ht_prob_draw)}</span>${warnMark("raw")}</div>
-        <div class="market uncal-market"><span class="label">2H</span><span class="val ${pctClass(m.ht_prob_away)}">${fmtPct(m.ht_prob_away)}</span>${warnMark("raw")}</div>
-        <div class="market ${isFilteredMarket("HT O0.5", filterMarket) ? "market-filtered" : ""}"><span class="label">HT O0.5</span><span class="val ${pctClass(m.prob_ht_over_0_5)}">${fmtPct(m.prob_ht_over_0_5)}</span>${marketCertMark("HT O0.5")}</div>
-        <div class="market uncal-market ${isFilteredMarket("HT O1.5", filterMarket) ? "market-filtered" : ""}"><span class="label">HT O1.5</span><span class="val ${pctClass(m.prob_ht_over_1_5)}">${fmtPct(m.prob_ht_over_1_5)}</span>${marketCertMark("HT O1.5")}</div>
-        <div class="market uncal-market"><span class="label">HT BTTS</span><span class="val ${pctClass(m.ht_prob_btts)}">${fmtPct(m.ht_prob_btts)}</span>${warnMark("raw")}</div>
-        ${m.ht_top_score_h != null ? `<div class="market score-ht">
-          <span class="label">${tt("match.score.ht", "Scor HT")}</span>
-          <span class="val">${m.ht_top_score_h}–${m.ht_top_score_a}</span>
-          <span class="raw-note">${fmtPct(m.ht_top_score_prob)}</span>
-        </div>` : ""}
-      </div>
-    </div>` : ""}
-    </details>
-    </div>
-  </div>`;
+  const prob = matchReportProbability;
+  const number = value => typeof value === "number" && Number.isFinite(value) ? fmtNum(value) : "—";
+  const score = (h, a) => Number.isInteger(h) && h >= 0 && Number.isInteger(a) && a >= 0 ? `${h}–${a}` : "—";
+  const row = (label, value, key, extra = "") => `<div class="report-market market ${isFilteredMarket(key, filterMarket) ? "market-filtered" : ""}" data-market="${key}"><div class="report-market-line"><span class="label">${esc(label)}</span><strong class="val">${prob(value)}</strong></div>${matchReportMeter(value)}${extra}</div>`;
+  const result = (values, labels, keys) => `<div class="report-results">${values.map((v, i) => `<div class="report-result market ${isFilteredMarket(keys[i], filterMarket) ? "market-filtered" : ""}"><span class="label">${esc(labels[i])}</span><strong class="val">${prob(v)}</strong>${keys[i].endsWith("H") ? warnMark("raw") : ""}</div>`).join("")}</div>${values.every(validMatchProbability) ? `<div class="report-split" aria-hidden="true">${values.map(v => `<span style="flex:${v}"></span>`).join("")}</div>` : ""}`;
+  const tabs = ["overview", "goals", "half"].map((name, i) => `<button type="button" role="tab" id="${id}-${name}" aria-controls="${id}-${name}-panel" aria-selected="${name === active}">${esc(c[i])}</button>`).join("");
+  const panel = name => `class="report-panel" id="${id}-${name}-panel" role="tabpanel" aria-labelledby="${id}-${name}"${active === name ? "" : " hidden"}`;
+  const freeTag = m.free ? `<span class="free-tag">${tt("freemium.tag", "GRATUIT AZI")}</span>` : "";
+  const xgValid = [m.xg_home, m.xg_away].every(v => typeof v === "number" && Number.isFinite(v) && v >= 0);
+  const htBtts = m.prob_ht_btts;
+  return `<div class="match match-report ${m.calibrated ? "" : "uncalibrated"} ${m.free ? "match-free" : ""}${filterMarket ? " open" : ""}" data-fid="${Number.isSafeInteger(m.fixture_id) ? m.fixture_id : ""}">
+    <div class="match-header" role="button" tabindex="0" aria-expanded="${filterMarket || (typeof window !== "undefined" && window.innerWidth > 600) ? "true" : "false"}" aria-controls="${id}-body">
+      <div class="match-title"><div class="match-teams"><span class="team home">${esc(m.home_team)}</span><span class="vs">vs</span><span class="team away">${esc(m.away_team)}</span></div><div class="match-meta"><span class="liga">${esc(m.country)} · ${esc(m.league)}</span><span class="when">${matchWhen(m)}</span>${calibTag}${freeTag}</div></div><span class="match-chev" aria-hidden="true"></span>
+    </div><div class="match-body" id="${id}-body">
+    <nav class="report-tabs" role="tablist" aria-label="${esc(c[3])}">${tabs}</nav>
+    <section ${panel("overview")}><div class="report-heading"><h3>${esc(c[4])}</h3><span>${tt("match.phase.ft", "Final · 90 min")}</span></div>
+    ${result([m.prob_home, m.prob_draw, m.prob_away], [m.home_team, c[5], m.away_team], ["1", "X", "2"])}
+    <div class="report-section"><div class="report-heading"><h3>${esc(c[6])}</h3><span>${esc(c[7])}</span></div><div class="report-xg"><strong>${number(m.xg_home)}<small>${esc(m.home_team)}</small></strong><strong>${number(m.xg_away)}<small>${esc(m.away_team)}</small></strong></div>${xgValid ? xgBar(m.xg_home, m.xg_away) : ""}<p class="report-note">${esc(c[17])}</p><div class="report-score"><strong>${score(m.top_score_h, m.top_score_a)}</strong><div>${esc(c[8])}<small>${prob(m.top_score_prob)}</small></div></div></div>
+    <div class="report-section"><h3>${esc(c[9])}</h3><div class="report-dc">${row("1X", m.prob_1x, "1X", skillMark("dc_1x", m.prob_1x))}${row("X2", m.prob_x2, "X2", skillMark("dc_x2", m.prob_x2))}${row("12", m.prob_12, "12", skillMark("dc_12", m.prob_12))}</div></div></section>
+    <section ${panel("goals")}><div class="report-heading"><h3>${esc(c[1])}</h3><span>${tt("match.phase.ft", "Final · 90 min")}</span></div>
+    ${row(`${c[11]} 1.5`, m.prob_over_1_5, "O1.5", marketCertMark("O1.5"))}
+    ${row(`${c[11]} 2.5`, m.prob_over_2_5, "O2.5", rawNote(m.prob_over_2_5_raw, m.prob_over_2_5) + marketCertMark("O2.5"))}
+    ${row(`${c[11]} 3.5`, m.prob_over_3_5, "O3.5", rawNote(m.prob_over_3_5_raw, m.prob_over_3_5) + marketCertMark("O3.5"))}
+    ${row(c[10], m.prob_btts, "BTTS", rawNote(m.prob_btts_raw, m.prob_btts) + marketCertMark("BTTS"))}
+    ${row(`${c[12]} 2.5`, matchReportComplement(m.prob_over_2_5), "U2.5", skillMark("under_2_5", matchReportComplement(m.prob_over_2_5)))}
+    ${row(`${c[12]} 3.5`, matchReportComplement(m.prob_over_3_5), "U3.5", skillMark("under_3_5", matchReportComplement(m.prob_over_3_5)))}
+    </section><section ${panel("half")}><div class="report-heading"><h3>${esc(c[13])}</h3><span>${esc(c[7])}</span></div>
+    ${row(`${c[11]} 0.5`, m.prob_ht_over_0_5, "HT O0.5", marketCertMark("HT O0.5"))}
+    ${row(`${c[11]} 1.5`, m.prob_ht_over_1_5, "HT O1.5", marketCertMark("HT O1.5"))}
+    ${row(c[10], htBtts, "HT BTTS", warnMark("raw"))}
+    <div class="report-section"><h3>${esc(c[14])}</h3>${result([m.ht_prob_home, m.ht_prob_draw, m.ht_prob_away], [m.home_team, c[5], m.away_team], ["1H", "XH", "2H"])}<div class="report-score"><strong>${score(m.ht_top_score_h, m.ht_top_score_a)}</strong><div>${esc(c[8])}<small>${prob(m.ht_top_score_prob)}</small></div></div><p class="report-note">${esc(c[6])}: ${number(m.xg_home_ht)} – ${number(m.xg_away_ht)}</p></div>
+    </section><footer class="report-foot"><span>${esc(c[18])} · ${calibTag}</span><p>${esc(c[16])}</p></footer>
+    </div></div>`;
 }
 
 function esc(s) {
@@ -1355,6 +1340,20 @@ function renderHistMatch(m) {
 }
 
 
+/* Shared presentation for public sample and authenticated Pro text. */
+function loadProReport() {
+  if (typeof document === "undefined" || !document.head || !document.querySelector(".pro-card .pro-visible")) return;
+  if (window.PoseidonProReport) { window.PoseidonProReport.scan(); return; }
+  if (document.getElementById("pro-report-script")) return;
+  const css = document.createElement("link"); css.rel = "stylesheet"; css.href = "assets/pro-report.css?v=20261117"; document.head.appendChild(css);
+  const script = document.createElement("script"); script.id = "pro-report-script"; script.src = "assets/pro-context.js?v=20261117";
+  script.onload = () => { const report = document.createElement("script"); report.src = "assets/pro-report.js?v=20261117"; document.head.appendChild(report); };
+  script.onerror = script.onload; // Context extraction is optional; keep the source-text report available.
+  document.head.appendChild(script);
+}
+if (typeof window !== "undefined" && typeof document !== "undefined") {
+  i18nGata().then(loadProReport).catch(() => {});
+}
 /* 28 sept 2026 — membrii Pro văd pe site analizele scrise ale zilei (aceleași ca în #analize-pro). */
 function _md(s) {
   // 7 oct 2026: analiza începe cu „## 💎 Meci · Ligă · dată” — titlul e deja în capul cardului, îl scoatem; alte „#” devin text simplu
@@ -1412,5 +1411,6 @@ async function renderProAnalize(zi) {
     const txt = it => (limba !== "ro" && it[`analysis_${limba}`]) || it.analysis;
     const nota = d.items.some(it => limba !== "ro" && !it[`analysis_${limba}`]) ? `<p class="muted">${tt("pro.azi.ro_only", "Traducerea apare în câteva minute; până atunci textul e în română.")}</p>` : "";
     continut.innerHTML = nota + d.items.map(it => `<article class="pro-card pro-card-full"><div class="pro-card-head">💎 ${_md(it.match?.home)} – ${_md(it.match?.away)} · ${_md(it.match?.league)}</div><div class="pro-visible">${_md(txt(it))}</div></article>`).join("");
+    loadProReport();
   } catch (e) { if (!activa()) return; console.warn("[membri] analize", e); continut.innerHTML = `<p class="muted">${tt("pro.azi.retea", "Nu am putut contacta serverul membrilor. Reîncarcă pagina; analizele sunt și în #analize-pro pe Discord.")}</p>`; }
 }

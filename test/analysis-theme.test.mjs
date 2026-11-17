@@ -201,6 +201,7 @@ function realVariableEntries(html) {
 
 test('actual malformed archive heading is repaired without changing its date markup', async () => {
   const entry=realVariableEntries(readFileSync(new URL('../analize/2026-10-22.html',import.meta.url),'utf8')).find(entry => entry.attrs['data-i18n']==='arhiva.zi.h1');
+  entry.attrs['data-i18n-vars'] = '{"data":"<span data-date="2026-10-22">22 octombrie 2026</span>"}';
   assert.throws(() => JSON.parse(entry.attrs['data-i18n-vars']));
   for (const language of ['ro','en','es','it','fr','id']) {
     const state=await run({language,entries:[entry]});
@@ -256,6 +257,6 @@ test('real variable attributes across all helper pages interpolate in six langua
       });
     }
   }
-  assert(malformed > 0); assert(checked > 1000);
+  assert(checked > 1000); // Explicit malformed fixture above does not depend on regenerated archives staying broken.
   t.diagnostic(`${malformed} real malformed date attributes repaired; ${checked} actual interpolations verified across six languages`);
 });

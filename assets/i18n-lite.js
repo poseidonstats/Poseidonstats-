@@ -85,7 +85,19 @@
     });
   }
   function traduceCandGata(I) {
-    function reda() { normalizareVariabile(); aplica(I); }
+    function reda() {
+      normalizareVariabile(); aplica(I);
+      if (document.querySelector('.pro-card')) {
+        if (window.PoseidonProReport) window.PoseidonProReport.scan();
+        else if (!document.getElementById('pro-report-script')) {
+          var style = document.createElement('link'); style.rel = 'stylesheet'; style.href = sus + 'assets/pro-report.css?v=20261117'; document.head.appendChild(style);
+          var report = document.createElement('script'); report.id = 'pro-report-script'; report.src = sus + 'assets/pro-context.js?v=20261117';
+          report.onload = function () { var ui = document.createElement('script'); ui.src = sus + 'assets/pro-report.js?v=20261117'; document.head.appendChild(ui); };
+          report.onerror = report.onload;
+          document.head.appendChild(report);
+        }
+      }
+    }
     if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", reda, { once: true });
     else reda();
   }
