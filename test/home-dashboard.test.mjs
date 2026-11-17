@@ -13,7 +13,7 @@ const audit = read('data/audit.json');
 const i18n = read('assets/i18n.json');
 const tr = key => i18n.en[key] || key;
 // 26 oct: Andreea a cerut scoaterea recomandării automate și a ghidului ei.
-const marketChoiceCopy = new Set(['index.howto', 'index.cardinfo.body', 'repere.p']);
+const marketChoiceCopy = new Set(['index.howto', 'index.cardinfo.body', 'repere.p', 'pro.analize.h2']);
 // Audit 30 Oct: explicit provenance corrections are authorized by 'Remediază tot'.
 // Keep every unrelated legacy dictionary value protected by the original assertions.
 const provenanceCopy = new Set(['metod.p.2b','metod.h3.3','metod.p.3','proof.metrici','proof.lead','index.intro','footer.title','ligi.tagline','tr.bt.sample','arhiva.tagline','audit.p','ds.p','ds.note','ds.col.pub_ts','ds.col.platt_versiune',

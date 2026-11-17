@@ -1385,7 +1385,7 @@ async function renderProAnalize(zi) {
   const prima = document.querySelector("main.container > section, main.container > *"); const main = document.querySelector("main.container");
   if (main && prima && prima !== el) main.insertBefore(el, prima);
   const dataText = new Intl.DateTimeFormat(_loc(), { day: "numeric", month: "long", year: "numeric" }).format(new Date(data + "T12:00:00Z"));
-  el.innerHTML = `<h2 data-i18n="pro.analize.h2">${tt("pro.analize.h2", "💎 Analizele tale Pro")}</h2>
+  el.innerHTML = `<h2 data-i18n="pro.analize.h2">${tt("pro.analize.h2", "Analizele tale Pro")}</h2>
     <label for="pro-date"><span data-i18n="filters.day">${tt("filters.day", "Zi:")}</span> <input id="pro-date" type="date" value="${data}" max="${azi}"></label>
     <p class="muted"><span data-date="${data}">${esc(dataText)}</span></p><div id="pro-content" aria-live="polite"><p class="muted">…</p></div>`;
   el.querySelector("#pro-date").addEventListener("change", e => renderProAnalize(e.target.value));
@@ -1410,7 +1410,7 @@ async function renderProAnalize(zi) {
     // 7 oct 2026: analiza în limba aleasă pe site (analysis_en/es/it din arhivă, traduse de traduce_analize.py); fără traducere → româna
     const txt = it => (limba !== "ro" && it[`analysis_${limba}`]) || it.analysis;
     const nota = d.items.some(it => limba !== "ro" && !it[`analysis_${limba}`]) ? `<p class="muted">${tt("pro.azi.ro_only", "Traducerea apare în câteva minute; până atunci textul e în română.")}</p>` : "";
-    continut.innerHTML = nota + d.items.map(it => `<article class="pro-card pro-card-full"><div class="pro-card-head">💎 ${_md(it.match?.home)} – ${_md(it.match?.away)} · ${_md(it.match?.league)}</div><div class="pro-visible">${_md(txt(it))}</div></article>`).join("");
+    continut.innerHTML = nota + d.items.map(it => `<article class="pro-card pro-card-full"><div class="pro-card-head">${_md(it.match?.home)} – ${_md(it.match?.away)} · ${_md(it.match?.league)}</div><div class="pro-visible">${_md(txt(it))}</div></article>`).join("");
     loadProReport();
   } catch (e) { if (!activa()) return; console.warn("[membri] analize", e); continut.innerHTML = `<p class="muted">${tt("pro.azi.retea", "Nu am putut contacta serverul membrilor. Reîncarcă pagina; analizele sunt și în #analize-pro pe Discord.")}</p>`; }
 }
