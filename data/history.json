@@ -1,21 +1,26 @@
 {
- "generated_at": "2026-11-16T03:25:48+00:00",
+ "generated_at": "2026-11-17T03:26:03+00:00",
  "days": [
   {
-   "date": "2026-11-16",
+   "date": "2026-11-17",
    "status": "in_progress",
    "matches": [
     {
-     "fixture_id": 1649547,
-     "time": "17:00",
+     "fixture_id": 1649552,
+     "time": "19:00",
      "country": "World",
      "league": "Friendlies",
-     "home": "Kosovo U21",
-     "away": "Luxembourg U21",
+     "home": "Poland U21",
+     "away": "Serbia U21",
      "calibrated_lg": true,
      "picks": [
       {
        "market": "Over 1.5",
+       "prob": 84,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "1X",
        "prob": 81,
        "outcome": "PENDING"
       }
@@ -27,22 +32,22 @@
      "snapshot": "dayof"
     },
     {
-     "fixture_id": 1649548,
-     "time": "19:15",
+     "fixture_id": 1649028,
+     "time": "20:00",
      "country": "World",
      "league": "Friendlies",
-     "home": "Italy U21",
-     "away": "Belgium U21",
+     "home": "Albania U21",
+     "away": "Spain U21",
      "calibrated_lg": true,
      "picks": [
       {
-       "market": "1X",
-       "prob": 82,
+       "market": "Over 1.5",
+       "prob": 84,
        "outcome": "PENDING"
       },
       {
-       "market": "Under 3.5",
-       "prob": 71,
+       "market": "X2",
+       "prob": 81,
        "outcome": "PENDING"
       }
      ],
@@ -53,17 +58,22 @@
      "snapshot": "dayof"
     },
     {
-     "fixture_id": 1649022,
-     "time": "21:00",
-     "country": "World",
-     "league": "Friendlies",
-     "home": "Chile U20",
-     "away": "Mexico U20",
+     "fixture_id": 1596045,
+     "time": "21:45",
+     "country": "England",
+     "league": "Non League Premier - Isthmian",
+     "home": "Burgess Hill Town",
+     "away": "Brentwood Town",
      "calibrated_lg": true,
      "picks": [
       {
        "market": "Over 1.5",
-       "prob": 77,
+       "prob": 87,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "Over 2.5",
+       "prob": 70,
        "outcome": "PENDING"
       }
      ],
@@ -74,17 +84,22 @@
      "snapshot": "dayof"
     },
     {
-     "fixture_id": 1646121,
-     "time": "21:30",
-     "country": "World",
-     "league": "Friendlies",
-     "home": "England U21",
-     "away": "France U21",
+     "fixture_id": 1596049,
+     "time": "21:45",
+     "country": "England",
+     "league": "Non League Premier - Isthmian",
+     "home": "Dartford",
+     "away": "Three Bridges",
      "calibrated_lg": true,
      "picks": [
       {
        "market": "Over 1.5",
-       "prob": 80,
+       "prob": 87,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "Over 2.5",
+       "prob": 70,
        "outcome": "PENDING"
       }
      ],
@@ -96,11 +111,11 @@
     }
    ],
    "totals": {
-    "picks": 5,
+    "picks": 8,
     "wins": 0,
     "losses": 0,
-    "pending": 5,
-    "locked_pending": 90
+    "pending": 8,
+    "locked_pending": 230
    }
   }
  ],
@@ -191,9 +206,9 @@
   }
  ],
  "integritate": {
-  "total": 61824,
+  "total": 61958,
   "pastrate": 39366,
-  "nerezolvate": 12976,
+  "nerezolvate": 13110,
   "inghetate_dupa_start": 344,
   "reprogramate_peste_prag": 2,
   "recalibrare_indisponibila": 8765,
