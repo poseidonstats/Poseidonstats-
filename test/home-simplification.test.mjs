@@ -105,24 +105,29 @@ function sampleDocument(){
   const text=markup=>markup.replace(/<[^>]*>/g,'').replace(/&amp;/g,'&').replace(/\s+/g,' ').trim();
   const heading={textContent:text(block.match(/<div class="pro-card-head">([\s\S]*?)<\/div>/)[1])};
   const markers=[...block.matchAll(/<div data-lang="([a-z]+)"[^>]*>/g)],bodies={};
-  markers.forEach((marker,index)=>{const part=block.slice(marker.index,markers[index+1]?.index);const paragraphs=[...part.matchAll(/<p\b[^>]*>([\s\S]*?)<\/p>/g)].map(match=>({textContent:text(match[1])}));bodies[marker[1]]={querySelectorAll:()=>paragraphs,querySelector:()=>paragraphs[0]||null};});
+  markers.forEach((marker,index)=>{const part=block.slice(marker.index,markers[index+1]?.index);const paragraphs=[...part.matchAll(/<p\b[^>]*>([\s\S]*?)<\/p>/g)].map(match=>({textContent:text(match[1])}));const source=part.match(/<div class="pro-visible">([\s\S]*?)<\/div>\s*<\/div>/)?.[1]||part; const visible={innerHTML:source,querySelector:()=>null};bodies[marker[1]]={querySelectorAll:()=>paragraphs,querySelector:selector=>selector==='.pro-visible'?visible:paragraphs[0]||null};});
   const card={querySelectorAll:()=>Object.keys(bodies).map(lang=>({getAttribute:()=>lang})),querySelector:selector=>bodies[selector.match(/data-lang="([a-z]+)"/)?.[1]]||null};
   heading.closest=()=>card;
   return {doc:{querySelector:selector=>selector==='#exemplu-pro .pro-card-head'?heading:null},heading,bodies};
 }
 
-test('compact Pro demonstration uses only the actual generated sample, truthful language fallback and existing member routes',()=>{
+test('tabbed Pro demonstration uses only the actual generated sample, truthful language fallback and existing member routes',()=>{
   assert.equal(typeof dashboard.renderProSummary,'function');
   const {doc,heading,bodies}=sampleDocument();
   for(const [tier,href] of [[null,'#exemplu-pro'],['basic','analize/index.html'],['pro','#pro-analize']]){
     const markup=dashboard.renderProSummary(doc,translate,'en',tier);
     assert(markup.includes(heading.textContent.split(' · ')[0]));assert(markup.includes(`href="${href}"`));
-    assert(markup.includes(bodies.en.querySelector().textContent.slice(0,70)));
+    assert(markup.replace(/<[^>]*>/g,'').includes(bodies.en.querySelector().textContent.slice(0,70)));
     assert.equal(markup.includes('data-dashboard-analysis'),tier===null);
-    assert(markup.length<2200,'summary does not clone the full generated analysis');
+    assert.match(markup,/dashboard-pro-summary pro-card/);assert.match(markup,/class="pro-visible"/);assert(markup.includes(bodies.en.querySelector('.pro-visible').innerHTML),'full public source retained for shared renderer');
   }
+  const visible=bodies.en.querySelector('.pro-visible'), sourceHTML=visible.innerHTML;
+  visible.innerHTML='<div id="pro-report-existing-tab-0">enhanced</div>';
+  visible.querySelector=selector=>selector==='.report-original > div'?{innerHTML:sourceHTML}:null;
+  const refreshed=dashboard.renderProSummary(doc,translate,'en',null);
+  assert(refreshed.includes(sourceHTML));assert(!refreshed.includes('pro-report-existing-tab-0'),'rerender must use original source, not duplicate tab IDs');
   const italian=dashboard.renderProSummary(doc,translate,'it',null);
-  assert(italian.includes(bodies.it.querySelector().textContent.slice(0,70)));
+  assert(italian.replace(/<[^>]*>/g,'').includes(bodies.it.querySelector().textContent.slice(0,70)));
   assert(!italian.includes('class="dashboard-analysis-language"'),'an existing Italian translation needs no fallback notice');
   delete bodies.it; // Deliberately exercise the missing-language branch, independently of changing daily data.
   const fallback=dashboard.renderProSummary(doc,translate,'it',null);

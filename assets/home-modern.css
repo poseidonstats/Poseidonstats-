@@ -739,3 +739,8 @@ body.home-modern .salt-meciuri { display: none; }
 }
 /* Keep the approved versus separator visible over the legacy mobile rule. */
 .home-modern .match-report .match-teams .vs { display: inline; }
+
+/* The homepage example uses the full public Pro report renderer. */
+.home-modern .dashboard-pro-summary.pro-card { padding:0; }
+.home-modern .dashboard-pro-summary > .dashboard-analysis-meta { display:block;padding:14px 24px 0; }
+.home-modern .dashboard-pro-summary .dashboard-report-action { padding:0 24px 24px; }

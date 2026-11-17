@@ -228,19 +228,17 @@
     if (!card) return `<p>${escapeHTML(tr('dashboard.data.unavailable'))}</p>`;
     const selection = chooseAnalysisLanguage(lang,Array.from(card.querySelectorAll('[data-lang]'),el => el.getAttribute('data-lang')));
     const body = selection.language ? card.querySelector(`[data-lang="${selection.language}"]`) : null;
-    const paragraphs = body ? Array.from(body.querySelectorAll('.pro-visible p')) : [];
-    const compact = (value, limit) => {
-      const text = String(value || '').replace(/\s+/g,' ').trim();
-      return text.length > limit ? text.slice(0,limit).replace(/\s+\S*$/,'') + '…' : text;
-    };
+    // Copy only the public sample's original source, never the member report or
+    // enhanced markup (which would duplicate tab IDs and lose click listeners).
+    const visible = body && body.querySelector('.pro-visible');
+    const original = visible && visible.querySelector('.report-original > div');
+    const source = original || visible;
     const title = head.textContent.split(' · ')[0].trim();
-    const metadata = head.textContent.slice(title.length).replace(/^\s*·\s*/,'').trim();
     const notice = analysisLanguageNotice(selection,tr), action = analysisAction(tier);
-    return `<article class="dashboard-pro-summary"><span class="dashboard-analysis-meta">${escapeHTML(tr('dashboard.analysis.sample'))}</span><h3>${escapeHTML(title)}</h3><p class="dashboard-analysis-meta">${escapeHTML(metadata)}</p>` +
+    return `<article class="dashboard-pro-summary pro-card"><span class="dashboard-analysis-meta">${escapeHTML(tr('dashboard.analysis.sample'))}</span><div class="pro-card-head">${escapeHTML(head.textContent)}</div>` +
       (notice ? `<p class="dashboard-analysis-language">${escapeHTML(notice)}</p>` : '') +
-      (paragraphs[1] ? `<p class="dashboard-pro-context">${escapeHTML(compact(paragraphs[1].textContent,180))}</p>` : '') +
-      `<p class="dashboard-analysis-excerpt">${escapeHTML(paragraphs[0] ? compact(paragraphs[0].textContent,220) : tr('dashboard.data.unavailable'))}</p>` +
-      `<a class="dashboard-analysis-link" href="${escapeHTML(action.href)}"${action.sample ? ' data-dashboard-analysis' : ''}>${escapeHTML(tr(action.key))} →</a></article>`;
+      `<div data-lang="${escapeHTML(selection.language || lang)}"><div class="pro-visible">${source ? source.innerHTML : escapeHTML(tr('dashboard.data.unavailable'))}</div></div>` +
+      `<div class="dashboard-report-action"><a class="dashboard-analysis-link" href="${escapeHTML(action.href)}"${action.sample ? ' data-dashboard-analysis' : ''}>${escapeHTML(tr(action.key))} →</a></div></article>`;
   }
   function membershipTier(body) {
     const classes = body && body.classList;
@@ -354,6 +352,7 @@
       const target = doc.getElementById('dashboard-analyses');
       const tr = translator(), lang = doc.documentElement.lang;
       doc.querySelectorAll('[data-dashboard-pro-summary]').forEach(element => {element.innerHTML = renderProSummary(doc,tr,lang,membershipTier(doc.body));});
+      if (doc.defaultView && doc.defaultView.PoseidonProReport) doc.defaultView.PoseidonProReport.scan();
       if (!target) return;
       const action = analysisAction(membershipTier(doc.body));
       const cards = [];
