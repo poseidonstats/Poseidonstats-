@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync,readdirSync} from 'node:fs';
 import report from '../assets/pro-report.js';
+import {proSample,plain,marketProbability} from './helpers/pro-sample.mjs';
 const source=readFileSync(new URL('../analize/2026-11-16.html',import.meta.url),'utf8');
 const bodies=[...source.matchAll(/<div class="pro-visible">([\s\S]*?)\n      <\/div>\n    <\/article>/g)].map(m=>m[1]);
 test('real six-language archive retains source, probabilities and loss in each report',()=>{
@@ -34,10 +35,33 @@ test('member line-break format, missing sections and unknown text keep honest so
  assert.deepEqual(Object.keys(report.words).sort(),['en','es','fr','id','it','ro']);
  for(const word of Object.values(report.words))assert.equal(word.length,11);
 });
-test('actual current public sample in all six languages excludes declined tier filler',()=>{
- const html=readFileSync(new URL('../index.html',import.meta.url),'utf8').split('<!-- PRO_SAMPLE_CARD_START -->')[1].split('<!-- PRO_SAMPLE_CARD_END -->')[0];
- const sources=[...html.matchAll(/<div class="pro-visible">([\s\S]*?)\n      <\/div>/g)].map(m=>m[1]);assert.equal(sources.length,6);
- for(const original of sources){const data=report.sections(original);assert.equal(data.markets.length,2);assert.equal(data.thesis.length,1);assert.equal(data.original,original);assert(data.thesis[0].includes('34%'));assert.doesNotMatch(data.markets.join(''),/Base:|Main:|Bold:|Curajos:|Arriesgado:|Dasar:/);}
+function assertSampleConserved(sample) {
+ let reference;
+ for(const variant of sample.variants){
+  const data=report.sections(variant.original);
+  assert.equal(data.original,variant.original,'original HTML stays byte-for-byte intact');
+  for(const [target,key] of [['thesis','verdict'],['context','context'],['evidence','model'],['watch','urmarit']])assert.deepEqual(data[target],[variant.paragraphs[key]],`${variant.language} ${key} retained`);
+  // In the source, the editorial role ends at the first colon.
+  // Preserve everything after it: market, probability, argument and their order.
+  const expected=variant.markets.map(item=>{const text=plain(item);assert(text.includes(':'));return text.slice(text.indexOf(':')+1).trim();});
+  assert.deepEqual(data.markets.map(plain),expected,`${variant.language} supplied markets conserved without editorial labels`);
+  const probabilities=variant.markets.map(marketProbability);
+  if(reference)assert.deepEqual(probabilities,reference,'translated source probabilities agree');else reference=probabilities;
+ }
+}
+test('current public sample retains its actual translated content and every supplied market',()=>{
+ assertSampleConserved(proSample(readFileSync(new URL('../index.html',import.meta.url),'utf8')));
+});
+test('legitimate archived samples with two and three markets satisfy the same conservation contract',()=>{
+ for(const [file,teams,probabilities] of [
+  ['analize/2026-11-16.html',['Sorrento','SS Monopoli'],[82,66]],
+  ['analize/2026-11-17.html',['Burgess Hill Town','Brentwood Town'],[87,70,64]]
+ ]){
+  const sample=proSample(readFileSync(new URL('../'+file,import.meta.url),'utf8'));
+  assert.deepEqual([sample.home,sample.away],teams);
+  for(const variant of sample.variants)assert.deepEqual(variant.markets.map(marketProbability),probabilities);
+  assertSampleConserved(sample);
+ }
 });
 test('hyphenated member picks and six translated leading tiers retain markets',()=>{
  for(const label of ['Bază','Base','Principal','Principale','Curajos','Arriesgado','Audace','Audacieux','Dasar','Utama','Berani']){
