@@ -369,8 +369,9 @@ function matchWhen(m) {
   });
 }
 
-function renderLockedMatch(m) {
-  return `<div class="match match-locked">
+function renderLockedMatch(m, member = false) {
+  const dossier = member && typeof window !== "undefined" ? window.PoseidonDossier?.button(m) || "" : "";
+  return `<div class="match match-locked"${dossier ? ` data-fid="${Number(m.fixture_id)}"` : ""}>
     <div class="match-title">
       <div class="match-teams">${esc(m.home_team)} <span class="vs">vs</span> ${esc(m.away_team)}</div>
       <div class="match-meta">
@@ -378,7 +379,7 @@ function renderLockedMatch(m) {
         <span class="when">${matchWhen(m)}</span>
       </div>
     </div>
-    <span class="lock-tag" aria-label="${tt("match.locked", "predicție disponibilă pentru abonați")}">🔒</span>
+    ${dossier || `<span class="lock-tag" aria-label="${tt("match.locked", "predicție disponibilă pentru abonați")}">🔒</span>`}
   </div>`;
 }
 
@@ -725,6 +726,7 @@ async function renderIndex() {
   if (calib && calib.market_cert) MARKET_CERT = calib.market_cert;
   const scData = await fetchJSON(SCORECARD_URL);
   if (scData && scData.markets) scData.markets.forEach(c => { SCORECARD[c.key] = c; });
+  if (typeof window !== "undefined") window.PoseidonDossier?.setPredictions(PRED_SURSA === "membru" ? data : null);
   if (!data || !data.matches) {
     document.getElementById("matches").innerHTML =
       `<p class="muted">${tt("match.loading", "Datele se încarcă... Dacă persistă, predicțiile zilei nu sunt încă publicate.")}</p>`;
@@ -810,22 +812,25 @@ async function renderIndex() {
     // 2 oct 2026 — cifra onestă: blocatele de AZI separat de cele din toată fereastra (7 zile); „2117 azi” era fereastra întreagă.
     const aziRO = new Date().toLocaleDateString("sv-SE", { timeZone: "Europe/Bucharest" });
     const blocateAzi = blocate.filter(m => ziRO(m.match_date) === aziRO).length;
-    document.getElementById("match-count").textContent = blocate.length
+    const member = PRED_SURSA === "membru";
+    document.getElementById("match-count").textContent = blocate.length && !member
       ? tt("freemium.count", "{free} predicții complete, gratuite. Alte {today} meciuri calculate de model pentru azi și {locked} meciuri în total pe următoarele 7 zile; le deblochezi pe toate cu Basic, 5 $/lună, intrând cu contul Patreon.")
           .replace("{free}", deschise.length).replace("{today}", nUnits(blocateAzi)).replace("{locked}", nUnits(blocate.length))
-      : tt("match.count", "{shown} meciuri afișate (din {total} totale).").replace("{shown}", deschise.length).replace("{total}", matches.length);
+      : tt("match.count", "{shown} meciuri afișate (din {total} totale).").replace("{shown}", member ? filtered.length : deschise.length).replace("{total}", matches.length);
 
     const matchesEl = document.getElementById("matches");
     matchesEl.classList.toggle("only-calibrated-markets", !!(chkCalibMk && chkCalibMk.checked));
 
     // 6 oct 2026 — banda Pro deasupra primului meci (doar pentru nemembri); blocul mare rămâne după cele 5 gratuite. 20 oct 2026: fără probă gratuită (decizia Andreei); clasa „trial-banner” rămâne, pentru CSS și evenimentul GoatCounter.
-    let html = blocate.length
+    let html = blocate.length && !member
       ? `<a href="#abonament" class="trial-banner">${tt("trial.banner", "💎 <strong>Pro, 20 $/lună</strong>: analizele scrise ale zilei, verificate a doua zi cu scorul real · <span class=\"trial-banner-cta\">Alege →</span>")}</a>`
       : "";
-    html += deschise.map(m => renderMatch(m, fmk)).join("");
-    if (blocate.length) {
-      if (blocate.length) html += renderUnlockCta(blocate.length, blocateAzi);
-      html += blocate.slice(0, LOCKED_PREVIEW).map(renderLockedMatch).join("");
+    html += deschise.map(m => renderMatch(m, fmk, member)).join("");
+    if (member) {
+      html += blocate.map(m => renderLockedMatch(m, true)).join("");
+    } else if (blocate.length) {
+      html += renderUnlockCta(blocate.length, blocateAzi);
+      html += blocate.slice(0, LOCKED_PREVIEW).map(m => renderLockedMatch(m)).join("");
       if (blocate.length > LOCKED_PREVIEW) {
         html += `<p class="locked-more muted">` + tt("freemium.more", "… și încă {n} meciuri analizate, nelistate aici.").replace("{n}", nUnits(blocate.length - LOCKED_PREVIEW)) + `</p>`;
       }
@@ -1041,8 +1046,8 @@ if (typeof document !== "undefined") {
     selectMatchReportTab(next); next.focus();
   });
 }
-function renderMatch(m, filterMarket = "") {
-  if (isLocked(m)) return renderLockedMatch(m);
+function renderMatch(m, filterMarket = "", member = false) {
+  if (isLocked(m)) return renderLockedMatch(m, member);
   const c = MATCH_REPORT_COPY[LANG] || MATCH_REPORT_COPY.en;
   const id = `match-report-${++matchReportSequence}`;
   const active = matchReportTab(filterMarket);
@@ -1059,10 +1064,11 @@ function renderMatch(m, filterMarket = "") {
   const freeTag = m.free ? `<span class="free-tag">${tt("freemium.tag", "GRATUIT AZI")}</span>` : "";
   const xgValid = [m.xg_home, m.xg_away].every(v => typeof v === "number" && Number.isFinite(v) && v >= 0);
   const htBtts = m.prob_ht_btts;
+  const dossier = member && typeof window !== "undefined" ? window.PoseidonDossier?.button(m) || "" : "";
   return `<div class="match match-report ${m.calibrated ? "" : "uncalibrated"} ${m.free ? "match-free" : ""}${filterMarket ? " open" : ""}" data-fid="${Number.isSafeInteger(m.fixture_id) ? m.fixture_id : ""}">
     <div class="match-header" role="button" tabindex="0" aria-expanded="${filterMarket || (typeof window !== "undefined" && window.innerWidth > 600) ? "true" : "false"}" aria-controls="${id}-body">
       <div class="match-title"><div class="match-teams"><span class="team home">${esc(m.home_team)}</span><span class="vs">vs</span><span class="team away">${esc(m.away_team)}</span></div><div class="match-meta"><span class="liga">${esc(m.country)} · ${esc(m.league)}</span><span class="when">${matchWhen(m)}</span>${calibTag}${freeTag}</div></div><span class="match-chev" aria-hidden="true"></span>
-    </div><div class="match-body" id="${id}-body">
+    </div>${dossier ? `<div class="match-dossier-action">${dossier}</div>` : ""}<div class="match-body" id="${id}-body">
     <nav class="report-tabs" role="tablist" aria-label="${esc(c[3])}">${tabs}</nav>
     <section ${panel("overview")}><div class="report-heading"><h3>${esc(c[4])}</h3><span>${tt("match.phase.ft", "Final · 90 min")}</span></div>
     ${result([m.prob_home, m.prob_draw, m.prob_away], [m.home_team, c[5], m.away_team], ["1", "X", "2"])}
@@ -1359,6 +1365,17 @@ function _md(s) {
   // 7 oct 2026: analiza începe cu „## 💎 Meci · Ligă · dată” — titlul e deja în capul cardului, îl scoatem; alte „#” devin text simplu
   return String(s || "").trim().replace(/^#{1,6}\s[^\n]*\n?/, "").replace(/^#{1,6}\s+/gm, "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>").replace(/\n/g, "<br>");
 }
+function proAnalysisForFixture(data, day, fixture) {
+  if (!Array.isArray(data?.items) || (data.date && data.date !== day)) return null;
+  return data.items.find(item => Number(item?.match?.fixture_id) === fixture
+    && typeof item.analysis === "string" && item.analysis.trim()) || null;
+}
+function proAnalysisText(item, language) {
+  const translated = language !== "ro" && item["analysis_" + language];
+  return typeof translated === "string" && translated.trim()
+    ? { text: translated, lang: language }
+    : { text: item.analysis, lang: "ro" };
+}
 // 30 oct 2026: zi selectabilă în zona Pro; o cerere veche nu suprascrie ziua/limba curentă.
 let PRO_ZI = null;
 let PRO_CERERE = 0;
@@ -1408,7 +1425,7 @@ async function renderProAnalize(zi) {
     if (!d || !Array.isArray(d.items) || (d.date && d.date !== data)) throw new Error("Invalid Pro analyses response");
     if (!d.items.length) { continut.innerHTML = `<p class="muted">${tt("pro.zi.gol", "Nu sunt analize Pro publicate pentru această zi.")}</p>`; return; }
     // 7 oct 2026: analiza în limba aleasă pe site (analysis_en/es/it din arhivă, traduse de traduce_analize.py); fără traducere → româna
-    const txt = it => (limba !== "ro" && it[`analysis_${limba}`]) || it.analysis;
+    const txt = it => proAnalysisText(it, limba).text;
     const nota = d.items.some(it => limba !== "ro" && !it[`analysis_${limba}`]) ? `<p class="muted">${tt("pro.azi.ro_only", "Traducerea apare în câteva minute; până atunci textul e în română.")}</p>` : "";
     continut.innerHTML = nota + d.items.map(it => `<article class="pro-card pro-card-full"><div class="pro-card-head">${_md(it.match?.home)} – ${_md(it.match?.away)} · ${_md(it.match?.league)}</div><div class="pro-visible">${_md(txt(it))}</div></article>`).join("");
     loadProReport();

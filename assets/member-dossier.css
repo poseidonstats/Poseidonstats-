@@ -1,0 +1,99 @@
+.match-dossier-action { padding: 0 .9rem .65rem; }
+.dossier-open,
+.member-dossier button {
+  min-height: 44px;
+  padding: .35rem .65rem;
+  border: 1px solid #aabbb0;
+  border-radius: .65rem;
+  background: #f4f8ee;
+  color: #15382e;
+  font: inherit;
+  font-size: .85rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+.dossier-open:hover,
+.member-dossier button:hover { background: #e3edda; }
+.dossier-open:focus-visible,
+.member-dossier :focus-visible { outline: 3px solid #a07920; outline-offset: 2px; }
+.dashboard-team .dossier-open { margin-top: .25rem; }
+body:has(.member-dossier[open]) { overflow: hidden; }
+.member-dossier {
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  width: min(calc(100% - 1rem), 55rem);
+  max-height: min(94dvh, 65rem);
+  padding: 0;
+  border: 1px solid #b5c4b9;
+  border-radius: 1rem;
+  overflow: auto;
+  overscroll-behavior: contain;
+  background: #fffef9;
+  color: #152c26;
+}
+.member-dossier::backdrop { background: #132920d4; }
+.dossier-heading {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .6rem;
+  padding: .65rem clamp(.65rem, 3vw, 1.35rem);
+  border-bottom: 1px solid #d8dfd5;
+  background: inherit;
+}
+.dossier-heading h2 { margin: 0; color: inherit; font: 650 clamp(1.18rem, 4vw, 1.8rem)/1.18 Georgia, serif; }
+.dossier-body { padding: .65rem clamp(.65rem, 3vw, 1.35rem) 1.25rem; }
+.member-dossier p { margin: 0 0 .55rem; }
+.member-dossier .dossier-note { color: #445d50; font-size: .77rem; }
+.dossier-tabs { display: flex; gap: .25rem; margin-bottom: .6rem; }
+.dossier-tabs button { min-width: 0; flex: 1; padding-inline: .2rem; }
+.member-dossier .dossier-tabs button[aria-selected="true"] { background: #14342d; border-color: #14342d; color: #fffef9; }
+.dossier-scope { padding: 0; border: 0; margin: 0 0 .6rem; }
+.dossier-scope legend { font-size: .76rem; font-weight: 650; margin-bottom: .18rem; }
+.dossier-scope label {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  min-height: 44px;
+  padding: .2rem .45rem;
+  margin-right: .2rem;
+  border: 1px solid #d8dfd5;
+  border-radius: .5rem;
+  font-size: .78rem;
+  cursor: pointer;
+}
+.dossier-scope label:has(:checked) { background: #e8eee4; border-color: #aabbb0; }
+.dossier-scope input { margin: 0; accent-color: #14342d; }
+.member-dossier table {
+  width: 100%;
+  margin: 0;
+  border-collapse: collapse;
+  background: transparent;
+  color: inherit;
+  font-variant-numeric: tabular-nums;
+}
+.dossier-table th, .dossier-table td,
+.dossier-results-table th, .dossier-results-table td { padding: .45rem .28rem; border-bottom: 1px solid #d8dfd5; }
+.dossier-table thead th { background: #14342d; color: #fffef9; font-size: .78rem; }
+.dossier-table tbody th { width: 42%; text-align: left; font-size: .8rem; font-weight: 650; }
+.dossier-table td { width: 29%; text-align: center; font-size: .87rem; font-weight: 700; }
+.member-dossier th small, .member-dossier td small { display: block; font-size: .7rem; font-weight: 500; line-height: 1.25; }
+.member-dossier td small { color: #445d50; }
+.member-dossier table + .dossier-note { margin-top: .5rem; }
+.dossier-results-title { margin: 1rem 0 .35rem; font-size: .95rem; }
+.dossier-results { display: grid; grid-template-columns: 1fr 1fr; gap: .8rem; }
+.dossier-results-table th, .dossier-results-table td { font-size: .75rem; }
+.dossier-results-table caption { padding: .4rem; background: #e8eee4; text-align: left; font-weight: 750; }
+.dossier-results-table td:first-child, .dossier-results-table td:last-child { white-space: nowrap; }
+.member-dossier [data-dossier-editorial] { margin-bottom: .5rem; }
+.dossier-editorial { margin-bottom: .65rem; padding: .75rem; border: 1px solid #d8dfd5; border-radius: .6rem; }
+.dossier-editorial p:last-child { margin-bottom: 0; }
+.dossier-editorial .pro-card { margin: 0; overflow-wrap: anywhere; }
+.dossier-tabs button { overflow-wrap: anywhere; }
+@media (max-width: 600px) {
+  .dossier-results { grid-template-columns: 1fr; }
+}

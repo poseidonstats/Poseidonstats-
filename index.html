@@ -15,6 +15,7 @@
 <meta property="og:type" content="website">
 <link rel="stylesheet" href="assets/style.css?v=20261026-market-choice1">
 <link rel="stylesheet" href="assets/home-modern.css?v=20261118-paywall-wrap">
+<link rel="stylesheet" href="assets/member-dossier.css?v=20261118">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#1e3a8a">
 <link rel="apple-touch-icon" href="assets/icon-192.png">
@@ -728,9 +729,17 @@ Statistici informative. Modelul poate greși. Verifică sursa. 18+.
   </div>
 </footer>
 
-<script src="assets/members.js?v=20261024-conversion1"></script>
-<script src="assets/app.js?v=20261117-pro-titles"></script>
+<dialog id="member-dossier" class="member-dossier" aria-labelledby="member-dossier-title">
+  <div class="dossier-heading">
+    <h2 id="member-dossier-title" data-dossier-title>Dosarul meciului</h2>
+    <button type="button" data-dossier-close>Închide</button>
+  </div>
+  <div class="dossier-body" data-dossier-body></div>
+</dialog>
+<script src="assets/members.js?v=20261118-dossier"></script>
+<script src="assets/member-dossier.js?v=20261118"></script>
+<script src="assets/app.js?v=20261118-dossier"></script>
 <script src="assets/citire.js?v=20261024-onestitate3"></script>
-<script src="assets/home-dashboard.js?v=20261117-pro-sample"></script>
+<script src="assets/home-dashboard.js?v=20261118-dossier"></script>
 </body>
 </html>

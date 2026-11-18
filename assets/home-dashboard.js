@@ -1,4 +1,4 @@
-/* Homepage presentation only: public local exports, no model or member API calls. */
+/* Homepage presentation: public exports and the already verified member prediction list. */
 (function (root, factory) {
   const api = factory();
   if (typeof module === 'object' && module.exports) module.exports = api;
@@ -33,6 +33,7 @@
   }
   function isPublic(match) { return match.free === true && match.locked !== true; }
   function probability(value) { return finite(value) && value >= 0 && value <= 1 ? value : null; }
+  function memberForecast(match) { return match.locked !== true && (match.prob_home != null || match.prob_over_1_5 != null); }
   function normalizeSearch(value) {
     return String(value == null ? '' : value).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/\s+/g,' ').trim();
   }
@@ -44,19 +45,21 @@
     if (selected && available.includes(selected) && !shortlist.includes(selected)) shortlist.splice(Math.min(shortlist.length,5),1,selected);
     return {available,shortlist};
   }
-  function selectRows(data, day, league = '', limit = 7, search = '') {
+  function selectRows(data, day, league = '', limit = 7, search = '', member = false) {
     availableDays(data); // Validate the export before displaying any values.
     const query = normalizeSearch(search);
     const matching = data.matches.filter(m => dayOf(m.match_date) === day && (!league || m.league === league) &&
       (!query || normalizeSearch(m.home_team).includes(query) || normalizeSearch(m.away_team).includes(query)));
-    matching.sort((a, b) => Number(isPublic(b)) - Number(isPublic(a)) || Date.parse(a.match_date) - Date.parse(b.match_date));
+    const visible = m => isPublic(m) || member && (m.dossier_only || memberForecast(m));
+    matching.sort((a, b) => Number(visible(b)) - Number(visible(a)) || Date.parse(a.match_date) - Date.parse(b.match_date));
     return {
       total: matching.length,
       free: matching.filter(isPublic).length,
       rows: matching.slice(0, limit).map(m => ({
         fixture_id: m.fixture_id, match_date: m.match_date, home: m.home_team || '', away: m.away_team || '',
-        league: m.league || '', country: m.country || '', locked: !isPublic(m),
-        probabilities: isPublic(m) ? [probability(m.prob_home), probability(m.prob_draw), probability(m.prob_away)] : [null, null, null]
+        league: m.league || '', country: m.country || '', locked: !visible(m),
+        ...(member && m.dossier_only ? {dossierOnly:true} : {}),
+        probabilities: visible(m) && !m.dossier_only ? [probability(m.prob_home), probability(m.prob_draw), probability(m.prob_away)] : [null, null, null]
       }))
     };
   }
@@ -93,19 +96,22 @@
       return Object.entries(vars).reduce((s, [k, v]) => s.split(`{${k}}`).join(String(v)), translated);
     };
   }
-  function renderRows(rows, tr, loc) {
+  function renderRows(rows, tr, loc, dossiers = null) {
     const pct = v => v == null ? '—' : `${new Intl.NumberFormat(loc, {maximumFractionDigits:1}).format(v * 100)}%`;
     return rows.map(row => {
       const date = new Date(row.match_date);
       const time = new Intl.DateTimeFormat(loc, {timeZone:TIMEZONE, hour:'2-digit', minute:'2-digit', hour12:false}).format(date);
       const identity = {fixture_id:row.fixture_id,home_team:row.home,away_team:row.away,match_date:row.match_date,locked:row.locked};
-      const readingAPI = typeof window !== 'undefined' && window.POSEIDON_CITIRE;
+      const dossier = dossiers ? dossiers.button(identity) : '';
+      const readingAPI = !row.dossierOnly && typeof window !== 'undefined' && window.POSEIDON_CITIRE;
       const reading = !row.locked && readingAPI && typeof readingAPI.dashboardRow === 'function' ? readingAPI.dashboardRow(identity) : '';
-      const readingAttributes = row.locked ? '' : ` data-reading-fixture="${escapeHTML(row.fixture_id)}" data-reading-home="${escapeHTML(row.home)}" data-reading-away="${escapeHTML(row.away)}" data-reading-kickoff="${escapeHTML(row.match_date)}" data-reading-free="true"`;
+      const readingAttributes = row.locked || row.dossierOnly ? '' : ` data-reading-fixture="${escapeHTML(row.fixture_id)}" data-reading-home="${escapeHTML(row.home)}" data-reading-away="${escapeHTML(row.away)}" data-reading-kickoff="${escapeHTML(row.match_date)}" data-reading-free="true"`;
+      const title = `${escapeHTML(row.home)} <span aria-hidden="true">–</span> ${escapeHTML(row.away)}`;
+      const name = row.dossierOnly ? `<strong>${title}</strong>` : `<a href="#matches" data-dashboard-fixture="${escapeHTML(row.fixture_id)}" title="${escapeHTML(`${row.home} – ${row.away}`)}">${title}</a>`;
       return `<tr${readingAttributes}><td><time datetime="${escapeHTML(row.match_date)}">${escapeHTML(time)}</time></td>` +
-        `<td class="dashboard-team"><a href="#matches" data-dashboard-fixture="${escapeHTML(row.fixture_id)}" title="${escapeHTML(`${row.home} – ${row.away}`)}">${escapeHTML(row.home)} <span aria-hidden="true">–</span> ${escapeHTML(row.away)}</a><small title="${escapeHTML(`${row.country} · ${row.league}`)}">${escapeHTML(row.country)} · ${escapeHTML(row.league)}</small></td>` +
+        `<td class="dashboard-team">${name}<small title="${escapeHTML([row.country,row.league].filter(Boolean).join(' · '))}">${escapeHTML([row.country,row.league].filter(Boolean).join(' · '))}</small>${dossier}</td>` +
         row.probabilities.map(v => `<td class="dashboard-prob">${escapeHTML(pct(v))}</td>`).join('') +
-        `<td><span class="${row.locked ? 'dashboard-lock' : 'dashboard-free'}">${row.locked ? '🔒 ' : ''}${escapeHTML(tr(row.locked ? 'dashboard.access.locked' : 'dashboard.access.free'))}</span></td></tr>${reading}`;
+        `<td><span class="${row.locked ? 'dashboard-lock' : 'dashboard-free'}">${row.locked ? '🔒 ' : ''}${escapeHTML(dossier ? dossiers.copy().member : tr(row.locked ? 'dashboard.access.locked' : 'dashboard.access.free'))}</span></td></tr>${reading}`;
     }).join('');
   }
   function renderChart(points, tr, loc, id, layout = {}) {
@@ -270,6 +276,7 @@
     const clearSearch = doc.getElementById('dashboard-search-clear');
     const table = doc.getElementById('dashboard-predictions');
     const status = doc.getElementById('dashboard-table-status');
+    const dossiers = doc.defaultView?.PoseidonDossier;
     let selectedLeague = '';
     async function localJSON(path) {
       const response = await fetch(path, {credentials:'omit'});
@@ -308,11 +315,20 @@
         el.innerHTML = renderChart(points,tr,loc,`dashboard-chart-${i}`,{width,height});
       });
     }
+    function dashboardPredictions() {
+      const member = dossiers?.predictions();
+      if (!member || !dateSelect?.value) return member || predictions;
+      const catalog = dossiers.catalog(dateSelect.value);
+      const forecastIds = new Set(member.matches.filter(memberForecast).map(m => String(m.fixture_id)));
+      const dossierOnly = catalog.filter(m => !forecastIds.has(String(m.fixture_id)));
+      const dossierIds = new Set(dossierOnly.map(m => String(m.fixture_id)));
+      return {...member, matches: [...member.matches.filter(m => !dossierIds.has(String(m.fixture_id))), ...dossierOnly]};
+    }
     function renderLeagues() {
       if (!leagues && !leagueMenu) return;
       const day = dateSelect && dateSelect.value;
       let available = [], shortlist = [];
-      try { ({available,shortlist} = leagueChoices(predictions,day,selectedLeague)); } catch (_) { /* Table reports unavailable exports. */ }
+      try { ({available,shortlist} = leagueChoices(dashboardPredictions(),day,selectedLeague)); } catch (_) { /* Table reports unavailable exports. */ }
       if (!available.includes(selectedLeague)) selectedLeague = '';
       const tr = translator();
       if (leagues) leagues.innerHTML = ['',...shortlist].map(league => `<button type="button" data-dashboard-league="${escapeHTML(league)}" aria-pressed="${league===selectedLeague}">${escapeHTML(league || tr('dashboard.leagues.all'))}</button>`).join('');
@@ -327,11 +343,15 @@
       const tr = translator();
       try {
         const query = search ? search.value : '';
-        const selection = selectRows(predictions,dateSelect ? dateSelect.value : '',selectedLeague,5,query);
+        const member = !!dossiers?.predictions();
+        if (member && dateSelect?.value) dossiers.loadCatalog(dateSelect.value);
+        const selection = selectRows(dashboardPredictions(),dateSelect ? dateSelect.value : '',selectedLeague,5,query,member);
         if (search) search.disabled = false;
         if (clearSearch) clearSearch.disabled = !normalizeSearch(query);
-        table.innerHTML = selection.rows.length ? renderRows(selection.rows,tr,locale(doc)) : `<tr><td colspan="6">${escapeHTML(tr(normalizeSearch(query) ? 'simplify.search.empty' : 'dashboard.table.empty'))}</td></tr>`;
-        if (status) status.textContent = tr('dashboard.table.count', {shown:selection.rows.length,total:selection.total,free:selection.free}) + ' · ' + tr('dashboard.table.timezone') + ' · ' + tr('dashboard.table.rawnote');
+        table.innerHTML = selection.rows.length ? renderRows(selection.rows,tr,locale(doc),member ? dossiers : null) : `<tr><td colspan="6">${escapeHTML(tr(normalizeSearch(query) ? 'simplify.search.empty' : 'dashboard.table.empty'))}</td></tr>`;
+        if (status) status.textContent = (member
+          ? tr('match.count', {shown:selection.rows.length,total:selection.total})
+          : tr('dashboard.table.count', {shown:selection.rows.length,total:selection.total,free:selection.free})) + ' · ' + tr('dashboard.table.timezone') + (member ? '' : ' · ' + tr('dashboard.table.rawnote'));
       } catch (_) {
         if (search) search.disabled = true;
         if (clearSearch) clearSearch.disabled = true;
@@ -342,7 +362,8 @@
     function renderDates() {
       if (!dateSelect) return;
       try {
-        const days = availableDays(predictions), previous = dateSelect.value;
+        const days = [...new Set([...availableDays(dashboardPredictions()), ...(dossiers?.predictions() ? dossiers.recentDays() : [])])].sort();
+        const previous = dateSelect.value;
         dateSelect.innerHTML = days.map(day => `<option value="${day}">${escapeHTML(new Intl.DateTimeFormat(locale(doc),{day:'numeric',month:'long',year:'numeric',timeZone:TIMEZONE}).format(new Date(day+'T12:00:00Z')))}</option>`).join('');
         dateSelect.value = days.includes(previous) ? previous : chooseDay(days);
         dateSelect.disabled = !days.length;
@@ -391,8 +412,8 @@
       const fragment = event.target.closest('a[href^="#"]');
       if (fragment) openTargetDetails(doc,fragment.getAttribute('href'));
       const match = event.target.closest('[data-dashboard-fixture]');
-      if (match && predictions) {
-        const source = predictions.matches.find(m => String(m.fixture_id) === match.getAttribute('data-dashboard-fixture'));
+      if (match && dashboardPredictions()) {
+        const source = dashboardPredictions().matches.find(m => String(m.fixture_id) === match.getAttribute('data-dashboard-fixture'));
         if (source) {
           revealMatch(doc, source);
         }
@@ -409,6 +430,8 @@
     const evidence = doc.getElementById('dashboard-evidence-details');
     if (evidence) evidence.addEventListener('toggle',() => {if (evidence.open) renderCharts();});
     observeMembership(doc.body, renderAnalyses);
+    if (dossiers) view.addEventListener('poseidon:member-predictions', () => {renderDates();renderLeagues();renderTable();});
+    if (dossiers) view.addEventListener('poseidon:dossier-catalog', () => {renderLeagues();renderTable();});
     render();
     openTargetDetails(doc,view && view.location && view.location.hash,true);
     try {

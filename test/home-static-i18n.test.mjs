@@ -67,8 +67,7 @@ function renderer(language) {
     actual('function nUnits(n) {','// 14 oct 2026 — rezumatul exemplului Pro'),
     actual('function pickBadge(name, prob, stars = 0) {','/* ============== Marcaj onestitate'),
     actual('const PROMOTED_MARKETS = [','/* Popover singleton'),
-    actual('function xgBar(xgH, xgA) {','function renderMatch(m, filterMarket = "") {'),
-    actual('function renderMatch(m, filterMarket = "") {','/* ============== TRACK RECORD')
+    actual('function xgBar(xgH, xgA) {','/* ============== TRACK RECORD')
   ].join('\n'),context);
   context.fixture=fixture;
   return {context,call:code=>runInContext(code,context)};
@@ -130,11 +129,11 @@ test('homepage market filters use translated labels and homepage assets use thei
     assert.equal(key,`filters.market.${market}`);
     for (const language of languages) assert(dictionary[language][key]);
   }
-  assert(html.includes('assets/app.js?v=20261117-pro-titles'));
+  assert(html.includes('assets/app.js?v=20261118-dossier'));
   assert(html.includes('assets/home-modern.css?v=20261118-paywall-wrap'));
-  assert(html.includes('assets/members.js?v=20261024-conversion1'));
+  assert(html.includes('assets/members.js?v=20261118-dossier'));
   assert(html.includes('assets/conversion.js?v=20261024-conversion1'));
-  assert(html.includes('assets/home-dashboard.js?v=20261117-pro-sample'));
+  assert(html.includes('assets/home-dashboard.js?v=20261118-dossier'));
   // The per-metric TEST-N honesty contract superseded reading-frozen1. Check the current asset and cache key together.
   const readingSource=readFileSync(new URL('../assets/citire.js',import.meta.url),'utf8');
   assert(readingSource.includes('nN(t.familia)') && readingSource.includes('nN(t.interval)') && readingSource.includes('nN(t.directia)'));

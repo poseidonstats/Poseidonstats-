@@ -2,7 +2,7 @@
    cache-ul doar ca rezervă offline. Versiunea veche (cache-first pe shell) ținea telefoanele pe pagina și scripturile de la prima
    vizită, iar cererile către zona de membri (alt domeniu) treceau tot prin ea și se puteau îngheța. Cererile către alte domenii
    (Worker-ul de membri, Patreon) NU mai sunt interceptate deloc. */
-const CACHE = "poseidon-v100";
+const CACHE = "poseidon-v101";
 const SHELL = [
   "./index.html",
   "./simulator.html",
@@ -23,6 +23,8 @@ const SHELL = [
   "./assets/conversion.js",
   "./assets/home-dashboard.js",
   "./assets/members.js",
+  "./assets/member-dossier.js",
+  "./assets/member-dossier.css",
   "./manifest.json",
 ];
 
@@ -38,11 +40,15 @@ self.addEventListener("activate", e => {
 
 self.addEventListener("fetch", e => {
   const url = new URL(e.request.url);
-  if (url.origin !== self.location.origin || e.request.method !== "GET") return;   // alt domeniu / non-GET: direct la rețea, fără noi
+  if (url.origin !== self.location.origin || e.request.method !== "GET" ||
+      url.pathname.startsWith("/api/") || url.searchParams.has("members_token") ||
+      e.request.headers.has("authorization")) return;
   e.respondWith(
     fetch(e.request)
       .then(r => {
-        if (r && r.ok) { const copy = r.clone(); caches.open(CACHE).then(c => c.put(e.request, copy)).catch(() => null); }
+        if (r && r.ok && !/\bno-store\b/i.test(r.headers.get("cache-control") || "")) {
+          const copy = r.clone(); caches.open(CACHE).then(c => c.put(e.request, copy)).catch(() => null);
+        }
         return r;
       })
       .catch(() => caches.match(e.request, { ignoreSearch: true }).then(r => r || caches.match("./index.html")))

@@ -90,6 +90,9 @@
   const api = {
     MEMBERS_API, tokenDinUrl, captureaza, tierDinToken, incarcaPredictii, textBara, textNone,
     tier: () => tierDinToken(token()),
+    getProtected: (path, signal) => fetch(MEMBERS_API + path, {
+      headers: { authorization: "Bearer " + token() }, credentials: "omit", cache: "no-store", signal,
+    }),
     incarca: (publicUrl) => incarcaPredictii({ api: MEMBERS_API, token: token(), publicUrl, sterge,
       onAccess: detail => { if (root.PoseidonConversion) root.PoseidonConversion.access(detail); } }),
   };
