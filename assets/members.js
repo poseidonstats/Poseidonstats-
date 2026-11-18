@@ -93,8 +93,23 @@
     getProtected: (path, signal) => fetch(MEMBERS_API + path, {
       headers: { authorization: "Bearer " + token() }, credentials: "omit", cache: "no-store", signal,
     }),
-    incarca: (publicUrl) => incarcaPredictii({ api: MEMBERS_API, token: token(), publicUrl, sterge,
-      onAccess: detail => { if (root.PoseidonConversion) root.PoseidonConversion.access(detail); } }),
+    incarca: async (publicUrl, isCurrent = () => true) => {
+      let session = token();
+      const sameSession = () => token() === session;
+      const result = await incarcaPredictii({
+        api: MEMBERS_API, token: session, publicUrl,
+        sterge: () => {
+          if (isCurrent() && sameSession()) {
+            sterge();
+            session = null;
+          }
+        },
+        onAccess: detail => {
+          if (isCurrent() && sameSession()) root.PoseidonConversion?.access(detail);
+        },
+      });
+      return { ...result, sameSession };
+    },
   };
   if (typeof window !== "undefined") { root.PoseidonMembers = api; document.addEventListener("DOMContentLoaded", init); }
   if (typeof module !== "undefined" && module.exports) module.exports = { tokenDinUrl, captureaza, tierDinToken, incarcaPredictii, textBara, textNone };

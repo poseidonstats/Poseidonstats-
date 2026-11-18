@@ -1,6 +1,8 @@
 // Teste (înaintea codului) — assets/members.js: tokenul din URL, tier-ul afișat, încărcarea datelor complete cu revenire la public.
 import { test } from "node:test";
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import { runInNewContext } from "node:vm";
 import { tokenDinUrl, tierDinToken, incarcaPredictii, textBara, textNone } from "../assets/members.js";
 
 const b64u = (o) => Buffer.from(JSON.stringify(o)).toString("base64").replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
@@ -39,6 +41,41 @@ test("membru → datele complete de la API; 401/403 → token șters și date pu
   assert.equal(r3.sursa, "public"); assert.equal(sters.length, 1);
   const r4 = await incarcaPredictii({ api: "", token: tokBasic, publicUrl: "data/predictions.json", fetchImpl, sterge: () => {} });
   assert.equal(r4.sursa, "public");                                                     // API neconfigurat încă → public
+});
+
+test("un 403 întârziat de la o cerere înlocuită nu șterge sesiunea curentă", async () => {
+  let saved = tokBasic;
+  let current = true;
+  const pending = [];
+  const outcomes = [];
+  const window = { location: { search: "" }, PoseidonConversion: { access: x => outcomes.push(x.status) } };
+  runInNewContext(readFileSync(new URL("../assets/members.js", import.meta.url), "utf8"), {
+    window, document: { addEventListener() {} },
+    localStorage: { getItem: () => saved, removeItem: () => { saved = null; } },
+    fetch: url => url.endsWith("/api/predictions")
+      ? new Promise(resolve => pending.push(resolve))
+      : Promise.resolve(Response.json({ matches: [] })),
+  });
+  const older = window.PoseidonMembers.incarca("data/predictions.json", () => current);
+  current = false;
+  const newer = window.PoseidonMembers.incarca("data/predictions.json");
+  pending[1](Response.json({ matches: [] }));
+  const accepted = await newer;
+  pending[0](new Response(null, { status: 403 }));
+  await older;
+  assert.equal(saved, tokBasic);
+  assert(accepted.sameSession());
+  assert.deepEqual(outcomes, [200]);
+
+  saved = "replacement-token";
+  assert(!accepted.sameSession());
+  const denied = window.PoseidonMembers.incarca("data/predictions.json");
+  pending[2](new Response(null, { status: 403 }));
+  const fallback = await denied;
+  assert.equal(saved, null);
+  assert.equal(fallback.sursa, "public");
+  assert(fallback.sameSession());
+  assert.deepEqual(outcomes, [200, 403]);
 });
 
 test("textul din bară: neautentificat → buton de login; basic/pro → etichetă + ieșire", () => {

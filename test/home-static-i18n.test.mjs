@@ -130,9 +130,9 @@ test('homepage market filters use translated labels and homepage assets use thei
     assert.equal(key,`filters.market.${market}`);
     for (const language of languages) assert(dictionary[language][key]);
   }
-  assert(html.includes('assets/app.js?v=20261118e'));
+  assert(html.includes('assets/app.js?v=20261118f'));
   assert(html.includes('assets/home-modern.css?v=20261118e'));
-  assert(html.includes('assets/members.js?v=20261118-dossier'));
+  assert(html.includes('assets/members.js?v=20261118f'));
   assert(html.includes('assets/conversion.js?v=20261024-conversion1'));
   assert(html.includes('assets/home-dashboard.js?v=20261118e'));
   // The per-metric TEST-N honesty contract superseded reading-frozen1. Check the current asset and cache key together.

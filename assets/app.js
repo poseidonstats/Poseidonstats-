@@ -130,7 +130,7 @@ function mountLangSwitcher() {
     puneRezumatInCaseta();
     injectLiveStats(); // re-injectare după ce applyI18n a rescris [data-i18n]
     // Re-render pagini dinamice
-    if (document.getElementById("matches")) renderIndex().then(renderProAnalize);
+    if (document.getElementById("matches")) renderHome();
     if (document.getElementById("days-list")) renderIstoric();
     if (document.getElementById("calibration-tables")) renderTrackRecord();
     if (document.getElementById("sim-gen-result")) renderSimulator();
@@ -146,33 +146,42 @@ if (typeof window !== "undefined") {
 // fără token sau fără API configurat → fișierul public (5 gratuite + restul cu lacăt), exact ca înainte.
 let PRED_SURSA = "public";
 let PRED_CU_TOKEN = false;   // prima încărcare a pornit deja cu token → plasa de siguranță de la DOMContentLoaded nu mai redesenează (evita 2× 2 MB)
-async function loadPredictions() {
+async function loadPredictions(isCurrent) {
   const M = (typeof window !== "undefined") ? window.PoseidonMembers : null;
   if (M && M.MEMBERS_API) {
-    if (M.tier()) {
-      PRED_CU_TOKEN = true;
+    PRED_CU_TOKEN = Boolean(M.tier());
+    return M.incarca(PRED_URL, isCurrent);
+  }
+  return { sursa: "public", data: await fetchJSON(PRED_URL) };
+}
+
+function showPredictionSource({ sursa, eroare }) {
+  PRED_SURSA = sursa;
+  const M = (typeof window !== "undefined") ? window.PoseidonMembers : null;
+  if (M && M.MEMBERS_API) {
+    const tier = M.tier();
+    document.body.classList.toggle("is-member", Boolean(tier));
+    document.body.classList.toggle("tier-basic", tier === "basic");
+    document.body.classList.toggle("tier-pro", tier === "pro");
+    if (tier) {
       // 7 oct 2026 (Andreea, logată: „tot scrolez mult până la meciuri”): membrul nu are nevoie de prezentare.
       // body.is-member + tier-basic/tier-pro → CSS ascunde intro/dovadă; Basic: exemplul Pro (upsell) coboară SUB lista de meciuri.
       try {
-        document.body.classList.add("is-member", "tier-" + M.tier());
         const mt = document.getElementById("matches");
-        if (M.tier() === "basic") { const ex = document.getElementById("exemplu-pro"); if (ex && mt && mt.parentNode) mt.parentNode.insertBefore(ex, mt.nextSibling); }
+        if (tier === "basic") { const ex = document.getElementById("exemplu-pro"); if (ex && mt && mt.parentNode) mt.parentNode.insertBefore(ex, mt.nextSibling); }
         // reperele zilei coboară sub listă: membrul vrea lista imediat (analize Pro → filtre pliate → meciuri)
         const rep = document.getElementById("repere-azi"); if (rep && mt && mt.parentNode) mt.parentNode.insertBefore(rep, mt.nextSibling);
       } catch (e) {}
     }
-    const r = await M.incarca(PRED_URL);
-    PRED_SURSA = r.sursa;
     // 6 oct 2026: abonat valid, dar datele membrilor n-au venit (9 zile de KV gol au trecut neobservate) → spunem clar, nu lacăte tăcute
-    if (M.tier() && r.sursa === "public" && r.eroare && r.eroare !== 401 && r.eroare !== 403) {
+    document.querySelector(".membru-eroare")?.remove();
+    if (tier && sursa === "public" && eroare && eroare !== 401 && eroare !== 403) {
       const b = document.getElementById("match-count");
-      if (b) b.insertAdjacentHTML("beforebegin", `<p class="membru-eroare">⚠️ ${tt("membru.eroare", "Ești membru, dar datele complete nu s-au încărcat (cod {cod}). Reîncarcă peste câteva minute; dacă persistă, scrie-ne pe Discord, #discutii.").replace("{cod}", r.eroare)}</p>`);
+      if (b) b.insertAdjacentHTML("beforebegin", `<p class="membru-eroare">⚠️ ${tt("membru.eroare", "Ești membru, dar datele complete nu s-au încărcat (cod {cod}). Reîncarcă peste câteva minute; dacă persistă, scrie-ne pe Discord, #discutii.").replace("{cod}", eroare)}</p>`);
     }
     // 29 sept — diagnostic: browserul spune worker-ului ce sursă a afișat (apare în `wrangler tail`); fără header, fără preflight
-    try { fetch(`${M.MEMBERS_API}/api/ping?sursa=${r.sursa}&tier=${M.tier() || "none"}&v=${SCRIPT_V}`, { mode: "no-cors", cache: "no-store" }).catch(() => {}); } catch {}
-    return r.data;
+    try { fetch(`${M.MEMBERS_API}/api/ping?sursa=${sursa}&tier=${tier || "none"}&v=${SCRIPT_V}`, { mode: "no-cors", cache: "no-store" }).catch(() => {}); } catch {}
   }
-  return fetchJSON(PRED_URL);
 }
 const SCRIPT_V = "20261014c";
 // 7 oct 2026 — evenimente în GoatCounter (fără cookie, fără date personale): clicuri pe butoanele de abonament/trial/login și
@@ -290,7 +299,7 @@ if (typeof document !== "undefined") {
 if (typeof window !== "undefined") {
   document.addEventListener("DOMContentLoaded", () => {
     const M = window.PoseidonMembers;
-    if (M && M.MEMBERS_API && M.tier() && !PRED_CU_TOKEN && PRED_SURSA === "public" && document.getElementById("matches")) renderIndex().then(renderProAnalize);
+    if (M && M.MEMBERS_API && M.tier() && !PRED_CU_TOKEN && PRED_SURSA === "public" && document.getElementById("matches")) renderHome();
   });
 }
 
@@ -721,7 +730,10 @@ async function renderSimulator() {
   const el = document.getElementById("sim-matches");
   if (!genEl && !el) return;
 
-  const data = await loadPredictions();
+  const prediction = await loadPredictions();
+  if (prediction.sameSession && !prediction.sameSession()) return renderSimulator();
+  showPredictionSource(prediction);
+  const { data, sursa } = prediction;
   if (!data || !data.matches) {
     const msg = `<p class="muted">${tt("sim.nodata",
       "Datele zilei nu sunt încă publicate. Revino după actualizarea de dimineață.")}</p>`;
@@ -736,7 +748,7 @@ async function renderSimulator() {
   const Mm = (typeof window !== "undefined") ? window.PoseidonMembers : null;
   const aziRO0 = new Date().toLocaleDateString("sv-SE", { timeZone: "Europe/Bucharest" });
   let free;
-  if (Mm && Mm.MEMBERS_API && Mm.tier() && PRED_SURSA === "membru") {
+  if (Mm && Mm.MEMBERS_API && Mm.tier() && sursa === "membru") {
     free = data.matches.filter(m => !isLocked(m) && ziRO(m.match_date) === aziRO0 && m.prob_over_1_5 != null);
     if (free.length < 2) free = data.matches.filter(m => !isLocked(m) && ziRO(m.match_date) >= azi && m.prob_over_1_5 != null).slice(0, 60);
     free.sort((a, b) => (b.prob_over_1_5 || 0) - (a.prob_over_1_5 || 0)); free = free.slice(0, 12);   // cele mai sigure 40, ca lista manuală să rămână parcurgibilă
@@ -813,21 +825,31 @@ async function renderSimulator() {
 }
 
 /* ============== INDEX (predicții) ============== */
+let INDEX_CERERE = 0;
 async function renderIndex() {
+  const request = ++INDEX_CERERE;
+  const isCurrent = () => request === INDEX_CERERE;
   const formatDay = new Intl.DateTimeFormat("sv-SE", { timeZone: "Europe/Bucharest" });
   const aziRO = formatDay.format(new Date());
   // F3 — încarc și calibration.json pt eligibilitatea per piață (badge data-driven).
   // Fallback grațios: dacă lipsește, MARKET_CERT={} → marketState cade pe PROMOTED (ca înainte).
-  const [data, calib] = await Promise.all([loadPredictions(), fetchJSON(CALIB_URL)]);
+  const [prediction, calib] = await Promise.all([loadPredictions(isCurrent), fetchJSON(CALIB_URL)]);
   await i18nGata();
-  if (calib && calib.market_cert) MARKET_CERT = calib.market_cert;
+  if (!isCurrent()) return false;
   const scData = await fetchJSON(SCORECARD_URL);
+  if (!isCurrent()) return false;
+  if (prediction.sameSession && !prediction.sameSession()) return renderIndex();
+
+  showPredictionSource(prediction);
+  const { data, sursa } = prediction;
+  const member = sursa === "membru";
+  if (calib && calib.market_cert) MARKET_CERT = calib.market_cert;
   if (scData && scData.markets) scData.markets.forEach(c => { SCORECARD[c.key] = c; });
-  if (typeof window !== "undefined") window.PoseidonDossier?.setPredictions(PRED_SURSA === "membru" ? data : null);
+  if (typeof window !== "undefined") window.PoseidonDossier?.setPredictions(member ? data : null);
   if (!data || !data.matches) {
     document.getElementById("matches").innerHTML =
       `<p class="muted">${tt("match.loading", "Datele se încarcă... Dacă persistă, predicțiile zilei nu sunt încă publicate.")}</p>`;
-    return;
+    return true;
   }
   const matches = data.matches;
 
@@ -923,7 +945,6 @@ async function renderIndex() {
     // Blocatele merg mereu cronologic: n-avem după ce altceva să le ordonăm onest.
     blocate.sort((a, b) => a.match_date.localeCompare(b.match_date));
 
-    const member = PRED_SURSA === "membru";
     const shown = member ? filtered.length : deschise.length + Math.min(blocate.length, LOCKED_PREVIEW);
     document.getElementById("match-count").textContent = tt("match.count", "{shown} meciuri afișate (din {total} totale).")
       .replace("{shown}", shown).replace("{total}", dayMatches.length);
@@ -935,7 +956,12 @@ async function renderIndex() {
     let html = blocate.length && !member
       ? `<a href="#abonament" class="trial-banner">${tt("trial.banner", "💎 <strong>Pro, 20 $/lună</strong>: analizele scrise ale zilei, verificate a doua zi cu scorul real · <span class=\"trial-banner-cta\">Alege →</span>")}</a>`
       : "";
-    html += deschise.map(m => renderMatch(m, fmk, member)).join("");
+    // Citim starea după așteptarea datelor, ca să preluăm și clicurile făcute între timp.
+    const openReport = matchesEl.querySelector(".match-report.open[data-fid]:not([data-fid=''])");
+    const openFixture = openReport?.dataset.fid;
+    const openTab = openReport?.querySelector('[data-report-tab][aria-selected="true"]')?.dataset.reportTab;
+    html += deschise.map(m => renderMatch(m, fmk, member,
+      String(m.fixture_id) === openFixture ? openTab ?? matchReportTab(fmk) : null)).join("");
     if (member) {
       html += blocate.map(m => renderLockedMatch(m, true)).join("");
     } else if (blocate.length) {
@@ -959,6 +985,11 @@ async function renderIndex() {
     update();
   };
   update();
+  return true;
+}
+
+async function renderHome() {
+  if (await renderIndex()) renderProAnalize();
 }
 
 function pickBadge(name, prob, stars = 0) {
@@ -1170,11 +1201,11 @@ if (typeof document !== "undefined") {
     selectMatchReportTab(next); next.focus();
   });
 }
-function renderMatch(m, filterMarket = "", member = false) {
+function renderMatch(m, filterMarket = "", member = false, openTab = null) {
   if (isLocked(m)) return renderLockedMatch(m, member);
   const c = MATCH_REPORT_COPY[LANG] || MATCH_REPORT_COPY.en;
   const id = `match-report-${++matchReportSequence}`;
-  const active = matchReportTab(filterMarket);
+  const active = openTab ?? matchReportTab(filterMarket);
   const calibTag = m.calibrated
     ? `<span class="ok-tag">${tt("match.calibrated", "calibrată")}</span>`
     : `<span class="warn-tag">${tt("match.uncalibrated", "ligă necalibrată")}</span>`;
@@ -1183,14 +1214,14 @@ function renderMatch(m, filterMarket = "", member = false) {
   const score = (h, a) => Number.isInteger(h) && h >= 0 && Number.isInteger(a) && a >= 0 ? `${h}–${a}` : "—";
   const row = (label, value, key, extra = "") => `<div class="report-market market ${isFilteredMarket(key, filterMarket) ? "market-filtered" : ""}" data-market="${key}"><div class="report-market-line"><span class="label">${esc(label)}</span><strong class="val">${prob(value)}</strong></div>${matchReportMeter(value)}${extra}</div>`;
   const result = (values, labels, keys) => `<div class="report-results">${values.map((v, i) => `<div class="report-result market ${isFilteredMarket(keys[i], filterMarket) ? "market-filtered" : ""}"><span class="label">${esc(labels[i])}</span><strong class="val">${prob(v)}</strong>${keys[i].endsWith("H") ? warnMark("raw") : ""}</div>`).join("")}</div>${values.every(validMatchProbability) ? `<div class="report-split" aria-hidden="true">${values.map(v => `<span style="flex:${v}"></span>`).join("")}</div>` : ""}`;
-  const tabs = ["overview", "goals", "half"].map((name, i) => `<button type="button" role="tab" id="${id}-${name}" aria-controls="${id}-${name}-panel" aria-selected="${name === active}" tabindex="${name === active ? 0 : -1}">${esc(c[i])}</button>`).join("");
+  const tabs = ["overview", "goals", "half"].map((name, i) => `<button type="button" role="tab" data-report-tab="${name}" id="${id}-${name}" aria-controls="${id}-${name}-panel" aria-selected="${name === active}" tabindex="${name === active ? 0 : -1}">${esc(c[i])}</button>`).join("");
   const panel = name => `class="report-panel" id="${id}-${name}-panel" role="tabpanel" aria-labelledby="${id}-${name}"${active === name ? "" : " hidden"}`;
   const freeTag = m.free ? `<span class="free-tag">${tt("freemium.tag", "GRATUIT AZI")}</span>` : "";
   const xgValid = [m.xg_home, m.xg_away].every(v => typeof v === "number" && Number.isFinite(v) && v >= 0);
   const htBtts = m.prob_ht_btts;
   const dossier = member && typeof window !== "undefined" ? window.PoseidonDossier?.button(m) || "" : "";
-  return `<div class="match match-report ${m.calibrated ? "" : "uncalibrated"} ${m.free ? "match-free" : ""}" data-fid="${Number.isSafeInteger(m.fixture_id) ? m.fixture_id : ""}">
-    <div class="report-summary"><div class="match-header" role="button" tabindex="0" aria-expanded="false" aria-controls="${id}-body">
+  return `<div class="match match-report ${m.calibrated ? "" : "uncalibrated"} ${m.free ? "match-free" : ""}${openTab === null ? "" : " open"}" data-fid="${Number.isSafeInteger(m.fixture_id) ? m.fixture_id : ""}">
+    <div class="report-summary"><div class="match-header" role="button" tabindex="0" aria-expanded="${openTab !== null}" aria-controls="${id}-body">
       <div class="match-title"><div class="match-teams"><span class="team home">${esc(m.home_team)}</span><span class="vs">vs</span><span class="team away">${esc(m.away_team)}</span></div><div class="match-meta"><span class="liga">${esc(countryLabel(m.country))} · ${esc(m.league)}</span><span class="when">${matchWhen(m)}</span>${calibTag}${freeTag}</div></div><span class="match-chev" aria-hidden="true"></span>
     </div>${dossier ? `<div class="match-dossier-action">${dossier}</div>` : ""}</div><div class="match-body" id="${id}-body">
     <nav class="report-tabs" role="tablist" aria-label="${esc(c[3])}">${tabs}</nav>
@@ -1315,7 +1346,7 @@ async function renderTrackRecord() {
   document.getElementById("forward-stats").innerHTML = fwdHtml;
 }
 
-if (document.getElementById("matches")) renderIndex().then(renderProAnalize);
+if (document.getElementById("matches")) renderHome();
 
 
 /* ============== ISTORIC (pagina istoric.html) ============== */
