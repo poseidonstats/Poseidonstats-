@@ -358,11 +358,11 @@ body.home-modern.tier-pro #exemplu-pro, body.home-modern.tier-basic #exemplu-pro
   .home-modern header { padding-top: 12px; }
   .home-modern .brand-name { font-size: 21px; }
   .home-modern .brand-icon { width: 25px; height: 31px; }
-  .home-modern #home-nav { gap: 0; }
+  .home-modern #home-nav { gap: 0; padding-inline: 8px; }
   .home-modern #home-nav > a, .home-modern .nav-more > summary { padding-inline: 6px; }
   .home-modern .nav-more { position: static; }
   .home-modern .nav-more > div { right: 16px; }
-  .home-modern .lang-switcher { max-width: 84px; }
+  .home-modern .lang-select { padding-inline: 4px; }
   .home-modern .members-bar { gap: 8px; padding-top: 10px; }
   .home-modern .members-hint { font-size: 12px; flex-basis: 100%; }
   .home-modern .members-login, .home-modern .members-sub { min-height: 39px; display: inline-flex; align-items: center; }

@@ -64,7 +64,7 @@
     const utc=/Z$|[+-]\d{2}:?\d{2}$/i.test(value)?value:value+'Z';
     return Date.parse(utc.replace(' ','T'));
   }
-  function venueHistory(dossier, fixture) {
+  function venueHistory(dossier, fixture, includeEmpty=false) {
     if (!Number.isSafeInteger(fixture) || fixture<=0 || dossier?.fixture_id !== fixture
       || (dossier.history_context!==undefined && dossier.history_context!=='same_competition_season')
       || !Array.isArray(dossier.teams) || dossier.teams.length !== 2) return null;
@@ -85,10 +85,37 @@
         seen.add(row.id);
         return true;
       });
-      return matches.length ? {name:team.name,home,matches} : null;
+      return matches.length || includeEmpty ? {name:team.name,home,matches} : null;
     }
     const home=venue(true),away=venue(false);
     return home && away ? [home,away] : null;
+  }
+  function marketFrequency(dossier, fixture, key) {
+    const sizes=venueHistory(dossier,fixture,true);
+    if (!sizes || typeof key!=='string') return null;
+    const halfTime=key.startsWith('ht_');
+    const market=halfTime?key.slice(3):key;
+    const total=market.match(/^(over|under)_([0-9]+)_5$/);
+    const results={home:(h,a)=>h>a, draw:(h,a)=>h===a, away:(h,a)=>a>h,
+      '1x2_home':(h,a)=>h>a, '1x2_draw':(h,a)=>h===a, '1x2_away':(h,a)=>a>h,
+      dc_1x:(h,a)=>h>=a, dc_x2:(h,a)=>h<=a, dc_12:(h,a)=>h!==a,
+      btts:(h,a)=>h>0&&a>0, btts_no:(h,a)=>h===0||a===0};
+    const threshold=total?Number(total[2])+.5:null;
+    const qualifies=total?(h,a)=>total[1]==='over'?h+a>threshold:h+a<threshold
+      : Object.hasOwn(results,market)?results[market]:null;
+    if (!qualifies) return null;
+    return sizes.map(({name,home,matches})=>{
+      let hits=0,n=0;
+      for (const row of matches) {
+        const scored=halfTime?row.halfScored:row.scored;
+        const conceded=halfTime?row.halfConceded:row.conceded;
+        if (!Number.isSafeInteger(scored) || scored<0 || scored>row.scored
+          || !Number.isSafeInteger(conceded) || conceded<0 || conceded>row.conceded) continue;
+        n++;
+        if (home?qualifies(scored,conceded):qualifies(conceded,scored)) hits++;
+      }
+      return {name,home,hits,n};
+    });
   }
   function goalEvidence(dossier, fixture, goals) {
     const sizes=venueHistory(dossier,fixture);
@@ -115,5 +142,5 @@
       draws:matches.filter(row=>row.scored===row.conceded).length}));
     return {covered,opponent};
   }
-  return {extract,goalEvidence,resultEvidence};
+  return {extract,goalEvidence,resultEvidence,marketFrequency};
 });

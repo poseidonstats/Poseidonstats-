@@ -17,10 +17,10 @@ function actual(start, end) {
   assert(first >= 0 && last > first, start);
   return source.slice(first, last);
 }
-function harness({ language = 'ro', tier = 'pro', now = '2026-10-30T04:00:00Z', fetchImpl = async () => reply(payload('2026-10-30')), dossierImpl = async () => reply({}, 404) } = {}) {
+function harness({ language = 'ro', tier = 'pro', now = '2026-10-30T04:00:00Z', fetchImpl = async () => reply(payload('2026-10-30')) } = {}) {
   // The real renderer owns markup, request URL/headers and event registration.
   // The small DOM boundary records HTML and exposes actual input change handlers.
-  const elements = new Map(), requests = [], dossierRequests = [], warnings = [];
+  const elements = new Map(), requests = [], dossierOpens = [], warnings = [], documentEvents = {};
   function node(id) {
     let html = '', children = [];
     const n = { value: '', listeners: {}, setAttribute() {}, removeAttribute() {}, addEventListener(type, fn) { this.listeners[type] = fn; },
@@ -47,12 +47,15 @@ function harness({ language = 'ro', tier = 'pro', now = '2026-10-30T04:00:00Z', 
   elements.set('home-nav-analyses-archive', { hidden: true });
   class Clock extends Date { constructor(...args) { super(...(args.length ? args : [now])); } static now() { return new Date(now).getTime(); } }
   const context = createContext({ LANG: language, I18N: dictionary, Date: Clock, Intl,
-    document: { getElementById: id => elements.get(id) || null, querySelector: () => null, createElement: node },
-    window: { PoseidonMembers: { MEMBERS_API: 'https://members.invalid', tier: () => context.memberTier,
-      getProtected: (path, signal) => { dossierRequests.push({ path, signal }); return dossierImpl(path, signal); } } }, memberTier: tier,
+    document: { getElementById: id => elements.get(id) || null, querySelector: () => null, createElement: node,
+      addEventListener: (type,handler) => { documentEvents[type] = handler; } },
+    window: { PoseidonMembers: { MEMBERS_API: 'https://members.invalid', tier: () => context.memberTier },
+      PoseidonDossier: { copy: lang => ({ viewEditorial: 'VIEW-PRO-' + lang }), openPro: (trigger,item,day) => {
+        dossierOpens.push({ trigger,item,day }); return true;
+      } } }, memberTier: tier,
     localStorage: { getItem: key => key === 'poseidon_members_token' ? 'TEST-TOKEN' : null },
     fetch: async (url, options) => { requests.push({ url, options }); return fetchImpl(url, options); },
-    AbortController, i18nGata: async () => {}, console: { warn: (...args) => warnings.push(args) }
+    URLSearchParams, i18nGata: async () => {}, console: { warn: (...args) => warnings.push(args) }
   });
   runInContext([
     actual('const ziRO =', '/* ============== i18n'),
@@ -61,12 +64,15 @@ function harness({ language = 'ro', tier = 'pro', now = '2026-10-30T04:00:00Z', 
     actual('function esc(s) {', '/* ============== TRACK RECORD'),
     source.slice(source.indexOf('/* Shared presentation for public sample'))
   ].join('\n'), context);
-  // The card itself has a separate test suite. Here the fixture and protected response test the feed contract.
-  runInContext(`
-    createProAnalysisCard = (item, language) => ({ item, html: _md(proAnalysisText(item, language).text) });
-    setProAnalysisDossier = (card, dossier) => { card.dossier = dossier; };
-  `, context);
-  return { context, requests, dossierRequests, warnings, element: id => elements.get(id),
+  function open() {
+    const button = elements.get('pro-active-report')?.children[0];
+    if (!button) return null;
+    const before = dossierOpens.length;
+    button.listeners.click();
+    return dossierOpens.length > before ? dossierOpens.at(-1) : null;
+  }
+  return { context, requests, dossierOpens, warnings, element: id => elements.get(id), open, documentEvents,
+    selectedText: () => { const selection = open(); return selection && runInContext('proAnalysisText',context)(selection.item,context.LANG); },
     render: date => { context.selected = date; return runInContext('renderProAnalize(selected)', context); },
     body: () => [elements.get('pro-match-choice')?.innerHTML, elements.get('pro-content')?.innerHTML || elements.get('pro-analize').innerHTML,
       ...(elements.get('pro-active-report')?.children || []).map(child => child.html || child.textContent)].join(''),
@@ -84,16 +90,16 @@ test('default Pro date follows Bucharest day; native calendar retrieves yesterda
   await h.change('2026-10-29');
   assert.equal(h.requests.at(-1).url, 'https://members.invalid/api/analize/2026-10-29');
   assert.equal(h.element('pro-date').value, '2026-10-29');
-  assert(h.body().includes('2026-10-29'));
+  assert.equal(h.open().day,'2026-10-29');
   assert.match(h.element('pro-analize').innerHTML, /id="pro-date" type="date" value="2026-10-29"/);
   assert.doesNotMatch(h.element('pro-analize').innerHTML, /data-date="2026-10-29"/);
 });
 
 test('historical 404 replaces old analysis and never promises it will arrive after 07:45', async () => {
   const h = harness({ fetchImpl: async url => url.endsWith('2026-10-29') ? reply({}, 404) : reply(payload('2026-10-30', 'STALE-TODAY')) });
-  await h.render(); assert(h.body().includes('STALE-TODAY'));
+  await h.render(); assert.equal(h.open().item.analysis,'STALE-TODAY');
   await h.render('2026-10-29');
-  assert(!h.body().includes('STALE-TODAY'));
+  assert.equal(h.open(),null);
   assert(!h.body().includes('07:45'));
   assert(h.body().includes(dictionary.ro['pro.zi.lipsa'].replace('{cod}', '404')));
 });
@@ -111,7 +117,7 @@ test('basic and logged-out users make no Pro request; 401/403 discard previous P
   for (const status of [401, 403]) {
     const h = harness({ fetchImpl: async url => url.endsWith('2026-10-29') ? reply({}, status) : reply(payload('2026-10-30', 'PRIVATE-OLD')) });
     await h.render(); await h.render('2026-10-29');
-    assert(!h.body().includes('PRIVATE-OLD'));
+    assert.equal(h.open(),null);
     assert(h.body().includes(dictionary.ro['pro.azi.sesiune']));
   }
 });
@@ -123,13 +129,13 @@ test('slower prior dates and prior language responses cannot overwrite the most 
   const p0 = h.render(); await new Promise(r => setImmediate(r)); const p1 = h.render('2026-10-29');
   yesterday.resolve(reply(payload('2026-10-29', 'YESTERDAY'))); await p1;
   today.resolve(reply(payload('2026-10-30', 'WRONG-TODAY'))); await p0;
-  assert(h.body().includes('YESTERDAY')); assert(!h.body().includes('WRONG-TODAY'));
+  assert.equal(h.open().item.analysis,'YESTERDAY');
   const old = deferred(), current = deferred(); let n = 0;
   const lang = harness({ fetchImpl: () => ++n === 1 ? old.promise : current.promise });
   const ro = lang.render('2026-10-29'); await new Promise(r => setImmediate(r)); lang.context.LANG = 'en'; const en = lang.render();
   current.resolve(reply(payload('2026-10-29', 'CURRENT'))); await en;
   old.resolve(reply(payload('2026-10-29', 'OUTDATED'))); await ro;
-  assert(lang.body().includes('CURRENT:en')); assert(!lang.body().includes('OUTDATED'));
+  assert.equal(lang.selectedText().text,'CURRENT:en');
   assert.equal(lang.requests.at(-1).url, 'https://members.invalid/api/analize/2026-10-29');
 });
 
@@ -142,8 +148,8 @@ test('all six languages translate calendar/title/date and render the matching an
     assert(html.includes(dictionary[language]['pro.analize.h2'])); assert(html.includes(dictionary[language]['filters.day']));
     assert.match(html, /id="pro-date" type="date" value="2026-10-29"/);
     assert(h.body().includes(dictionary[language]['dashboard.table.match']));
-    assert(h.body().includes('&lt;script>unsafe&lt;/script>'));
-    if (language !== 'ro') assert(h.body().includes(':' + language));
+    assert.match(h.body(),new RegExp('VIEW-PRO-'+language));
+    assert.equal(h.selectedText().lang,language);
     assert(!h.body().includes('<script>'));
   }
 });
@@ -152,7 +158,7 @@ test('network and malformed payload errors replace previous cards, and invalid/f
   for (const response of [() => Promise.reject(new Error('explicit offline fixture')), () => reply({ items: 'bad' })]) {
     const h = harness({ fetchImpl: async url => url.endsWith('2026-10-29') ? response() : reply(payload('2026-10-30', 'OLD-CARD')) });
     await h.render(); await h.render('2026-10-29');
-    assert(!h.body().includes('OLD-CARD')); assert(h.body().includes(dictionary.ro['pro.azi.retea']));
+    assert.equal(h.open(),null); assert(h.body().includes(dictionary.ro['pro.azi.retea']));
   }
   const h = harness(); await h.render();
   for (const date of ['2026-10-31', '2026-02-30', '2026-10-29/../../api/predictions', '']) {
@@ -161,50 +167,41 @@ test('network and malformed payload errors replace previous cards, and invalid/f
   }
 });
 
-test('daily selector mounts one match, keeps its selection on language refresh and requests only its own protected dossier', async () => {
+test('Pro button and dashboard action open only the selected fixture and preserve selection on translation', async () => {
   const date = '2026-10-30';
   const first = { match: { home: 'Elazığspor', away: 'Menemen Belediyespor', fixture_id: 101 }, analysis: 'FIRST ANALYSIS' };
   const second = { match: { home: 'Hatayspor', away: 'İnegöl Kafkas Gençlik', fixture_id: 102 }, analysis: 'SECOND ANALYSIS' };
   const historic = { match: { home: 'Home & Sons', away: 'Visitors' }, analysis: 'LEGACY ANALYSIS' };
-  const firstDossier = deferred(), secondDossier = deferred();
-  const items = [first, second, historic];
-  const h = harness({ fetchImpl: async () => reply({ date, items }),
-    dossierImpl: path => path.endsWith('/101') ? firstDossier.promise : secondDossier.promise });
+  const h = harness({ fetchImpl: async () => reply({ date, items: [first,second,historic] }) });
   await h.render();
   assert.match(h.body(), /<label[^>]+for="pro-match-select"/);
   assert.match(h.body(), /Elazığspor – Menemen Belediyespor/);
   assert.match(h.body(), /Hatayspor – İnegöl Kafkas Gençlik/);
   assert.match(h.body(), /Home &amp; Sons – Visitors/);
-  assert.match(h.body(), /FIRST ANALYSIS/);
-  assert.doesNotMatch(h.body(), /SECOND ANALYSIS|LEGACY ANALYSIS/);
-  assert.equal(h.element('pro-active-report').children.length, 1);
-  assert.deepEqual(h.dossierRequests.map(request => request.path), ['/api/dosar/2026-10-30/101']);
+  assert.doesNotMatch(h.body(), /FIRST ANALYSIS|SECOND ANALYSIS|LEGACY ANALYSIS/);
+  assert.equal(h.dossierOpens.length,0);
+  assert.equal(h.open().item,first);
 
   const select = h.element('pro-match-select');
   select.value = '1';
-  const dossierPending = select.listeners.change();
-  assert(h.dossierRequests[0].signal.aborted);
-  assert.equal(h.element('pro-active-report').children.length, 1);
-  assert.match(h.body(), /SECOND ANALYSIS/);
-  assert.doesNotMatch(h.body(), /FIRST ANALYSIS/);
-  secondDossier.resolve(reply({ fixture_id: 102 }));
-  await dossierPending;
-  firstDossier.resolve(reply({ fixture_id: 101 }));
-  await new Promise(resolve => setImmediate(resolve));
-  assert.equal(h.element('pro-active-report').children[0].dossier.fixture_id, 102);
-  assert.equal(h.dossierRequests[1].path, '/api/dosar/2026-10-30/102');
+  select.listeners.change();
+  const link = { dataset: {}, closest: () => link };
+  let prevented = false;
+  h.documentEvents.click({target: link, preventDefault: () => { prevented = true; }});
+  assert(prevented);
+  assert.equal(h.dossierOpens.at(-1).trigger,link);
+  assert.equal(h.dossierOpens.at(-1).item,second);
 
   select.value = '2';
   select.listeners.change();
-  assert.match(h.body(), /LEGACY ANALYSIS/);
-  assert.doesNotMatch(h.body(), /SECOND ANALYSIS/);
-  assert.equal(h.dossierRequests.length, 2);
+  assert.equal(h.open().item,historic);
   h.context.LANG = 'fr';
   await h.render();
-  assert.equal(h.element('pro-match-select').value, '2');
-  assert.match(h.body(), /LEGACY ANALYSIS/);
-  assert(h.body().includes(dictionary.fr['pro.azi.ro_only']));
-  assert.equal(h.dossierRequests.length, 2);
+  assert.equal(h.element('pro-match-select').value,'2');
+  assert.equal(h.selectedText().lang,'ro');
+  assert.equal(h.open().day,date);
+  h.context.memberTier = null;
+  assert.equal(h.open(),null);
 });
 
 test('sticky analyses link opens the daily feed only for a verified Pro member and preserves access to the archive', async () => {

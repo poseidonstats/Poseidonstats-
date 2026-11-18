@@ -2,9 +2,39 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync,readdirSync} from 'node:fs';
 import report from '../assets/pro-report.js';
+import protectedContext from '../assets/pro-context.js';
 import {proSample,plain,marketProbability} from './helpers/pro-sample.mjs';
 const source=readFileSync(new URL('../analize/2026-11-16.html',import.meta.url),'utf8');
 const bodies=[...source.matchAll(/<div class="pro-visible">([\s\S]*?)\n      <\/div>\n    <\/article>/g)].map(m=>m[1]);
+
+test('dossier shows verified counts and similar estimates for the exact official market and match', t=>{
+ t.mock.method(protectedContext,'marketFrequency',()=>[{name:'Away',home:false,n:5,hits:3}]);
+ globalThis.PoseidonProContext=protectedContext;
+ t.after(()=>{delete globalThis.PoseidonProContext;});
+ const day='2026-11-18',cutoff='2026-11-18T05:20:00Z';
+ const record={key:'over_1_5',fixture_id:123,date:day,from:'2026-10-31',to:'2026-11-17',as_of:cutoff};
+ const item={match:{fixture_id:123},site_published_at_utc:'2026-11-18T06:00:00Z',provenance:{
+  original_kickoff_utc:'2026-11-18T14:00:00Z',generated_at_utc:cutoff,inputs:{picks:[{rol:'Principal',key:'over_1_5',p:79.5}]}},
+  league_record:{...record,criteria:'verified_league_ft90_v1',league_id:7,season:2026,phase:'2. Lig White Group',hits:31,settled:45},
+  pro_market_record:{...record,criteria:'verified_pro_primary_ft90_v1',hits:19,settled:24,band:{min_pct:78,max_pct:82,hits:7,settled:9}}};
+ const render=(override={})=>report.dossierReport('',{...item,...override},null,day,'ro');
+ const markup=render();
+ assert.match(markup,/Pronostic publicat înainte de meci[\s\S]*Peste 1,5 goluri în meci · 79,5%/);
+ assert.match(markup,/Liga, grupa albă<\/b> · 31 din 45 de meciuri \(68,89\s*%\)/);
+ assert.match(markup,/19 din 24 decontate/);
+ assert.match(markup,/Estimări similare \(78–82%\) · 7 din 9/);
+ assert.match(markup,/Away în deplasare · 3 din 5/);
+ assert.match(render({site_published_at_utc:'2026-11-18T14:00:00Z'}),/Pronostic arhivat/);
+ assert.match(render({site_published_at_utc:undefined}),/Pronostic arhivat/);
+ for(const patch of [{key:'over_2_5'},{fixture_id:124},{date:'2026-11-17'},{to:day},{as_of:'2026-11-18T06:00:00Z'}]){
+  const rejected=render({pro_market_record:{...item.pro_market_record,...patch}});
+  assert.doesNotMatch(rejected,/19 din 24|Estimări similare/);
+  assert.match(rejected,/aceeași piață<\/b> · Date indisponibile/);
+ }
+ const empty=render({pro_market_record:{...item.pro_market_record,hits:0,settled:0}});
+ assert.match(empty,/0 selecții eligibile/);
+ assert.doesNotMatch(empty,/0 din 0|NaN|Estimări similare/);
+});
 test('real six-language archive retains source, probabilities and loss in each report',()=>{
  assert.equal(bodies.length,12);
  for(const html of bodies){

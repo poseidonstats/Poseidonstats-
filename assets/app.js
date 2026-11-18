@@ -111,6 +111,7 @@ function mountLangSwitcher() {
     LANG = e.target.value;
     localStorage.setItem("poseidon_lang", LANG);
     applyI18n();
+    window.PoseidonDossier?.switchLanguage(LANG);
     puneRezumatInCaseta();
     injectLiveStats(); // re-injectare după ce applyI18n a rescris [data-i18n]
     // Re-render pagini dinamice
@@ -1367,18 +1368,34 @@ function renderHistMatch(m) {
 
 
 /* Shared presentation for public sample and authenticated Pro text. */
+let PRO_REPORT_LOAD;
 function loadProReport() {
-  if (typeof document === "undefined" || !document.head || !document.querySelector(".pro-card .pro-visible")) return;
-  if (window.PoseidonProReport) { window.PoseidonProReport.scan(); return; }
-  if (document.getElementById("pro-report-script")) return;
-  const css = document.createElement("link"); css.rel = "stylesheet"; css.href = "assets/pro-report.css?v=20261118c"; document.head.appendChild(css);
-  const script = document.createElement("script"); script.id = "pro-report-script"; script.src = "assets/pro-context.js?v=20261118c";
-  script.onload = () => { const report = document.createElement("script"); report.src = "assets/pro-report.js?v=20261118c"; document.head.appendChild(report); };
-  script.onerror = script.onload; // Context extraction is optional; keep the source-text report available.
-  document.head.appendChild(script);
+  if (window.PoseidonProReport) return Promise.resolve(window.PoseidonProReport);
+  if (PRO_REPORT_LOAD) return PRO_REPORT_LOAD;
+  const css = document.createElement("link"); css.rel = "stylesheet"; css.href = "assets/pro-report.css?v=20261118d"; document.head.appendChild(css);
+  PRO_REPORT_LOAD = new Promise((resolve,reject) => {
+    const script = document.createElement("script"); script.id = "pro-report-script"; script.src = "assets/pro-context.js?v=20261118d";
+    script.onload = script.onerror = () => {
+      const report = document.createElement("script"); report.src = "assets/pro-report.js?v=20261118d";
+      report.onload = () => resolve(window.PoseidonProReport);
+      report.onerror = () => { PRO_REPORT_LOAD = null; css.remove(); script.remove(); report.remove(); reject(new Error("Pro report unavailable")); };
+      document.head.appendChild(report);
+    };
+    document.head.appendChild(script);
+  });
+  return PRO_REPORT_LOAD;
 }
 if (typeof window !== "undefined" && typeof document !== "undefined") {
-  i18nGata().then(loadProReport).catch(() => {});
+  i18nGata().then(() => document.querySelector(".pro-card .pro-visible") && loadProReport()).catch(() => {});
+  document.addEventListener("click", event => {
+    if (event.defaultPrevented || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    const link = event.target.closest('.dashboard-analysis-link[href="#pro-analize"]');
+    if (!link) return;
+    const match = link.dataset.proMatch, day = link.dataset.proDay;
+    const opened = match && day ? window.PoseidonDossier?.openProForMatch(link, day, match)
+      : document.getElementById("pro-active-report")?.openSelectedPro?.(link);
+    if (opened) event.preventDefault();
+  });
 }
 /* 28 sept 2026 — membrii Pro văd pe site analizele scrise ale zilei (aceleași ca în #analize-pro). */
 function _md(s) {
@@ -1396,49 +1413,12 @@ function proAnalysisText(item, language) {
     ? { text: translated, lang: language }
     : { text: item.analysis, lang: "ro" };
 }
-function createProAnalysisCard(item, language, dossier = null) {
-  const analysis = proAnalysisText(item, language);
-  const card = document.createElement("article");
-  card.className = "pro-card pro-card-full";
-  const heading = document.createElement("div");
-  heading.className = "pro-card-head";
-  const teams = document.createElement("h3");
-  teams.textContent = [item.match?.home, item.match?.away].filter(Boolean).join(" – ");
-  heading.append(teams);
-  if (item.match?.league) {
-    const league = document.createElement("p");
-    league.textContent = item.match.league;
-    heading.append(league);
-  }
-  card.append(heading);
-  const content = document.createElement("div");
-  content.className = "pro-visible";
-  content.hidden = true;
-  content.dataset.proMemberReport = "true";
-  content.lang = analysis.lang;
-  const fixture = Number(item.match?.fixture_id);
-  if (Number.isSafeInteger(fixture) && fixture > 0) content.dataset.proFixture = String(fixture);
-  content.poseidonProDossier = dossier;
-  content.poseidonProSelection = item.provenance?.inputs?.picks;
-  content.innerHTML = _md(analysis.text);
-  card.append(content);
-  return card;
-}
-function setProAnalysisDossier(card, dossier) {
-  const content = card.querySelector(".pro-visible[data-pro-fixture]");
-  if (!content || String(dossier?.fixture_id) !== content.dataset.proFixture) return;
-  content.poseidonProDossier = dossier;
-  window.PoseidonProReport?.enhance(content, true);
-}
 // 30 oct 2026: zi selectabilă în zona Pro; o cerere veche nu suprascrie ziua/limba curentă.
 let PRO_ZI = null;
 let PRO_CERERE = 0;
 let PRO_MECI = null;
-let PRO_DOSAR_CONTROLLER = null;
 async function renderProAnalize(zi) {
   const cerere = ++PRO_CERERE;
-  PRO_DOSAR_CONTROLLER?.abort();
-  PRO_DOSAR_CONTROLLER = null;
   const M = (typeof window !== "undefined") ? window.PoseidonMembers : null;
   const el = document.getElementById("pro-analize");
   if (!el) return;
@@ -1499,11 +1479,11 @@ async function renderProAnalize(zi) {
     const meciuri = d.items.map((item, index) => {
       const match = item.match || {};
       const fixture = String(match.fixture_id ?? "");
-      const id = /^[1-9]\d{0,14}$/.test(fixture) ? Number(fixture) : null;
       const echipe = [match.home, match.away].filter(Boolean).join(" – ");
       const label = echipe || match.league || `${tt("dashboard.table.match", "Meci")} ${index + 1}`;
-      return { item, id, label, key: id ?? `${label}|${match.league ?? ""}` };
-    });
+      return { item, label, key: fixture || `${label}|${match.league ?? ""}` };
+    }).filter(({item}) => typeof item.analysis === "string" && item.analysis.trim());
+    if (!meciuri.length) { continut.innerHTML = `<p class="muted">${tt("pro.zi.gol", "Nu sunt analize Pro publicate pentru această zi.")}</p>`; return; }
     const alegere = el.querySelector("#pro-match-choice");
     alegere.innerHTML = `<label for="pro-match-select" data-i18n="dashboard.table.match">${esc(tt("dashboard.table.match", "Meci"))}</label>
       <select id="pro-match-select" aria-controls="pro-active-report">${meciuri.map(({ label }, index) => `<option value="${index}">${esc(label)}</option>`).join("")}</select>`;
@@ -1511,35 +1491,23 @@ async function renderProAnalize(zi) {
     continut.innerHTML = '<div id="pro-active-report"></div>';
     const selector = alegere.querySelector("#pro-match-select");
     const raport = continut.querySelector("#pro-active-report");
-    const afiseaza = () => {
-      if (!activa()) return;
-      const meci = meciuri[Number(selector.value)];
-      if (!meci) return;
-      PRO_MECI = meci.key;
-      PRO_DOSAR_CONTROLLER?.abort();
-      PRO_DOSAR_CONTROLLER = null;
-      const card = createProAnalysisCard(meci.item, limba);
-      raport.replaceChildren();
-      if (limba !== "ro" && proAnalysisText(meci.item, limba).lang === "ro") {
-        const nota = document.createElement("p");
-        nota.className = "muted";
-        nota.textContent = tt("pro.azi.ro_only", "Traducerea apare în câteva minute; până atunci textul e în română.");
-        raport.append(nota);
-      }
-      raport.append(card);
-      loadProReport();
-      if (!meci.id || typeof M.getProtected !== "function") return;
-      const controller = new AbortController();
-      PRO_DOSAR_CONTROLLER = controller;
-      return M.getProtected(`/api/dosar/${data}/${meci.id}`, controller.signal)
-        .then(raspuns => raspuns.ok ? raspuns.json() : null)
-        .then(dosar => {
-          if (dosar && activa() && !controller.signal.aborted) setProAnalysisDossier(card, dosar);
-        })
-        .catch(() => {}); // The archived analysis remains available if the dossier cannot be loaded.
+    const dosar = window.PoseidonDossier;
+    const deschide = document.createElement("button");
+    deschide.id = "pro-view-analysis";
+    deschide.className = "dossier-open";
+    deschide.type = "button";
+    deschide.setAttribute("aria-haspopup", "dialog");
+    deschide.setAttribute("aria-controls", "member-dossier");
+    deschide.textContent = dosar?.copy(limba).viewEditorial || "Pro analysis";
+    raport.openSelectedPro = trigger => {
+      const selected = meciuri[Number(selector.value)];
+      return activa() && selected && dosar?.openPro(trigger, selected.item, data);
     };
-    selector.value = String(Math.max(0, meciuri.findIndex(meci => meci.key === PRO_MECI)));
-    selector.addEventListener("change", afiseaza);
-    afiseaza();
+    deschide.addEventListener("click", () => raport.openSelectedPro(deschide));
+    raport.append(deschide);
+    const echipa = new URLSearchParams(window.location?.search).get("echipa");
+    const index = meciuri.findIndex(({key,item}) => PRO_MECI != null ? key === PRO_MECI : echipa && item.match?.home === echipa);
+    selector.value = String(Math.max(0, index));
+    selector.addEventListener("change", () => { PRO_MECI = meciuri[Number(selector.value)]?.key; });
   } catch (e) { if (!activa()) return; console.warn("[membri] analize", e); continut.innerHTML = `<p class="muted">${tt("pro.azi.retea", "Nu am putut contacta serverul membrilor. Reîncarcă pagina; analizele sunt și în #analize-pro pe Discord.")}</p>`; }
 }

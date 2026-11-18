@@ -231,6 +231,13 @@
     if (tier === 'basic') return {href:'analize/index.html',key:'dashboard.analysis.readarchive',sample:false};
     return {href:'#exemplu-pro',key:'dashboard.analysis.read',sample:true};
   }
+  function analysisLink(head,action,tr) {
+    const day = head.querySelector?.('[data-date]')?.getAttribute('data-date');
+    const title = head.textContent.split(' · ')[0].trim();
+    const specific = action.href === '#pro-analize' && /^\d{4}-\d{2}-\d{2}$/.test(day) && title;
+    const attrs = specific ? ` data-pro-day="${day}" data-pro-match="${escapeHTML(title)}"` : action.sample ? ' data-dashboard-analysis' : '';
+    return `<a class="dashboard-analysis-link" href="${escapeHTML(action.href)}"${attrs}>${escapeHTML(tr(action.key))} →</a>`;
+  }
   function renderProSummary(doc, tr, lang, tier) {
     const head = doc.querySelector('#exemplu-pro .pro-card-head');
     if (!head) return `<p>${escapeHTML(tr('dashboard.data.unavailable'))}</p>`;
@@ -242,12 +249,11 @@
     // enhanced markup (which would duplicate tab IDs and lose click listeners).
     const visible = body && body.querySelector('.pro-visible');
     const source = doc.defaultView?.PoseidonProReport?.sourceMarkup?.(visible) ?? visible?.innerHTML;
-    const title = head.textContent.split(' · ')[0].trim();
     const notice = analysisLanguageNotice(selection,tr), action = analysisAction(tier);
     return `<article class="dashboard-pro-summary pro-card"><span class="dashboard-analysis-meta">${escapeHTML(tr('dashboard.analysis.sample'))}</span><div class="pro-card-head">${escapeHTML(head.textContent)}</div>` +
       (notice ? `<p class="dashboard-analysis-language">${escapeHTML(notice)}</p>` : '') +
       `<div data-lang="${escapeHTML(selection.language || lang)}"><div class="pro-visible">${source ?? escapeHTML(tr('dashboard.data.unavailable'))}</div></div>` +
-      `<div class="dashboard-report-action"><a class="dashboard-analysis-link" href="${escapeHTML(action.href)}"${action.sample ? ' data-dashboard-analysis' : ''}>${escapeHTML(tr(action.key))} →</a></div></article>`;
+      `<div class="dashboard-report-action">${analysisLink(head,action,tr)}</div></article>`;
   }
   function membershipTier(body) {
     const classes = body && body.classList;
@@ -411,7 +417,7 @@
         const excerpt = body && body.querySelector('.pro-visible p');
         const title = head.textContent.split(' · ')[0].trim();
         const metadata = head.textContent.slice(title.length).replace(/^\s*·\s*/, '').trim();
-        cards.push(`<article class="dashboard-analysis-card"><span class="dashboard-illustration dashboard-analysis-illustration">${escapeHTML(tr('dashboard.illustration'))}</span><span class="dashboard-analysis-meta">${escapeHTML(tr('dashboard.analysis.sample'))}</span><h3 class="dashboard-analysis-title">${escapeHTML(title)}</h3><p class="dashboard-analysis-meta">${escapeHTML(metadata)}</p>${notice ? `<p class="dashboard-analysis-meta dashboard-analysis-language">${escapeHTML(notice)}</p>` : ''}<p class="dashboard-analysis-excerpt">${escapeHTML(excerpt ? excerpt.textContent : tr('dashboard.data.unavailable'))}</p><a class="dashboard-analysis-link" href="${escapeHTML(action.href)}"${action.sample ? ' data-dashboard-analysis' : ''}>${escapeHTML(tr(action.key))} →</a></article>`);
+        cards.push(`<article class="dashboard-analysis-card"><span class="dashboard-illustration dashboard-analysis-illustration">${escapeHTML(tr('dashboard.illustration'))}</span><span class="dashboard-analysis-meta">${escapeHTML(tr('dashboard.analysis.sample'))}</span><h3 class="dashboard-analysis-title">${escapeHTML(title)}</h3><p class="dashboard-analysis-meta">${escapeHTML(metadata)}</p>${notice ? `<p class="dashboard-analysis-meta dashboard-analysis-language">${escapeHTML(notice)}</p>` : ''}<p class="dashboard-analysis-excerpt">${escapeHTML(excerpt ? excerpt.textContent : tr('dashboard.data.unavailable'))}</p>${analysisLink(head,action,tr)}</article>`);
       }
       if (archive) {
         const links = Array.from(archive.querySelectorAll('a[href]')).filter(a => /^\d{4}-\d{2}-\d{2}\.html$/.test(a.getAttribute('href'))).slice(0,2);

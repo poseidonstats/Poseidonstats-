@@ -9,6 +9,131 @@
     fr: ['Analyse','Contexte','Résultat','Conclusion de l’analyse','Éléments à l’appui','À surveiller','Perspectives des marchés','Rapport original','La vérification du résultat n’est pas encore disponible.','Le contexte des équipes n’est pas disponible dans ce rapport.','RAPPORT PRO'],
     id: ['Analisis','Konteks tim','Ulasan hasil','Kesimpulan analisis','Bukti pendukung','Yang perlu diamati','Gambaran pasar','Laporan asli','Ulasan hasil belum tersedia.','Konteks tim belum tersedia dalam laporan ini.','LAPORAN PRO']
   };
+  const marketCopy = {
+    ro: ['Liga','grupa albă','grupa roșie','Meciurile echipelor','acasă','în deplasare','Istoric Pro · aceeași piață','{hits} din {n}','de meciuri','decontate','Estimări similare','Date indisponibile','0 selecții eligibile','Rezultate până la {cutoff}','O selecție principală pe meci și piață, publicată înainte de start și decontată înainte de data acestui meci.'],
+    en: ['League','White Group','Red Group','Teams’ matches','at home','away','Pro history · same market','{hits} of {n}','matches','settled','Similar estimates','Data unavailable','0 eligible picks','Results as of {cutoff}','One main pick per fixture and market, published before kickoff and settled before this fixture date.'],
+    es: ['Liga','grupo blanco','grupo rojo','Partidos de los equipos','en casa','fuera','Historial Pro · mismo mercado','{hits} de {n}','partidos','liquidadas','Estimaciones similares','Datos no disponibles','0 selecciones elegibles','Resultados hasta {cutoff}','Una selección principal por partido y mercado, publicada antes del inicio y liquidada antes de la fecha del partido.'],
+    it: ['Campionato','girone bianco','girone rosso','Partite delle squadre','in casa','in trasferta','Storico Pro · stesso mercato','{hits} su {n}','partite','refertate','Stime simili','Dati non disponibili','0 selezioni idonee','Risultati al {cutoff}','Una selezione principale per partita e mercato, pubblicata prima del calcio d’inizio e risolta prima della data della partita.'],
+    fr: ['Championnat','groupe blanc','groupe rouge','Matchs des équipes','à domicile','à l’extérieur','Historique Pro · même marché','{hits} sur {n}','matchs','résolues','Estimations similaires','Données indisponibles','0 sélections admissibles','Résultats au {cutoff}','Une sélection principale par match et marché, publiée avant le coup d’envoi et résolue avant la date du match.'],
+    id: ['Liga','grup putih','grup merah','Pertandingan tim','di kandang','tandang','Riwayat Pro · pasar yang sama','{hits} dari {n}','laga','selesai','Estimasi serupa','Data tidak tersedia','0 pilihan yang memenuhi syarat','Hasil hingga {cutoff}','Satu pilihan utama per laga dan pasar, dipublikasikan sebelum sepak mula dan diselesaikan sebelum tanggal laga ini.'],
+  };
+  const archiveCopy = {
+    ro: ['Pronostic publicat înainte de meci','Pronostic arhivat','Rezultat final','Vezi verificarea în arhivă'],
+    en: ['Pick published before kickoff','Archived pick','Final score','View the review in the archive'],
+    es: ['Pronóstico publicado antes del inicio','Pronóstico archivado','Resultado final','Ver la revisión en el archivo'],
+    it: ['Pronostico pubblicato prima del calcio d’inizio','Pronostico archiviato','Risultato finale','Vedi la verifica in archivio'],
+    fr: ['Pronostic publié avant le coup d’envoi','Pronostic archivé','Score final','Voir la vérification dans les archives'],
+    id: ['Pilihan dipublikasikan sebelum sepak mula','Pilihan yang diarsipkan','Skor akhir','Lihat hasil verifikasi di arsip'],
+  };
+  function archiveReviewLabels(lang) {
+    const [,,final,open]=archiveCopy[lang]||archiveCopy.en;
+    return {final,open};
+  }
+  const bucharestDay=new Intl.DateTimeFormat('sv-SE',{timeZone:'Europe/Bucharest',year:'numeric',month:'2-digit',day:'2-digit'});
+  function isoDate(day) {
+    if (typeof day!=='string' || !/^\d{4}-\d{2}-\d{2}$/.test(day)) return false;
+    const date=new Date(day+'T00:00:00Z');
+    return Number.isFinite(+date) && date.toISOString().slice(0,10)===day;
+  }
+  function instant(value) {
+    return typeof value==='string' && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}.*(?:Z|[+-]\d{2}:?\d{2})$/i.test(value) ? Date.parse(value) : NaN;
+  }
+  function validCounts({hits,settled}) {
+    return Number.isSafeInteger(hits) && Number.isSafeInteger(settled) && hits>=0 && hits<=settled;
+  }
+  function verifiedRecord(record,{fixture,day,key,kickoff,publication},kind) {
+    const league=kind==='league';
+    const criteria=league?'verified_league_ft90_v1':'verified_pro_primary_ft90_v1';
+    if (!record || !isoDate(day) || !key || record.criteria!==criteria || record.fixture_id!==fixture
+      || record.date!==day || record.key!==key || !validCounts(record)) return null;
+    const cutoff=instant(record.as_of),start=instant(kickoff),published=instant(publication);
+    if (!Number.isFinite(cutoff) || (Number.isFinite(start) && cutoff>=start)
+      || (Number.isFinite(published) && (cutoff>published || (Number.isFinite(start) && published>=start)))) return null;
+    const cutoffDay=bucharestDay.format(cutoff);
+    if (cutoffDay>day || (cutoffDay===day && (!Number.isFinite(start) || !Number.isFinite(published)))) return null;
+    if (league && (!Number.isSafeInteger(record.league_id) || record.league_id<=0 || !Number.isSafeInteger(record.season))) return null;
+    if (record.settled && (!isoDate(record.from) || !isoDate(record.to) || record.from>record.to
+      || record.to>cutoffDay || (!league && record.to>=day))) return null;
+    return record;
+  }
+  function marketSummary(item,dossier,identity,lang) {
+    const [leagueLabel,white,red,teamsLabel,atHome,away,historyLabel,count,matches,settled,similar,unavailable,empty,cutoffLabel,criteria]=marketCopy[lang]||marketCopy.en;
+    const num=new Intl.NumberFormat(lang);
+    const percent=new Intl.NumberFormat(lang,{style:'percent',minimumFractionDigits:2,maximumFractionDigits:2});
+    const period=new Intl.DateTimeFormat(lang==='en'?'en-GB':lang,{day:'numeric',month:'short',year:'numeric',timeZone:'UTC'});
+    const cutoff=new Intl.DateTimeFormat(lang==='en'?'en-GB':lang,{dateStyle:'short',timeStyle:'short',timeZone:'Europe/Bucharest'});
+    const tally=(hits,n)=>count.replace('{hits}',num.format(hits)).replace('{n}',num.format(n));
+    const range=record=>record.from===record.to?period.format(new Date(record.from))
+      : period.formatRange(new Date(record.from),new Date(record.to));
+    const recordDates=record=>[record.settled?range(record):'',cutoffLabel.replace('{cutoff}',cutoff.format(instant(record.as_of)))].filter(Boolean).join(' · ');
+    const format=(record,unit)=>`${tally(record.hits,record.settled)} ${unit} (${percent.format(record.hits/record.settled)})`;
+    const candidate=verifiedRecord(item.league_record,identity,'league');
+    const league=dossier?.season && candidate?.season!==Number(dossier.season)?null:candidate;
+    const leaguePhase=league?.phase?.toLowerCase?.();
+    const group=leaguePhase==='2. lig white group'?white:leaguePhase==='2. lig red group'?red
+      : leaguePhase && leaguePhase!=='regular season'?league.phase:'';
+    const leagueName=group?`${leagueLabel}, ${group}`:leagueLabel;
+    const teams=root.PoseidonProContext?.marketFrequency(dossier,identity.fixture,identity.key);
+    const pro=verifiedRecord(item.pro_market_record,identity,'pro');
+    const band=pro?.band;
+    const bandCovered=band && validCounts(band) && band.settled>0 && band.settled<=pro.settled
+      && band.hits<=pro.hits && band.settled-band.hits<=pro.settled-pro.hits
+      && Number.isFinite(band.min_pct) && Number.isFinite(band.max_pct) && band.min_pct>=0 && band.max_pct<=100
+      && band.min_pct<=identity.estimate && identity.estimate<=band.max_pct;
+    const notes=pro?`<small>${escapeText(recordDates(pro))}</small>${bandCovered?`<small data-pro-similar>${escapeText(`${similar} (${num.format(band.min_pct)}–${num.format(band.max_pct)}%) · ${tally(band.hits,band.settled)}`)}</small>`:''}<small>${escapeText(criteria)}</small>`:'';
+    const leaguePeriod=league?.settled?`<small>${escapeText(`${leagueName} · ${recordDates(league)}`)}</small>`:'';
+    const venues=`<p data-pro-venues><b>${escapeText(teamsLabel)}</b>${teams?teams.map(team=>`<span>${escapeText(`${team.name} ${team.home?atHome:away} · ${team.n?tally(team.hits,team.n):'—'}`)}</span>`).join(''):` · ${escapeText(unavailable)}`}</p>`;
+    return `<div class="dossier-market-evidence">
+      <p data-pro-league><b>${escapeText(leagueName)}</b> · ${escapeText(league?.settled ? format(league,matches) : unavailable)}</p>
+      <details data-pro-history><summary><b>${escapeText(historyLabel)}</b> · ${escapeText(pro?.settled?format(pro,settled):pro?empty:unavailable)}</summary>${notes}${leaguePeriod}${venues}</details>
+    </div>`;
+  }
+  const matchReading = {
+    ro: ['Ce arată datele de dinaintea meciului','{team} a marcat {average} goluri pe meci în {n} deplasări (modelul estima {estimate}).','{home} a primit {one} din cele {all} goluri de acasă într-un singur meci, {score} cu {opponent}.'],
+    en: ['What the pre-match data showed','{team} scored {average} goals per game across {n} league away matches. The model expected {estimate}.','{home} conceded {one} of their {all} home goals in one match, a {score} against {opponent}.'],
+    es: ['Qué mostraban los datos previos al partido','{team} marcó {average} goles por partido en {n} salidas de liga. El modelo estimaba {estimate}.','{home} recibió {one} de sus {all} goles en casa en un partido, un {score} contra {opponent}.'],
+    it: ['Cosa mostravano i dati prepartita','{team} ha segnato {average} gol a partita in {n} trasferte di campionato. Il modello ne stimava {estimate}.','{home} ha subito {one} dei suoi {all} gol in casa in una partita, {score} contro {opponent}.'],
+    fr: ['Ce que montraient les données d’avant-match','{team} a marqué {average} buts par match en {n} déplacements de championnat. Le modèle en attendait {estimate}.','{home} a encaissé {one} de ses {all} buts à domicile en un match, un {score} contre {opponent}.'],
+    id: ['Apa yang ditunjukkan data prapertandingan','{team} mencetak {average} gol per laga dalam {n} laga tandang liga. Model memperkirakan {estimate}.','{home} kebobolan {one} dari {all} gol kandang dalam satu laga, {score} melawan {opponent}.'],
+  };
+  function preMatchReading(item,fixture,day,facts,lang) {
+    const original=item.provenance;
+    const match=original?.inputs?.match;
+    const kickoff=instant(original?.original_kickoff_utc),captured=instant(original?.inputs_captured_at_utc),generated=instant(original?.generated_at_utc);
+    if (!facts?.away || !facts.home || match?.fixture_id!==fixture || match.date!==day
+      || !(captured<=generated && generated<kickoff) || !Number.isFinite(match.xg_away)) return '';
+    const {away,home}=facts;
+    if (away.scored/away.n >= match.xg_away || !home.worst?.opponent || home.worst.conceded<=0) return '';
+    const [title,comparison,concentration]=matchReading[lang]||matchReading.en;
+    const n=new Intl.NumberFormat(lang,{minimumFractionDigits:2,maximumFractionDigits:2});
+    const fill=line=>escapeText(line.replace(/\{(\w+)\}/g,(_,key)=>({
+      team:away.name,average:n.format(away.scored/away.n),n:away.n,estimate:n.format(match.xg_away),
+      home:home.name,one:home.worst.conceded,all:home.conceded,score:`${home.worst.scored}–${home.worst.conceded}`,opponent:home.worst.opponent,
+    })[key]));
+    return `<div class="dossier-reading"><h3>${title}</h3><p>${fill(comparison)} ${fill(concentration)}</p></div>`;
+  }
+  function dossierReport(html,item,dossier,day,lang,sourceLang=lang) {
+    const data=sections(html);
+    const structured=structuredSelection(item.provenance?.inputs?.picks,lang);
+    const selection=structured || data.selection;
+    const dossierApi=root.PoseidonProContext;
+    const fixture=Number(item.match?.fixture_id);
+    const key=selection?.key || (selection?.goals ? `over_${selection.goals-1}_5` : null);
+    const identity={fixture,day,key,kickoff:item.provenance?.original_kickoff_utc,
+      publication:item.provenance?.generated_at_utc,estimate:Number(selection?.probability?.replace('%','').replace(',','.'))};
+    const evidence=key?marketSummary(item,dossier,identity,lang):'';
+    const goals=structured?.goals;
+    const facts=goals?dossierApi?.goalEvidence(dossier,fixture,goals):null;
+    const snapshot=instant(dossier?.as_of),published=instant(identity.publication);
+    const reading=snapshot<=published?preMatchReading(item,fixture,day,facts,lang):'';
+    const conclusion=(data.thesis[0]||data.other[0])?.replace(/^<p\b[^>]*>\s*(?:⚡\s*)?<strong[^>]*>[^<]*<\/strong>\s*/u,'<p>')||'';
+    const receipt=instant(item.site_published_at_utc);
+    const publishedOnTime=published<=receipt && receipt<instant(identity.kickoff);
+    const pickLabel=(archiveCopy[lang]||archiveCopy.en)[publishedOnTime?0:1];
+    const w=words[lang]||words.en;
+    const review=data.review.map(block=>reviewMarkup(block,sourceLang)).join('');
+    return `${selection?`<p class="dossier-published"><span>${pickLabel}</span> · <strong>${escapeText(selection.market)} · ${escapeText(selection.probability)}</strong></p>`:''}${reading||`<div lang="${escapeText(sourceLang)}">${conclusion}</div>`}${evidence}<details class="dossier-review"${review?'':' data-review-lookup'}><summary>${w[2]}</summary><div data-dossier-review-content aria-live="polite">${review || `<p>${w[8]}</p>`}</div></details>`;
+  }
   // Observed historical tier labels; anchored to the start, never narrative words.
   const tierNames = 'Base|Main pick|Main|Bold pick|Bold|Curajos|Arriesgado|Atrevido|Coraggioso|Bază|Baza|Principal|Principale|Principali|Audaz|Audace|Audacieux|Utama|Berani|Dasar|Siguranță|Safe pick|Safe|Safety|Seguridad|Sicurezza|Sécurité|Aman|Keamanan|Banker|Core|Foundation|Value pick|Risky pick|Audacios';
   const tierPrefix = new RegExp('^(?:\\s|-|[🔒🎯💎]|\\*|<strong>)*?(?:'+tierNames+')\\s*:\\s*(?:\\*\\*)?\\s*(?:</strong>)?\\s*','iu');
@@ -43,11 +168,11 @@
     const {key,p,piata}=primary[0];
     if (!Number.isFinite(p) || p<0 || p>100 || typeof key!=='string') return null;
     const total=key.match(/^over_([12])_5$/);
-    const format={ro:'Peste {n} goluri',en:'Over {n} goals',es:'Más de {n} goles',
-      it:'Over {n} gol',fr:'Plus de {n} buts',id:'Di atas {n} gol'}[lang] || 'Over {n} goals';
+    const format={ro:'Peste {n} goluri în meci',en:'Over {n} total goals',es:'Más de {n} goles en el partido',
+      it:'Over {n} gol totali',fr:'Plus de {n} buts dans le match',id:'Di atas {n} gol total'}[lang] || 'Over {n} total goals';
     const number=new Intl.NumberFormat(lang,{maximumFractionDigits:2});
     const market=total ? format.replace('{n}',number.format(Number(total[1])+.5))
-      : {dc_1x:'1X',dc_x2:'X2',dc_12:'12'}[key] || (lang==='ro' && typeof piata==='string' ? piata : '');
+      : {dc_1x:'1X',dc_x2:'X2',dc_12:'12'}[key] || (typeof piata==='string' ? piata : '');
     return market ? {market,probability:number.format(p)+'%',goals:total?Number(total[1])+1:null, key} : null;
   }
   function sections(html) {
@@ -398,7 +523,7 @@
   }
   function scan() {document.querySelectorAll('.pro-card .pro-visible').forEach(container=>enhance(container));}
   function sourceMarkup(container) {return sourceStates.get(container) ?? container?.innerHTML;}
-  const api={sections,stripTier,cleanReview,editorialMarkup,recordMarkup,structuredSelection,reviewMarkup,words,enhance,scan,sourceMarkup};
+  const api={sections,stripTier,cleanReview,editorialMarkup,recordMarkup,structuredSelection,reviewMarkup,words,enhance,scan,sourceMarkup,dossierReport,archiveReviewLabels};
   if (typeof module!=='undefined'&&module.exports) module.exports=api;
   if (typeof document==='undefined') return;
   root.PoseidonProReport=api;

@@ -4,7 +4,24 @@ import {createRequire} from 'node:module';
 import {readFileSync} from 'node:fs';
 import vm from 'node:vm';
 import {proSample,pairedEvidence,numbers,plain} from './helpers/pro-sample.mjs';
-const require=createRequire(import.meta.url),{extract}=require('../assets/pro-context.js');
+const require=createRequire(import.meta.url),{extract,marketFrequency}=require('../assets/pro-context.js');
+
+test('venue frequencies preserve market orientation and reject duplicates, future fixtures and invalid half-time rows',()=>{
+ const date='2026-11-01T12:00:00Z';
+ const row=(id,home,scored,conceded,extra={})=>({id,date,home,scored,conceded,...extra});
+ const dossier={fixture_id:10,match_date:'2026-11-18T12:00:00Z',as_of:'2026-11-17T22:00:00Z',teams:[
+  {name:'Home',home:true,matches:[row(1,true,2,1,{halfScored:1,halfConceded:1}),row(2,true,0,1,{halfScored:1,halfConceded:0})]},
+  {name:'Away',home:false,matches:[row(3,false,1,3),row(4,false,1,1),row(3,false,1,0),row(5,false,4,0,{date:'2026-11-18T10:00:00Z'}),row(10,false,2,0)]},
+ ]};
+ const counts=key=>marketFrequency(dossier,10,key)?.map(({hits,n})=>[hits,n]);
+ assert.deepEqual(counts('dc_1x'),[[1,2],[2,2]]);
+ assert.deepEqual(counts('dc_x2'),[[1,2],[1,2]]);
+ assert.deepEqual(counts('over_1_5'),[[1,2],[2,2]]);
+ assert.deepEqual(counts('under_1_5'),[[1,2],[0,2]]);
+ assert.deepEqual(counts('ht_over_0_5'),[[1,1],[0,0]]);
+ assert.equal(marketFrequency(dossier,11,'dc_1x'),null);
+ assert.equal(marketFrequency(dossier,10,'constructor'),null);
+});
 function fixture(file,lang) {
  const html=readFileSync(new URL('../'+file,import.meta.url),'utf8');
  const block=html.split(`data-lang="${lang}"`)[1];
