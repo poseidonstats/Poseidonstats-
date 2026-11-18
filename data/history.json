@@ -1,22 +1,48 @@
 {
- "generated_at": "2026-11-17T03:26:03+00:00",
+ "generated_at": "2026-11-18T03:26:18+00:00",
  "days": [
   {
-   "date": "2026-11-17",
+   "date": "2026-11-18",
    "status": "in_progress",
    "matches": [
     {
-     "fixture_id": 1649552,
-     "time": "19:00",
-     "country": "World",
-     "league": "Friendlies",
-     "home": "Poland U21",
-     "away": "Serbia U21",
+     "fixture_id": 1591386,
+     "time": "12:00",
+     "country": "Turkey",
+     "league": "2. Lig",
+     "home": "Adana Demirspor",
+     "away": "Kastamonuspor 1966",
      "calibrated_lg": true,
      "picks": [
       {
        "market": "Over 1.5",
-       "prob": 84,
+       "prob": 85,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "Over 2.5",
+       "prob": 66,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null,
+     "snapshot": "dayof"
+    },
+    {
+     "fixture_id": 1591393,
+     "time": "12:00",
+     "country": "Turkey",
+     "league": "2. Lig",
+     "home": "Isparta 32 Spor",
+     "away": "Somaspor",
+     "calibrated_lg": true,
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 83,
        "outcome": "PENDING"
       },
       {
@@ -30,92 +56,14 @@
      "ht_h": null,
      "ht_a": null,
      "snapshot": "dayof"
-    },
-    {
-     "fixture_id": 1649028,
-     "time": "20:00",
-     "country": "World",
-     "league": "Friendlies",
-     "home": "Albania U21",
-     "away": "Spain U21",
-     "calibrated_lg": true,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 84,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "X2",
-       "prob": 81,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null,
-     "snapshot": "dayof"
-    },
-    {
-     "fixture_id": 1596045,
-     "time": "21:45",
-     "country": "England",
-     "league": "Non League Premier - Isthmian",
-     "home": "Burgess Hill Town",
-     "away": "Brentwood Town",
-     "calibrated_lg": true,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 87,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "Over 2.5",
-       "prob": 70,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null,
-     "snapshot": "dayof"
-    },
-    {
-     "fixture_id": 1596049,
-     "time": "21:45",
-     "country": "England",
-     "league": "Non League Premier - Isthmian",
-     "home": "Dartford",
-     "away": "Three Bridges",
-     "calibrated_lg": true,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 87,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "Over 2.5",
-       "prob": 70,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null,
-     "snapshot": "dayof"
     }
    ],
    "totals": {
-    "picks": 8,
+    "picks": 4,
     "wins": 0,
     "losses": 0,
-    "pending": 8,
-    "locked_pending": 230
+    "pending": 4,
+    "locked_pending": 175
    }
   }
  ],
@@ -131,7 +79,7 @@
    "wlo_pct": 70.1,
    "tier": "ROBUST",
    "base_rate_pct": 43.9,
-   "base_n": 34292,
+   "base_n": 34291,
    "lift_pp": 28.2
   },
   {
@@ -145,7 +93,7 @@
    "wlo_pct": 83.1,
    "tier": "STRONG ROBUST",
    "base_rate_pct": 67.3,
-   "base_n": 34292,
+   "base_n": 34291,
    "lift_pp": 16.9
   },
   {
@@ -159,35 +107,35 @@
    "wlo_pct": 83.1,
    "tier": "STRONG ROBUST",
    "base_rate_pct": 56.1,
-   "base_n": 34292,
+   "base_n": 34291,
    "lift_pp": 29.5
   },
   {
    "key": "over_1_5",
    "name": "Over 1.5",
    "threshold": 0.75,
-   "n": 21784,
+   "n": 21783,
    "wins": 17912,
-   "losses": 3872,
+   "losses": 3871,
    "hit_pct": 82.2,
    "wlo_pct": 81.7,
    "tier": "STRONG ROBUST",
    "base_rate_pct": 77.7,
-   "base_n": 34292,
+   "base_n": 34291,
    "lift_pp": 4.5
   },
   {
    "key": "over_2_5",
    "name": "Over 2.5",
    "threshold": 0.65,
-   "n": 5839,
+   "n": 5838,
    "wins": 4211,
-   "losses": 1628,
+   "losses": 1627,
    "hit_pct": 72.1,
    "wlo_pct": 71.0,
    "tier": "ROBUST",
    "base_rate_pct": 56.3,
-   "base_n": 34292,
+   "base_n": 34291,
    "lift_pp": 15.9
   },
   {
@@ -201,19 +149,19 @@
    "wlo_pct": 74.7,
    "tier": "STRONG ROBUST",
    "base_rate_pct": 65.0,
-   "base_n": 34292,
+   "base_n": 34291,
    "lift_pp": 10.4
   }
  ],
  "integritate": {
-  "total": 61958,
-  "pastrate": 39366,
-  "nerezolvate": 13110,
+  "total": 62191,
+  "pastrate": 39365,
+  "nerezolvate": 13343,
   "inghetate_dupa_start": 344,
-  "reprogramate_peste_prag": 2,
+  "reprogramate_peste_prag": 3,
   "recalibrare_indisponibila": 8765,
   "tinta90_neeligibila": 371,
-  "ht_eligibile": 38593
+  "ht_eligibile": 38592
  },
- "note": "Cohortă calibrată eligibilă N=34292. Probabilitatea este reconstruită din snapshot-ul brut înghețat și versiunea Platt arhivată disponibilă la acel moment; cazurile cu disponibilitate necunoscută sunt excluse. Aceasta nu certifică blobul efectiv servit sau toate intrările istorice. Regulile de selecție sunt cele din scorecard; FT folosește ținta90 verificată; HT are eligibilitate și N separate. Baza este frecvența evenimentului în cohorta evaluată, iar lift = hit − bază."
+ "note": "Cohortă calibrată eligibilă N=34291. Probabilitatea este reconstruită din snapshot-ul brut înghețat și versiunea Platt arhivată disponibilă la acel moment; cazurile cu disponibilitate necunoscută sunt excluse. Aceasta nu certifică blobul efectiv servit sau toate intrările istorice. Regulile de selecție sunt cele din scorecard; FT folosește ținta90 verificată; HT are eligibilitate și N separate. Baza este frecvența evenimentului în cohorta evaluată, iar lift = hit − bază."
 }

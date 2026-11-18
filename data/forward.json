@@ -1,20 +1,20 @@
 {
- "generated_at": "2026-11-17T03:26:03+00:00",
- "n_total": 61958,
- "n_resolved": 39366,
- "n_ht_eligible": 38593,
- "n_pending": 11583,
+ "generated_at": "2026-11-18T03:26:18+00:00",
+ "n_total": 62191,
+ "n_resolved": 39365,
+ "n_ht_eligible": 38592,
+ "n_pending": 11816,
  "n_not_played": 796,
  "n_replayed_far": 731,
  "integritate": {
-  "total": 61958,
-  "pastrate": 39366,
-  "nerezolvate": 13110,
+  "total": 62191,
+  "pastrate": 39365,
+  "nerezolvate": 13343,
   "inghetate_dupa_start": 344,
-  "reprogramate_peste_prag": 2,
+  "reprogramate_peste_prag": 3,
   "recalibrare_indisponibila": 8765,
   "tinta90_neeligibila": 371,
-  "ht_eligibile": 38593
+  "ht_eligibile": 38592
  },
  "calibration_note": "Evaluarea reconstruiește probabilitățile din snapshot-ul brut înghețat înaintea meciului și o versiune Platt disponibilă atunci. Rândurile fără o asemenea versiune sunt excluse; brutul original se păstrează. Reconstrucția nu certifică blobul efectiv publicat sau disponibilitatea tuturor datelor istorice. Intră doar rândurile nereprogramate la peste 10 zile.",
  "markets": [
@@ -47,10 +47,10 @@
     },
     {
      "range": "80–90%",
-     "n": 14475,
-     "hit_pct": 84.93,
-     "wlo_pct": 84.34,
-     "diff_pp": 1.02,
+     "n": 14474,
+     "hit_pct": 84.94,
+     "wlo_pct": 84.35,
+     "diff_pp": 1.03,
      "low_sample": false
     },
     {
@@ -76,10 +76,10 @@
     },
     {
      "range": "60–70%",
-     "n": 10610,
+     "n": 10609,
      "hit_pct": 65.95,
-     "wlo_pct": 65.04,
-     "diff_pp": 1.64,
+     "wlo_pct": 65.05,
+     "diff_pp": 1.65,
      "low_sample": false
     },
     {
@@ -166,10 +166,10 @@
     },
     {
      "range": "60–70%",
-     "n": 6029,
-     "hit_pct": 64.46,
-     "wlo_pct": 63.24,
-     "diff_pp": 1.6,
+     "n": 6028,
+     "hit_pct": 64.47,
+     "wlo_pct": 63.25,
+     "diff_pp": 1.62,
      "low_sample": false
     },
     {
@@ -219,10 +219,10 @@
     },
     {
      "range": "70–80%",
-     "n": 22073,
+     "n": 22072,
      "hit_pct": 75.28,
-     "wlo_pct": 74.7,
-     "diff_pp": 0.73,
+     "wlo_pct": 74.71,
+     "diff_pp": 0.74,
      "low_sample": false
     },
     {
