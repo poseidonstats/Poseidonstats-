@@ -400,6 +400,8 @@ body.home-modern.tier-pro #exemplu-pro, body.home-modern.tier-basic #exemplu-pro
   .home-modern .more-markets > summary { color: #efd27d; background: #0d293b; border-color: #2c4a60; font-size: 13px; padding: 12px; }
   .home-modern .match.match-locked { padding: 15px; }
   .home-modern .unlock-cta { padding: 19px; font-size: 14px; }
+  .home-modern .unlock-cta > * { min-width: 0; max-width: 100%; }
+  .home-modern .unlock-cta .unlock-btn { white-space: normal; overflow-wrap: anywhere; }
   .home-modern .ligi-grid { grid-template-columns: minmax(0, 1fr); }
   .home-modern .plan-grid { grid-template-columns: minmax(0, 1fr); }
   .home-modern .steps-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }

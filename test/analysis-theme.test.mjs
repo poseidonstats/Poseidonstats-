@@ -260,3 +260,22 @@ test('real variable attributes across all helper pages interpolate in six langua
   assert(checked > 1000); // Explicit malformed fixture above does not depend on regenerated archives staying broken.
   t.diagnostic(`${malformed} real malformed date attributes repaired; ${checked} actual interpolations verified across six languages`);
 });
+
+// Regression: a shared translation injected on /analize/index.html must not
+// resolve its archive link underneath /analize/ a second time.
+test('translated archive proof links resolve to the root archive from nested pages in every language', async () => {
+  const html=readFileSync(new URL('../analize/index.html',import.meta.url),'utf8');
+  const actual=html.match(/<p\s+data-i18n="(plans.get.after)">([\s\S]*?)<\/p>/);
+  assert(actual,'actual generated archive proof paragraph exists');
+  const entries=[{tag:'p',attrs:{'data-i18n':actual[1]},original:actual[2]},
+    ...['pro.arhiva','pro.card.maine'].map(key=>({tag:'p',attrs:{'data-i18n':key}}))];
+  for (const language of ['ro','en','es','it','fr','id']) {
+    const state=await run({language,entries});
+    for (const node of state.contentElements) {
+      const href=node.innerHTML.match(/<a\b[^>]*href="([^"]+)"/)?.[1];
+      assert(href,`${language} ${node.getAttribute('data-i18n')} renders an archive link`);
+      assert.equal(new URL(href,state.location.href).pathname,'/analize/index.html',
+        `${language} ${node.getAttribute('data-i18n')} must open the root archive`);
+    }
+  }
+});
