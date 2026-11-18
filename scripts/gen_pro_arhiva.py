@@ -539,7 +539,7 @@ def shell(
 <meta property="og:url" content="{canonical}">
 <meta property="og:type" content="article">
 <link rel="canonical" href="{canonical}">
-<link rel="stylesheet" href="{sus}assets/style.css">
+<link rel="stylesheet" href="{sus}assets/style.css?v=20261118e">
 <link rel="manifest" href="{sus}manifest.json">
 <meta name="theme-color" content="#1e3a8a">
 <link rel="apple-touch-icon" href="{sus}assets/icon-192.png">
@@ -562,7 +562,7 @@ def shell(
       <a href="{sus}metodologie.html" data-i18n="nav.metodologie">Metodologie</a>
       <a class="patreon" href="{sus}index.html#abonament" data-i18n="nav.abonamente">Abonamente</a>
     </nav>
-    <script src="{sus}assets/i18n-lite.js?v=20261118b" data-sus="{sus}"></script>
+    <script src="{sus}assets/i18n-lite.js?v=20261118e" data-sus="{sus}"></script>
   </div>
 </header>
 
@@ -690,7 +690,7 @@ def html_analiza(item: dict, v: dict, generat: str, lang: str = "ro") -> str:
         <p class="pro-lectie"><strong data-i18n="arhiva.lectia">Lecția:</strong> {lectie}</p>
       </div>"""
     return f"""
-    <article class="pro-card pro-card-full" id="m{m["fixture_id"]}">
+    <article class="pro-card pro-card-full">
       <div class="pro-card-head">{H.escape(m["home"])} – {H.escape(m["away"])} · {liga} · <span data-date="{m.get("date", "")[:10]}">{_data_ro(m.get("date", ""))}</span> · {scor}</div>
       <div class="pro-visible">
         <p class="muted" data-i18n="arhiva.model.arhivat" data-i18n-vars='{_vars({"cifre": cifre, "ora": ora or "—"})}'>Cifrele arhivate: {cifre}. Ora din arhivă: {ora or "—"}. Textul original este reprodus neschimbat; eligibilitatea prospectivă se verifică separat.</p>
@@ -876,9 +876,15 @@ def html_index(zile: list[dict], tot: dict, pe_zi: list[dict], azi: str) -> str:
 
 
 def html_zi(z: dict, rez: dict, prev: str | None, nxt: str | None) -> str:
+    ancorate = set()
+
     def _multi(it):
-        # 7 oct 2026: analiza în 4 limbi când există traduceri (analysis_en/es/it, din traduce_analize.py); i18n-lite arată varianta limbii alese
-        v = verifica(it, rez.get(it["match"]["fixture_id"]))
+        # 18 nov 2026 — legătura publică țintește grupul, vizibil în orice limbă.
+        fid = it["match"]["fixture_id"]
+        ancora = f"m{fid}"
+        atribut_id = f' id="{ancora}"' if ancora not in ancorate else ""
+        ancorate.add(ancora)
+        v = verifica(it, rez.get(fid))
         ro = html_analiza(it, v, z["generat"])
         var = [f'<div data-lang="ro">{ro}</div>']
         for cod in ("en", "es", "it", "fr", "id"):  # 14 oct 2026: + fr, + id
@@ -886,7 +892,9 @@ def html_zi(z: dict, rez: dict, prev: str | None, nxt: str | None) -> str:
                 var.append(
                     f'<div data-lang="{cod}" hidden>{html_analiza({**it, "analysis": it[f"analysis_{cod}"]}, v, z["generat"], cod)}</div>'
                 )
-        return f"<div data-lang-grup>{''.join(var)}</div>" if len(var) > 1 else ro
+        if len(var) > 1:
+            return f'<div class="pro-archive-match"{atribut_id} data-lang-grup>{"".join(var)}</div>'
+        return f'<div class="pro-archive-match"{atribut_id}>{ro}</div>'
 
     # Cu recuperare, nota de publicare este distinctă de textele originale.
     # Fără recuperare concatenarea cu șirul gol păstrează corpul analizelor.

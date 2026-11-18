@@ -14,7 +14,11 @@ const i18n = read('assets/i18n.json');
 const tr = key => i18n.en[key] || key;
 // Only the three shared archive hrefs changed; their translated copy stays protected.
 const archiveLinkKeys = new Set(['plans.get.after','pro.arhiva','pro.card.maine']);
-const preservedValue = (key,value) => archiveLinkKeys.has(key) ? value.replace('href="analize/index.html"','href="/analize/index.html"') : value;
+function preservedValue(key,value,lang) {
+  if (archiveLinkKeys.has(key)) return value.replace('href="analize/index.html"','href="/analize/index.html"');
+  if (key === 'ligilinks.foot' && lang === 'en') return value.replace('href="predictii/index.html"','href="en/predictions/index.html"');
+  return value;
+}
 // 26 oct: Andreea a cerut scoaterea recomandării automate și a ghidului ei.
 const marketChoiceCopy = new Set(['index.howto', 'index.cardinfo.body', 'repere.p', 'pro.analize.h2']);
 // Audit 30 Oct: explicit provenance corrections are authorized by 'Remediază tot'.
@@ -174,7 +178,7 @@ test('all six dictionaries preserve original values except the explicitly author
   assert(keys.length >= 47);
   for (const lang of ['ro','en','es','it','fr','id']) {
     for (const [key,value] of Object.entries(original[lang])) {
-      if (key !== 'dashboard.hero.title' && !marketChoiceCopy.has(key) && !provenanceCopy.has(key)) assert.equal(i18n[lang][key],preservedValue(key,value),`${lang}.${key}`);
+      if (key !== 'dashboard.hero.title' && !marketChoiceCopy.has(key) && !provenanceCopy.has(key)) assert.equal(i18n[lang][key],preservedValue(key,value,lang),`${lang}.${key}`);
     }
     assert.equal(i18n[lang]['dashboard.hero.title'],heroTitles[lang]);
     assert.deepEqual(Object.keys(i18n[lang]).filter(key => key.startsWith('dashboard.')).sort(),keys);
@@ -415,7 +419,7 @@ test('service worker shell includes homepage assets once and leaves external or 
   const handlers=new Map();
   const context=createContext({
     URL,
-    self:{location:{origin:'https://preview.invalid'},addEventListener:(type,handler)=>handlers.set(type,handler)},
+    self:{registration:{scope:'https://preview.invalid/'},addEventListener:(type,handler)=>handlers.set(type,handler)},
     caches:{},
     fetch:()=>{throw new Error('No network call permitted in this service-worker unit test');}
   });
@@ -476,7 +480,7 @@ test('conversion labels are complete in six languages and legacy dictionary valu
   assert(keys.length >= 14);
   const tokens=text=>({variables:(text.match(/\{\w+\}/g)||[]).sort(),tags:text.match(/<\/?[^>]+>/g)||[]});
   for (const lang of ['ro','en','es','it','fr','id']) {
-    for (const [key,value] of Object.entries(original[lang])) if (!marketChoiceCopy.has(key) && !provenanceCopy.has(key)) assert.equal(i18n[lang][key],preservedValue(key,value),`${lang}.${key}`);
+    for (const [key,value] of Object.entries(original[lang])) if (!marketChoiceCopy.has(key) && !provenanceCopy.has(key)) assert.equal(i18n[lang][key],preservedValue(key,value,lang),`${lang}.${key}`);
     assert.deepEqual(Object.keys(i18n[lang]).filter(key=>key.startsWith('conversion.')).sort(),keys);
     for (const key of keys) {
       assert(i18n[lang][key].trim(),`${lang}.${key}`);
@@ -508,9 +512,6 @@ test('conversion member visibility, privacy script order and numeric display con
   assert.match(css,/\.dashboard-hero-evidence \{ display: none; \}/);
   assert.equal((html.match(/\bdata-dashboard-kpis\b/g)||[]).length,2);
   assert.equal((html.match(/\bdata-dashboard-chart\b/g)||[]).length,2);
-  assert.match(css,/\.dashboard-col-time \{ width: 48px; \}/);
-  assert.match(css,/\.dashboard-col-prob \{ width: 56px; \}/);
-  assert.match(css,/td\.dashboard-prob \{ overflow: visible; white-space: nowrap; text-overflow: clip; \}/);
   assert.match(css,/\.home-modern \.simplify-demo \.dashboard-table th:nth-child\(2\),\s*\.home-modern \.simplify-demo \.dashboard-table td\.dashboard-team \{ text-align: left; \}/);
   assert.match(css,/body\.home-modern \.salt-meciuri \{ display: none; \}/);
 });
@@ -552,7 +553,7 @@ test('search, league choice, honest copy and activation labels are complete with
   const keys=Object.keys(i18n.ro).filter(key=>key.startsWith('simplify.')).sort();assert(keys.length>=19);
   for (const lang of ['ro','en','es','it','fr','id']) {
     assert.deepEqual(Object.keys(i18n[lang]).filter(key=>key.startsWith('simplify.')).sort(),keys);
-    for (const [key,value] of Object.entries(original[lang])) if (!marketChoiceCopy.has(key) && !provenanceCopy.has(key)) assert.equal(i18n[lang][key],preservedValue(key,value),`${lang}.${key}`);
+    for (const [key,value] of Object.entries(original[lang])) if (!marketChoiceCopy.has(key) && !provenanceCopy.has(key)) assert.equal(i18n[lang][key],preservedValue(key,value,lang),`${lang}.${key}`);
     for (const key of keys) {
       assert(i18n[lang][key].trim(),`${lang}.${key}`);
       const tags=text=>text.match(/<\/?[^>]+>/g)||[];
@@ -576,14 +577,19 @@ test('home reading identities are escaped on free rows even without an official 
   for(const forbidden of ['mainPickForMatch','market_quotes','official_selection','dashboard-selection-row','observedQuoteText','formatMarketOdd']) assert(!source.includes(forbidden),forbidden);
 });
 
-test('mobile six-column table uses a complete width budget and lets reading text wrap inside its own cell',()=>{
+test('dashboard rows expose each probability and access cell with its table header and a mobile probability label',()=>{
+  const match={fixture_id:123,match_date:'2026-11-18T11:00:00Z',home:'Home team',away:'Away team',country:'World',league:'Cup',locked:false,probabilities:[.55,.23,.22]};
+  const html=dashboard.renderRows([match],tr,'en-GB');
+  assert.match(html,/<tr class="dashboard-match-row" role="row"/);
+  const result=[...html.matchAll(/headers="dashboard-th-(\d)"><span[^>]+>([^<]+)<\/span>([^<]+)<\/td>/g)].map(m=>m.slice(1));
+  assert.deepEqual(result,[['0','1','55%'],['1','X','23%'],['2','2','22%']]);
+  assert.match(html,/class="dashboard-access-cell" role="cell" headers="dashboard-th-access"/);
+  const home=readFileSync(new URL('../index.html',import.meta.url),'utf8');
+  for (const key of ['time','match','0','1','2','access']) assert.match(home,new RegExp(`id="dashboard-th-${key}" scope="col"`));
   const css=readFileSync(new URL('../assets/home-modern.css',import.meta.url),'utf8');
   const mobile=css.slice(css.lastIndexOf('@media (max-width: 600px)'));
-  assert.match(mobile,/\.dashboard-table \{ width: 100%; min-width: 0; max-width: 100%; table-layout: fixed;/);
-  const width=name=>Number(mobile.match(new RegExp(`\\.dashboard-col-${name} \\{ width: ([\\d.]+)%;`))[1]);
-  assert.equal(width('time')+width('match')+3*width('prob')+width('access'),100);
-  assert.match(mobile,/td:nth-child\(2\) \{ width: auto; min-width: 0; max-width: none;/);
-  assert.match(mobile,/\.dashboard-team > a,[^{}]+\{[^}]*overflow: visible; white-space: normal; overflow-wrap: anywhere; text-overflow: clip;/);
+  assert.match(mobile,/\.dashboard-match-row \{[^}]*grid-template-columns: repeat\(3, minmax\(0, 1fr\)\);/);
+  assert.match(mobile,/\.dashboard-match-row \.dashboard-team \{[^}]*grid-column: 1 \/ -1;[^}]*overflow-wrap: anywhere;/);
   assert.match(mobile,/\.dashboard-reading-row \.citire \{ box-sizing: border-box; width: 100%; min-width: 0; max-width: 100%;/);
   assert.match(css,/\.dashboard-reading-row \.citire \{[^}]*overflow-wrap: anywhere;[^}]*border-left: 3px solid #c9a227;/);
 });

@@ -9,10 +9,12 @@ export const numbers=text=>(text.match(/\d+(?:[.,]\d+)?/g)||[]).map(n=>Number(n.
 export function proSample(html) {
  const start='<!-- PRO_SAMPLE_CARD_START -->',end='<!-- PRO_SAMPLE_CARD_END -->';
  if(html.includes(start))html=html.split(start)[1].split(end)[0];
+ const dailyExample=html.includes('data-public-pro-report');
  const heading=html.match(/<div class="pro-card-head">([\s\S]*?)<\/div>/)?.[1];
  assert(heading,'sample heading exists');
  const teams=plain(heading).split(' · ')[0].split(' – ');assert.equal(teams.length,2,'sample identifies both teams');
- const group=html.split('<div data-lang-grup>')[1]?.split('<div data-lang-grup>')[0];assert(group,'language group exists');
+ const group=html.split(/<div(?: class="pro-archive-match"(?: id="m\d+")?)? data-lang-grup>/)[1];
+ assert(group,'language group exists');
  const tags=[...group.matchAll(/<div data-lang="([^"]+)"[^>]*>/g)];
  assert.deepEqual(tags.map(m=>m[1]),languages,'one source variant per supported language');
  const variants=tags.map((tag,i)=>{
@@ -26,6 +28,11 @@ export function proSample(html) {
    const paragraph=original.match(new RegExp('<p><strong data-i18n="arhiva\\.sect\\.'+key+'">[\\s\\S]*?<\\/p>'))?.[0];
    assert(paragraph,`${tag[1]} ${key} source exists`);return[key,paragraph];
   }));
+  if(dailyExample) {
+   const selected=original.match(/class="dossier-published">[\s\S]*?<strong>([^<]+) · (\d+(?:[.,]\d+)?)%<\/strong>/);
+   assert(selected,'daily example identifies its principal selection');
+   return{language:tag[1],original,paragraphs,selection:{market:selected[1],probability:Number(selected[2].replace(',','.'))}};
+  }
   const list=original.match(/data-i18n="arhiva\.sect\.piete"[^>]*>[\s\S]*?<\/p>\s*<ul>([\s\S]*?)<\/ul>/)?.[1];assert(list,'market list exists');
   // Supplied predictions put a probability immediately after the market dash.
   // Declined recommendations have explanatory prose there instead.

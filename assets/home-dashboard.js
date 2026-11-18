@@ -1,13 +1,13 @@
 /* Homepage presentation: public exports and the already verified member prediction list. */
 (function (root, factory) {
-  const api = factory();
-  if (typeof module === 'object' && module.exports) module.exports = api;
+  if (typeof module === 'object' && module.exports) module.exports = factory(require('./country-label.js'));
   else {
+    const api = factory(root.PoseidonCountry);
     root.PoseidonDashboard = api;
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => api.mount(document));
     else api.mount(document);
   }
-})(typeof window !== 'undefined' ? window : globalThis, function () {
+})(typeof window !== 'undefined' ? window : globalThis, function (countries) {
   'use strict';
   const TIMEZONE = 'Europe/Bucharest';
   const dayFormatter = new Intl.DateTimeFormat('en-GB', { timeZone: TIMEZONE, year: 'numeric', month: '2-digit', day: '2-digit' });
@@ -108,10 +108,13 @@
       const readingAttributes = row.locked || row.dossierOnly ? '' : ` data-reading-fixture="${escapeHTML(row.fixture_id)}" data-reading-home="${escapeHTML(row.home)}" data-reading-away="${escapeHTML(row.away)}" data-reading-kickoff="${escapeHTML(row.match_date)}" data-reading-free="true"`;
       const title = `${escapeHTML(row.home)} <span aria-hidden="true">–</span> ${escapeHTML(row.away)}`;
       const name = row.dossierOnly ? `<strong>${title}</strong>` : `<a href="#matches" data-dashboard-fixture="${escapeHTML(row.fixture_id)}" title="${escapeHTML(`${row.home} – ${row.away}`)}">${title}</a>`;
-      return `<tr${readingAttributes}><td><time datetime="${escapeHTML(row.match_date)}">${escapeHTML(time)}</time></td>` +
-        `<td class="dashboard-team">${name}<small title="${escapeHTML([row.country,row.league].filter(Boolean).join(' · '))}">${escapeHTML([row.country,row.league].filter(Boolean).join(' · '))}</small>${dossier}</td>` +
-        row.probabilities.map(v => `<td class="dashboard-prob">${escapeHTML(pct(v))}</td>`).join('') +
-        `<td><span class="${row.locked ? 'dashboard-lock' : 'dashboard-free'}">${row.locked ? '🔒 ' : ''}${escapeHTML(dossier ? dossiers.copy().member : tr(row.locked ? 'dashboard.access.locked' : 'dashboard.access.free'))}</span></td></tr>${reading}`;
+      const country = countries?.label(row.country, loc) || row.country;
+      const competition = escapeHTML([country, row.league].filter(Boolean).join(' · '));
+      const probabilityCells = row.probabilities.map((value,i) =>
+        `<td class="dashboard-prob" role="cell" headers="dashboard-th-${i}"><span class="dashboard-prob-key" aria-hidden="true">${['1','X','2'][i]}</span>${escapeHTML(pct(value))}</td>`).join('');
+      return `<tr class="dashboard-match-row" role="row"${readingAttributes}><td class="dashboard-time-cell" role="cell" headers="dashboard-th-time"><time datetime="${escapeHTML(row.match_date)}">${escapeHTML(time)}</time></td>` +
+        `<td class="dashboard-team" role="cell" headers="dashboard-th-match">${name}<small title="${competition}">${competition}</small>${dossier}</td>` + probabilityCells +
+        `<td class="dashboard-access-cell" role="cell" headers="dashboard-th-access"><span class="${row.locked ? 'dashboard-lock' : 'dashboard-free'}">${row.locked ? '🔒 ' : ''}${escapeHTML(dossier ? dossiers.copy().member : tr(row.locked ? 'dashboard.access.locked' : 'dashboard.access.free'))}</span></td></tr>${reading}`;
     }).join('');
   }
   function renderChart(points, tr, loc, id, layout = {}) {
@@ -250,7 +253,8 @@
     const visible = body && body.querySelector('.pro-visible');
     const source = doc.defaultView?.PoseidonProReport?.sourceMarkup?.(visible) ?? visible?.innerHTML;
     const notice = analysisLanguageNotice(selection,tr), action = analysisAction(tier);
-    return `<article class="dashboard-pro-summary pro-card"><span class="dashboard-analysis-meta">${escapeHTML(tr('dashboard.analysis.sample'))}</span><div class="pro-card-head">${escapeHTML(head.textContent)}</div>` +
+    const publicReport = card.hasAttribute?.('data-public-pro-report') ? ' data-public-pro-report' : '';
+    return `<article class="dashboard-pro-summary pro-card"${publicReport}><span class="dashboard-analysis-meta">${escapeHTML(tr('dashboard.analysis.sample'))}</span><div class="pro-card-head">${escapeHTML(head.textContent)}</div>` +
       (notice ? `<p class="dashboard-analysis-language">${escapeHTML(notice)}</p>` : '') +
       `<div data-lang="${escapeHTML(selection.language || lang)}"><div class="pro-visible">${source ?? escapeHTML(tr('dashboard.data.unavailable'))}</div></div>` +
       `<div class="dashboard-report-action">${analysisLink(head,action,tr)}</div></article>`;
@@ -403,6 +407,10 @@
     function renderAnalyses() {
       const target = doc.getElementById('dashboard-analyses');
       const tr = translator(), lang = doc.documentElement.lang;
+      const sampleCountry = doc.querySelector('#exemplu-pro [data-sample-country]');
+      if (sampleCountry && countries) {
+        sampleCountry.textContent = countries.label(sampleCountry.getAttribute('data-sample-country'), lang);
+      }
       doc.querySelectorAll('[data-dashboard-pro-summary]').forEach(element => {element.innerHTML = renderProSummary(doc,tr,lang,membershipTier(doc.body));});
       if (doc.defaultView && doc.defaultView.PoseidonProReport) doc.defaultView.PoseidonProReport.scan();
       if (!target) return;

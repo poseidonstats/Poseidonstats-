@@ -5,7 +5,8 @@ Cardul = analiza de AZI, completă, fără lacăt — prima din arhiva zilei (~/
 scrisă la 07:20 și postată în #analize-pro). Până apare fișierul zilei (publicarea site-ului e la 06:10, analizele la 07:28),
 cardul rămâne analiza de ieri, aceeași, acum cu scorul final. Sub card: rezultatul analizei de ieri + link la verificarea de a
 doua zi din arhivă (analize/<zi>.html). Lista „azi în Pro” rămâne cu lacăt, fără meciul publicat.
-Se cheamă din daily_publish.sh (06:10) și din publish_pro_sample.sh (07:45, după cronul Pro, cu push propriu).
+Exemplul trebuie să coincidă cu exemplul deja aprobat pe ruta publică; eticheta pre-meci cere chitanța originală de site.
+Se cheamă din daily_publish.sh (06:10) și din publish_pro_sample.sh (07:50 și la reîncercarea de la 12:35).
 Uz: gen_pro_sample.py [--date 2026-10-02] [--dry-run]     (implicit: azi, ora României)"""
 
 from __future__ import annotations
@@ -16,7 +17,9 @@ import json
 import re
 import sys
 from datetime import datetime, timedelta
+from hashlib import sha256
 from pathlib import Path
+from urllib.request import Request, urlopen
 from zoneinfo import ZoneInfo
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -31,6 +34,15 @@ START, END = "<!-- PRO_SAMPLE_CARD_START -->", "<!-- PRO_SAMPLE_CARD_END -->"
 LISTA_START, LISTA_END = "<!-- PRO_TODAY_LIST_START -->", "<!-- PRO_TODAY_LIST_END -->"
 POSEIDON_SCRIPTS = Path.home() / "football_predictor" / "scripts" / "poseidon"
 PRED_FULL = Path.home() / "football_predictor" / "data" / "predictions_full.json"
+PUBLIC_EXAMPLE = "https://poseidon-members.poseidonstats.workers.dev/api/exemplu"
+TOTAL_MARKET = {
+    "ro": "Peste {n} goluri în meci",
+    "en": "Over {n} total goals",
+    "es": "Más de {n} goles en el partido",
+    "it": "Over {n} gol totali",
+    "fr": "Plus de {n} buts dans le match",
+    "id": "Di atas {n} gol total",
+}
 LUNI = [
     "ianuarie",
     "februarie",
@@ -227,59 +239,129 @@ def _data_ro(iso: str) -> str:
         return iso
 
 
+def _principal_row(picks: list[str]) -> str:
+    rows = [line for line in picks if line.startswith("🎯")]
+    return rows[0] if len(rows) == 1 else ""
+
+
+def _principal(item: dict, picks: list[str]) -> tuple[str, int | float, str] | None:
+    """Preferă pronosticul structurat al dosarului. Pentru fișele vechi, citește doar rândul principal."""
+    structured = (item.get("provenance") or {}).get("inputs", {}).get("picks") or []
+    primary = [
+        p for p in structured if isinstance(p, dict) and p.get("rol") == "Principal"
+    ]
+    if len(primary) == 1:
+        pick = primary[0]
+        market, probability = pick.get("piata"), pick.get("p")
+        if (
+            isinstance(market, str)
+            and market
+            and isinstance(pick.get("key"), str)
+            and type(probability) in (int, float)
+            and 0 <= probability <= 100
+        ):
+            return market, probability, pick["key"]
+    row = _principal_row(picks)
+    match = re.search(r"\s+[—–-]\s+(\d+(?:[.,]\d+)?)\s*%", row.replace("**", ""))
+    if not match:
+        return None
+    probability = float(match[1].replace(",", "."))
+    market = piata_din_linie(row)
+    return (market, probability, "") if market and 0 <= probability <= 100 else None
+
+
 def html_card(
-    item: dict, zi: str, generat: str, scor: tuple[int, int] | None, baza: str, ok
+    item: dict,
+    zi: str,
+    scor: tuple[int, int] | None,
+    principal_ok: bool | None = None,
 ) -> str:
-    """Analiza completă, fără lacăt. Dacă meciul s-a jucat deja (cardul de ieri, dimineața devreme), capul arată scorul și verdictul Bazei."""
+    """Arată pronosticul principal și textul exemplului public, cu verificarea aceluiași meci."""
     m = item["match"]
     p = parseaza(item["analysis"])
+    principal = _principal(item, p["picks"])
+    published = bool(item.get("_public_site_delivery"))
     liga = m.get("league", "")
     tara = m.get("country", "")
     head = (
         f"{H.escape(m['home'])} – {H.escape(m['away'])} · {H.escape(liga)}"
-        + (f" ({H.escape(tara)})" if tara else "")
+        + (
+            f' (<span data-sample-country="{H.escape(tara)}">{H.escape(tara)}</span>)'
+            if tara
+            else ""
+        )
         + f' · <span data-date="{(m.get("date") or zi)[:10]}">{_data_ro(m.get("date", zi))}</span>'
     )
-    head += (
-        f' · <strong data-i18n="pro.card.rezfinal" data-i18n-vars=\'{{"s":"{scor[0]}-{scor[1]}"}}\'>rezultat final {scor[0]}-{scor[1]}</strong>'
-        if scor
-        else ' · <strong data-i18n="pro.card.archived">Analiză arhivată; publicarea înainte de start nu este confirmată.</strong>'
+    if scor:
+        head += f' · <strong data-i18n="pro.card.rezfinal" data-i18n-vars=\'{{"s":"{scor[0]}-{scor[1]}"}}\'>rezultat final {scor[0]}-{scor[1]}</strong>'
+    status = (
+        '<span data-i18n="pro.card.publicata0">publicată înainte de meci</span>'
+        if published
+        else '<span data-i18n="pro.card.archived">Analiză arhivată; publicarea înainte de start nu este confirmată.</span>'
     )
 
-    def _verif(b: str) -> str:
-        """Verdictul Bazei, cu piața în limba variantei (28 oct 2026: înainte, toate variantele primeau piața din analiza românească)."""
-        if not (scor and baza):
-            return ""
-        v = json.dumps(
-            {"p": _inline(b)}, ensure_ascii=False, separators=(",", ":")
-        ).replace("'", "&#39;")
-        s = {
-            True: f"<span data-i18n=\"pro.card.verif.da\" data-i18n-vars='{v}'>✅ Pick-ul de bază, <strong>{_inline(b)}</strong>, a ieșit.</span>",
-            False: f"<span data-i18n=\"pro.card.verif.nu\" data-i18n-vars='{v}'>❌ Pick-ul de bază, <strong>{_inline(b)}</strong>, nu a ieșit — publicăm și când greșim.</span>",
-            None: f"<span data-i18n=\"pro.card.verif.neev\" data-i18n-vars='{v}'>Pick-ul de bază: <strong>{_inline(b)}</strong>.</span>",
-        }[ok]
-        return f'        <p class="pro-verificat">{s} <a href="analize/{zi}.html#m{m.get("fixture_id")}" data-i18n="pro.card.verif.link">Verificarea completă →</a></p>\n'
+    def _titlu_principal(sectiuni: dict, lang: str) -> str:
+        if not principal:
+            return f'<div class="dossier-published">{status}</div>'
+        market, probability, key = principal
+        pct = f"{probability:.2f}".rstrip("0").rstrip(".")
+        total = re.fullmatch(r"over_([12])_5", key)
+        if total:
+            n = total[1] + (".5" if lang == "en" else ",5")
+            market = TOTAL_MARKET[lang].format(n=n)
+        elif key in ("dc_1x", "dc_x2", "dc_12"):
+            market = key.removeprefix("dc_").upper()
+        elif lang != "ro":
+            row = _principal_row(sectiuni["picks"])
+            market = piata_din_linie(row) or market
+        if lang != "en":
+            pct = pct.replace(".", ",")
+        return f'<div class="dossier-published">{status} · <strong>{H.escape(market)} · {pct}%</strong></div>'
 
-    def _corp(p: dict, b: str) -> str:
-        verif = _verif(b)
-        picks = "".join(f"<li>{_inline(linie)}</li>" for linie in p["picks"])
+    def _corp(p: dict, lang: str) -> str:
+        verdict = f'<p><strong data-i18n="arhiva.sect.verdict">Verdict:</strong> {_inline(p["verdict"])}</p>'
+        reason = re.search(
+            r"\s+[—–-]\s+(\d+(?:[.,]\d+)?)\s*%[.·]\s*(.+)",
+            _principal_row(p["picks"]).replace("**", ""),
+        )
+        matching_reason = principal and reason and float(reason[1].replace(",", ".")) == principal[1]
+        if scor:
+            result_key, result_text = {
+                True: ("da", "✅ a ieșit"),
+                False: ("nu", "❌ nu a ieșit"),
+                None: ("neev", "neevaluabil din scor"),
+            }[principal_ok]
+            result = (
+                f' · <span data-i18n="arhiva.semn.{result_key}">{result_text}</span>'
+                if principal
+                else ""
+            )
+            verif = (
+                f'<p class="pro-verificat"><span data-i18n="pro.card.rezfinal" data-i18n-vars=\'{{"s":"{scor[0]}-{scor[1]}"}}\'>Rezultat final {scor[0]}-{scor[1]}</span>{result} '
+                f'<a href="analize/{zi}.html#m{m["fixture_id"]}" data-i18n="pro.card.verif.link">Verificarea completă →</a></p>'
+            )
+        else:
+            verif = '<p data-i18n="arhiva.fararez">Fără rezultat final în bază.</p>'
         return "\n".join(
             [
                 '      <div class="pro-visible">',
-                f'        <p><strong data-i18n="arhiva.sect.verdict">Verdict:</strong> {_inline(p["verdict"])}</p>',
+                f"        {_titlu_principal(p, lang)}",
+                f'        <p>{_inline(reason[2])}</p>' if matching_reason else f"        {verdict}",
+                '        <details class="dossier-context"><summary data-i18n="dashboard.analysis.read">Citește analiza</summary>',
+                f"        {verdict}" if matching_reason else "",
                 f'        <p><strong data-i18n="arhiva.sect.context">Context:</strong> {_inline(p["context"])}</p>',
                 f'        <p><strong data-i18n="arhiva.sect.model">Modelul vs realitate:</strong> {_inline(p["model"])}</p>',
-                f'        <p><strong data-i18n="arhiva.sect.piete">Piețele alese:</strong></p><ul>{picks}</ul>',
                 f'        <p><strong data-i18n="arhiva.sect.urmarit">De urmărit:</strong> {_inline(p["urmarit"])}</p>',
-                verif.rstrip("\n")
-                if verif
-                else '        <p class="muted" data-i18n="pro.card.maine">Rezultatul și verificarea pick-urilor apar mâine dimineață, în <a href="analize/index.html">arhiva analizelor</a>.</p>',
+                "        </details>",
+                '        <details class="dossier-review"><summary data-i18n="arhiva.th.rezultat">Rezultat</summary>',
+                f"        {verif}",
+                "        </details>",
                 "      </div>",
             ]
         )
 
     # 7 oct 2026: analiza în limba aleasă când există traduceri (analysis_en/es/it din traduce_analize.py); app.js arată varianta [data-lang]
-    variante = [f'<div data-lang="ro">\n{_corp(p, baza)}\n</div>']
+    variante = [f'<div data-lang="ro">\n{_corp(p, "ro")}\n</div>']
     for cod in (
         "en",
         "es",
@@ -290,17 +372,15 @@ def html_card(
         text = item.get(f"analysis_{cod}") or ""
         pt = parseaza(text)
         if pt["verdict"] and pt["picks"]:
-            variante.append(
-                f'<div data-lang="{cod}" hidden>\n{_corp(pt, baza_in_limba(text, baza))}\n</div>'
-            )
+            variante.append(f'<div data-lang="{cod}" hidden>\n{_corp(pt, cod)}\n</div>')
     corp = (
         f"<div data-lang-grup>{''.join(variante)}</div>"
         if len(variante) > 1
-        else _corp(p, baza)
+        else _corp(p, "ro")
     )
     return "\n".join(
         [
-            '<div class="pro-card">',
+            '<div class="pro-card" data-public-pro-report>',
             f'      <div class="pro-card-head">{head}</div>',
             corp,
             "    </div>",
@@ -308,57 +388,23 @@ def html_card(
     )
 
 
-def html_ieri(item: dict, zi: str, scor: tuple[int, int] | None, baza: str, ok) -> str:
-    """Linia de sub card: ce s-a întâmplat cu analiza publicată ieri în același loc."""
+def html_ieri(item: dict, zi: str, scor: tuple[int, int] | None) -> str:
+    """Arată scorul exemplului public anterior, separat de pronosticul zilei."""
     m = item["match"]
     nume = f"{H.escape(m['home'])} – {H.escape(m['away'])}"
+    v = {
+        "meci": nume,
+        "zi": zi,
+        "fid": str(m["fixture_id"]),
+        "scor": f"{scor[0]}-{scor[1]}" if scor else "",
+        "baza": "",
+    }
+    var_attrs = H.escape(json.dumps(v, ensure_ascii=False), quote=True)
     if not scor:
-        return f'<p class="pro-ieri muted" data-i18n="pro.ieri.fara" data-i18n-vars=\'{{"meci":"{nume}","zi":"{zi}"}}\'>Ieri, aici: <strong>{nume}</strong> — rezultatul final nu e încă în bază; verificarea apare în <a href="analize/{zi}.html">arhiva zilei</a>.</p>'
-    semn = {True: "✅ a ieșit", False: "❌ nu a ieșit", None: ""}[ok]
-    cheie_b = {
-        True: "pro.ieri.baza.da",
-        False: "pro.ieri.baza.nu",
-        None: "pro.ieri.baza.neev",
-    }[ok]
-
-    def _linie(b: str, atribut: str = "") -> str:
-        baza_html = (
-            f" — bază <strong>{_inline(b)}</strong> {semn}".rstrip() if b else ""
-        )
-        vb = json.dumps({"b": _inline(b)}, ensure_ascii=False, separators=(",", ":"))
-        vars_ = json.dumps(
-            {
-                "meci": nume,
-                "scor": f"{scor[0]}-{scor[1]}",
-                "baza": (
-                    f"<span data-i18n=\"{cheie_b}\" data-i18n-vars='{vb}'>{baza_html}</span>"
-                    if b
-                    else ""
-                ),
-                "zi": zi,
-                "fid": str(m.get("fixture_id")),
-            },
-            ensure_ascii=False,
-        ).replace("'", "&#39;")
-        return (
-            f'<p class="pro-ieri"{atribut} data-i18n="pro.ieri.cu" data-i18n-vars=\'{vars_}\'>Ieri, aici: <strong>{nume}</strong>, {scor[0]}-{scor[1]}'
-            + baza_html
-            + f'. <a href="analize/{zi}.html#m{m.get("fixture_id")}">Verificarea de a doua zi →</a></p>'
-        )
-
-    # 28 oct 2026 (Andreea: „Avem o greșeală de traducere”): piața de Bază în limba fiecărei variante, din analiza tradusă; app.js arată varianta limbii
-    traduse = [
-        (cod, baza_in_limba(item.get(f"analysis_{cod}") or "", ""))
-        for cod in ("en", "es", "it", "fr", "id")
-    ]
-    traduse = [(cod, b) for cod, b in traduse if b]
-    if not baza or not traduse:
-        return _linie(baza)
+        return f'<p class="pro-ieri muted" data-i18n="pro.ieri.fara" data-i18n-vars="{var_attrs}">Ieri, aici: <strong>{nume}</strong> — rezultatul final nu e încă în bază; verificarea apare în <a href="analize/{zi}.html">arhiva zilei</a>.</p>'
     return (
-        "<div data-lang-grup>"
-        + _linie(baza, ' data-lang="ro"')
-        + "".join(_linie(b, f' data-lang="{cod}" hidden') for cod, b in traduse)
-        + "</div>"
+        f'<p class="pro-ieri" data-i18n="pro.ieri.cu" data-i18n-vars="{var_attrs}">Ieri, aici: <strong>{nume}</strong>, {v["scor"]}. '
+        f'<a href="analize/{zi}.html#m{m["fixture_id"]}">Verificarea de a doua zi →</a></p>'
     )
 
 
@@ -492,37 +538,119 @@ def lista_pro_azi(zi: str, limit: int = 12) -> list[dict]:
 
 
 # ----------------------------------------------------------------- CLI
+def _public_sample(zi: str) -> dict | None:
+    """Consultă doar ruta anonimă a exemplului, niciodată istoricul complet al membrilor."""
+    try:
+        request = Request(
+            f"{PUBLIC_EXAMPLE}/{zi}",
+            headers={"User-Agent": "POSEIDON-Site/1.0", "Accept": "application/json"},
+        )
+        with urlopen(request, timeout=4) as response:
+            data = json.load(response)
+        item = (
+            data.get("item")
+            if isinstance(data, dict) and data.get("date") == zi
+            else None
+        )
+        return item if isinstance(item, dict) else None
+    except (OSError, ValueError):
+        return None
+
+
+def _site_delivery(item: dict, receipt: dict) -> str | None:
+    """Cu SHA-ul arhivei validat de citeste_livrari, păstrează doar chitanța exactă de site."""
+    rows = receipt.get("deliveries")
+    if receipt.get("schema") != 1 or not isinstance(rows, list):
+        return None
+    site_rows = [r for r in rows if isinstance(r, dict) and r.get("channel") == "site"]
+    proof = item.get("provenance") or {}
+    generated = PP.stamp(proof.get("generated_at_utc"))
+    kickoff = PP.stamp(proof.get("original_kickoff_utc"))
+    try:
+        now = PP.utc_now()
+        eligible, _ = PP.eligibilitate(item, {"deliveries": site_rows}, now=now)
+    except (AttributeError, TypeError, ValueError):
+        return None
+    if not eligible:
+        return None
+    latest_allowed = PP.stamp(now)
+    return min(
+        published
+        for row in site_rows
+        if row.get("prediction_id") == proof["prediction_id"]
+        and row.get("fixture_id") == item["match"]["fixture_id"]
+        and row.get("original_kickoff_utc") == proof["original_kickoff_utc"]
+        and (published := PP.stamp(row.get("published_at_utc")))
+        and generated <= published < kickoff
+        and published <= latest_allowed
+    ).isoformat()
+
+
 def _incarca(zi: str):
     f = ARHIVA / f"{zi}.json"
     if not f.exists():
         return None, ""
-    d = json.loads(f.read_text())
-    items = [it for it in d.get("items") or [] if it.get("match", {}).get("fixture_id")]
-    if items:
-        items[0] = {**items[0], "_deliveries": PP.citeste_livrari(f)}
-    return (items[0] if items else None), d.get("generated_at", "")
-
-
-def _verdict(item: dict):
-    """(scor, piața de bază, a ieșit?) pentru un item — scor None dacă meciul nu e încheiat în bază."""
-    fid = item["match"]["fixture_id"]
-    scor, half = _date_rezultat(rezultate([fid]).get(fid))
-    baza = piata_baza(parseaza(item["analysis"])["picks"])
-    return (
-        scor,
-        baza,
-        (
-            evalueaza(
-                baza,
-                *scor,
-                *half,
-                home=item["match"].get("home", ""),
-                away=item["match"].get("away", ""),
-            )
-            if (scor and baza)
-            else None
-        ),
+    raw = f.read_bytes()
+    d = json.loads(raw)
+    items = d.get("items") or []
+    if not items or not items[0].get("match", {}).get("fixture_id"):
+        return None, ""
+    item = items[0]
+    public = _public_sample(zi)
+    # Worker-ul poate serializa 2.0 ca 2. Comparăm textele publice și valorile,
+    # apoi folosim numai copia canonică locală pentru verificarea SHA.
+    fields = (
+        "match",
+        "provenance",
+        "analysis",
+        *(f"analysis_{lang}" for lang in TOTAL_MARKET if lang != "ro"),
     )
+    matches_public = public and all(item.get(key) == public.get(key) for key in fields)
+    if not matches_public:
+        return None, ""
+    try:
+        receipt = PP.citeste_livrari(f)
+        # Leagă chitanța de aceiași octeți din care am luat exemplul, inclusiv la scrieri concurente.
+        if receipt.get("archive_sha256") != sha256(raw).hexdigest():
+            receipt = {}
+    except (AttributeError, OSError, ValueError):
+        receipt = {}
+    timestamp = (
+        None
+        if any(
+            d.get(flag)
+            for flag in (
+                "published_late",
+                "recovery_kind",
+                "recovery_of",
+                "exclude_from_forward_test",
+                "dry_run",
+                "dryrun",
+            )
+        )
+        else _site_delivery(item, receipt)
+    )
+    return {**item, "_public_site_delivery": timestamp}, d.get("generated_at", "")
+
+
+def _verdict(item: dict, result) -> tuple[tuple[int, int] | None, bool | None]:
+    from gen_pro_arhiva import evalueaza_pick
+
+    m = item["match"]
+    scor, half = _date_rezultat(result)
+    principal = _principal(item, parseaza(item["analysis"])["picks"])
+    principal_ok = None
+    if scor and principal:
+        principal_ok = evalueaza_pick(principal[0], *scor, m["home"], m["away"], *half)
+    return scor, principal_ok
+
+
+def _are_deja_exemplul_azi(zi: str) -> bool:
+    """O întrerupere a confirmării publice nu înlocuiește cardul de azi deja pe site."""
+    html = INDEX.read_text(encoding="utf-8")
+    _, _, sample = html.partition(START)
+    sample, end, _ = sample.partition(END)
+    return bool(end and f'data-date="{zi}"' in sample)
 
 
 def main() -> None:
@@ -535,29 +663,43 @@ def main() -> None:
     azi = a.date
     ieri = (datetime.strptime(azi, "%Y-%m-%d") - timedelta(days=1)).strftime("%Y-%m-%d")
     it_azi, gen_azi = _incarca(azi)
-    it_ieri, gen_ieri = _incarca(ieri)
+    if not it_azi and _are_deja_exemplul_azi(azi):
+        print(
+            f"[gen_pro_sample] confirmarea publică pentru {azi} indisponibilă; cardul zilei rămâne"
+        )
+        return
+    it_ieri, _ = _incarca(ieri)
+    fids = [i["match"]["fixture_id"] for i in (it_azi, it_ieri) if i]
+    rez = rezultate(fids) if fids else {}
     if it_azi:
-        scor, baza, ok = _verdict(it_azi)
-        card = html_card(it_azi, azi, gen_azi, scor, baza, ok)
         zi_card = azi
         fid_card = it_azi["match"]["fixture_id"]
-        linie = html_ieri(it_ieri, ieri, *_verdict(it_ieri)) if it_ieri else ""
+        card = html_card(it_azi, azi, *_verdict(it_azi, rez.get(fid_card)))
+        linie = (
+            html_ieri(
+                it_ieri,
+                ieri,
+                _date_rezultat(rez.get(it_ieri["match"]["fixture_id"]))[0],
+            )
+            if it_ieri
+            else ""
+        )
         print(
             f"[gen_pro_sample] card AZI {azi}: {it_azi['match']['home']} – {it_azi['match']['away']} ({it_azi['match'].get('league')}), scrisă la {gen_azi[11:16]}"
         )
     elif it_ieri:
-        scor, baza, ok = _verdict(it_ieri)
-        card = html_card(it_ieri, ieri, gen_ieri, scor, baza, ok)
+        card = html_card(
+            it_ieri, ieri, *_verdict(it_ieri, rez.get(it_ieri["match"]["fixture_id"]))
+        )
         zi_card = ieri
         fid_card = None
         linie = ""
         print(
-            f"[gen_pro_sample] fără arhivă Pro pentru {azi} încă — cardul rămâne analiza de ieri ({ieri}: {it_ieri['match']['home']} – {it_ieri['match']['away']}), "
-            + (f"rezultat {scor[0]}-{scor[1]}" if scor else "fără rezultat încă")
+            f"[gen_pro_sample] fără exemplu public confirmat pentru {azi} — rămâne exemplul de ieri ({ieri}: {it_ieri['match']['home']} – {it_ieri['match']['away']})"
         )
     else:
         print(
-            f"[gen_pro_sample] nicio arhivă Pro pentru {azi} sau {ieri} — cardul rămâne"
+            f"[gen_pro_sample] niciun exemplu public confirmat pentru {azi} sau {ieri} — cardul rămâne"
         )
         return
     rows = lista_pro_azi(azi)

@@ -16,7 +16,7 @@
 <link rel="alternate" hreflang="ro" href="https://poseidonstats.com/predictii/anglia-national-league.html">
 <link rel="alternate" hreflang="en" href="https://poseidonstats.com/en/predictions/england-national-league.html">
 <link rel="alternate" hreflang="x-default" href="https://poseidonstats.com/predictii/anglia-national-league.html">
-<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/style.css?v=20261118e">
 <meta name="theme-color" content="#1e3a8a">
 <link rel="apple-touch-icon" href="../assets/icon-192.png">
 <script data-goatcounter="https://poseidonstats.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
@@ -69,22 +69,23 @@
       <a href="../metodologie.html" data-i18n="nav.metodologie">Metodologie</a>
       <a class="patreon" href="../index.html#abonament" data-i18n="nav.abonamente">Abonamente</a>
     </nav>
-    <script src="../assets/i18n-lite.js" data-sus="../"></script>
+    <script src="../assets/country-label.js?v=20261118e"></script>
+    <script src="../assets/i18n-lite.js?v=20261118e" data-sus="../"></script>
   </div>
 </header>
 
 <main class="container">
   <section class="intro">
     <div class="hero">
-      <h1 class="hero-title" data-i18n="ligi.h1" data-i18n-vars='{"liga":"National League"}'>Predicții National League</h1>
-      <p class="hero-sub" data-i18n="ligi.sub" data-i18n-vars='{"liga":"National League (Anglia)"}'>Probabilități pentru meciurile din National League (Anglia), calculate de un model Poisson + Dixon-Coles și calibrate pe rezultate reale, publicate înainte de meci și verificabile după.</p>
+      <h1 class="hero-title" data-i18n="ligi.h1" data-i18n-vars='{"liga": "National League"}' data-i18n-vars-en='{"liga": "National League"}'>Predicții National League</h1>
+      <p class="hero-sub" data-i18n="ligi.sub" data-i18n-vars='{"liga": "National League (<span data-country-label=\"England\">Anglia</span>)"}' data-i18n-vars-en='{"liga": "National League (England)"}'>Probabilități pentru meciurile din National League (Anglia), calculate de un model Poisson + Dixon-Coles și calibrate pe rezultate reale, publicate înainte de meci și verificabile după.</p>
       <p class="hero-free" data-i18n="ligi.hero.free">5 predicții complete gratuit în fiecare zi · fără cont · fără reclame · zero link-uri către case de pariuri</p>
     </div>
-    <p><span data-i18n="ligi.rez.main" data-i18n-vars='{"n": "<span data-i18n=\"n.meciuri\" data-i18n-vars=&#39;{\"n\":\"21 de\"}&#39;>21 de meciuri</span>", "liga": "National League (Anglia)", "z": "7", "data": "<span data-date=\"2026-11-20\">20 noiembrie 2026</span>"}'>Modelul a analizat <strong><span data-i18n="n.meciuri" data-i18n-vars='{"n":"21 de"}'>21 de meciuri</span></strong> din National League (Anglia) în următoarele 7 zile, primul pe <span data-date="2026-11-20">20 noiembrie 2026</span>.</span> <span data-i18n="ligi.rez.blocate">Cele 5 predicții publicate gratuit azi sunt pe alte competiții; probabilitățile pentru meciurile de aici sunt disponibile abonaților. Programul, profilul de calibrare al ligii și jurnalul predicțiilor deja verificate rămân publice, mai jos.</span></p>
+    <p><span data-i18n="ligi.rez.main" data-i18n-vars='{"n": "<span data-i18n=\"n.meciuri\" data-i18n-vars=&#39;{\"n\":\"21 de\"}&#39;>21 de meciuri</span>", "liga": "National League (<span data-country-label=\"England\">Anglia</span>)", "z": "7", "data": "<span data-date=\"2026-11-20\">20 noiembrie 2026</span>"}' data-i18n-vars-en='{"liga": "National League (England)"}'>Modelul a analizat <strong><span data-i18n="n.meciuri" data-i18n-vars='{"n":"21 de"}'>21 de meciuri</span></strong> din National League (Anglia) în următoarele 7 zile, primul pe <span data-date="2026-11-20">20 noiembrie 2026</span>.</span> <span data-i18n="ligi.rez.blocate">Cele 5 predicții publicate gratuit azi sunt pe alte competiții; probabilitățile pentru meciurile de aici sunt disponibile abonaților. Programul, profilul de calibrare al ligii și jurnalul predicțiilor deja verificate rămân publice, mai jos.</span></p>
   </section>
 
   <section>
-    <h2 data-i18n="ligi.urmatoare" data-i18n-vars='{"liga":"National League (Anglia)"}'>Meciurile următoare din National League (Anglia)</h2>
+    <h2 data-i18n="ligi.urmatoare" data-i18n-vars='{"liga": "National League (<span data-country-label=\"England\">Anglia</span>)"}' data-i18n-vars-en='{"liga": "National League (England)"}'>Meciurile următoare din National League (Anglia)</h2>
     <div class="calibration-card">
       <table>
         <thead><tr>
@@ -226,12 +227,12 @@
 
   <section>
     <h2 data-i18n="ligi.cunoaste">Cât de bine cunoaște modelul această ligă</h2>
-<p><span data-i18n="ligi.prof.expl" data-i18n-vars='{"n": "<span data-i18n=\"n.meciuri\" data-i18n-vars=&#39;{\"n\": \"263 de\"}&#39;>263 de meciuri</span>", "liga": "National League (Anglia)", "bias": "10.1", "dir": "<span data-i18n=\"ligi.prof.mai_putine\">mai puține</span>"}'>Pe backtest-ul de calibrare (ianuarie–mai 2026, ratings înghețate la 31 decembrie 2025), modelul a văzut <strong><span data-i18n="n.meciuri" data-i18n-vars='{"n": "263 de"}'>263 de meciuri</span></strong> din National League (Anglia). Golurile pe care le aștepta erau cu <strong>10.1%</strong> <span data-i18n="ligi.prof.mai_putine">mai puține</span> decât cele marcate efectiv — exact abaterea pe care o corectează calibrarea per-ligă.</span> <span class="warn-tag" data-i18n="ligi.cal.slaba">calibrare slabă</span></p><p><span data-i18n="ligi.prof.nu">Abaterea depășește pragul de ±10%, așa că marcăm liga explicit ca având calibrare slabă: probabilitățile rămân calibrate global, dar profilul ei propriu nu e validat separat. Preferăm să scrie asta pe pagină decât să nu știi.</span></p>
+<p><span data-i18n="ligi.prof.expl" data-i18n-vars='{"n": "<span data-i18n=\"n.meciuri\" data-i18n-vars=&#39;{\"n\": \"263 de\"}&#39;>263 de meciuri</span>", "liga": "National League (<span data-country-label=\"England\">Anglia</span>)", "bias": "10.1", "dir": "<span data-i18n=\"ligi.prof.mai_putine\">mai puține</span>"}' data-i18n-vars-en='{"liga": "National League (England)"}'>Pe backtest-ul de calibrare (ianuarie–mai 2026, ratings înghețate la 31 decembrie 2025), modelul a văzut <strong><span data-i18n="n.meciuri" data-i18n-vars='{"n": "263 de"}'>263 de meciuri</span></strong> din National League (Anglia). Golurile pe care le aștepta erau cu <strong>10.1%</strong> <span data-i18n="ligi.prof.mai_putine">mai puține</span> decât cele marcate efectiv — exact abaterea pe care o corectează calibrarea per-ligă.</span> <span class="warn-tag" data-i18n="ligi.cal.slaba">calibrare slabă</span></p><p><span data-i18n="ligi.prof.nu">Abaterea depășește pragul de ±10%, așa că marcăm liga explicit ca având calibrare slabă: probabilitățile rămân calibrate global, dar profilul ei propriu nu e validat separat. Preferăm să scrie asta pe pagină decât să nu știi.</span></p>
     <p class="muted" data-i18n="ligi.metoda">Metoda completă, cu ce corectăm și ce nu, e pe pagina de <a href="../metodologie.html">metodologie</a>.</p>
   </section>
 
   <section>
-    <h2 data-i18n="ligi.iesit" data-i18n-vars='{"liga":"National League (Anglia)"}'>Ce a ieșit până acum în National League (Anglia)</h2>
+    <h2 data-i18n="ligi.iesit" data-i18n-vars='{"liga": "National League (<span data-country-label=\"England\">Anglia</span>)"}' data-i18n-vars-en='{"liga": "National League (England)"}'>Ce a ieșit până acum în National League (Anglia)</h2>
 <p class="muted" data-i18n="ligi.jurnal.gol" data-i18n-vars='{"data":"<span data-date=\"2026-06-02\">2 iunie 2026</span>"}'>Încă nu avem predicții rezolvate pe această ligă în jurnalul forward (pornit pe <span data-date="2026-06-02">2 iunie 2026</span>). Cum se joacă meciurile, apar aici — și cele nimerite, și cele ratate.</p>
   </section>
 

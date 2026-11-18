@@ -50,7 +50,7 @@ function harness(member=false, fixtures=null) {
     incarca:async()=>{events.push('member-load');return {data:publicFixture,sursa:'membru'};}
   }};
   const executable=[
-    actual('function t(key) {','function _loc()'),
+    actual('function t(key) {','function applyI18n()'),
     actual('let _i18nGataResolve = null;','async function initI18n()'),
     actual('async function fetchJSON(url) {','function pctClass('),
     actual('async function loadPredictions() {','const SCRIPT_V ='),

@@ -5,7 +5,7 @@ const CALIB_URL = "data/calibration.json";
 const FORWARD_URL = "data/forward.json";
 const HISTORY_URL = "data/history.json";
 const SCORECARD_URL = "data/scorecard.json";
-const I18N_URL = "assets/i18n.json";
+const I18N_URL = "assets/i18n.json?v=20261118e";
 
 // Scorecard skill per piață (din backtest OOS), folosit pentru contextul piețelor.
 let SCORECARD = {};                       // key -> card (label, tier, threshold, skill_stars, lift_pp, hit)
@@ -78,6 +78,21 @@ function applyI18n() {
       const [attr, key] = pair.split(":");
       el.setAttribute(attr.trim(), t(key.trim()));
     });
+  });
+  const pageTitle = document.querySelector("title[data-page-title]");
+  if (pageTitle) {
+    const key = pageTitle.dataset.pageTitle;
+    const translated = t(key);
+    if (translated !== key) {
+      pageTitle.textContent = /\bPOSEIDON\b/i.test(translated) ? translated
+        : key === "page.title.home" ? `POSEIDON — ${translated}` : `${translated} | POSEIDON`;
+    }
+  }
+  const leaguePath = LANG === "en" ? "en/predictions/index.html" : "predictii/index.html";
+  document.querySelectorAll('a[data-i18n="nav.ligi"]').forEach(link => {
+    const href = link.getAttribute("href");
+    const path = href?.match(/^((?:\.\.?\/)*|\/)(?:en\/predictions|predictii)\/index\.html([?#].*)?$/);
+    if (path) link.setAttribute("href", path[1] + leaguePath + (path[2] || ""));
   });
   document.documentElement.lang = LANG;
 }
@@ -232,11 +247,26 @@ if (typeof document !== "undefined") {
 }
 // 7 oct 2026 — pe telefon filtrele stau pliate sub un buton „Filtre ▾” (6 selectoare = un ecran întreg înainte de meciuri)
 function _pliazaFiltre() {
-  const f = document.querySelector("section.filters"); if (!f || f.previousElementSibling?.classList?.contains("filtre-toggle")) return;
-  const b = document.createElement("button"); b.type = "button"; b.className = "filtre-toggle";
-  const txt = () => tt("filters.toggle", "⚙️ Filtre") + (f.classList.contains("deschis") ? " ▴" : " ▾");
-  b.textContent = txt(); b.addEventListener("click", () => { f.classList.toggle("deschis"); b.textContent = txt(); });
-  f.parentNode.insertBefore(b, f);
+  const filters = document.querySelector("section.filters");
+  if (!filters || filters.previousElementSibling?.classList?.contains("filtre-toggle")) return;
+  const button = document.createElement("button");
+  button.type = "button";
+  button.className = "filtre-toggle";
+  filters.id ||= "prediction-filters";
+  button.setAttribute("aria-controls", filters.id);
+  const label = document.createElement("span");
+  label.dataset.i18n = "filters.toggle";
+  label.textContent = tt("filters.toggle", "Filtre");
+  const arrow = document.createElement("span");
+  arrow.setAttribute("aria-hidden", "true");
+  button.append(label, arrow);
+  const update = open => {
+    button.setAttribute("aria-expanded", String(open));
+    arrow.textContent = open ? " ▴" : " ▾";
+  };
+  update(filters.classList.contains("deschis"));
+  button.addEventListener("click", () => update(filters.classList.toggle("deschis")));
+  filters.parentNode.insertBefore(button, filters);
 }
 if (typeof document !== "undefined") {
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", _pliazaFiltre); else _pliazaFiltre();
@@ -284,9 +314,18 @@ function fmtPct(p) {
   if (p == null || isNaN(p)) return "—";
   return Math.round(p * 100) + "%";
 }
+const decimalFormats = new Map();
 function fmtNum(n, d = 2) {
-  if (n == null || isNaN(n)) return "—";
-  return Number(n).toFixed(d);
+  const value = Number(n);
+  if (n == null || !Number.isFinite(value)) return "—";
+  const locale = _loc();
+  const key = `${locale}:${d}`;
+  if (!decimalFormats.has(key)) {
+    decimalFormats.set(key, new Intl.NumberFormat(locale, {
+      minimumFractionDigits: d, maximumFractionDigits: d, useGrouping: false,
+    }));
+  }
+  return decimalFormats.get(key).format(value);
 }
 
 /* ============== Cifre vii (sursă unică: JSON-urile publicate) ==============
@@ -361,7 +400,7 @@ const LOCKED_PREVIEW = 40;   // câte rânduri blocate desenăm (2775 de noduri 
 function nUnits(n) {
   // 7 oct 2026: separator de mii după limbă (2.771 în RO/ES/IT, 2,771 în EN) + „de” în RO doar înaintea unui substantiv
   // (textele care îl folosesc au substantivul imediat după: „2.771 de meciuri în total”, nu „2.771 de în total”)
-  const fmt = new Intl.NumberFormat(LANG === "en" ? "en-GB" : LANG === "es" ? "es-ES" : LANG === "it" ? "it-IT" : "ro-RO").format(n);
+  const fmt = new Intl.NumberFormat(_loc()).format(n);
   if (LANG !== "ro") return fmt;
   const r = n % 100;
   return (r === 0 || r >= 20) ? `${fmt} de` : fmt;
@@ -369,6 +408,10 @@ function nUnits(n) {
 
 function isLocked(m) {
   return m.locked === true || (m.prob_over_1_5 == null && m.prob_home == null);
+}
+
+function countryLabel(country) {
+  return typeof window !== "undefined" ? window.PoseidonCountry?.label(country, LANG) ?? country : country;
 }
 
 function matchWhen(m) {
@@ -384,7 +427,7 @@ function renderLockedMatch(m, member = false) {
     <div class="match-title">
       <div class="match-teams">${esc(m.home_team)} <span class="vs">vs</span> ${esc(m.away_team)}</div>
       <div class="match-meta">
-        <span class="liga">${esc(m.country)} · ${esc(m.league)}</span>
+        <span class="liga">${esc(countryLabel(m.country))} · ${esc(m.league)}</span>
         <span class="when">${matchWhen(m)}</span>
       </div>
     </div>
@@ -455,23 +498,66 @@ function renderUnlockCta(nLocked, nLockedAzi = null) {
    probabilitățile ca și cum meciurile ar fi independente. Sunt aproape
    independente, nu perfect. */
 
-const SIM_MARKETS = [
-  ["1", "prob_home", "Victorie gazde"],
-  ["X", "prob_draw", "Egal"],
-  ["2", "prob_away", "Victorie oaspeți"],
-  ["1X", "prob_1x", "Gazdele nu pierd"],
-  ["X2", "prob_x2", "Oaspeții nu pierd"],
-  ["Peste 1.5", "prob_over_1_5", "Minim 2 goluri"],
-  ["Peste 2.5", "prob_over_2_5", "Minim 3 goluri"],
-  ["Ambele", "prob_btts", "Ambele echipe marchează"],
-];
+const SIM_MARKETS = {
+  home: ["1", "Victorie gazde"],
+  draw: ["X", "Egal"],
+  away: ["2", "Victorie oaspeți"],
+  dc_1x: ["1X", "Gazdele nu pierd"],
+  dc_x2: ["X2", "Oaspeții nu pierd"],
+  over_1_5: ["", "Peste 1,5"],
+  over_2_5: ["", "Peste 2,5"],
+  btts: ["", "Ambele echipe marchează"],
+};
+const SIM_MARKET_FIELDS = { dc_1x: "1x", dc_x2: "x2" };
+
+function simMarketLabel(market, compact = false) {
+  const [symbol, label] = SIM_MARKETS[market];
+  return compact && symbol ? symbol : tt(`mk.${market}`, label);
+}
+
+function simPct(p, digits = 0) {
+  if (!Number.isFinite(p)) return "—";
+  return p.toLocaleString(_loc(), { style: "percent", minimumFractionDigits: digits, maximumFractionDigits: digits });
+}
 
 const SIM = { sel: new Map(), free: [], nTotal: 0, varianta: 0, nGen: 3 };
 
 function simFmtOdds(p) {
   if (!p || p <= 0) return "—";
   const c = 1 / p;
-  return c >= 100 ? c.toFixed(0) : c.toFixed(2);
+  return fmtNum(c, c >= 100 ? 0 : 2);
+}
+
+function simReadOdds(inputId) {
+  const input = document.getElementById(inputId);
+  if (!input) return null;
+  const value = input.value.trim();
+  const odds = /^\d+(?:[.,]\d+)?$/.test(value) ? Number(value.replace(",", ".")) : NaN;
+  const valid = Number.isFinite(odds) && odds > 1;
+  const invalid = value !== "" && !valid;
+  const errorId = `${inputId}-error`;
+  let message = document.getElementById(errorId);
+  if (invalid) {
+    if (!message) {
+      message = document.createElement("p");
+      message.id = errorId;
+      message.className = "sim-warn";
+      message.setAttribute("role", "status");
+      input.after(message);
+    }
+    input.setAttribute("aria-invalid", "true");
+    input.setAttribute("aria-errormessage", errorId);
+    message.hidden = false;
+    message.textContent = tt("sim.odds.invalid", "Introdu o cotă mai mare decât 1, de exemplu 2,50.");
+  } else {
+    input.removeAttribute("aria-invalid");
+    input.removeAttribute("aria-errormessage");
+    if (message) {
+      message.textContent = "";
+      message.hidden = true;
+    }
+  }
+  return valid ? odds : null;
 }
 
 // renderSimulator() se reapelează la schimbarea limbii; fără garda asta, „Altă variantă"
@@ -490,9 +576,9 @@ function simNume(m) {
 // modelului, nu o alegere editorială: nu „recomandăm" piața, e pur și simplu maximul.
 function simBest(m) {
   let best = null;
-  for (const [et, k] of SIM_MARKETS) {
-    const p = m[k];
-    if (p != null && (best === null || p > best.prob)) best = { eticheta: et, prob: p, meci: simNume(m), fix: String(m.fixture_id) };
+  for (const market of Object.keys(SIM_MARKETS)) {
+    const p = m[`prob_${SIM_MARKET_FIELDS[market] || market}`];
+    if (p != null && (best === null || p > best.prob)) best = { market, prob: p, meci: simNume(m), fix: String(m.fixture_id) };
   }
   return best;
 }
@@ -524,9 +610,9 @@ function simTicketHtml(sel, cotaIn) {
   let p = 1;
   const pasi = sel.map((s, i) => {
     p *= s.prob;
-    return `<tr><td>${i + 1}</td><td><strong>${esc(s.meci)}</strong> — ${esc(s.eticheta)}
-      <span class="muted">(${fmtPct(s.prob)})</span></td>
-      <td class="sim-run">${(p * 100).toFixed(1)}%</td></tr>`;
+    return `<tr><td>${i + 1}</td><td><strong>${esc(s.meci)}</strong> — ${esc(simMarketLabel(s.market, true))}
+      <span class="muted">(${simPct(s.prob)})</span></td>
+      <td class="sim-run">${simPct(p, 1)}</td></tr>`;
   }).join("");
   const unuDin = 1 / p;
 
@@ -535,19 +621,19 @@ function simTicketHtml(sel, cotaIn) {
     comparatie = `<div class="sim-compare">
       <p>${tt("sim.compare",
         "La cota <strong>{cota}</strong>, casa te plătește ca și cum șansa ar fi <strong>1 din {casa}</strong>. Calibrarea noastră spune <strong>~1 din {noi}</strong>.")
-        .replace("{cota}", cotaIn.toFixed(2))
-        .replace("{casa}", cotaIn.toFixed(1))
-        .replace("{noi}", unuDin.toFixed(1))}</p>
+        .replace("{cota}", fmtNum(cotaIn))
+        .replace("{casa}", fmtNum(cotaIn, 1))
+        .replace("{noi}", fmtNum(unuDin, 1))}</p>
       <p class="sim-warn">${tt("sim.compare.warn", "Diferența dintre cele două numere <strong>nu este un câștig</strong>. Cota casei include marja ei, iar modelul nostru greșește regulat — vezi <a href=\"track-record.html\">track record-ul</a>, unde publicăm și piețele pe care nu prezicem destul de bine. Comparația e aici ca să înțelegi ce plătește casa, nu ca să-ți spună ce să faci.")}</p>
     </div>`;
   }
 
   return `
     <div class="sim-total">
-      <div class="sim-total-p">${(p * 100).toFixed(1)}%</div>
+      <div class="sim-total-p">${simPct(p, 1)}</div>
       <div class="sim-total-lbl">${tt("sim.total",
         "șansa ca <strong>toate cele {n} selecții</strong> să iasă — adică <strong>~1 din {x}</strong>")
-        .replace("{n}", sel.length).replace("{x}", unuDin.toFixed(1))}</div>
+        .replace("{n}", sel.length).replace("{x}", fmtNum(unuDin, 1))}</div>
       <div class="sim-total-odds">${tt("sim.fair",
         "Cota care ar corespunde exact acestei probabilități: <strong>{c}</strong>")
         .replace("{c}", simFmtOdds(p))}</div>
@@ -558,8 +644,8 @@ function simTicketHtml(sel, cotaIn) {
     </table>
     <p class="sim-drop">${tt("sim.drop",
       "Fiecare selecție adăugată <strong>scade</strong> șansa totală — de la {prima} cu una singură, la {ultima} cu toate {n}. Asta e aritmetica pe care biletele nu ți-o arată.")
-      .replace("{prima}", fmtPct(sel[0].prob))
-      .replace("{ultima}", (p * 100).toFixed(1) + "%")
+      .replace("{prima}", simPct(sel[0].prob))
+      .replace("{ultima}", simPct(p, 1))
       .replace("{n}", sel.length)}</p>
     ${comparatie}`;
 }
@@ -577,6 +663,7 @@ function simCtaPro() {
 function simGenereaza() {
   const out = document.getElementById("sim-gen-result");
   if (!out) return;
+  const cota = simReadOdds("sim-gen-odds");
   const cand = SIM.free.map(simBest).filter(Boolean);
   const n = Math.min(SIM.nGen, cand.length);
   if (n < 2) {
@@ -586,8 +673,6 @@ function simGenereaza() {
   const variante = simCombinatii(cand, n);
   SIM.varianta = ((SIM.varianta % variante.length) + variante.length) % variante.length;
   const v = variante[SIM.varianta];
-  const cota = parseFloat((document.getElementById("sim-gen-odds") || {}).value);
-
   out.innerHTML = simTicketHtml(v.sel, cota)
     + `<p class="sim-varianta">${tt("sim.gen.variant",
         "Varianta {k} din {total}, ordonate descrescător după șansa compusă. Selecțiile sunt piețele cu cea mai mare probabilitate calibrată din fiecare meci — o alegere mecanică, nu o recomandare.")
@@ -598,17 +683,19 @@ function simGenereaza() {
 /* ---------- Modul secundar: construit manual ---------- */
 
 function simCard(m) {
-  const chips = SIM_MARKETS
-    .filter(([, k]) => m[k] != null)
-    .map(([et, k, titlu]) =>
-      `<button type="button" class="sim-chip" data-fix="${m.fixture_id}" data-key="${k}"
-         data-et="${esc(et)}" data-p="${m[k]}" title="${esc(titlu)}">
-         ${esc(et)} <span class="sim-chip-p">${fmtPct(m[k])}</span>
-       </button>`).join("");
+  const chips = Object.keys(SIM_MARKETS).map(market => {
+    const p = m[`prob_${SIM_MARKET_FIELDS[market] || market}`];
+    if (p == null) return "";
+    const title = esc(simMarketLabel(market)).replace(/"/g, "&quot;");
+    return `<button type="button" class="sim-chip" data-fix="${m.fixture_id}" data-key="${market}"
+         data-p="${p}" title="${title}">
+         ${esc(simMarketLabel(market, true))} <span class="sim-chip-p">${simPct(p)}</span>
+       </button>`;
+  }).join("");
   return `<div class="sim-card" data-card="${m.fixture_id}">
     <div class="sim-card-head">
       <strong>${esc(m.home_team)}</strong> – <strong>${esc(m.away_team)}</strong>
-      <span class="muted-xs">${esc(m.country)} · ${esc(m.league)} · ${matchWhen(m)}</span>
+      <span class="muted-xs">${esc(countryLabel(m.country))} · ${esc(m.league)} · ${matchWhen(m)}</span>
     </div>
     <div class="sim-chips">${chips}</div>
   </div>`;
@@ -617,13 +704,13 @@ function simCard(m) {
 function simUpdate() {
   const out = document.getElementById("sim-result");
   if (!out) return;
+  const cota = simReadOdds("sim-odds");
   const sel = [...SIM.sel.values()];
   if (sel.length < 2) {
     out.innerHTML = `<p class="muted">${tt("sim.empty",
       "Alege cel puțin două selecții, din meciuri diferite, ca să vezi cum se compune șansa.")}</p>`;
     return;
   }
-  const cota = parseFloat((document.getElementById("sim-odds") || {}).value);
   out.innerHTML = simTicketHtml(sel, cota);
 }
 
@@ -712,7 +799,7 @@ async function renderSimulator() {
         chip.classList.add("on");
         const card = chip.closest(".sim-card").querySelector(".sim-card-head");
         SIM.sel.set(fix, {
-          eticheta: chip.dataset.et,
+          market: chip.dataset.key,
           prob: parseFloat(chip.dataset.p),
           meci: card.textContent.trim().split("\n")[0].trim(),
         });
@@ -766,10 +853,13 @@ async function renderIndex() {
   const chkCalibMk = document.getElementById("filter-calibrated-markets");
   const setInitialDay = selDay.options.length === 1 && !selDay.value && byDay.has(aziRO);
   [[selDay, days], [selLeague, leagues], [selCountry, countries]].forEach(([select, values]) => {
-    const existing = new Set(Array.from(select.options, option => option.value));
-    values.forEach(value => {
-      if (!existing.has(value)) { select.add(new Option(value, value)); existing.add(value); }
-    });
+    const existing = new Map(Array.from(select.options, option => [option.value, option]));
+    for (const value of values) {
+      const option = existing.get(value);
+      const label = select === selCountry ? countryLabel(value) : value;
+      if (!option) select.add(new Option(label, value));
+      else if (select === selCountry) option.text = label;
+    }
   });
 
   if (setInitialDay) selDay.value = aziRO;
@@ -961,16 +1051,23 @@ function ensureWarnPopover() {
 }
 
 let _warnOpenFor = null;
+function closeWarnPopover() {
+  const trigger = _warnOpenFor;
+  if (trigger) {
+    document.getElementById("warn-popover").style.display = "none";
+    _warnOpenFor = null;
+  }
+  return trigger;
+}
 document.addEventListener("click", e => {
   const btn = e.target.closest(".market-warn");
-  const pop = ensureWarnPopover();
   if (btn) {
     e.preventDefault();
-    if (_warnOpenFor === btn) { // al doilea tap pe același ⚠️ → închide
-      pop.style.display = "none";
-      _warnOpenFor = null;
+    if (_warnOpenFor === btn) {
+      closeWarnPopover();
       return;
     }
+    const pop = ensureWarnPopover();
     pop.textContent = btn.getAttribute("data-tip") || "";
     pop.style.display = "block";
     const r = btn.getBoundingClientRect();
@@ -982,9 +1079,15 @@ document.addEventListener("click", e => {
     pop.style.top = (r.bottom + window.scrollY + 6) + "px";
     _warnOpenFor = btn;
   } else if (!e.target.closest("#warn-popover")) {
-    pop.style.display = "none";
-    _warnOpenFor = null;
+    closeWarnPopover();
   }
+});
+document.addEventListener("keydown", e => {
+  if (e.key !== "Escape" || e.defaultPrevented) return;
+  const trigger = closeWarnPopover();
+  if (!trigger) return;
+  e.preventDefault();
+  if (trigger.isConnected) trigger.focus({ preventScroll: true });
 });
 
 function xgBar(xgH, xgA) {
@@ -1088,7 +1191,7 @@ function renderMatch(m, filterMarket = "", member = false) {
   const dossier = member && typeof window !== "undefined" ? window.PoseidonDossier?.button(m) || "" : "";
   return `<div class="match match-report ${m.calibrated ? "" : "uncalibrated"} ${m.free ? "match-free" : ""}" data-fid="${Number.isSafeInteger(m.fixture_id) ? m.fixture_id : ""}">
     <div class="report-summary"><div class="match-header" role="button" tabindex="0" aria-expanded="false" aria-controls="${id}-body">
-      <div class="match-title"><div class="match-teams"><span class="team home">${esc(m.home_team)}</span><span class="vs">vs</span><span class="team away">${esc(m.away_team)}</span></div><div class="match-meta"><span class="liga">${esc(m.country)} · ${esc(m.league)}</span><span class="when">${matchWhen(m)}</span>${calibTag}${freeTag}</div></div><span class="match-chev" aria-hidden="true"></span>
+      <div class="match-title"><div class="match-teams"><span class="team home">${esc(m.home_team)}</span><span class="vs">vs</span><span class="team away">${esc(m.away_team)}</span></div><div class="match-meta"><span class="liga">${esc(countryLabel(m.country))} · ${esc(m.league)}</span><span class="when">${matchWhen(m)}</span>${calibTag}${freeTag}</div></div><span class="match-chev" aria-hidden="true"></span>
     </div>${dossier ? `<div class="match-dossier-action">${dossier}</div>` : ""}</div><div class="match-body" id="${id}-body">
     <nav class="report-tabs" role="tablist" aria-label="${esc(c[3])}">${tabs}</nav>
     <section ${panel("overview")}><div class="report-overview-grid"><div class="report-overview-result"><div class="report-heading"><h3>${esc(c[4])}</h3><span>${tt("match.phase.ft", "Final · 90 min")}</span></div>
@@ -1165,7 +1268,7 @@ async function renderTrackRecord() {
       <p class="muted">${tt("tr.lg.ok.p", "Bias între goluri prezise vs reale: ±10%.")}</p>
       <table><thead><tr><th>${tt("tr.lg.th.liga", "Țară / Ligă")}</th><th>N</th><th>Bias</th></tr></thead>
         <tbody>${ok.slice(0, 30).map(l => `<tr>
-          <td>${esc(l.country)} / ${esc(l.league)}</td>
+          <td>${esc(countryLabel(l.country))} / ${esc(l.league)}</td>
           <td>${l.n}</td>
           <td>${l.bias_pp >= 0 ? "+" : ""}${l.bias_pp.toFixed(1)}%</td>
         </tr>`).join("")}</tbody>
@@ -1178,7 +1281,7 @@ async function renderTrackRecord() {
       <p class="muted">${tt("tr.lg.bad.p", "Bias mai mare de ±10% sau sample sub 80 — predicții afișate cu marker de rezervă pe pagina principală.")}</p>
       <table><thead><tr><th>${tt("tr.lg.th.liga", "Țară / Ligă")}</th><th>N</th><th>Bias</th></tr></thead>
         <tbody>${bad.slice(0, 30).map(l => `<tr>
-          <td>${esc(l.country)} / ${esc(l.league)}</td>
+          <td>${esc(countryLabel(l.country))} / ${esc(l.league)}</td>
           <td>${l.n}</td>
           <td>${l.bias_pp >= 0 ? "+" : ""}${l.bias_pp.toFixed(1)}%</td>
         </tr>`).join("")}</tbody>
@@ -1266,12 +1369,14 @@ async function renderIstoric() {
   const allPicks = new Set();
   for (const d of data.days) for (const m of d.matches) for (const p of m.picks) allPicks.add(p.market);
   const sel = document.getElementById("filter-market");
-  [...allPicks].sort().forEach(m => sel.add(new Option(m, m)));
+  const selected = sel.value;
+  sel.replaceChildren(sel.options[0], ...[...allPicks].sort().map(m => new Option(m, m)));
+  sel.value = allPicks.has(selected) ? selected : "";
 
   // Hook filters
   ["filter-market", "filter-result", "filter-calibrated-only"].forEach(id => {
     const el = document.getElementById(id);
-    el.addEventListener(el.tagName === "SELECT" ? "change" : "change", renderIstoricDays);
+    el.addEventListener("change", renderIstoricDays);
   });
 
   renderIstoricDays();
@@ -1323,7 +1428,7 @@ function renderIstoricDays() {
   }).join("");
 
   document.getElementById("days-list").innerHTML = html
-    || `<p class="muted">Niciun pick care să se potrivească filtrelor.</p>`;
+    || `<p class="muted">${tt("history.empty", "Nicio selecție nu corespunde filtrelor.")}</p>`;
 }
 
 function fmtDayDate(s) {
@@ -1359,7 +1464,7 @@ function renderHistMatch(m) {
       <span class="hist-ft">${ftHtml}</span>
     </div>
     <div class="hist-match-meta">
-      <span class="muted">${esc(m.country)} · ${esc(m.league)}</span>
+      <span class="muted">${esc(countryLabel(m.country))} · ${esc(m.league)}</span>
       ${calMark}
     </div>
     <div class="hist-match-picks">${picksHtml}</div>
@@ -1372,11 +1477,11 @@ let PRO_REPORT_LOAD;
 function loadProReport() {
   if (window.PoseidonProReport) return Promise.resolve(window.PoseidonProReport);
   if (PRO_REPORT_LOAD) return PRO_REPORT_LOAD;
-  const css = document.createElement("link"); css.rel = "stylesheet"; css.href = "assets/pro-report.css?v=20261118d"; document.head.appendChild(css);
+  const css = document.createElement("link"); css.rel = "stylesheet"; css.href = "assets/pro-report.css?v=20261118e"; document.head.appendChild(css);
   PRO_REPORT_LOAD = new Promise((resolve,reject) => {
-    const script = document.createElement("script"); script.id = "pro-report-script"; script.src = "assets/pro-context.js?v=20261118d";
+    const script = document.createElement("script"); script.id = "pro-report-script"; script.src = "assets/pro-context.js?v=20261118e";
     script.onload = script.onerror = () => {
-      const report = document.createElement("script"); report.src = "assets/pro-report.js?v=20261118d";
+      const report = document.createElement("script"); report.src = "assets/pro-report.js?v=20261118e";
       report.onload = () => resolve(window.PoseidonProReport);
       report.onerror = () => { PRO_REPORT_LOAD = null; css.remove(); script.remove(); report.remove(); reject(new Error("Pro report unavailable")); };
       document.head.appendChild(report);
@@ -1453,6 +1558,7 @@ async function renderProAnalize(zi) {
         <input id="pro-date" type="date" value="${data}" max="${azi}">
       </div>
       <div id="pro-match-choice" class="pro-match-choice" hidden></div>
+      <div id="pro-active-report" class="pro-feed-action" hidden></div>
     </div><div id="pro-content" aria-live="polite"><p class="muted">…</p></div>`;
   el.querySelector("#pro-date").addEventListener("change", e => renderProAnalize(e.target.value));
   const continut = el.querySelector("#pro-content");
@@ -1486,11 +1592,15 @@ async function renderProAnalize(zi) {
     if (!meciuri.length) { continut.innerHTML = `<p class="muted">${tt("pro.zi.gol", "Nu sunt analize Pro publicate pentru această zi.")}</p>`; return; }
     const alegere = el.querySelector("#pro-match-choice");
     alegere.innerHTML = `<label for="pro-match-select" data-i18n="dashboard.table.match">${esc(tt("dashboard.table.match", "Meci"))}</label>
-      <select id="pro-match-select" aria-controls="pro-active-report">${meciuri.map(({ label }, index) => `<option value="${index}">${esc(label)}</option>`).join("")}</select>`;
+      <div class="pro-match-field">
+        <span id="pro-match-name" aria-hidden="true"></span>
+        <select id="pro-match-select">${meciuri.map(({ label }, index) => `<option value="${index}">${esc(label)}</option>`).join("")}</select>
+      </div>`;
     alegere.hidden = false;
-    continut.innerHTML = '<div id="pro-active-report"></div>';
+    continut.innerHTML = "";
     const selector = alegere.querySelector("#pro-match-select");
-    const raport = continut.querySelector("#pro-active-report");
+    const numeMeci = alegere.querySelector("#pro-match-name");
+    const raport = el.querySelector("#pro-active-report");
     const dosar = window.PoseidonDossier;
     const deschide = document.createElement("button");
     deschide.id = "pro-view-analysis";
@@ -1505,9 +1615,15 @@ async function renderProAnalize(zi) {
     };
     deschide.addEventListener("click", () => raport.openSelectedPro(deschide));
     raport.append(deschide);
+    raport.hidden = false;
     const echipa = new URLSearchParams(window.location?.search).get("echipa");
     const index = meciuri.findIndex(({key,item}) => PRO_MECI != null ? key === PRO_MECI : echipa && item.match?.home === echipa);
     selector.value = String(Math.max(0, index));
-    selector.addEventListener("change", () => { PRO_MECI = meciuri[Number(selector.value)]?.key; });
+    numeMeci.textContent = meciuri[Number(selector.value)].label;
+    selector.addEventListener("change", () => {
+      const meci = meciuri[Number(selector.value)];
+      PRO_MECI = meci?.key;
+      numeMeci.textContent = meci?.label || "";
+    });
   } catch (e) { if (!activa()) return; console.warn("[membri] analize", e); continut.innerHTML = `<p class="muted">${tt("pro.azi.retea", "Nu am putut contacta serverul membrilor. Reîncarcă pagina; analizele sunt și în #analize-pro pe Discord.")}</p>`; }
 }

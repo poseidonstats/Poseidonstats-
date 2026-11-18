@@ -486,7 +486,8 @@
     // i18n translates hidden source variants too. Do not freeze their display until selected.
     const languageVariant = container.closest('[data-lang]');
     if (languageVariant && languageVariant.hidden) return;
-    if ((!refresh && container.dataset.proEnhanced) || container.closest('.pro-locked, [data-pro-locked]')) return;
+    if ((!refresh && container.dataset.proEnhanced)
+      || container.closest('.pro-locked, [data-pro-locked], [data-public-pro-report]')) return;
     const original=sourceStates.get(container) ?? container.innerHTML;
     const data=sections(original);
     if (!data.thesis.length && !container.dataset.proMemberReport) return;

@@ -73,9 +73,11 @@ def test_readers_propagate_validated_half_to_sample_verdict_and_legacy_choice(
     assert results[2] == results[3] == dict(gh=2, ga=1, hth=None, hta=None)
     item = dict(
         match=dict(fixture_id=1, home="A", away="B"),
-        analysis="🎯 **Picks**\n🔒 **Bază:** **Peste 0.5 goluri la pauză — 70%.** text\n👁️ x",
+        analysis="🎯 **Picks**\n🔒 **Bază:** **Peste 0.5 goluri la pauză — 70%.** text\n"
+        "🎯 **Principal:** **Peste 0.5 goluri la pauză — 70%.** text\n👁️ x",
     )
-    assert S._verdict(item) == ((2, 1), MARKET, False)
+    assert S._verdict(item, results[1]) == ((2, 1), False)
+    assert S._verdict(item, results[2]) == ((2, 1), None)
     assert S.alege([item], results)[1:] == ((2, 1), MARKET, False)
 
 

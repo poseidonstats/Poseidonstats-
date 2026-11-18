@@ -43,7 +43,7 @@ import json
 import re
 import sys
 from collections import defaultdict
-from datetime import datetime, timedelta, timezone
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -55,7 +55,7 @@ try:
 except Exception:                                    # pragma: no cover
     TZ = timezone(timedelta(hours=3))
 
-SITE = Path.home() / "poseidon-site"
+SITE = Path(__file__).resolve().parent.parent
 DATA = SITE / "data"
 OUT = SITE / "predictii"
 ARH = OUT / "arhiva"
@@ -71,7 +71,7 @@ LINKS_START = "<!-- LEAGUES_LINKS_START -->"
 LINKS_END = "<!-- LEAGUES_LINKS_END -->"
 
 FEREASTRA_ZILE = 7          # câte zile în față listăm pe pagina de ligă
-ARHIVA_ZILE = 30            # câte zile din jurnal primesc pagină proprie
+ARHIVA_ZILE = 30            # câte zile din jurnal reîmprospătăm la o rulare
 PRAG_TIER_MIN = 30          # sub atât NU dăm verdict pe ligă (N<30 = zgomot)
 
 # Praguri pick — sincron cu pickBadge() din assets/app.js și cu gen_static_daily.py.
@@ -226,10 +226,12 @@ def wilson_lo(wins: int, n: int) -> float:
 # ───────────────────────────── shell HTML ─────────────────────────────
 
 def shell(*, titlu: str, descriere: str, canonical: str, corp: str,
-          adancime: int, jsonld: str = "", alternate_en: str | None = None) -> str:
+          adancime: int, jsonld: str = "", alternate_en: str | None = None,
+          etichete_tari: bool = False) -> str:
     """Shell identic ca stil cu restul site-ului. Fără app.js: paginile sunt
     100% statice (nimic de randat din JS) — mai rapide și indexabile integral."""
     sus = "../" * adancime
+    script_tari = f'    <script src="{sus}assets/country-label.js?v=20261118e"></script>\n' if etichete_tari else ""
     if len(titlu) > 62 or len(descriere) > 160:
         print(f"[gen_seo_pages] ATENȚIE trunchiere Google: titlu={len(titlu)} "
               f"descriere={len(descriere)} → {canonical}", file=sys.stderr)
@@ -248,7 +250,7 @@ def shell(*, titlu: str, descriere: str, canonical: str, corp: str,
 <meta property="og:url" content="{e(canonical)}">
 <meta property="og:type" content="website">
 <link rel="canonical" href="{e(canonical)}">
-{_hreflang(canonical, alternate_en)}<link rel="stylesheet" href="{sus}assets/style.css">
+{_hreflang(canonical, alternate_en)}<link rel="stylesheet" href="{sus}assets/style.css?v=20261118e">
 <meta name="theme-color" content="#1e3a8a">
 <link rel="apple-touch-icon" href="{sus}assets/icon-192.png">
 <script data-goatcounter="https://poseidonstats.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
@@ -275,7 +277,7 @@ def shell(*, titlu: str, descriere: str, canonical: str, corp: str,
       <a href="{sus}metodologie.html" data-i18n="nav.metodologie">Metodologie</a>
       <a class="patreon" href="{sus}index.html#abonament" data-i18n="nav.abonamente">Abonamente</a>
     </nav>
-    <script src="{sus}assets/i18n-lite.js" data-sus="{sus}"></script>
+{script_tari}    <script src="{sus}assets/i18n-lite.js?v=20261118e" data-sus="{sus}"></script>
   </div>
 </header>
 
@@ -370,7 +372,7 @@ def tabel_meciuri(meciuri: list[dict]) -> str:
 
 
 def profil_calibrare(intrare: dict | None, nume: str, n_marcate: int = 0,
-                     n_total: int = 0) -> str:
+                     n_total: int = 0, *, nume_i18n: str, vars_en: str) -> str:
     if not intrare:
         return ('<p class="muted" data-i18n="ligi.prof.fara">Această ligă nu are încă un profil de calibrare propriu '
                 '(pragul e de minimum 80 de meciuri în backtest). Probabilitățile rămân '
@@ -379,9 +381,9 @@ def profil_calibrare(intrare: dict | None, nume: str, n_marcate: int = 0,
     directie = ('<span data-i18n="ligi.prof.mai_multe">mai multe</span>' if bias > 0 else '<span data-i18n="ligi.prof.mai_putine">mai puține</span>')
     marker = ('<span class="ok-tag" data-i18n="ligi.cal.ok">✓ calibrată</span>' if ok
               else '<span class="warn-tag" data-i18n="ligi.cal.slaba">calibrare slabă</span>')
-    _vars_expl = _v({"n": n_meciuri(n), "liga": e(nume), "bias": f"{abs(bias):.1f}", "dir": directie})
+    _vars_expl = _v({"n": n_meciuri(n), "liga": nume_i18n, "bias": f"{abs(bias):.1f}", "dir": directie})
     explicatie = (
-        f'<span data-i18n="ligi.prof.expl" data-i18n-vars=\'{_vars_expl}\'>'
+        f'<span data-i18n="ligi.prof.expl" data-i18n-vars=\'{_vars_expl}\'{vars_en}>'
         f"Pe backtest-ul de calibrare (ianuarie–mai 2026, ratings înghețate la 31 decembrie "
         f"2025), modelul a văzut <strong>{n_meciuri(n)}</strong> din {e(nume)}. "
         f"Golurile pe care le aștepta erau cu <strong>{abs(bias):.1f}%</strong> {directie} "
@@ -485,17 +487,36 @@ def nume_scurt(nume: str) -> str:
 TARA_IMPLICITA = {"Premier League": "Anglia", "Serie A": "Italia", "Bundesliga": "Germania", "Liga 1": None, "Liga 2": None, "Super League": None, "Primera Division": None, "Liga I": None}
 TARA_SCURTA = {"SuperLiga României": "România"}
 
+def nume_liga_i18n(nume: str, tara_sursa: str, *, scurt: bool = False) -> str:
+    """Dă bootstrapului numele federației din date pentru localizarea țării."""
+    liga, separator, tara = nume.removesuffix(")").rpartition(" (")
+    if not separator:
+        return e(nume)
+    if scurt and nume_scurt(nume) == liga:
+        return e(liga)
+    afisata = TARA_SCURTA.get(tara, tara) if scurt else tara
+    eticheta = f'<span data-country-label="{e(tara_sursa)}">{e(afisata)}</span>'
+    return f"{e(liga)} {eticheta}" if scurt else f"{e(liga)} ({eticheta})"
+
+
 def pagina_liga(tara: str, liga: str, slug: str, nume: str, *,
                 meciuri: list[dict], cal: dict | None, zile: list[dict]) -> str:
+    import gen_seo_pages_en as EN
+
     canonical = f"{BASE}/predictii/{slug}.html"
     n_meci = len(meciuri)
+    nume_i18n = nume_liga_i18n(nume, tara)
+    nume_scurt_i18n = nume_liga_i18n(nume, tara, scurt=True)
+    vars_en = f" data-i18n-vars-en='{_v({'liga': e(EN.nume_long(nume))})}'"
+    vars_scurt_en = f" data-i18n-vars-en='{_v({'liga': e(EN.nume_en(nume))})}'"
+    vars_liga = _v({"liga": nume_i18n})
 
     libere = [m for m in meciuri if not blocat(m)]
     if meciuri:
         prima = min(datetime.fromisoformat(m["match_date"].replace("Z", "+00:00")) for m in meciuri)
         _iso = prima.astimezone(TZ).date().isoformat()
-        _n = (f'<span data-i18n="n.meci1">un meci</span>' if n_meci == 1 else f'<span data-i18n="n.meciuri" data-i18n-vars=\'{{"n":"{cu_de(n_meci)}"}}\'>{cu_de(n_meci)} meciuri</span>')
-        rezumat = (f'<span data-i18n="ligi.rez.main" data-i18n-vars=\'{_v({"n": _n, "liga": e(nume), "z": str(FEREASTRA_ZILE), "data": f"<span data-date=\"{_iso}\">{data_ro(prima.astimezone(TZ))}</span>"})}\'>'
+        _n = ('<span data-i18n="n.meci1">un meci</span>' if n_meci == 1 else f'<span data-i18n="n.meciuri" data-i18n-vars=\'{{"n":"{cu_de(n_meci)}"}}\'>{cu_de(n_meci)} meciuri</span>')
+        rezumat = (f'<span data-i18n="ligi.rez.main" data-i18n-vars=\'{_v({"n": _n, "liga": nume_i18n, "z": str(FEREASTRA_ZILE), "data": f"<span data-date=\"{_iso}\">{data_ro(prima.astimezone(TZ))}</span>"})}\'{vars_en}>'
                    f"Modelul a analizat <strong>{_n}</strong> din {e(nume)} în următoarele {FEREASTRA_ZILE} zile, primul pe <span data-date=\"{_iso}\">{data_ro(prima.astimezone(TZ))}</span>.</span>")
         if libere:
             xg_mediu = sum(m["xg_home"] + m["xg_away"] for m in libere) / len(libere)
@@ -510,7 +531,7 @@ def pagina_liga(tara: str, liga: str, slug: str, nume: str, *,
                      f"calibrare și jurnalul predicțiilor verificate. 5 predicții complete "
                      f"gratuit zilnic.")
     else:
-        rezumat = (f'<span data-i18n="ligi.rezumat0" data-i18n-vars=\'{{"z":"{FEREASTRA_ZILE}","liga":"{e(nume)}"}}\'>În următoarele {FEREASTRA_ZILE} zile nu e programat niciun meci din '
+        rezumat = (f'<span data-i18n="ligi.rezumat0" data-i18n-vars=\'{_v({"z": str(FEREASTRA_ZILE), "liga": nume_i18n})}\'{vars_en}>În următoarele {FEREASTRA_ZILE} zile nu e programat niciun meci din '
                    f"{e(nume)} în datele noastre — probabil pauză competițională sau "
                    f"intersezon. Pagina rămâne aici: profilul de calibrare de mai jos e "
                    f"valabil oricum, iar meciurile reapar automat la reluare.</span>")
@@ -520,26 +541,26 @@ def pagina_liga(tara: str, liga: str, slug: str, nume: str, *,
 
     corp = f"""  <section class="intro">
     <div class="hero">
-      <h1 class="hero-title" data-i18n="ligi.h1" data-i18n-vars='{{"liga":"{e(nume_scurt(nume))}"}}'>Predicții {e(nume_scurt(nume))}</h1>
-      <p class="hero-sub" data-i18n="ligi.sub" data-i18n-vars='{{"liga":"{e(nume)}"}}'>Probabilități pentru meciurile din {e(nume)}, calculate de un model Poisson + Dixon-Coles și calibrate pe rezultate reale, publicate înainte de meci și verificabile după.</p>
+      <h1 class="hero-title" data-i18n="ligi.h1" data-i18n-vars='{_v({"liga": nume_scurt_i18n})}'{vars_scurt_en}>Predicții {e(nume_scurt(nume))}</h1>
+      <p class="hero-sub" data-i18n="ligi.sub" data-i18n-vars='{vars_liga}'{vars_en}>Probabilități pentru meciurile din {e(nume)}, calculate de un model Poisson + Dixon-Coles și calibrate pe rezultate reale, publicate înainte de meci și verificabile după.</p>
       <p class="hero-free" data-i18n="ligi.hero.free">5 predicții complete gratuit în fiecare zi · fără cont · fără reclame · zero link-uri către case de pariuri</p>
     </div>
     <p>{rezumat}</p>
   </section>
 
   <section>
-    <h2 data-i18n="ligi.urmatoare" data-i18n-vars='{{"liga":"{e(nume)}"}}'>Meciurile următoare din {e(nume)}</h2>
+    <h2 data-i18n="ligi.urmatoare" data-i18n-vars='{vars_liga}'{vars_en}>Meciurile următoare din {e(nume)}</h2>
 {continut if continut else '    <p class="muted" data-i18n="ligi.niciun">Niciun meci programat în fereastra curentă. Vezi <a href="../index.html">predicțiile gratuite ale zilei</a>.</p>'}
   </section>
 
   <section>
     <h2 data-i18n="ligi.cunoaste">Cât de bine cunoaște modelul această ligă</h2>
-{profil_calibrare(cal, nume, sum(1 for m in meciuri if not m.get("calibrated")), n_meci)}
+{profil_calibrare(cal, nume, sum(1 for m in meciuri if not m.get("calibrated")), n_meci, nume_i18n=nume_i18n, vars_en=vars_en)}
     <p class="muted" data-i18n="ligi.metoda">Metoda completă, cu ce corectăm și ce nu, e pe pagina de <a href="../metodologie.html">metodologie</a>.</p>
   </section>
 
   <section>
-    <h2 data-i18n="ligi.iesit" data-i18n-vars='{{"liga":"{e(nume)}"}}'>Ce a ieșit până acum în {e(nume)}</h2>
+    <h2 data-i18n="ligi.iesit" data-i18n-vars='{vars_liga}'{vars_en}>Ce a ieșit până acum în {e(nume)}</h2>
 {jurnal_liga(zile, tara, liga)}
   </section>
 
@@ -559,9 +580,9 @@ def pagina_liga(tara: str, liga: str, slug: str, nume: str, *,
     titlu = f"Predicții {nume_scurt(nume)} {datetime.now().year} | Probabilități și meciuri"
     if len(titlu) > 62:
         titlu = f"Predicții {nume_scurt(nume)} {datetime.now().year} | Probabilități"
-    import gen_seo_pages_en as EN
     return shell(titlu=titlu,
-                 descriere=descriere, canonical=canonical, corp=corp, adancime=1, jsonld=ld, alternate_en=EN.url_en(slug))
+                 descriere=descriere, canonical=canonical, corp=corp, adancime=1,
+                 jsonld=ld, alternate_en=EN.url_en(slug), etichete_tari=tara != "World")
 
 
 def pagina_hub(randuri: list[dict]) -> str:
@@ -690,23 +711,47 @@ def pagina_zi(zi: dict) -> str:
     return shell(titlu=titlu, descriere=descriere, canonical=canonical, corp=corp, adancime=2, jsonld=ld)
 
 
-def pagina_arhiva(zile_scrise: list[str]) -> str:
+def zile_publicate(director: Path) -> list[str]:
+    """Datele publicate, inclusiv zilele ieșite din fereastra jurnalului."""
+    zile = []
+    for f in director.glob("????-??-??.html"):
+        try:
+            zi = date.fromisoformat(f.stem)
+        except ValueError:
+            continue
+        if f.is_file() and zi.isoformat() == f.stem:
+            zile.append(f.stem)
+    return sorted(zile, reverse=True)
+
+
+def pagina_arhiva(zile: list[str]) -> str:
     canonical = f"{BASE}/predictii/arhiva/index.html"
-    lista = "".join(f'      <li><a href="{z}.html" data-i18n="ligi.zi.item" data-i18n-vars=\'{{"data":"<span data-date=\\"{z}\\">{data_ro(z)}</span>"}}\'>Predicții fotbal <span data-date="{z}">{data_ro(z)}</span></a></li>'
-                    for z in zile_scrise)
+    luni = defaultdict(list)
+    for zi in zile:
+        luni[zi[:7]].append(
+            f'        <li><a href="{zi}.html"><time datetime="{zi}" data-date="{zi}">{data_ro(zi)}</time></a></li>'
+        )
+    grupuri = []
+    for index, (luna, linkuri) in enumerate(luni.items()):
+        an, nr_lunii = luna.split("-")
+        deschis = " open" if index == 0 else ""
+        grupuri.append(f"""    <details class="archive-month"{deschis}>
+      <summary><time datetime="{luna}" data-month="{luna}">{RO_MONTHS[int(nr_lunii)]} {an}</time></summary>
+      <ul class="arhiva-list">
+{chr(10).join(linkuri)}
+      </ul>
+    </details>""")
     corp = f"""  <section class="intro">
     <div class="hero">
       <h1 class="hero-title" data-i18n="ligi.arh.h1">Arhiva predicțiilor, zi cu zi</h1>
       <p class="hero-sub" data-i18n="ligi.arh.sub">Fiecare zi păstrează predicțiile exact cum au fost publicate dimineața, cu rezultatul real alături. Nimic nu se rescrie după meci.</p>
     </div>
-    <p data-i18n="ligi.arh.p" data-i18n-vars='{{"n":"{len(zile_scrise)}"}}'>Sunt <strong>{len(zile_scrise)}</strong> zile în arhiva publică. Tabelul cumulat pe piețe e pe <a href="../../istoric.html">istoric</a>, iar calibrarea completă pe <a href="../../track-record.html">track record</a>.</p>
+    <p data-i18n="ligi.arh.p" data-i18n-vars='{{"n":"{len(zile)}"}}'>Sunt <strong>{len(zile)}</strong> zile în arhiva publică. Tabelul cumulat pe piețe e pe <a href="../../istoric.html">istoric</a>, iar calibrarea completă pe <a href="../../track-record.html">track record</a>.</p>
   </section>
 
   <section>
     <h2 data-i18n="ligi.zile.h">Zile arhivate</h2>
-    <ul class="arhiva-list">
-{lista}
-    </ul>
+{chr(10).join(grupuri)}
   </section>
 
   <p class="pro-disclaimer" data-i18n="repere.disclaimer">Probabilități calibrate empiric · informativ · nu sfat de pariere · 18+</p>
@@ -798,7 +843,9 @@ def main() -> int:
         return 1
 
     meciuri = pred["matches"] if isinstance(pred, dict) else pred
-    cal_map = {(l["country"], l["league"]): l for l in (cal or {}).get("leagues", [])}
+    cal_map = {
+        (liga["country"], liga["league"]): liga for liga in (cal or {}).get("leagues", [])
+    }
     zile = (hist or {}).get("days", [])
 
     acum = azi()
@@ -827,10 +874,14 @@ def main() -> int:
               (f"{BASE}/simulator.html", "weekly", "0.8"),
               (f"{BASE}/metodologie.html", "monthly", "0.6"),
               (f"{BASE}/terms.html", "yearly", "0.3"),
+              (f"{BASE}/privacy.html", "yearly", "0.3"),
               (f"{BASE}/predictii/index.html", "daily", "0.9"),
               (f"{BASE}/statistici-pariuri.html", "weekly", "0.8"),          # 1 oct 2026 — pagina pe interogările reale din Search Console
               (f"{BASE}/en/betting-odds-statistics.html", "weekly", "0.7")]
-    pagini += [(f"{BASE}/analize/{f.stem}.html", "monthly", "0.5") for f in sorted((SITE / "analize").glob("????-??-??.html"))]
+    pagini.extend(
+        (f"{BASE}/analize/{zi}.html", "monthly", "0.5")
+        for zi in reversed(zile_publicate(SITE / "analize"))
+    )
 
     randuri_hub = []
     for tara, liga, slug, nume in LEAGUES:
@@ -850,24 +901,25 @@ def main() -> int:
     except Exception as ex:  # noqa: BLE001
         print(f"[gen_seo_pages] paginile EN au eșuat: {ex}", file=sys.stderr)
 
-    zile_scrise = []
+    zile_scrise = 0
     for zi in sorted(zile, key=lambda z: z["date"], reverse=True):
         if zi["date"] > acum.date().isoformat():
             continue                                  # ziua viitoare n-are ce arăta
-        if len(zile_scrise) >= ARHIVA_ZILE:
+        if zile_scrise >= ARHIVA_ZILE:
             break
         pag = pagina_zi(zi)
         if not pag:
             continue
         (ARH / f'{zi["date"]}.html').write_text(pag)
-        zile_scrise.append(zi["date"])
-        pagini.append((f'{BASE}/predictii/arhiva/{zi["date"]}.html', "weekly", "0.5"))
+        zile_scrise += 1
 
-    (ARH / "index.html").write_text(pagina_arhiva(zile_scrise))
+    zile_arhiva = zile_publicate(ARH)
+    (ARH / "index.html").write_text(pagina_arhiva(zile_arhiva), encoding="utf-8")
+    pagini.extend((f"{BASE}/predictii/arhiva/{zi}.html", "weekly", "0.5") for zi in zile_arhiva)
     pagini.append((f"{BASE}/predictii/arhiva/index.html", "daily", "0.6"))
 
     scrie_sitemap(pagini)
-    print(f"[gen_seo_pages] OK — {len(LEAGUES)} pagini de ligă, {len(zile_scrise)} zile de "
+    print(f"[gen_seo_pages] OK — {len(LEAGUES)} pagini de ligă, {len(zile_arhiva)} zile de "
           f"arhivă, sitemap cu {len(pagini)} URL-uri")
 
     # Auditul catalog vs. promovare: paginile de mai jos există legitim ca intrări de

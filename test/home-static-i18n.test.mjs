@@ -73,7 +73,7 @@ function renderer(language) {
   return {context,call:code=>runInContext(code,context)};
 }
 
-test('actual match cards and accessibility labels translate static UI in all six languages without changing displayed numbers', () => {
+test('actual match cards and accessibility labels translate static UI and localize xG without changing its value', () => {
   let numbers;
   for (const language of languages) {
     const r=renderer(language),html=r.call('renderMatch(fixture)');
@@ -86,7 +86,8 @@ test('actual match cards and accessibility labels translate static UI in all six
     assert.deepEqual(renderedTabs,tabs[language]);
     assert.equal((html.match(/role="tabpanel"/g)||[]).length,3);
     assert.equal((html.match(/aria-selected="true"/g)||[]).length,1);
-    for (const value of ['27%','21%','53%','84%','64%','43%','59%','78%','46%','1.30','1.96','1–1']) assert(html.includes(value),`${language} preserves ${value}`);
+    const xg=language==='en'?['1.30','1.96']:['1,30','1,96'];
+    for (const value of ['27%','21%','53%','84%','64%','43%','59%','78%','46%',...xg,'1–1']) assert(html.includes(value),`${language} preserves ${value}`);
     const uncalibrated=r.call('renderMatch({...fixture,calibrated:false})');
     assert(uncalibrated.includes(dictionary[language]['match.uncalibrated']));
     const locked=r.call('renderLockedMatch({...fixture,locked:true})');
@@ -129,11 +130,11 @@ test('homepage market filters use translated labels and homepage assets use thei
     assert.equal(key,`filters.market.${market}`);
     for (const language of languages) assert(dictionary[language][key]);
   }
-  assert(html.includes('assets/app.js?v=20261118d'));
-  assert(html.includes('assets/home-modern.css?v=20261118d'));
+  assert(html.includes('assets/app.js?v=20261118e'));
+  assert(html.includes('assets/home-modern.css?v=20261118e'));
   assert(html.includes('assets/members.js?v=20261118-dossier'));
   assert(html.includes('assets/conversion.js?v=20261024-conversion1'));
-  assert(html.includes('assets/home-dashboard.js?v=20261118d'));
+  assert(html.includes('assets/home-dashboard.js?v=20261118e'));
   // The per-metric TEST-N honesty contract superseded reading-frozen1. Check the current asset and cache key together.
   const readingSource=readFileSync(new URL('../assets/citire.js',import.meta.url),'utf8');
   assert(readingSource.includes('nN(t.familia)') && readingSource.includes('nN(t.interval)') && readingSource.includes('nN(t.directia)'));

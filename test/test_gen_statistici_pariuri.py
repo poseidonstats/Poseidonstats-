@@ -32,3 +32,9 @@ def test_html_ro_en_fara_nume_de_case_cu_hreflang():
     assert "<title>Statistici pariuri fotbal" in ro and 'hreflang="en" href="https://poseidonstats.com/en/betting-odds-statistics.html"' in ro
     assert "<title>Betting Odds Statistics" in en and 'hreflang="ro" href="https://poseidonstats.com/statistici-pariuri.html"' in en and '<html lang="en">' in en
     assert "Predicții" not in en and "1,41–1,60" in ro and "1.41–1.60" in en
+    assert '<main class="container" lang="ro">' in ro and '<main class="container" lang="en">' in en
+    assert 'data-edition-notice data-i18n="stats.edition.ro"' in ro
+    assert 'data-edition-notice data-i18n="stats.edition.en"' in en
+    assert '<a lang="en" hreflang="en" href="en/betting-odds-statistics.html">English</a>' in ro
+    assert '<a lang="ro" hreflang="ro" href="../statistici-pariuri.html">Română</a>' in en
+    assert "location.replace(" not in ro and "location.replace(" not in en

@@ -2,8 +2,11 @@
 // poseidon_lang), traduce [data-i18n] din assets/i18n.json, pune selectorul de limbă în nav și arată varianta [data-lang] potrivită.
 (function () {
   var LANGS = ["ro", "en", "es", "it", "fr", "id"], NUME = { ro: "🇷🇴 Română", en: "🇬🇧 English", es: "🇪🇸 Español", it: "🇮🇹 Italiano", fr: "🇫🇷 Français", id: "🇮🇩 Bahasa Indonesia" };  // 14 oct 2026: + fr, + id
-  function lang() { try { var s = localStorage.getItem("poseidon_lang"); if (LANGS.indexOf(s) >= 0) return s; } catch (e) {} var b = (navigator.language || "ro").slice(0, 2); return LANGS.indexOf(b) >= 0 ? b : "en"; }  // 14 oct 2026: limbile pe care nu le avem cad pe engleză
+  function lang() { try { var s = localStorage.getItem("poseidon_lang"); if (LANGS.indexOf(s) >= 0) return s; } catch (e) {} var b = (navigator.language || "ro").slice(0, 2).toLowerCase(); return LANGS.indexOf(b) >= 0 ? b : "en"; }  // 14 oct 2026: limbile pe care nu le avem cad pe engleză
   var L = lang(); var sus = (document.currentScript && document.currentScript.getAttribute("data-sus")) || "";
+  var pageLanguage = document.documentElement.lang || "ro";
+  var editionPath = location.pathname;
+  var hasEditions = /^\/(?:statistici-pariuri\.html|en\/betting-odds-statistics\.html)$/.test(editionPath);
   // Generated public pages keep their content; theme their shared shell here so regeneration stays safe.
   function temaPublica() {
     var canonical = document.querySelector('link[rel="canonical"]');
@@ -17,10 +20,11 @@
     document.body.classList.add("home-modern", "secondary-modern", analysis ? "analysis-modern" : prediction ? "prediction-modern" : "stats-modern");
     var currentKey = analysis ? "nav.analize" : prediction ? "nav.ligi" : "";
     ["home-modern", "pages-modern"].forEach(function (name) {
-      var href = sus + "assets/" + name + ".css";
-      var absolute = new URL(href, document.baseURI).href;
+      var href = sus + "assets/" + name + ".css?v=20261118e";
+      var absolute = new URL(href, document.baseURI);
       var present = document.getElementById("public-" + name + "-style") || Array.prototype.some.call(document.querySelectorAll('link[rel="stylesheet"]'), function (link) {
-        return new URL(link.getAttribute("href"), document.baseURI).href === absolute;
+        var existing = new URL(link.getAttribute("href"), document.baseURI);
+        return existing.origin === absolute.origin && existing.pathname === absolute.pathname;
       });
       if (present) return;
       var link = document.createElement("link");
@@ -64,7 +68,8 @@
     if (prediction) summary.className = "active";
     more.appendChild(summary);
     more.appendChild(menu);
-    lien(menu, path.indexOf("/en/") === 0 ? "en/predictions/index.html" : "predictii/index.html", "nav.ligi", "Pe ligi");
+    var englishLeagues = L === "en" || (prediction && path.indexOf("/en/") === 0);
+    lien(menu, englishLeagues ? "en/predictions/index.html" : "predictii/index.html", "nav.ligi", "Pe ligi");
     lien(menu, "simulator.html", "nav.simulator", "Simulator");
     lien(menu, "istoric.html", "nav.istoric", "Istoric");
     lien(menu, "index.html#intrebari", "faq.h2", "Întrebări frecvente");
@@ -90,9 +95,9 @@
       if (document.querySelector('.pro-card')) {
         if (window.PoseidonProReport) window.PoseidonProReport.scan();
         else if (!document.getElementById('pro-report-script')) {
-          var style = document.createElement('link'); style.rel = 'stylesheet'; style.href = sus + 'assets/pro-report.css?v=20261118b'; document.head.appendChild(style);
-          var report = document.createElement('script'); report.id = 'pro-report-script'; report.src = sus + 'assets/pro-context.js?v=20261118b';
-          report.onload = function () { var ui = document.createElement('script'); ui.src = sus + 'assets/pro-report.js?v=20261118b'; document.head.appendChild(ui); };
+          var style = document.createElement('link'); style.rel = 'stylesheet'; style.href = sus + 'assets/pro-report.css?v=20261118e'; document.head.appendChild(style);
+          var report = document.createElement('script'); report.id = 'pro-report-script'; report.src = sus + 'assets/pro-context.js?v=20261118e';
+          report.onload = function () { var ui = document.createElement('script'); ui.src = sus + 'assets/pro-report.js?v=20261118e'; document.head.appendChild(ui); };
           report.onerror = report.onload;
           document.head.appendChild(report);
         }
@@ -105,11 +110,36 @@
     document.documentElement.lang = L;
     for (var trecere = 0; trecere < 2; trecere++) document.querySelectorAll("[data-i18n]").forEach(function (el) { if (trecere === 1 && !(el.parentElement && el.parentElement.closest("[data-i18n]"))) return;
       var k = el.getAttribute("data-i18n"); var v = (I[L] && I[L][k]) || (I.ro && I.ro[k]); if (!v) return;
-      var vars = el.getAttribute("data-i18n-vars"); if (vars) { try { var o = JSON.parse(vars); Object.keys(o).forEach(function (n) { v = v.split("{" + n + "}").join(o[n]); }); } catch (e) {} }
+      var o = {};
+      ["data-i18n-vars", "data-i18n-vars-" + L].forEach(function (attr) {
+        var vars = el.getAttribute(attr);
+        if (vars) { try { Object.assign(o, JSON.parse(vars)); } catch (e) {} }
+      });
+      Object.keys(o).forEach(function (n) { v = v.split("{" + n + "}").join(o[n]); });
       el.innerHTML = v;
     });
-    var fmt = new Intl.DateTimeFormat(L === "en" ? "en-GB" : L === "es" ? "es-ES" : L === "it" ? "it-IT" : L === "fr" ? "fr-FR" : L === "id" ? "id-ID" : "ro-RO", { day: "numeric", month: "long", year: "numeric" });
+    var locale = { ro: "ro-RO", en: "en-GB", es: "es-ES", it: "it-IT", fr: "fr-FR", id: "id-ID" }[L];
+    if (L !== "ro" && typeof window !== "undefined" && window.PoseidonCountry) {
+      document.querySelectorAll("[data-country-label]").forEach(function (el) {
+        el.textContent = window.PoseidonCountry.label(el.getAttribute("data-country-label"), locale);
+      });
+    }
+    var fmt = new Intl.DateTimeFormat(locale, { day: "numeric", month: "long", year: "numeric" });
     document.querySelectorAll("[data-date]").forEach(function (el) { var d = el.getAttribute("data-date"); if (/^\d{4}-\d{2}-\d{2}$/.test(d)) el.textContent = fmt.format(new Date(d + "T12:00:00Z")); });
+    var monthFmt = new Intl.DateTimeFormat(locale, { month: "long", year: "numeric" });
+    document.querySelectorAll("[data-month]").forEach(function (el) {
+      var month = el.getAttribute("data-month");
+      if (/^\d{4}-(?:0[1-9]|1[0-2])$/.test(month)) el.textContent = monthFmt.format(new Date(month + "-15T12:00:00Z"));
+    });
+    if (!hasEditions && L !== pageLanguage) {
+      var heading = document.querySelector("h1[data-i18n]");
+      if (heading && heading.textContent.trim()) document.title = heading.textContent.replace(/\s+/g, " ").trim() + " | POSEIDON";
+    }
+    var editionNotice = document.querySelector("[data-edition-notice]");
+    if (editionNotice) {
+      editionNotice.setAttribute("lang", L);
+      editionNotice.hidden = L === pageLanguage;
+    }
     document.querySelectorAll("[data-lang]").forEach(function (el) { el.hidden = el.getAttribute("data-lang") !== L; });
     // dacă nu există varianta în limba aleasă, rămâne româna
     document.querySelectorAll("[data-lang-grup]").forEach(function (g) { var are = g.querySelector('[data-lang="' + L + '"]'); if (!are) { var en = g.querySelector('[data-lang="en"]'), ro = g.querySelector('[data-lang="ro"]'), alt = en || ro; if (alt) { alt.hidden = false; if (alt === ro && L !== "ro" && !g.querySelector(".nota-ro")) { var n = document.createElement("p"); n.className = "muted nota-ro"; n.textContent = (I[L] && I[L]["arhiva.nota_ro"]) || ""; if (n.textContent) g.insertBefore(n, ro); } } } });
@@ -121,8 +151,20 @@
     var w = document.createElement("div"); w.className = "lang-switcher";
     w.innerHTML = '<select class="lang-select" aria-label="Language">' + LANGS.map(function (l) { return '<option value="' + l + '"' + (l === L ? " selected" : "") + ">" + NUME[l] + "</option>"; }).join("") + "</select>";
     nav.appendChild(w);
-    w.querySelector("select").addEventListener("change", function (e) { try { localStorage.setItem("poseidon_lang", e.target.value); } catch (x) {} location.reload(); });
+    w.querySelector("select").addEventListener("change", function (e) {
+      var selected = e.target.value;
+      try { localStorage.setItem("poseidon_lang", selected); } catch (x) {}
+      if (hasEditions) {
+        var edition = selected === "ro" ? "ro" : "en";
+        var link = document.querySelector('a[hreflang="' + edition + '"]');
+        if (link && edition !== pageLanguage) {
+          location.assign(link.href);
+          return;
+        }
+      }
+      location.reload();
+    });
   }
   selector();
-  fetch(sus + "assets/i18n.json", { cache: "no-cache" }).then(function (r) { return r.json(); }).then(traduceCandGata).catch(function () {});
+  fetch(sus + "assets/i18n.json?v=20261118e", { cache: "no-cache" }).then(function (r) { return r.json(); }).then(traduceCandGata).catch(function () {});
 })();

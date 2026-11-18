@@ -167,3 +167,18 @@ def test_pagina_zilei_trimite_limba_fiecarei_variante():
     )
     en = pagina[pagina.index('<div data-lang="en"') :]
     assert "<td>Base</td><td>Over 1.5 goals</td>" in en
+
+
+def test_fragmentul_meciului_ramane_unic_indiferent_de_limba():
+    multi = {**ITEM, **{f"analysis_{lang}": EN for lang in LIMBI[1:]}}
+    monolingual = {"match": {**MECI, "fixture_id": 1596969}, "analysis": RO}
+    page = A.html_zi(
+        {"zi": "2026-10-27", "generat": GENERAT, "items": [multi, monolingual, multi]},
+        {1596968: REZ, 1596969: REZ},
+        None,
+        None,
+    )
+    assert page.count('id="m1596968"') == page.count('id="m1596969"') == 1
+    assert '<div class="pro-archive-match" id="m1596968" data-lang-grup>' in page
+    assert '<div class="pro-archive-match" id="m1596969">' in page
+    assert page.count('<article class="pro-card pro-card-full">') == 13

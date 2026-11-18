@@ -837,6 +837,7 @@ footer a { color: #93c5fd; }
 
 /* ===== Lang switcher ===== */
 .lang-switcher { margin-left: 10px; display:inline-flex; align-items:center; }
+header nav .lang-switcher { flex: none; }
 .lang-select {
   background:rgba(255,255,255,0.12); color:#fff;
   border:1px solid rgba(255,255,255,0.3); border-radius:6px;

@@ -1,15 +1,28 @@
 """8 oct 2026: cu doar două ligi calibrate în bucket, „max 2 pe ligă” lăsa 4 gratuite în loc de 5 (site_check a alertat).
 Fallback: când nu se umplu 5, a treia trecere ignoră plafonul pe ligă (prioritatea rămâne probabilitatea)."""
 import sys
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timezone
 from pathlib import Path
+
+import pytest
+
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "scripts"))
 import make_public_predictions as M
 
 
+@pytest.fixture(autouse=True)
+def fixed_bucharest_day(monkeypatch):
+    class FixedDateTime(datetime):
+        @classmethod
+        def now(cls, tz=None):
+            moment = cls(2026, 10, 7, 22, 30, tzinfo=timezone.utc)
+            return moment.astimezone(tz) if tz else moment.replace(tzinfo=None)
+
+    monkeypatch.setattr(M, "datetime", FixedDateTime)
+
+
 def _m(fid, liga, p, tara="Israel"):
-    azi = datetime.now(timezone.utc) + timedelta(hours=6)
-    return {"fixture_id": fid, "match_date": azi.strftime("%Y-%m-%dT%H:%M:%SZ"), "calibrated": True,
+    return {"fixture_id": fid, "match_date": "2026-10-08T15:00:00Z", "calibrated": True,
             "prob_over_1_5": p, "country": tara, "league": liga}
 
 

@@ -79,8 +79,15 @@ function assertSampleConserved(sample) {
   if(reference)assert.deepEqual(probabilities,reference,'translated source probabilities agree');else reference=probabilities;
  }
 }
-test('current public sample retains its actual translated content and every supplied market',()=>{
- assertSampleConserved(proSample(readFileSync(new URL('../index.html',import.meta.url),'utf8')));
+test('current public sample keeps one principal selection, context and the review in every language',()=>{
+ const sample=proSample(readFileSync(new URL('../index.html',import.meta.url),'utf8'));
+ const probability=sample.variants[0].selection.probability;
+ for(const variant of sample.variants){
+  assert.equal(variant.selection.probability,probability,variant.language);
+  assert.match(variant.original,/<details class="dossier-context">/);
+  assert.match(variant.original,/<details class="dossier-review">/);
+  assert.doesNotMatch(variant.original,/arhiva\.sect\.piete|🔒|💎|dossier-market-evidence/);
+ }
 });
 test('legitimate archived samples with two and three markets satisfy the same conservation contract',()=>{
  for(const [file,teams,probabilities] of [

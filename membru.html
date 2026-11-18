@@ -8,12 +8,28 @@
 <style>body{font-family:system-ui,-apple-system,sans-serif;background:#1e3a8a;color:#fff;display:flex;min-height:100vh;align-items:center;justify-content:center;margin:0}p{font-size:1.1rem;padding:24px;text-align:center}</style>
 </head>
 <body>
-<p>🔱 Te conectez la zona de membri…</p>
+<p role="status">🔱 Te conectez la zona de membri…</p>
 <script>
 /* 29 sept 2026 — pagina de aterizare după login-ul Patreon. Face trei lucruri, în ordine, și abia apoi deschide site-ul:
    1) salvează tokenul de membru în browser; 2) scoate service worker-ul vechi și cache-urile lui (telefoanele rămâneau pe
    scripturile de la prima vizită); 3) deschide pagina principală cu un parametru unic, ca să vină proaspătă de la server. */
 (async function () {
+  var messages = {
+    ro: ["Te conectez la zona de membri…", "Conectare"],
+    en: ["Connecting you to the members’ area…", "Signing in"],
+    fr: ["Connexion à votre espace membre…", "Connexion"],
+    es: ["Conectándote con el área de miembros…", "Iniciando sesión"],
+    it: ["Accesso all’area riservata agli iscritti…", "Accesso in corso"],
+    id: ["Menghubungkan Anda ke area anggota…", "Sedang masuk"]
+  };
+  var saved;
+  try { saved = localStorage.getItem("poseidon_lang"); } catch (e) {}
+  var browser = (navigator.language || "ro").slice(0, 2).toLowerCase();
+  var supported = Object.keys(messages);
+  var locale = supported.includes(saved) ? saved : supported.includes(browser) ? browser : "en";
+  document.documentElement.lang = locale;
+  document.title = "POSEIDON — " + messages[locale][1];
+  document.querySelector('[role="status"]').textContent = "🔱 " + messages[locale][0];
   try { var t = new URLSearchParams(location.search).get("members_token"); if (t) localStorage.setItem("poseidon_members_token", t); } catch (e) {}
   try { if ("serviceWorker" in navigator) { var regs = await navigator.serviceWorker.getRegistrations(); await Promise.all(regs.map(function (r) { return r.unregister(); })); } } catch (e) {}
   try { if (window.caches) { var ks = await caches.keys(); await Promise.all(ks.map(function (k) { return caches.delete(k); })); } } catch (e) {}

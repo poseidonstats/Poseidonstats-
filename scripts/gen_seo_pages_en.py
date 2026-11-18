@@ -78,7 +78,7 @@ def shell_en(*, title: str, description: str, canonical: str, body: str, jsonld:
 <meta property="og:url" content="{e(canonical)}">
 <meta property="og:type" content="website">
 <link rel="canonical" href="{e(canonical)}">
-{alt}<link rel="stylesheet" href="{up}assets/style.css">
+{alt}<link rel="stylesheet" href="{up}assets/style.css?v=20261118e">
 <meta name="theme-color" content="#1e3a8a">
 <link rel="apple-touch-icon" href="{up}assets/icon-192.png">
 <script data-goatcounter="https://poseidonstats.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>

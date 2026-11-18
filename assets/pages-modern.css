@@ -88,6 +88,16 @@ body.secondary-modern.home-modern.is-member .intro { display: block; }
 .analysis-modern .pro-verificare .audit-table { min-width: 470px; }
 .analysis-modern .pro-lectie { padding-top: 15px; border-top: 1px solid #2b4a60; }
 .analysis-modern .pro-verificat, .analysis-modern .num-win { color: #83deb0; }
+.analysis-modern .pro-archive-match { display: flow-root; scroll-margin-top: 12px; }
+.prediction-modern .archive-month > .arhiva-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 145px), 1fr));
+  gap: 0 12px;
+  list-style: none;
+  padding: 8px 16px;
+}
+.prediction-modern .archive-month li { margin: 0; }
+.prediction-modern .archive-month a { display: block; padding-block: 9px; }
 .analysis-modern .num-loss { color: #f4a0a5; }
 .analysis-modern .pro-zile { columns: 2; column-gap: 24px; }
 .analysis-modern .pro-zile li { padding: 10px 0; border-bottom: 1px solid #244357; font-size: 14px; }

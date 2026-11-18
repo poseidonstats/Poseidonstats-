@@ -115,6 +115,9 @@ def _shell(*, lang: str, title: str, description: str, canonical: str, body: str
     foot = ("⚠️ <strong>Informativ.</strong> NU sfat de pariere. <strong>NU garanție.</strong> Folosește responsabil. <strong>18+</strong>." if ro
             else "⚠️ <strong>Informational.</strong> NOT betting advice. <strong>NO guarantee.</strong> Play responsibly. <strong>18+</strong>.")
     terms = "Termeni și Condiții" if ro else "Terms"
+    edition_note = ("Aceasta este ediția în română. Articolul este disponibil în română și în engleză." if ro
+                    else "You’re reading the English edition. This article is available in Romanian and English.")
+    current = ' aria-current="page"'
     return f"""<!DOCTYPE html>
 <html lang="{lang}">
 <head>
@@ -130,11 +133,10 @@ def _shell(*, lang: str, title: str, description: str, canonical: str, body: str
 <meta property="og:url" content="{canonical}">
 <meta property="og:type" content="article">
 <link rel="canonical" href="{canonical}">
-{alt}<link rel="stylesheet" href="{up}assets/style.css">
+{alt}<link rel="stylesheet" href="{up}assets/style.css?v=20261118e">
 <meta name="theme-color" content="#1e3a8a">
 <link rel="apple-touch-icon" href="{up}assets/icon-192.png">
 <script data-goatcounter="https://poseidonstats.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
-<script>(function(){{try{{var l=localStorage.getItem("poseidon_lang");var ro=document.documentElement.lang==="ro";var alt=document.querySelector('link[rel="alternate"][hreflang="'+(ro?"en":"ro")+'"]');if(alt&&((ro&&l&&l!=="ro")||(!ro&&l==="ro")))location.replace(alt.href);}}catch(e){{}}}})();</script>
 </head>
 <body>
 
@@ -143,7 +145,7 @@ def _shell(*, lang: str, title: str, description: str, canonical: str, body: str
 <header>
   <div class="container">
     <a href="{up}index.html" class="brand"><span class="brand-icon">🔱</span><span class="brand-name">POSEIDON</span><span class="brand-pulse"></span></a>
-    <p class="tagline">{tag}</p>
+    <p class="tagline" data-i18n="tagline">{tag}</p>
     <nav>
       <a href="{up}index.html" data-i18n="nav.predictii">{nav[0]}</a>
       <a href="{up}{'predictii' if ro else 'en/predictions'}/index.html" data-i18n="nav.ligi">{nav[1]}</a>
@@ -153,15 +155,20 @@ def _shell(*, lang: str, title: str, description: str, canonical: str, body: str
       <a href="{up}metodologie.html" data-i18n="nav.metodologie">{nav[5]}</a>
       <a class="patreon" href="{up}index.html#abonament" data-i18n="nav.abonamente">{nav[6]}</a>
     </nav>
-    <script src="{up}assets/i18n-lite.js" data-sus="{up}"></script>
+    <script src="{up}assets/i18n-lite.js?v=20261118e" data-sus="{up}"></script>
   </div>
 </header>
 
-<main class="container">
+<main class="container" lang="{lang}">
+  <div class="card-info">
+    <p data-edition-notice data-i18n="stats.edition.{lang}" hidden>{edition_note}</p>
+    <a lang="ro" hreflang="ro" href="{up}statistici-pariuri.html"{current if ro else ''}>Română</a> ·
+    <a lang="en" hreflang="en" href="{up}en/betting-odds-statistics.html"{'' if ro else current}>English</a>
+  </div>
 {body}
 </main>
 
-<footer>
+<footer lang="{lang}">
   <div class="container">
     <p><strong>POSEIDON</strong> — {'model statistic propriu, ratings Bayesian cu calibrare per-ligă.' if ro else 'our own statistical model, Bayesian ratings with per-league calibration.'}</p>
     <p>{foot}</p>

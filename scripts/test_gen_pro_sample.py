@@ -52,14 +52,13 @@ def test_alege_prefera_analiza_cu_baza_iesita_si_rezultat_cunoscut():
     assert G.alege([items[1]], rez) is None                           # fără rezultat → nimic de publicat
 
 
-def test_html_card_are_scorul_verdictul_si_partea_blocata():
+def test_html_card_verifica_principalul_si_leaga_acelasi_meci():
     it = {"match": {"fixture_id": 3, "home": "ESMTK", "away": "Dabas", "league": "NB III - Southeast", "country": "Hungary", "date": "2026-09-27"}, "analysis": TEXT}
-    h = G.html_card(it, "2026-09-27", "2026-09-27T07:30:00", (6, 0), "1X (ESMTK nu pierde)", True)
+    h = G.html_card(it, "2026-09-27", (6, 0), True)
     assert "ESMTK – Dabas" in h and "27 septembrie 2026" in h and "rezultat final 6-0" in h
-    # 2 oct 2026: cardul e analiza completă, fără lacăt; verificarea stă sub el
-    assert "a ieșit" in h and 'href="analize/2026-09-27.html#m3"' in h and "1X (ESMTK nu pierde)" in h
-    assert "a ieșit" in h and "**" not in h and "<strong>91%</strong>" in h
-    assert "<script" not in h and "&lt;" not in G.html_card(it, "2026-09-27", "2026-09-27T07:30:00", (6, 0), "1X", None)
+    assert "a ieșit" in h and 'href="analize/2026-09-27.html#m3"' in h
+    assert '<strong>Peste 1.5 goluri · 86%</strong>' in h
+    assert all(text not in h for text in ("1X (ESMTK nu pierde)", "Curajos:", "91%", "**", "<script"))
 
 
 def test_injecteaza_refuza_fara_markeri_si_e_idempotent_cu_markeri():
@@ -99,10 +98,10 @@ def test_lista_pro_azi_cu_lacat_si_injectare_idempotenta():
 def test_html_card_variante_pe_limba_cand_exista_traducere():
     # 7 oct 2026: cu analysis_en cardul are grup de limbi; fără traducere, un singur corp (fără grup)
     it = {"match": {"fixture_id": 3, "home": "ESMTK", "away": "Dabas", "league": "NB III", "country": "Hungary", "date": "2026-09-27"}, "analysis": TEXT}
-    h1 = G.html_card(it, "2026-09-27", "2026-09-27T07:30:00", None, "", None)
-    assert "data-lang-grup" not in h1 and h1.count('class="pro-visible"') == 1 and 'data-i18n="pro.card.maine"' in h1
+    h1 = G.html_card(it, "2026-09-27", None)
+    assert "data-lang-grup" not in h1 and h1.count('class="pro-visible"') == 1 and 'data-i18n="arhiva.fararez"' in h1
     en = TEXT.replace("**Verdict:**", "**Verdict:** EN-VERSION")
-    h2 = G.html_card({**it, "analysis_en": en, "analysis_es": ""}, "2026-09-27", "2026-09-27T07:30:00", None, "", None)
+    h2 = G.html_card({**it, "analysis_en": en, "analysis_es": ""}, "2026-09-27", None)
     assert "data-lang-grup" in h2 and 'data-lang="en" hidden' in h2 and 'data-lang="es"' not in h2
     assert "EN-VERSION" in h2 and h2.count('class="pro-visible"') == 2 and 'data-i18n="arhiva.sect.verdict"' in h2
 
@@ -114,3 +113,50 @@ def test_parserul_gaseste_picks_urile_si_in_traduceri():
     it = "⚡ **Verdetto:** x\n📊 **Contesto:** y\n🧮 **Modello:** z\n🎯 **Pronostici**\n🔒 **Base:** **Over 1.5 — 88%.** a\n🎯 **Principale:** **Over 2.5 — 70%.** b\n👁️ **Da seguire:** w\n*informativo*"
     assert len(G.parseaza(ro)["picks"]) == 2 and len(G.parseaza(it)["picks"]) == 2
     assert G.parseaza(it)["model"].startswith("z") and "Pronostici" not in G.parseaza(it)["model"]
+
+
+def test_exemplul_public_pastreaza_selectia_cand_apare_chitanta(monkeypatch, tmp_path):
+    import json
+
+    day = "2026-09-27"
+    item = G.PP.cu_provenienta(
+        {"analysis": TEXT, "match": {"fixture_id": 3, "home": "ESMTK", "away": "Dabas",
+                                    "date": day, "match_date": day + "T12:00:00Z"}},
+        {"picks": [{"rol": "Principal", "key": "over_1_5", "piata": "Peste 1,5 goluri", "p": 86}]},
+        "a" * 64, captured_at=day + "T04:00:00Z", generated_at=day + "T04:15:00Z",
+    )
+    path = tmp_path / f"{day}.json"
+    path.write_text(json.dumps({"items": [item]}))
+    monkeypatch.setattr(G, "ARHIVA", tmp_path)
+    monkeypatch.setattr(G, "_public_sample", lambda _: item)
+
+    before, _ = G._incarca(day)
+    html_before = G.html_card(before, day, None)
+    assert 'data-i18n="pro.card.archived"' in html_before
+    assert 'data-i18n="pro.card.publicata0"' not in html_before
+    assert '<strong>Peste 1,5 goluri în meci · 86%</strong>' in html_before
+
+    G.PP.marcheaza_livrare(path, [0], "discord", at=day + "T04:25:00Z")
+    assert G._incarca(day)[0]["_public_site_delivery"] is None
+    G.PP.marcheaza_livrare(path, [0], "site", at=day + "T04:30:00Z")
+    after, _ = G._incarca(day)
+    assert after["_public_site_delivery"] == day + "T04:30:00+00:00"
+    html_after = G.html_card(after, day, None)
+    assert 'data-i18n="pro.card.publicata0"' in html_after
+    assert '<strong>Peste 1,5 goluri în meci · 86%</strong>' in html_after
+    assert all(text not in html_after for text in ("04:30", "archive_sha256", "pro_market_record"))
+
+    receipt = G.PP.citeste_livrari(path)
+    site = next(row for row in receipt["deliveries"] if row["channel"] == "site")
+    for wrong in ({"fixture_id": 321}, {"prediction_id": "other"},
+                  {"original_kickoff_utc": day + "T11:00:00Z"},
+                  {"published_at_utc": item["match"]["match_date"]}):
+        bad = {**receipt, "deliveries": [{**site, **wrong}]}
+        assert G._site_delivery(item, bad) is None
+
+    path.write_text(path.read_text() + "\n")
+    assert G._incarca(day)[0]["_public_site_delivery"] is None
+    monkeypatch.setattr(G, "_public_sample", lambda _: {**item, "analysis": "altă fișă"})
+    assert G._incarca(day) == (None, "")
+    monkeypatch.setattr(G, "_public_sample", lambda _: None)
+    assert G._incarca(day) == (None, "")

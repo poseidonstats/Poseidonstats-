@@ -12,6 +12,6 @@ cd "$SITE" || exit 0
 $PY "$SITE/scripts/gen_pro_sample.py" >> "$LOG" 2>&1 || { echo "[$(ts)] [WARN] gen_pro_sample (07:50) a eșuat — cardul NU s-a actualizat" >> "$LOG"; ~/odds_decoder/scripts/tg_trimite.sh "⚠️ Exemplul Pro (07:50): gen_pro_sample a eșuat, cardul de pe prima pagină NU e cel de azi. Vezi logs/publish.log" >/dev/null 2>&1; exit 1; }
 $PY "$SITE/scripts/gate_html.py" "$SITE/index.html" --vs HEAD >> "$LOG" 2>&1 || { echo "[$(ts)] [GATE HTML] pro_sample BLOCAT — index.html stricat, nu împing" >> "$LOG"; git checkout -- index.html; ~/odds_decoder/scripts/tg_trimite.sh "❌ Exemplul Pro (07:50): index.html a picat gate-ul HTML, nu s-a publicat. Vezi logs/publish.log" >/dev/null 2>&1; exit 1; }
 if git diff --quiet -- index.html; then echo "[$(ts)] [pro_sample] index.html neschimbat" >> "$LOG"; exit 0; fi
-git add index.html && git commit -q -m "Exemplul Pro al zilei: $(TZ=Europe/Bucharest date +%Y-%m-%d), publicat înainte de meci" && git push -q origin HEAD \
+git add index.html && git commit -q -m "Actualizează exemplul Pro: $(TZ=Europe/Bucharest date +%Y-%m-%d)" && git push -q origin HEAD \
   && echo "[$(ts)] [pro_sample] împins pe site" >> "$LOG" || echo "[$(ts)] [WARN] pro_sample: push eșuat" >> "$LOG"
 exit 0

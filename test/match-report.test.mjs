@@ -55,7 +55,7 @@ test('market filter selects the relevant panel while cards wait for a selection'
 });
 test('six languages expose translated tabs and conserve identical numeric values',()=>{
  for(const [lang,label]of [['ro','Prezentare'],['en','Overview'],['es','Resumen'],['it','Panoramica'],['fr','Vue d’ensemble'],['id','Ringkasan']]){
-  const html=runtime(lang).render(match);assert(html.includes(`>${label}</button>`));assert(html.includes('74%'));assert(html.includes('2.39'));
+  const html=runtime(lang).render(match);assert(html.includes(`>${label}</button>`));assert(html.includes('74%'));assert(html.includes(lang==='en'?'2.39':'2,39'));
  }
 });
 test('click and arrow-key handlers change local panel visibility and selection only',()=>{

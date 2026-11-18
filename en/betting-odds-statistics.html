@@ -16,11 +16,10 @@
 <link rel="alternate" hreflang="ro" href="https://poseidonstats.com/statistici-pariuri.html">
 <link rel="alternate" hreflang="en" href="https://poseidonstats.com/en/betting-odds-statistics.html">
 <link rel="alternate" hreflang="x-default" href="https://poseidonstats.com/statistici-pariuri.html">
-<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/style.css?v=20261118e">
 <meta name="theme-color" content="#1e3a8a">
 <link rel="apple-touch-icon" href="../assets/icon-192.png">
 <script data-goatcounter="https://poseidonstats.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
-<script>(function(){try{var l=localStorage.getItem("poseidon_lang");var ro=document.documentElement.lang==="ro";var alt=document.querySelector('link[rel="alternate"][hreflang="'+(ro?"en":"ro")+'"]');if(alt&&((ro&&l&&l!=="ro")||(!ro&&l==="ro")))location.replace(alt.href);}catch(e){}})();</script>
 </head>
 <body>
 
@@ -29,7 +28,7 @@
 <header>
   <div class="container">
     <a href="../index.html" class="brand"><span class="brand-icon">🔱</span><span class="brand-name">POSEIDON</span><span class="brand-pulse"></span></a>
-    <p class="tagline">Probabilities published before kick-off · <strong>verifiable track record</strong> · public dataset</p>
+    <p class="tagline" data-i18n="tagline">Probabilities published before kick-off · <strong>verifiable track record</strong> · public dataset</p>
     <nav>
       <a href="../index.html" data-i18n="nav.predictii">Predictions</a>
       <a href="../en/predictions/index.html" data-i18n="nav.ligi">By league</a>
@@ -39,11 +38,16 @@
       <a href="../metodologie.html" data-i18n="nav.metodologie">Methodology</a>
       <a class="patreon" href="../index.html#abonament" data-i18n="nav.abonamente">Membership</a>
     </nav>
-    <script src="../assets/i18n-lite.js" data-sus="../"></script>
+    <script src="../assets/i18n-lite.js?v=20261118e" data-sus="../"></script>
   </div>
 </header>
 
-<main class="container">
+<main class="container" lang="en">
+  <div class="card-info">
+    <p data-edition-notice data-i18n="stats.edition.en" hidden>You’re reading the English edition. This article is available in Romanian and English.</p>
+    <a lang="ro" hreflang="ro" href="../statistici-pariuri.html">Română</a> ·
+    <a lang="en" hreflang="en" href="../en/betting-odds-statistics.html" aria-current="page">English</a>
+  </div>
   <section class="intro">
     <div class="hero">
       <h1 class="hero-title">Betting odds statistics: how often the odds come true</h1>
@@ -138,7 +142,7 @@
 
 </main>
 
-<footer>
+<footer lang="en">
   <div class="container">
     <p><strong>POSEIDON</strong> — our own statistical model, Bayesian ratings with per-league calibration.</p>
     <p>⚠️ <strong>Informational.</strong> NOT betting advice. <strong>NO guarantee.</strong> Play responsibly. <strong>18+</strong>.</p>

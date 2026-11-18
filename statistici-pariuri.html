@@ -16,11 +16,10 @@
 <link rel="alternate" hreflang="ro" href="https://poseidonstats.com/statistici-pariuri.html">
 <link rel="alternate" hreflang="en" href="https://poseidonstats.com/en/betting-odds-statistics.html">
 <link rel="alternate" hreflang="x-default" href="https://poseidonstats.com/statistici-pariuri.html">
-<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/style.css?v=20261118e">
 <meta name="theme-color" content="#1e3a8a">
 <link rel="apple-touch-icon" href="assets/icon-192.png">
 <script data-goatcounter="https://poseidonstats.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
-<script>(function(){try{var l=localStorage.getItem("poseidon_lang");var ro=document.documentElement.lang==="ro";var alt=document.querySelector('link[rel="alternate"][hreflang="'+(ro?"en":"ro")+'"]');if(alt&&((ro&&l&&l!=="ro")||(!ro&&l==="ro")))location.replace(alt.href);}catch(e){}})();</script>
 </head>
 <body>
 
@@ -29,7 +28,7 @@
 <header>
   <div class="container">
     <a href="index.html" class="brand"><span class="brand-icon">🔱</span><span class="brand-name">POSEIDON</span><span class="brand-pulse"></span></a>
-    <p class="tagline">Probabilități publicate înainte de meci · <strong>track record verificabil</strong> · dataset public</p>
+    <p class="tagline" data-i18n="tagline">Probabilități publicate înainte de meci · <strong>track record verificabil</strong> · dataset public</p>
     <nav>
       <a href="index.html" data-i18n="nav.predictii">Predicții</a>
       <a href="predictii/index.html" data-i18n="nav.ligi">Pe ligi</a>
@@ -39,11 +38,16 @@
       <a href="metodologie.html" data-i18n="nav.metodologie">Metodologie</a>
       <a class="patreon" href="index.html#abonament" data-i18n="nav.abonamente">Abonamente</a>
     </nav>
-    <script src="assets/i18n-lite.js" data-sus=""></script>
+    <script src="assets/i18n-lite.js?v=20261118e" data-sus=""></script>
   </div>
 </header>
 
-<main class="container">
+<main class="container" lang="ro">
+  <div class="card-info">
+    <p data-edition-notice data-i18n="stats.edition.ro" hidden>Aceasta este ediția în română. Articolul este disponibil în română și în engleză.</p>
+    <a lang="ro" hreflang="ro" href="statistici-pariuri.html" aria-current="page">Română</a> ·
+    <a lang="en" hreflang="en" href="en/betting-odds-statistics.html">English</a>
+  </div>
   <section class="intro">
     <div class="hero">
       <h1 class="hero-title">Statistici pariuri fotbal: cât de des se adeveresc cotele</h1>
@@ -138,7 +142,7 @@
 
 </main>
 
-<footer>
+<footer lang="ro">
   <div class="container">
     <p><strong>POSEIDON</strong> — model statistic propriu, ratings Bayesian cu calibrare per-ligă.</p>
     <p>⚠️ <strong>Informativ.</strong> NU sfat de pariere. <strong>NU garanție.</strong> Folosește responsabil. <strong>18+</strong>.</p>

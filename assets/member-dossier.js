@@ -468,8 +468,9 @@
         const archive = new DOMParser().parseFromString(await response.text(),"text/html");
         if (!stillOpen(state) || !target.isConnected || state.lang !== lang) return;
         if (archive.querySelector(".intro h1 [data-date]")?.dataset.date !== state.day) return;
-        const candidates = [...archive.querySelectorAll(`article[id="${id}"]`)].filter(card => card.querySelector(".pro-verificare"));
-        const selected = [lang,"en","ro"].map(code => candidates.find(card => card.closest("[data-lang]")?.dataset.lang === code)).find(Boolean);
+        const candidates = [...archive.querySelectorAll(`.pro-archive-match[id="${id}"] article.pro-card-full, article[id="${id}"]`)]
+          .filter(card => card.querySelector(".pro-verificare"));
+        const selected = [lang,"en","ro"].map(code => candidates.find(card => (card.closest("[data-lang]")?.dataset.lang || "ro") === code)).find(Boolean);
         const score = selected?.querySelector("[data-i18n='arhiva.rezfinal']")?.textContent.match(/\b\d+\s*[-–]\s*\d+\b/)?.[0];
         if (!score) return;
         const line = text("p",labels.final + " " + score.replace(/\s*[-–]\s*/,"–"));

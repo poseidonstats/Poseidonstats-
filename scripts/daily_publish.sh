@@ -135,10 +135,6 @@ $PY ~/poseidon-site/scripts/gen_audit.py >> "$LOG" 2>&1 || echo "[$(ts)] [WARN] 
 $PY ~/poseidon-site/scripts/gen_static_daily.py >> "$LOG" 2>&1 || \
     echo "[$(ts)] [WARN] gen_static_daily failed (publish continuă fără refresh static)" >> "$LOG"
 
-# Pagini SEO long-tail per-ligă (predictii/) — best-effort, ca gen_static_daily.
-$PY ~/poseidon-site/scripts/gen_seo_pages.py >> "$LOG" 2>&1 || \
-    echo "[$(ts)] [WARN] gen_seo_pages failed (publish continuă)" >> "$LOG"
-
 # 🆕 28 sept 2026 (cerința Andreei: „o analiză Pro pe site în fiecare zi, ca exemplu") — cardul „Exemplu de analiză Pro"
 # din index.html = analiza de IERI din arhiva #analize-pro, cu rezultatul real; best-effort (cardul vechi rămâne la eșec).
 $PY ~/poseidon-site/scripts/gen_pro_sample.py >> "$LOG" 2>&1 || \
@@ -147,6 +143,10 @@ $PY ~/poseidon-site/scripts/gen_pro_sample.py >> "$LOG" 2>&1 || \
 # 🆕 1 oct 2026 — arhiva publică a analizelor Pro (toate zilele trecute) cu verificarea de a doua zi; best-effort.
 $PY ~/poseidon-site/scripts/gen_pro_arhiva.py >> "$LOG" 2>&1 || \
     echo "[$(ts)] [WARN] gen_pro_arhiva failed (arhiva de ieri rămâne)" >> "$LOG"
+
+# Pagini SEO per ligă, arhiva predicțiilor și sitemap — după arhiva Pro, ca sitemapul să includă ziua nouă.
+$PY ~/poseidon-site/scripts/gen_seo_pages.py >> "$LOG" 2>&1 || \
+    echo "[$(ts)] [WARN] gen_seo_pages failed (publish continuă)" >> "$LOG"
 
 # 🆕 29 sept 2026 — lunea: reîmprospătez maparea meci ↔ eveniment la casă (validată prin scor), folosită de audit (cota de închidere) și de dataset; ~3 min, best-effort.
 if [ "$(TZ=Europe/Bucharest date +%u)" = "1" ]; then

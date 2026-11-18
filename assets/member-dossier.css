@@ -118,7 +118,6 @@ body:has(.member-dossier[open]) { overflow: hidden; }
 .dossier-review[open] summary { margin-bottom: .35rem; }
 .dossier-editorial .dossier-review a { color: #1c5342; text-decoration: underline; }
 .dossier-analysis:not([open]) { margin-bottom: .3rem; }
-.home-modern #pro-active-report { margin-top: .6rem; }
 .dossier-tabs button { overflow-wrap: anywhere; }
 @media (max-width: 600px) {
   .dossier-results { grid-template-columns: 1fr; }

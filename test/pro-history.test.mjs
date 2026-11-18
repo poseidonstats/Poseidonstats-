@@ -29,10 +29,10 @@ function harness({ language = 'ro', tier = 'pro', now = '2026-10-30T04:00:00Z', 
       get innerHTML() { return html; }, set innerHTML(value) {
         html = value;
         if (id === 'pro-analize') {
-          for (const child of ['pro-date','pro-content','pro-match-choice','pro-match-select','pro-active-report']) elements.delete(child);
+          for (const child of ['pro-date','pro-content','pro-match-choice','pro-match-select','pro-match-name','pro-active-report']) elements.delete(child);
         }
         if (['pro-analize','pro-content','pro-match-choice'].includes(id)) {
-          for (const match of value.matchAll(/<(?:input|div|select)\b[^>]*\bid="(pro-date|pro-content|pro-match-choice|pro-match-select|pro-active-report)"[^>]*>/g)) {
+          for (const match of value.matchAll(/<(?:input|div|select|span)\b[^>]*\bid="(pro-date|pro-content|pro-match-choice|pro-match-select|pro-match-name|pro-active-report)"[^>]*>/g)) {
             const child = node(match[1]);
             child.value = match[0].match(/\bvalue="([^"]*)"/)?.[1] || '';
             child.max = match[0].match(/\bmax="([^"]*)"/)?.[1] || '';
@@ -180,11 +180,13 @@ test('Pro button and dashboard action open only the selected fixture and preserv
   assert.match(h.body(), /Home &amp; Sons – Visitors/);
   assert.doesNotMatch(h.body(), /FIRST ANALYSIS|SECOND ANALYSIS|LEGACY ANALYSIS/);
   assert.equal(h.dossierOpens.length,0);
+  assert.equal(h.element('pro-match-name').textContent,'Elazığspor – Menemen Belediyespor');
   assert.equal(h.open().item,first);
 
   const select = h.element('pro-match-select');
   select.value = '1';
   select.listeners.change();
+  assert.equal(h.element('pro-match-name').textContent,'Hatayspor – İnegöl Kafkas Gençlik');
   const link = { dataset: {}, closest: () => link };
   let prevented = false;
   h.documentEvents.click({target: link, preventDefault: () => { prevented = true; }});
@@ -198,6 +200,7 @@ test('Pro button and dashboard action open only the selected fixture and preserv
   h.context.LANG = 'fr';
   await h.render();
   assert.equal(h.element('pro-match-select').value,'2');
+  assert.equal(h.element('pro-match-name').textContent,'Home & Sons – Visitors');
   assert.equal(h.selectedText().lang,'ro');
   assert.equal(h.open().day,date);
   h.context.memberTier = null;
