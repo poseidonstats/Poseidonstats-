@@ -404,17 +404,12 @@
         return;
       }
       const analysis = proAnalysisText(item, state.lang);
-      const card = text("article", undefined, "pro-card pro-card-full");
-      const heading = [item.match.home + " – " + item.match.away, item.match.league].filter(Boolean).join(" · ");
-      card.append(text("div", heading, "pro-card-head"));
+      const card = createProAnalysisCard(item, state.lang, state.dossier);
       if (analysis.lang !== state.lang) {
-        card.append(text("p", tt("pro.azi.ro_only", "Traducerea nu este disponibilă. Textul este în română."), "dossier-note"));
+        target.replaceChildren(text("p", tt("pro.azi.ro_only", "Traducerea nu este disponibilă. Textul este în română."), "dossier-note"), card);
+      } else {
+        target.replaceChildren(card);
       }
-      const content = text("div", undefined, "pro-visible");
-      content.lang = analysis.lang;
-      content.innerHTML = _md(analysis.text);
-      card.append(content);
-      target.replaceChildren(card);
       loadProReport();
     } catch (_) {
       if (current === state) target.textContent = c.retry;
@@ -462,6 +457,7 @@
         message.textContent = copy.missing;
         return;
       }
+      state.dossier = data;
       show(data,state);
     } catch (_) {
       if (current === state) message.textContent = copy.retry;

@@ -155,11 +155,15 @@
     openTargetDetails(doc,'#matches');
     const reset = doc.getElementById('filter-reset');
     if (reset) reset.click();
-    // Original full-card filters use UTC dates; the dashboard displays Bucharest time.
-    [['filter-day',source.match_date.slice(0,10)],['filter-league',source.league],['filter-minprob','0']].forEach(([id,value]) => {
+    [['filter-day',dayOf(source.match_date)],['filter-league',source.league],['filter-minprob','0']].forEach(([id,value]) => {
       const select = doc.getElementById(id);
       if (select) {select.value=value;select.dispatchEvent(new Event('change',{bubbles:true}));}
     });
+    const fixture = Number(source.fixture_id);
+    if (Number.isSafeInteger(fixture)) {
+      const heading = doc.querySelector(`#matches .match-report[data-fid="${fixture}"] .match-header[aria-expanded="false"]`);
+      if (heading) heading.click();
+    }
   }
   function chooseAnalysisLanguage(preferred, available) {
     const language = [preferred,'en','ro'].find(lang => available.includes(lang)) || null;
@@ -181,7 +185,7 @@
   }
   function watchLanguageSelector(doc, tr, Observer = typeof MutationObserver === 'function' ? MutationObserver : null) {
     if (decorateLanguageSelector(doc,tr) || !Observer) return null;
-    const nav = doc.querySelector('header nav');
+    const nav = doc.querySelector('#home-nav') || doc.querySelector('header nav');
     if (!nav) return null;
     const observer = new Observer(() => {if (decorateLanguageSelector(doc,tr)) observer.disconnect();});
     observer.observe(nav,{childList:true,subtree:true});
@@ -237,13 +241,12 @@
     // Copy only the public sample's original source, never the member report or
     // enhanced markup (which would duplicate tab IDs and lose click listeners).
     const visible = body && body.querySelector('.pro-visible');
-    const original = visible && visible.querySelector('.report-original > div');
-    const source = original || visible;
+    const source = doc.defaultView?.PoseidonProReport?.sourceMarkup?.(visible) ?? visible?.innerHTML;
     const title = head.textContent.split(' · ')[0].trim();
     const notice = analysisLanguageNotice(selection,tr), action = analysisAction(tier);
     return `<article class="dashboard-pro-summary pro-card"><span class="dashboard-analysis-meta">${escapeHTML(tr('dashboard.analysis.sample'))}</span><div class="pro-card-head">${escapeHTML(head.textContent)}</div>` +
       (notice ? `<p class="dashboard-analysis-language">${escapeHTML(notice)}</p>` : '') +
-      `<div data-lang="${escapeHTML(selection.language || lang)}"><div class="pro-visible">${source ? source.innerHTML : escapeHTML(tr('dashboard.data.unavailable'))}</div></div>` +
+      `<div data-lang="${escapeHTML(selection.language || lang)}"><div class="pro-visible">${source ?? escapeHTML(tr('dashboard.data.unavailable'))}</div></div>` +
       `<div class="dashboard-report-action"><a class="dashboard-analysis-link" href="${escapeHTML(action.href)}"${action.sample ? ' data-dashboard-analysis' : ''}>${escapeHTML(tr(action.key))} →</a></div></article>`;
   }
   function membershipTier(body) {
@@ -262,8 +265,30 @@
     observer.observe(body,{attributes:true,attributeFilter:['class']});
     return observer;
   }
+  function mountNavigation(doc) {
+    const menu = doc.querySelector('#home-nav .nav-more');
+    if (!menu) return;
+    const toggle = menu.querySelector('summary');
+    const closeOutside = event => {
+      if (menu.open && !menu.contains(event.target)) menu.open = false;
+    };
+    doc.addEventListener('click', closeOutside);
+    doc.addEventListener('focusin', closeOutside);
+    menu.addEventListener('click', event => {
+      if (!event.target.closest('a')) return;
+      toggle.focus({preventScroll:true});
+      menu.open = false;
+    });
+    menu.addEventListener('keydown', event => {
+      if (event.key !== 'Escape' || !menu.open) return;
+      event.preventDefault();
+      toggle.focus({preventScroll:true});
+      menu.open = false;
+    });
+  }
   async function mount(doc) {
     if (!doc.querySelector('[data-dashboard-kpis]')) return;
+    mountNavigation(doc);
     if (typeof i18nGata === 'function') await i18nGata();
     watchLanguageSelector(doc,translator());
     watchMemberLogin(doc,translator());

@@ -17,19 +17,22 @@ function actual(start, end) {
   assert(first >= 0 && last > first, start);
   return source.slice(first, last);
 }
-function harness({ language = 'ro', tier = 'pro', now = '2026-10-30T04:00:00Z', fetchImpl = async () => reply(payload('2026-10-30')) } = {}) {
+function harness({ language = 'ro', tier = 'pro', now = '2026-10-30T04:00:00Z', fetchImpl = async () => reply(payload('2026-10-30')), dossierImpl = async () => reply({}, 404) } = {}) {
   // The real renderer owns markup, request URL/headers and event registration.
   // The small DOM boundary records HTML and exposes actual input change handlers.
-  const elements = new Map(), requests = [], warnings = [];
+  const elements = new Map(), requests = [], dossierRequests = [], warnings = [];
   function node(id) {
-    let html = '';
-    const n = { value: '', listeners: {}, setAttribute() {}, addEventListener(type, fn) { this.listeners[type] = fn; },
+    let html = '', children = [];
+    const n = { value: '', listeners: {}, setAttribute() {}, removeAttribute() {}, addEventListener(type, fn) { this.listeners[type] = fn; },
+      get children() { return children; }, replaceChildren(...nodes) { children = nodes; }, append(...nodes) { children.push(...nodes); },
       querySelector(selector) { return elements.get(selector.replace(/^#/, '')) || null; },
       get innerHTML() { return html; }, set innerHTML(value) {
         html = value;
         if (id === 'pro-analize') {
-          elements.delete('pro-date'); elements.delete('pro-content');
-          for (const match of value.matchAll(/<(?:input|div)\b[^>]*\bid="(pro-date|pro-content)"[^>]*>/g)) {
+          for (const child of ['pro-date','pro-content','pro-match-choice','pro-match-select','pro-active-report']) elements.delete(child);
+        }
+        if (['pro-analize','pro-content','pro-match-choice'].includes(id)) {
+          for (const match of value.matchAll(/<(?:input|div|select)\b[^>]*\bid="(pro-date|pro-content|pro-match-choice|pro-match-select|pro-active-report)"[^>]*>/g)) {
             const child = node(match[1]);
             child.value = match[0].match(/\bvalue="([^"]*)"/)?.[1] || '';
             child.max = match[0].match(/\bmax="([^"]*)"/)?.[1] || '';
@@ -40,13 +43,16 @@ function harness({ language = 'ro', tier = 'pro', now = '2026-10-30T04:00:00Z', 
     return n;
   }
   elements.set('pro-analize', node('pro-analize'));
+  elements.set('home-nav-analyses', { href: 'analize/index.html' });
+  elements.set('home-nav-analyses-archive', { hidden: true });
   class Clock extends Date { constructor(...args) { super(...(args.length ? args : [now])); } static now() { return new Date(now).getTime(); } }
   const context = createContext({ LANG: language, I18N: dictionary, Date: Clock, Intl,
-    document: { getElementById: id => elements.get(id) || null, querySelector: () => null },
-    window: { PoseidonMembers: { MEMBERS_API: 'https://members.invalid', tier: () => context.memberTier } }, memberTier: tier,
+    document: { getElementById: id => elements.get(id) || null, querySelector: () => null, createElement: node },
+    window: { PoseidonMembers: { MEMBERS_API: 'https://members.invalid', tier: () => context.memberTier,
+      getProtected: (path, signal) => { dossierRequests.push({ path, signal }); return dossierImpl(path, signal); } } }, memberTier: tier,
     localStorage: { getItem: key => key === 'poseidon_members_token' ? 'TEST-TOKEN' : null },
     fetch: async (url, options) => { requests.push({ url, options }); return fetchImpl(url, options); },
-    i18nGata: async () => {}, console: { warn: (...args) => warnings.push(args) }
+    AbortController, i18nGata: async () => {}, console: { warn: (...args) => warnings.push(args) }
   });
   runInContext([
     actual('const ziRO =', '/* ============== i18n'),
@@ -55,9 +61,15 @@ function harness({ language = 'ro', tier = 'pro', now = '2026-10-30T04:00:00Z', 
     actual('function esc(s) {', '/* ============== TRACK RECORD'),
     source.slice(source.indexOf('/* Shared presentation for public sample'))
   ].join('\n'), context);
-  return { context, requests, warnings, element: id => elements.get(id),
+  // The card itself has a separate test suite. Here the fixture and protected response test the feed contract.
+  runInContext(`
+    createProAnalysisCard = (item, language) => ({ item, html: _md(proAnalysisText(item, language).text) });
+    setProAnalysisDossier = (card, dossier) => { card.dossier = dossier; };
+  `, context);
+  return { context, requests, dossierRequests, warnings, element: id => elements.get(id),
     render: date => { context.selected = date; return runInContext('renderProAnalize(selected)', context); },
-    body: () => elements.get('pro-content')?.innerHTML || elements.get('pro-analize').innerHTML,
+    body: () => [elements.get('pro-match-choice')?.innerHTML, elements.get('pro-content')?.innerHTML || elements.get('pro-analize').innerHTML,
+      ...(elements.get('pro-active-report')?.children || []).map(child => child.html || child.textContent)].join(''),
     change: async date => { const input = elements.get('pro-date'); assert(input, 'native date control is visible'); input.value = date; return input.listeners.change({ target: input }); } };
 }
 
@@ -73,7 +85,8 @@ test('default Pro date follows Bucharest day; native calendar retrieves yesterda
   assert.equal(h.requests.at(-1).url, 'https://members.invalid/api/analize/2026-10-29');
   assert.equal(h.element('pro-date').value, '2026-10-29');
   assert(h.body().includes('2026-10-29'));
-  assert.match(h.element('pro-analize').innerHTML, /data-date="2026-10-29"/);
+  assert.match(h.element('pro-analize').innerHTML, /id="pro-date" type="date" value="2026-10-29"/);
+  assert.doesNotMatch(h.element('pro-analize').innerHTML, /data-date="2026-10-29"/);
 });
 
 test('historical 404 replaces old analysis and never promises it will arrive after 07:45', async () => {
@@ -127,8 +140,8 @@ test('all six languages translate calendar/title/date and render the matching an
     const html = h.element('pro-analize').innerHTML;
     assert(dictionary[language]['pro.analize.h2']); assert(dictionary[language]['pro.zi.gol']); assert(dictionary[language]['pro.zi.lipsa']);
     assert(html.includes(dictionary[language]['pro.analize.h2'])); assert(html.includes(dictionary[language]['filters.day']));
-    const locale = { ro: 'ro-RO', en: 'en-GB', es: 'es-ES', it: 'it-IT', fr: 'fr-FR', id: 'id-ID' }[language];
-    assert(html.includes(new Intl.DateTimeFormat(locale, { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date('2026-10-29T12:00:00Z'))));
+    assert.match(html, /id="pro-date" type="date" value="2026-10-29"/);
+    assert(h.body().includes(dictionary[language]['dashboard.table.match']));
     assert(h.body().includes('&lt;script>unsafe&lt;/script>'));
     if (language !== 'ro') assert(h.body().includes(':' + language));
     assert(!h.body().includes('<script>'));
@@ -146,4 +159,69 @@ test('network and malformed payload errors replace previous cards, and invalid/f
     await h.render(date);
     assert.equal(h.requests.at(-1).url, 'https://members.invalid/api/analize/2026-10-30');
   }
+});
+
+test('daily selector mounts one match, keeps its selection on language refresh and requests only its own protected dossier', async () => {
+  const date = '2026-10-30';
+  const first = { match: { home: 'Elazığspor', away: 'Menemen Belediyespor', fixture_id: 101 }, analysis: 'FIRST ANALYSIS' };
+  const second = { match: { home: 'Hatayspor', away: 'İnegöl Kafkas Gençlik', fixture_id: 102 }, analysis: 'SECOND ANALYSIS' };
+  const historic = { match: { home: 'Home & Sons', away: 'Visitors' }, analysis: 'LEGACY ANALYSIS' };
+  const firstDossier = deferred(), secondDossier = deferred();
+  const items = [first, second, historic];
+  const h = harness({ fetchImpl: async () => reply({ date, items }),
+    dossierImpl: path => path.endsWith('/101') ? firstDossier.promise : secondDossier.promise });
+  await h.render();
+  assert.match(h.body(), /<label[^>]+for="pro-match-select"/);
+  assert.match(h.body(), /Elazığspor – Menemen Belediyespor/);
+  assert.match(h.body(), /Hatayspor – İnegöl Kafkas Gençlik/);
+  assert.match(h.body(), /Home &amp; Sons – Visitors/);
+  assert.match(h.body(), /FIRST ANALYSIS/);
+  assert.doesNotMatch(h.body(), /SECOND ANALYSIS|LEGACY ANALYSIS/);
+  assert.equal(h.element('pro-active-report').children.length, 1);
+  assert.deepEqual(h.dossierRequests.map(request => request.path), ['/api/dosar/2026-10-30/101']);
+
+  const select = h.element('pro-match-select');
+  select.value = '1';
+  const dossierPending = select.listeners.change();
+  assert(h.dossierRequests[0].signal.aborted);
+  assert.equal(h.element('pro-active-report').children.length, 1);
+  assert.match(h.body(), /SECOND ANALYSIS/);
+  assert.doesNotMatch(h.body(), /FIRST ANALYSIS/);
+  secondDossier.resolve(reply({ fixture_id: 102 }));
+  await dossierPending;
+  firstDossier.resolve(reply({ fixture_id: 101 }));
+  await new Promise(resolve => setImmediate(resolve));
+  assert.equal(h.element('pro-active-report').children[0].dossier.fixture_id, 102);
+  assert.equal(h.dossierRequests[1].path, '/api/dosar/2026-10-30/102');
+
+  select.value = '2';
+  select.listeners.change();
+  assert.match(h.body(), /LEGACY ANALYSIS/);
+  assert.doesNotMatch(h.body(), /SECOND ANALYSIS/);
+  assert.equal(h.dossierRequests.length, 2);
+  h.context.LANG = 'fr';
+  await h.render();
+  assert.equal(h.element('pro-match-select').value, '2');
+  assert.match(h.body(), /LEGACY ANALYSIS/);
+  assert(h.body().includes(dictionary.fr['pro.azi.ro_only']));
+  assert.equal(h.dossierRequests.length, 2);
+});
+
+test('sticky analyses link opens the daily feed only for a verified Pro member and preserves access to the archive', async () => {
+  const h = harness({ fetchImpl: async url => url.endsWith('2026-10-29') ? reply({}, 403) : reply(payload('2026-10-30')) });
+  const nav = h.element('home-nav-analyses');
+  const archive = h.element('home-nav-analyses-archive');
+  assert.equal(nav.href, 'analize/index.html');
+  assert(archive.hidden);
+  await h.render();
+  assert.equal(nav.href, '#pro-analize');
+  assert(!archive.hidden);
+  await h.render('2026-10-29');
+  assert.equal(nav.href, 'analize/index.html');
+  assert(archive.hidden);
+  await h.render('2026-10-30');
+  h.context.memberTier = null;
+  await h.render();
+  assert.equal(nav.href, 'analize/index.html');
+  assert(archive.hidden);
 });

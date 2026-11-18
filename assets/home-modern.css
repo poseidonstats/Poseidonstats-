@@ -4,6 +4,7 @@ body.home-modern {
   --dash-line: #17364b; --dash-gold: #efd06a; --dash-muted: #a7bbcb;
   --dash-text: #f3f6fa; --dash-green: #68dca4;
   background: var(--dash-bg); color: var(--dash-text);
+  overflow-x: clip;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
   font-size: 15px; line-height: 1.6; -webkit-font-smoothing: antialiased;
 }
@@ -22,21 +23,63 @@ body.home-modern {
 .home-modern .brand-pulse { display: none; }
 .home-modern .tagline { grid-column: 1 / -1; grid-row: 2; margin: 9px 0; font-size: 12px; color: var(--dash-muted); letter-spacing: 0; }
 .home-modern .tagline strong { color: #d5b86e; font-weight: 500; }
-.home-modern nav { margin: 0; gap: 3px; border: 0; justify-content: flex-end; align-items: center; flex-wrap: nowrap; min-width: 0; }
-.home-modern nav a { padding: 9px 10px; color: #dee8f0; font-size: 12px; border-bottom-width: 2px; white-space: nowrap; }
-.home-modern nav a.active { color: var(--dash-gold); border-color: var(--dash-gold); }
-.home-modern nav a:hover { color: var(--dash-gold); }
-.home-modern nav a.patreon { margin: 0; color: #e6edf3; background: transparent; border-radius: 0; animation: none; box-shadow: none; font-weight: 400; }
-.home-modern nav a.patreon::after { content: none; }
-.home-modern nav a.patreon:hover { transform: none; background: transparent; }
+/* Keep the navigation in view while the branding and membership panel scroll away. */
+html:has(.home-nav-bar) { scroll-padding-top: 45px; }
+.home-modern .home-nav-bar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: #03111d;
+  border-bottom: 1px solid var(--dash-line);
+}
+.home-modern #home-nav {
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: nowrap;
+  overflow: visible;
+  padding-block: 0;
+  border: 0;
+}
+.home-modern #home-nav a,
+.home-modern .nav-more > summary {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 8px;
+  border: 0;
+  color: #dee8f0;
+  font-size: 12px;
+}
+.home-modern #home-nav :is(a, summary):hover,
+.home-modern #home-nav [aria-current] { color: var(--dash-gold); }
+.home-modern #home-nav a[hidden] { display: none; }
+.home-modern #home-nav :focus-visible { outline-offset: -3px; }
+.home-modern #home-nav a.patreon { margin: 0; background: transparent; border-radius: 0; animation: none; box-shadow: none; font-weight: 400; }
+.home-modern #home-nav a.patreon::after { content: none; }
+.home-modern #home-nav a.patreon:hover { transform: none; }
 .home-modern .nav-more { position: relative; flex: 0 0 auto; }
-.home-modern .nav-more > summary { color: #dce6ee; font-size: 12px; padding: 9px 10px; cursor: pointer; list-style: none; white-space: nowrap; }
-.home-modern .nav-more > summary::after { content: "⌄"; margin-left: 7px; }
+.home-modern .nav-more > summary { cursor: pointer; list-style: none; white-space: nowrap; }
+.home-modern .nav-more > summary::after { content: "⌄"; margin-left: 5px; }
 .home-modern .nav-more > summary::-webkit-details-marker { display: none; }
-.home-modern .nav-more > div { position: absolute; z-index: 30; top: calc(100% + 6px); right: 0; min-width: 190px; background: #061725; border: 1px solid #2b4a5f; border-radius: 7px; padding: 8px; box-shadow: 0 18px 40px #0008; }
-.home-modern .nav-more > div a { display: block; border: 0; }
-.home-modern .lang-switcher { margin-left: 5px; }
-.home-modern .lang-select { font-size: 12px; background: #071b2a; border: 1px solid #244459; color: #e5edf4; padding: 7px; border-radius: 4px; max-width: 133px; }
+.home-modern .nav-more > div {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  width: 12rem;
+  max-height: calc(100vh - 50px);
+  max-height: calc(100dvh - 50px);
+  overflow: auto;
+  overscroll-behavior: contain;
+  background: #061725;
+  border: 1px solid #2b4a5f;
+  border-radius: 7px;
+  padding: 4px;
+  box-shadow: 0 18px 40px #0008;
+}
+.home-modern .lang-switcher { margin-left: auto; min-width: 0; }
+.home-modern .lang-select { font-size: 12px; background: #071b2a; border: 1px solid #244459; color: #e5edf4; padding: 7px; border-radius: 4px; max-width: 100%; }
 .home-modern .members-bar { grid-column: 1 / -1; margin: 0; padding: 9px 0 11px; border-top: 1px solid #102b3d; font-size: 12px; gap: 9px; }
 .home-modern .members-hint { color: #a9bbc9; flex: 1 1 500px; }
 .home-modern .members-sub { color: #101720; background: linear-gradient(#ffe38a, #e4af39); font-weight: 700; border-radius: 5px; padding: 7px 13px; }
@@ -287,7 +330,6 @@ body.home-modern.tier-pro #exemplu-pro, body.home-modern.tier-basic #exemplu-pro
   .home-modern .container { padding-inline: 24px; }
   .home-modern header > .container { column-gap: 15px; }
   .home-modern .brand-name { font-size: 19px; }
-  .home-modern nav a { padding-inline: 7px; }
   .home-modern .dashboard-hero { gap: 22px; }
   .home-modern .dashboard-hero h1 { font-size: 39px; }
   .home-modern .dashboard-feature-strip { gap: 8px; }
@@ -301,7 +343,6 @@ body.home-modern.tier-pro #exemplu-pro, body.home-modern.tier-basic #exemplu-pro
 @media (max-width: 850px) {
   .home-modern header > .container { display: flex; flex-wrap: wrap; }
   .home-modern .brand { margin-bottom: 10px; }
-  .home-modern nav { width: 100%; order: 2; justify-content: flex-start; }
   .home-modern .tagline { display: none; }
   .home-modern .members-bar { width: 100%; order: 3; margin-top: 7px; }
   .home-modern .dashboard-hero { grid-template-columns: minmax(0, 1fr); padding-top: 26px; gap: 20px; }
@@ -317,10 +358,11 @@ body.home-modern.tier-pro #exemplu-pro, body.home-modern.tier-basic #exemplu-pro
   .home-modern header { padding-top: 12px; }
   .home-modern .brand-name { font-size: 21px; }
   .home-modern .brand-icon { width: 25px; height: 31px; }
-  .home-modern nav { overflow-x: auto; scrollbar-width: none; gap: 0; min-height: 43px; }
-  .home-modern nav a, .home-modern .nav-more > summary { font-size: 12px; padding: 10px; }
-  .home-modern .nav-more > div { position: fixed; top: auto; right: 16px; margin-top: 5px; }
-  .home-modern .lang-switcher { flex-shrink: 0; }
+  .home-modern #home-nav { gap: 0; }
+  .home-modern #home-nav > a, .home-modern .nav-more > summary { padding-inline: 6px; }
+  .home-modern .nav-more { position: static; }
+  .home-modern .nav-more > div { right: 16px; }
+  .home-modern .lang-switcher { max-width: 84px; }
   .home-modern .members-bar { gap: 8px; padding-top: 10px; }
   .home-modern .members-hint { font-size: 12px; flex-basis: 100%; }
   .home-modern .members-login, .home-modern .members-sub { min-height: 39px; display: inline-flex; align-items: center; }
@@ -436,14 +478,11 @@ body.home-modern.tier-pro #exemplu-pro, body.home-modern.tier-basic #exemplu-pro
 /* Desktop proportions follow the supplied widescreen reference. */
 @media (min-width: 1181px) {
   .home-modern header { padding: 0; }
-  .home-modern header > .container { grid-template-columns: auto minmax(0, 1fr) auto; gap: 16px; min-height: 54px; }
+  .home-modern header > .container { grid-template-columns: minmax(0, 1fr) auto; gap: 16px; min-height: 54px; }
   .home-modern .brand { gap: 8px; }
   .home-modern .brand-icon { width: 25px; height: 34px; }
   .home-modern .brand-name { font-size: 18px; letter-spacing: .025em; }
   .home-modern .tagline { display: none; }
-  .home-modern nav { justify-content: center; gap: 0; }
-  .home-modern nav a, .home-modern .nav-more > summary { padding: 17px 7px 15px; font-size: 12px; }
-  .home-modern .lang-select { max-width: 82px; padding: 5px 3px; }
   .home-modern .members-bar { grid-column: auto; gap: 10px; flex-wrap: nowrap; padding: 0; border: 0; }
   .home-modern .members-hint:not(.members-none) { display: none; }
   .home-modern .members-login { order: 1; max-width: 130px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 6px 0; border: 0; background: transparent; }
@@ -746,3 +785,143 @@ body.home-modern .salt-meciuri { display: none; }
 .home-modern .dashboard-pro-summary.pro-card { padding:0; }
 .home-modern .dashboard-pro-summary > .dashboard-analysis-meta { display:block;padding:14px 24px 0; }
 .home-modern .dashboard-pro-summary .dashboard-report-action { padding:0 24px 24px; }
+
+/* Predictions stay compact until the reader opens a match. */
+.home-modern #matches .match-report:not(.open) > .match-body { display: none; }
+.home-modern #matches .match-report .match-header { cursor: pointer; }
+.home-modern #matches .match-report .match-header:focus-visible {
+  outline: 2px solid #dfc180;
+  outline-offset: -4px;
+}
+
+@media (min-width: 601px) {
+  .home-modern #matches :is(.match-report, .match-locked) {
+    max-width: 64rem;
+    margin-inline: auto;
+    transform: none;
+  }
+  .home-modern #matches .report-summary {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    background: radial-gradient(ellipse at top right, #213b4c, #0b2030 75%);
+  }
+  .home-modern #matches .match-header {
+    display: grid;
+    grid-template-columns: 16px minmax(0, 1fr);
+    grid-template-areas: "chev title";
+    align-items: center;
+    gap: 12px;
+    margin: 0;
+    padding: 15px 20px;
+    background: transparent;
+  }
+  .home-modern #matches .match-title { grid-area: title; }
+  .home-modern #matches .match-report .match-chev {
+    grid-area: chev;
+    display: block;
+    width: 8px;
+    height: 8px;
+    justify-self: center;
+    border-right: 2px solid #c3d5df;
+    border-bottom: 2px solid #c3d5df;
+    transform: rotate(45deg);
+  }
+  .home-modern #matches .match-report.open .match-chev { transform: rotate(-135deg); }
+  .home-modern #matches .match-report .match-teams {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: flex-start;
+    gap: 4px 9px;
+    font-size: 19px;
+  }
+  .home-modern #matches .match-report .team.away { text-align: left; }
+  .home-modern #matches .match-report .vs { margin: 0; }
+  .home-modern #matches .match-meta { margin-top: 5px; gap: 4px 10px; font-size: 13px; }
+  .home-modern #matches .match-report .match-meta .liga { width: auto; }
+  .home-modern #matches .match-meta .when { white-space: nowrap; }
+  .home-modern #matches .match-dossier-action { padding: 0 16px 0 0; }
+  .home-modern #matches .dossier-open {
+    padding-inline: 14px;
+    border-color: #dfc180;
+    background: #dfc180;
+    color: #0b2030;
+    white-space: nowrap;
+  }
+  .home-modern #matches .dossier-open:hover { background: #f2d99f; }
+  .home-modern #matches .report-tabs { padding: 0 20px; gap: 10px; }
+  .home-modern #matches .report-tabs button {
+    flex: 0 1 auto;
+    padding-inline: 14px;
+    font-size: 15px;
+    font-weight: 600;
+  }
+  .home-modern #matches .report-panel { padding: 16px 20px; }
+  .home-modern #matches .report-overview-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+  }
+  .home-modern #matches .report-overview-xg { margin: 0; padding: 0 0 0 20px; border: 0; border-left: 1px solid #29414f; }
+  .home-modern #matches .report-overview-grid .report-heading { margin-bottom: 10px; }
+  .home-modern #matches .report-heading > span,
+  .home-modern #matches .report-result .label,
+  .home-modern #matches .report-xg small { font-size: 13px; }
+  .home-modern #matches .report-overview-grid .report-results {
+    margin: 0;
+    text-align: center;
+  }
+  .home-modern #matches .report-overview-grid :is(.report-result .val, .report-xg strong) {
+    font-size: 25px;
+    font-variant-numeric: tabular-nums;
+  }
+  .home-modern #matches .report-xg {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: baseline;
+    text-align: center;
+  }
+  .home-modern #matches .report-xg strong:last-child { text-align: center; }
+  .home-modern #matches .report-score { margin-top: 10px; padding: 9px 12px; }
+  .home-modern #matches .report-score > strong { font-size: 23px; }
+  .home-modern #matches .report-section:not(.report-overview-xg) { margin-top: 14px; padding-top: 13px; }
+  .home-modern #matches .report-market.market { padding-block: 11px; }
+}
+
+.home-modern #pro-analize .pro-feed-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: start;
+  gap: 8px 16px;
+  margin-bottom: 12px;
+}
+.home-modern #pro-analize :is(.pro-day-choice, .pro-match-choice) {
+  display: grid;
+  gap: 3px;
+  max-width: 100%;
+  min-width: 0;
+}
+.home-modern #pro-analize .pro-match-choice { flex: 1 1 17em; }
+.home-modern #pro-analize .pro-match-choice[hidden] { display: none; }
+.home-modern #pro-analize .pro-feed-controls label {
+  color: var(--dash-muted);
+  font-size: 13px;
+}
+.home-modern #pro-analize :is(#pro-date, #pro-match-select) {
+  min-height: 44px;
+  max-width: 100%;
+  min-width: 0;
+  padding: 8px 11px;
+  border: 1px solid #355064;
+  border-radius: 6px;
+  background: #0c2130;
+  color: #edf2f5;
+  color-scheme: dark;
+  font: inherit;
+}
+.home-modern #pro-analize #pro-match-select { padding-inline: 7px; }
+.home-modern #pro-analize :is(#pro-date, #pro-match-select):focus-visible {
+  outline: 2px solid #e7cb88;
+  outline-offset: 2px;
+}

@@ -46,11 +46,11 @@ test('names are escaped; unique IDs and per-card tab links survive repeated rend
  const ids=[...html.matchAll(/\bid="([^"]+)"/g)].map(m=>m[1]);assert.equal(ids.length,new Set(ids).size);
  for(const [,id]of html.matchAll(/aria-(?:controls|labelledby)="([^"]+)"/g))assert(ids.includes(id),id);
 });
-test('market filter selects correct panel and expands mobile card',()=>{
+test('market filter selects the relevant panel while cards wait for a selection',()=>{
  const {context}=runtime();
  for(const [market,panel]of [['over_2_5','goals'],['under_3_5','goals'],['btts','goals'],['ht_over_0_5','half'],['dc_x2','overview'],['1x2','overview']]){
-  const html=context.renderMatch(match,market);assert.match(html,new RegExp(`aria-controls="match-report-\\d+-${panel}-panel" aria-selected="true"`));
-  assert.match(html,/match-free open/);assert.match(html,/market-filtered/);
+  const html=context.renderMatch(match,market);assert.match(html,new RegExp(`aria-controls="match-report-\\d+-${panel}-panel" aria-selected="true" tabindex="0"`));
+  assert.doesNotMatch(html,/match-free open/);assert.match(html,/aria-expanded="false"/);assert.match(html,/market-filtered/);
  }
 });
 test('six languages expose translated tabs and conserve identical numeric values',()=>{

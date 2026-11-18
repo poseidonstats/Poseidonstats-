@@ -10,7 +10,7 @@ function actual(start,end) {
   assert(first>=0 && last>first,`actual app source boundaries: ${start}`);
   return source.slice(first,last);
 }
-function harness(member=false) {
+function harness(member=false, fixtures=null) {
   // Explicit isolated DOM/network mocks. No real API, session or model is used.
   const events=[],writes=[],elements=new Map(),listeners=new Map();
   function element(id) {
@@ -27,7 +27,8 @@ function harness(member=false) {
     return elements.get(id);
   }
   const document={getElementById:element,body:{classList:{add:()=>{}}},addEventListener:(type,callback)=>listeners.set(type,callback)};
-  const publicFixture={matches:[{fixture_id:1,match_date:'2026-10-23T12:00:00Z',country:'Test country',league:'Test league',home_team:'Test home',away_team:'Test away',locked:true}]};
+  const sample={fixture_id:1,match_date:'2026-10-23T12:00:00Z',country:'Test country',league:'Test league',home_team:'Test home',away_team:'Test away',locked:true};
+  const publicFixture={matches:fixtures ? fixtures.map(fixture=>({...sample,...fixture})) : [sample]};
   const payloads=new Map([['data/predictions.json',publicFixture],['data/calibration.json',{}],['data/scorecard.json',{}]]);
   const context=createContext({
     document,I18N:null,LANG:'ro',CALIB_URL:'data/calibration.json',SCORECARD_URL:'data/scorecard.json',PRED_URL:'data/predictions.json',
@@ -36,7 +37,7 @@ function harness(member=false) {
     setTimeout:()=>0,
     Option:class {constructor(text,value) {this.text=text;this.value=value;}},
     renderMatch:()=>{events.push('detail:'+context.LANG);return '';},
-    renderLockedMatch:()=>'<div class="explicit-detail-renderer-stub"></div>',rezumatExemplu:()=>'',renderProAnalize:()=>{},
+    renderLockedMatch:m=>`<div class="explicit-detail-renderer-stub" data-fixture="${m.fixture_id}"></div>`,rezumatExemplu:()=>'',renderProAnalize:()=>{},
     fetch:async url=>{
       if (String(url).startsWith('https://members.invalid/api/ping?')) return {ok:true};
       assert(payloads.has(url),`only mocked local export is allowed: ${url}`);
@@ -115,4 +116,25 @@ test('actual homepage rerender across languages keeps filter options unique and 
     assert.equal(select.value,value,`${id}: selected value survives rerender`);
     assert.equal(values[0],'','placeholder survives rerender');
   }
+});
+
+test('initial list shows the Romanian day and explicit all days survives a language refresh', async () => {
+  const today=new Date().toLocaleDateString('sv-SE',{timeZone:'Europe/Bucharest'});
+  const todayStart=new Date(today+'T00:00:00Z');
+  const todayInUtcYesterday=new Date(+todayStart-60*60*1000).toISOString();
+  const anotherDay=new Date(+todayStart-24*60*60*1000).toISOString();
+  const h=harness(false,[{fixture_id:11,match_date:todayInUtcYesterday},{fixture_id:12,match_date:anotherDay}]);
+  const initial=runInContext('renderIndex()',h.context);h.ready();await initial;
+  const day=h.element('filter-day'),matches=h.element('matches');
+  assert.equal(day.value,today);
+  assert.match(matches.innerHTML,/data-fixture="11"/);
+  assert.doesNotMatch(matches.innerHTML,/data-fixture="12"/);
+  day.value='';
+  await runInContext('renderIndex()',h.context);
+  assert.equal(day.value,'');
+  assert.match(matches.innerHTML,/data-fixture="11"/);
+  assert.match(matches.innerHTML,/data-fixture="12"/);
+  day.value=today;
+  day.onchange();
+  assert.doesNotMatch(matches.innerHTML,/data-fixture="12"/);
 });

@@ -90,9 +90,9 @@
       if (document.querySelector('.pro-card')) {
         if (window.PoseidonProReport) window.PoseidonProReport.scan();
         else if (!document.getElementById('pro-report-script')) {
-          var style = document.createElement('link'); style.rel = 'stylesheet'; style.href = sus + 'assets/pro-report.css?v=20261117'; document.head.appendChild(style);
-          var report = document.createElement('script'); report.id = 'pro-report-script'; report.src = sus + 'assets/pro-context.js?v=20261117';
-          report.onload = function () { var ui = document.createElement('script'); ui.src = sus + 'assets/pro-report.js?v=20261117'; document.head.appendChild(ui); };
+          var style = document.createElement('link'); style.rel = 'stylesheet'; style.href = sus + 'assets/pro-report.css?v=20261118b'; document.head.appendChild(style);
+          var report = document.createElement('script'); report.id = 'pro-report-script'; report.src = sus + 'assets/pro-context.js?v=20261118b';
+          report.onload = function () { var ui = document.createElement('script'); ui.src = sus + 'assets/pro-report.js?v=20261118b'; document.head.appendChild(ui); };
           report.onerror = report.onload;
           document.head.appendChild(report);
         }

@@ -19,7 +19,7 @@ const preservedValue = (key,value) => archiveLinkKeys.has(key) ? value.replace('
 const marketChoiceCopy = new Set(['index.howto', 'index.cardinfo.body', 'repere.p', 'pro.analize.h2']);
 // Audit 30 Oct: explicit provenance corrections are authorized by 'Remediază tot'.
 // Keep every unrelated legacy dictionary value protected by the original assertions.
-const provenanceCopy = new Set(['metod.p.2b','metod.h3.3','metod.p.3','proof.metrici','proof.lead','index.intro','footer.title','ligi.tagline','tr.bt.sample','arhiva.tagline','audit.p','ds.p','ds.note','ds.col.pub_ts','ds.col.platt_versiune',
+const provenanceCopy = new Set(['pro.intro','unlock.exemplu.h','metod.p.2b','metod.h3.3','metod.p.3','proof.metrici','proof.lead','index.intro','footer.title','ligi.tagline','tr.bt.sample','arhiva.tagline','audit.p','ds.p','ds.note','ds.col.pub_ts','ds.col.platt_versiune',
   'tr.li.backtest','tr.li.source.bt','tr.li.forward','tr.li.source.fwd','tr.p.fwd',
   ...['home','draw','away','over_1_5','over_2_5','over_3_5','btts','ht_over_0_5','ht_over_1_5'].map(m=>`ds.col.cal_prob_${m}`)]);
 
@@ -141,16 +141,23 @@ test('missing exports raise errors, missing metrics remain null instead of becom
   assert.deepEqual(dashboard.selectRows(source,'2026-10-23').rows[0].probabilities,[null,null,null]);
 });
 
-test('fixture links reset legacy filters before selecting source UTC date, league and zero threshold', () => {
+test('fixture links reset legacy filters before selecting the Bucharest date, league and zero threshold, then open the card', () => {
   const calls = [];
   const elements = Object.fromEntries(['filter-day','filter-league','filter-minprob'].map(id => [id,{value:'stale',dispatchEvent:event => calls.push([id,event.type])}]));
   elements['filter-reset']={click:()=>calls.push(['reset'])};
-  dashboard.revealMatch({getElementById:id=>elements[id]}, {match_date:'2026-10-23T22:30:00Z',league:'Test league'});
+  dashboard.revealMatch({
+    getElementById:id=>elements[id],
+    querySelector:selector=>{
+      assert.equal(selector,'#matches .match-report[data-fid="42"] .match-header[aria-expanded="false"]');
+      return {click:()=>calls.push(['open'])};
+    },
+  }, {fixture_id:42,match_date:'2026-10-23T22:30:00Z',league:'Test league'});
   assert.deepEqual(calls[0],['reset']);
-  assert.equal(elements['filter-day'].value,'2026-10-23');
+  assert.equal(elements['filter-day'].value,'2026-10-24');
   assert.equal(elements['filter-league'].value,'Test league');
   assert.equal(elements['filter-minprob'].value,'0');
-  assert.equal(calls.length,4);
+  assert.equal(calls.length,5);
+  assert.deepEqual(calls.at(-1),['open']);
 });
 
 test('all six dictionaries preserve original values except the explicitly authorized UI copy and fully translate dashboard keys', () => {

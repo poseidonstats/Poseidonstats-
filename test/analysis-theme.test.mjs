@@ -172,12 +172,13 @@ test('every existing public HTML using lite is accepted with its actual canonica
   function htmlFiles(folder) {
     return readdirSync(folder,{withFileTypes:true}).flatMap(item => item.isDirectory() && ['analize','predictii','arhiva','en','predictions'].includes(item.name) ? htmlFiles(new URL(`${item.name}/`,folder)) : item.isFile() && item.name.endsWith('.html') ? [new URL(item.name,folder)] : []);
   }
-  const files = htmlFiles(new URL('../',import.meta.url)).filter(path => /<script[^>]*src="[^"]*assets\/i18n-lite\.js"/.test(readFileSync(path,'utf8')));
+  const liteScript = /<script[^>]*src="[^"]*assets\/i18n-lite\.js(?:\?v=[^"]+)?"[^>]*data-sus="([^"]*)"/;
+  const files = htmlFiles(new URL('../',import.meta.url)).filter(path => liteScript.test(readFileSync(path,'utf8')));
   assert(files.length > 100, 'inventory contains the actual generated helper pages');
   for (const file of files) {
     const html=readFileSync(file,'utf8');
     const canonical=html.match(/<link rel="canonical" href="([^"]+)"/)?.[1];
-    const prefix=html.match(/<script[^>]*src="[^"]*assets\/i18n-lite\.js"[^>]*data-sus="([^"]*)"/)?.[1];
+    const prefix=html.match(liteScript)?.[1];
     assert(canonical && prefix !== undefined, file.pathname);
     const state = await run({canonical,pathname:new URL(canonical).pathname,prefix});
     assert(state.body.classList.contains('secondary-modern'), file.pathname);

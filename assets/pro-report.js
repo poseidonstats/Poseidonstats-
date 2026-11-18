@@ -1,4 +1,4 @@
-/* 17 Nov 2026 — presentation of supplied Pro text only. No scoring, fetching or entitlement decisions. */
+/* Pro match reading from supplied analysis and protected pre-match history. */
 (function (root) {
   'use strict';
   const words = {
@@ -13,6 +13,7 @@
   const tierNames = 'Base|Main pick|Main|Bold pick|Bold|Curajos|Arriesgado|Atrevido|Coraggioso|Bază|Baza|Principal|Principale|Principali|Audaz|Audace|Audacieux|Utama|Berani|Dasar|Siguranță|Safe pick|Safe|Safety|Seguridad|Sicurezza|Sécurité|Aman|Keamanan|Banker|Core|Foundation|Value pick|Risky pick|Audacios';
   const tierPrefix = new RegExp('^(?:\\s|-|[🔒🎯💎]|\\*|<strong>)*?(?:'+tierNames+')\\s*:\\s*(?:\\*\\*)?\\s*(?:</strong>)?\\s*','iu');
   const tierCell = new RegExp('^(?:'+tierNames+')$','iu');
+  const primaryPrefix = /^(?:[-–]\s*|🎯\s*|\*\*\s*)*(?:Main(?: pick)?|Principal(?:e)?|Utama)\s*:/iu;
   function plain(html) { return html.replace(/<[^>]*>/g, '').trim(); }
   function stripTier(html) {
     let text=html, prefix;
@@ -24,8 +25,34 @@
     }
     return text;
   }
+  function recordedSelection(inner) {
+    if (!primaryPrefix.test(plain(inner))) return null;
+    const match=plain(stripTier(inner)).match(/^(.+?)\s+[—–-]\s+(\d+(?:[.,]\d+)?\s*%)(?:\s|[.—–]|$)/u);
+    if (!match) return null;
+    const [,market,probability]=match;
+    const total=market.match(/^(?:Peste|Over|Más de|Plus de|Di atas)\s+([12])[.,]5(?:\s+(?:goluri|goals|goles|buts|gol))?$/iu);
+    const result={market,probability,goals:total?Number(total[1])+1:null};
+    const directional=market.match(/(?:^|\()(1X|X2)\)?$/);
+    if (directional) result.key='dc_'+directional[1].toLowerCase();
+    return result;
+  }
+  function structuredSelection(picks,lang) {
+    if (!Array.isArray(picks)) return null;
+    const primary=picks.filter(pick=>pick?.rol==='Principal');
+    if (primary.length!==1) return null;
+    const {key,p,piata}=primary[0];
+    if (!Number.isFinite(p) || p<0 || p>100 || typeof key!=='string') return null;
+    const total=key.match(/^over_([12])_5$/);
+    const format={ro:'Peste {n} goluri',en:'Over {n} goals',es:'Más de {n} goles',
+      it:'Over {n} gol',fr:'Plus de {n} buts',id:'Di atas {n} gol'}[lang] || 'Over {n} goals';
+    const number=new Intl.NumberFormat(lang,{maximumFractionDigits:2});
+    const market=total ? format.replace('{n}',number.format(Number(total[1])+.5))
+      : {dc_1x:'1X',dc_x2:'X2',dc_12:'12'}[key] || (lang==='ro' && typeof piata==='string' ? piata : '');
+    return market ? {market,probability:number.format(p)+'%',goals:total?Number(total[1])+1:null, key} : null;
+  }
   function sections(html) {
-    const out = {thesis:[],context:[],evidence:[],watch:[],markets:[],review:[],other:[],original:html};
+    const out = {thesis:[],context:[],evidence:[],watch:[],markets:[],review:[],other:[],original:html,selection:null,selectionArgument:''};
+    const selections=[];
     const ri = html.search(/<div\s+class=["']pro-verificare["']/);
     let body = ri < 0 ? html : html.slice(0,ri);
     if (ri >= 0) out.review.push(html.slice(ri));
@@ -36,24 +63,37 @@
     for (const block of blocks) {
       if (!block.trim()) continue;
       const text=plain(block);
+      if (/^\s*(?:ℹ|\*?\s*(?:informativ(?:o|e)?|informational)\b.*18\+)/iu.test(text)) continue;
       if (/arhiva\.sect\.verdict/.test(block)||/^⚡/.test(text)) group='thesis';
       else if (/arhiva\.sect\.context/.test(block)||/^📊/.test(text)) group='context';
       else if (/arhiva\.sect\.model/.test(block)||/^🧮/.test(text)) group='evidence';
       else if (/arhiva\.sect\.urmarit/.test(block)||/^👁/.test(text)) group='watch';
-      else if (/arhiva\.sect\.piete/.test(block)||/^🎯\s*(Picks|Pron|Pilihan)/i.test(text)) group='markets';
+      else if (isMarketsHeading(block,text)) group='markets';
       if (/pro-verificat|pro\.card\.(?:maine|verif)/.test(block)) {out.review.push(block);continue;}
       if (group==='markets') {
-        if (/arhiva\.sect\.piete/.test(block)||/^🎯\s*(Picks|Pron|Pilihan)/i.test(text)) continue;
+        if (isMarketsHeading(block,text)) continue;
         const items=block.match(/<li\b[^>]*>([\s\S]*?)<\/li>/gi) || [block];
         for (const item of items) {
           const inner=item.replace(/^<(?:li|p)\b[^>]*>/i,'').replace(/<\/(?:li|p)>$/i,'');
           // A declined selection is not a historical prediction. Retain it in the original report only.
           if (/^(?:-?\s*💎\s*)?(?:<strong>)?(?:Bold|Curajos|Arriesgado|Audaz|Audace|Audacieux|Berani)[^:]*:/i.test(inner) && !/\d+(?:[.,]\d+)?\s*%/.test(inner.split(/[—–]/)[0]) && /no bold|no odds|no hay|ningún|nessun|aucun|sin |fără|nu |tidak /i.test(plain(inner))) continue;
+          const selection=recordedSelection(inner);
+          if (selection) {
+            const argument = plain(stripTier(inner)).match(/^[\s\S]*?\d+(?:[.,]\d+)?\s*%[.·]\s*(.+)$/u)?.[1] || '';
+            selections.push({selection,argument});
+          }
           out.markets.push(stripTier(inner));
         }
       } else out[group].push(block);
     }
+    if (selections.length===1) {
+      out.selection=selections[0].selection;
+      out.selectionArgument=selections[0].argument;
+    }
     return out;
+  }
+  function isMarketsHeading(block,text) {
+    return /arhiva\.sect\.piete/.test(block)||/^🎯\s*(?:Picks\b|Pronostic(?:uri|i)?\b|Pilihan\b|Previsioni\b|Pronósticos\b)/iu.test(text);
   }
   function cleanReview(html) {
     // The first audit column is an editorial tier, not an outcome. Keep every market and result.
@@ -64,16 +104,233 @@
       return row;
     });
   }
-  function marketMarkup(html) {
-    const match=html.match(/^([\s\S]*?)\s+[—–]\s*(?:<strong>)?(\d+(?:[.,]\d+)?%)(?:<\/strong>)?([\s\S]*)$/);
-    if (!match) return `<div class="report-market">${html}</div>`;
-    return `<div class="report-market"><div class="report-market-top"><h4>${match[1]}</h4><span class="report-prob">${match[2]}</span></div><div class="report-market-reason">${match[3].replace(/^\s*[.—–]\s*/, '')}</div></div>`;
-  }
   const contextWords={en:['At home','Away','Goals scored / match','Goals conceded / match','Over 2.5 goals','matches','Position','points','Context & recent form'],ro:['Acasă','În deplasare','Goluri marcate / meci','Goluri primite / meci','Peste 2,5 goluri','meciuri','Loc','puncte','Context și forma recentă'],es:['En casa','Fuera','Goles marcados / partido','Goles recibidos / partido','Más de 2,5 goles','partidos','Posición','puntos','Contexto y forma reciente'],it:['In casa','In trasferta','Gol fatti / partita','Gol subiti / partita','Over 2,5 gol','partite','Posizione','punti','Contesto e forma recente'],fr:['À domicile','À l’extérieur','Buts marqués / match','Buts encaissés / match','Plus de 2,5 buts','matchs','Position','points','Contexte et forme récente'],id:['Kandang','Tandang','Gol dicetak / laga','Gol kebobolan / laga','Di atas 2,5 gol','laga','Posisi','poin','Konteks dan performa terbaru']};
   function escapeText(value){return String(value).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+  const editorialCopy = {
+    ro: {
+      premise:'Lectură pe datele de dinaintea meciului', retrospective:'Lectură retrospectivă din date premeci', support:'Ce susține', risk:'Rezerva',
+      selection:'Selecția consemnată', record:'Detaliile analizei consemnate', contrary:'Istoricul pune selecția sub semnul întrebării',
+      sizes:['acasă','în deplasare'],
+    },
+    en: {
+      premise:'Reading based on pre-match data', retrospective:'Retrospective reading of pre-match data', support:'Supporting evidence', risk:'Risk',
+      selection:'Recorded selection', record:'Recorded analysis details', contrary:'The venue records raise doubts about the selection',
+      sizes:['at home','away'],
+    },
+    es: {
+      premise:'Lectura con datos previos al partido', retrospective:'Lectura retrospectiva con datos previos al partido', support:'A favor', risk:'La reserva',
+      selection:'Estimación registrada', record:'Detalles del análisis registrado',
+      contrary:'El historial en este campo plantea dudas sobre la selección',
+      sizes:['en casa','fuera'],
+    },
+    it: {
+      premise:'Lettura basata sui dati prepartita', retrospective:'Lettura retrospettiva dei dati prepartita', support:'A favore', risk:'La riserva',
+      selection:'Stima registrata', record:'Dettagli dell’analisi registrata',
+      contrary:'I risultati sul campo mettono in dubbio la selezione',
+      sizes:['in casa','in trasferta'],
+    },
+    fr: {
+      premise:'Lecture à partir des données d’avant-match', retrospective:'Lecture rétrospective des données d’avant-match', support:'Arguments en faveur', risk:'La réserve',
+      selection:'Estimation enregistrée', record:'Détails de l’analyse enregistrée',
+      contrary:'Les résultats sur ce terrain invitent à la prudence',
+      sizes:['à domicile','à l’extérieur'],
+    },
+    id: {
+      premise:'Analisis berdasarkan data prapertandingan', retrospective:'Tinjauan retrospektif data prapertandingan', support:'Bukti pendukung', risk:'Catatan',
+      selection:'Estimasi tercatat', record:'Rincian analisis tercatat',
+      contrary:'Hasil di kandang dan tandang membuat pilihan ini meragukan',
+      sizes:['di kandang','di tandang'],
+    },
+  };
+  const resultCopy={
+    ro:['Bilanțul lui {team} pe terenul de joc','{team} a evitat înfrângerea în {k} din {n} meciuri {venue} ({w} {win}, {d} {draw}).','{team} a câștigat {k} din {n} meciuri {venue}.','{team} are zero victorii în {n} meciuri {venue}'],
+    en:['{team} at this venue','{team} avoided defeat in {k} of {n} matches {venue} ({w} {win}, {d} {draw}).','{team} won {k} of {n} matches {venue}.','{team} went winless in {n} matches {venue}'],
+    es:['{team} en esta sede','{team} evitó la derrota en {k} de {n} partidos {venue} ({w} victorias, {d} empates).','{team} ganó {k} de {n} partidos {venue}.','{team} no ganó en sus {n} partidos {venue}'],
+    it:['{team} su questo campo','{team} ha evitato la sconfitta in {k} partite su {n} {venue} ({w} vittorie, {d} pareggi).','{team} ha vinto {k} partite su {n} {venue}.','{team} non ha mai vinto in {n} partite {venue}'],
+    fr:['{team} sur ce terrain','{team} a évité la défaite dans {k} matchs sur {n} {venue} ({w} victoires, {d} nuls).','{team} a gagné {k} matchs sur {n} {venue}.','{team} reste sans victoire en {n} matchs {venue}'],
+    id:['{team} di tempat ini','{team} terhindar dari kekalahan dalam {k} dari {n} laga {venue} ({w} menang, {d} imbang).','{team} menang {k} dari {n} laga {venue}.','{team} tidak menang dalam {n} laga {venue}'],
+  };
+  const totalsCopy={
+    ro:['De unde au venit golurile','Același prag, contribuții diferite','Pragul a fost depășit în {k} din {n} meciuri ale lui {team} {venue}.','{team} a marcat în {k} din {n} meciuri {venue} ({g} goluri).','Ambele echipe au marcat în {k} din {n} meciuri ale lui {team} {venue}.','{team} a marcat cel puțin {g} goluri în {k} din {n} meciuri {venue}.'],
+    en:['Where the goals came from','Same goal line, different scoring patterns','{team}’s matches {venue} cleared the goal line in {k} of {n}.','{team} scored in {k} of {n} matches {venue} ({g} goals).','Both teams scored in {k} of {n} of {team}’s matches {venue}.','{team} scored at least {g} goals themselves in {k} of {n} matches {venue}.'],
+    es:['De dónde llegaron los goles','Mismo umbral, perfiles distintos','Se superó el umbral en {k} de {n} partidos de {team} {venue}.','{team} marcó en {k} de {n} partidos {venue} ({g} goles).','Ambos equipos marcaron en {k} de {n} partidos de {team} {venue}.','{team} marcó al menos {g} goles en {k} de {n} partidos {venue}.'],
+    it:['Da dove sono arrivati i gol','Stessa soglia, profili diversi','La soglia è stata superata in {k} partite su {n} di {team} {venue}.','{team} ha segnato in {k} partite su {n} {venue} ({g} gol).','Entrambe hanno segnato in {k} partite su {n} di {team} {venue}.','{team} ha segnato almeno {g} gol in {k} partite su {n} {venue}.'],
+    fr:['D’où sont venus les buts','Même seuil, profils différents','Le seuil a été dépassé dans {k} matchs sur {n} de {team} {venue}.','{team} a marqué dans {k} matchs sur {n} {venue} ({g} buts).','Les deux équipes ont marqué dans {k} matchs sur {n} de {team} {venue}.','{team} a inscrit au moins {g} buts dans {k} matchs sur {n} {venue}.'],
+    id:['Dari mana gol tercipta','Ambang sama, pola gol berbeda','Ambang gol terlewati dalam {k} dari {n} laga {team} {venue}.','{team} mencetak gol dalam {k} dari {n} laga {venue} ({g} gol).','Kedua tim mencetak gol dalam {k} dari {n} laga {team} {venue}.','{team} mencetak sedikitnya {g} gol dalam {k} dari {n} laga {venue}.'],
+  };
+  const venueGoalsCopy={
+    ro: [
+      ['meciuri acasă','deplasări'],
+      '{team} a marcat în doar {k} din {n} {venue}',
+      'O înfrângere grea schimbă imaginea apărării lui {team}',
+      '{team} a primit puține goluri pe terenul relevant',
+      '{team} a marcat de cel puțin {g} ori în {k} din {n} {venue}.',
+      '{team} a primit cel mult {g} {unit} în {k} din {n} {venue}.',
+      'Excepția a fost {score} cu {opponent}.',
+      '{team} a înscris o singură dată în {k} din {n} {venue}.',
+      '{team} a rămas fără gol în {k} din {n} {venue}.',
+    ],
+    en: [
+      ['home games','away games'],
+      '{team} scored in only {k} of {n} {venue}',
+      'One heavy defeat skews the defensive record for {team}',
+      '{team} have conceded few goals at this venue',
+      '{team} scored at least {g} goals in {k} of {n} {venue}.',
+      '{team} conceded at most {g} {unit} in {k} of {n} {venue}.',
+      'The exception was the {score} defeat against {opponent}.',
+      '{team} scored exactly once in {k} of {n} {venue}.',
+      '{team} failed to score in {k} of {n} {venue}.',
+    ],
+    es: [
+      ['partidos en casa','partidos fuera'],
+      '{team} marcó en solo {k} de {n} {venue}',
+      'Una goleada distorsiona el balance defensivo de {team}',
+      '{team} encajó pocos goles en estos partidos',
+      '{team} marcó al menos {g} goles en {k} de {n} {venue}.',
+      '{team} encajó como máximo {g} {unit} en {k} de {n} {venue}.',
+      'La excepción fue el {score} contra {opponent}.',
+      '{team} marcó exactamente una vez en {k} de {n} {venue}.',
+      '{team} se quedó sin marcar en {k} de {n} {venue}.',
+    ],
+    it: [
+      ['partite in casa','trasferte'],
+      '{team} ha segnato in appena {k} su {n} {venue}',
+      'Una pesante sconfitta pesa sul bilancio difensivo di {team}',
+      '{team} ha subito pochi gol in queste partite',
+      '{team} ha segnato almeno {g} gol in {k} su {n} {venue}.',
+      '{team} ha subito al massimo {g} {unit} in {k} su {n} {venue}.',
+      'L’eccezione è il {score} contro {opponent}.',
+      '{team} ha segnato una sola volta in {k} su {n} {venue}.',
+      '{team} è rimasto a secco in {k} su {n} {venue}.',
+    ],
+    fr: [
+      ['matchs à domicile','déplacements'],
+      '{team} n’a marqué que dans {k} de ses {n} {venue}',
+      'Une lourde défaite pèse sur le bilan défensif de {team}',
+      '{team} a concédé peu de buts dans ces matchs',
+      '{team} a marqué au moins {g} buts dans {k} de ses {n} {venue}.',
+      '{team} a concédé au plus {g} {unit} dans {k} de ses {n} {venue}.',
+      'Le {score} contre {opponent} fait exception.',
+      '{team} a marqué exactement une fois dans {k} de ses {n} {venue}.',
+      '{team} n’a pas marqué dans {k} de ses {n} {venue}.',
+    ],
+    id: [
+      ['laga kandang','laga tandang'],
+      '{team} hanya mencetak gol dalam {k} dari {n} {venue}',
+      'Satu kekalahan telak membebani catatan pertahanan {team}',
+      '{team} hanya kebobolan sedikit dalam laga-laga ini',
+      '{team} mencetak sedikitnya {g} gol dalam {k} dari {n} {venue}.',
+      '{team} kebobolan paling banyak {g} {unit} dalam {k} dari {n} {venue}.',
+      'Pengecualiannya adalah kekalahan {score} melawan {opponent}.',
+      '{team} mencetak tepat satu gol dalam {k} dari {n} {venue}.',
+      '{team} gagal mencetak gol dalam {k} dari {n} {venue}.',
+    ],
+  };
+  const goalUnits={ro:['gol','goluri'],en:['goal','goals'],es:['gol','goles'],it:['gol','gol'],fr:['but','buts'],id:['gol','gol']};
+  const alternativeGoalsCopy={
+    ro:['{team} a cedat multe goluri în acest lot','{team} a primit cel puțin {g} goluri în {k} din {n} {venue}.',
+      '{team} a marcat de cel puțin {g} ori în doar {k} din {n} {venue}.','Ce arată scorurile recente ale echipelor'],
+    en:['{team} conceded heavily in this sample','{team} conceded at least {g} goals in {k} of {n} {venue}.',
+      '{team} scored at least {g} goals in only {k} of {n} {venue}.','What the recent scorelines show'],
+    es:['{team} encajó muchos goles en esta muestra','{team} encajó al menos {g} goles en {k} de {n} {venue}.',
+      '{team} marcó al menos {g} goles en solo {k} de {n} {venue}.','Qué muestran los últimos marcadores'],
+    it:['{team} ha subito molti gol in questo campione','{team} ha subito almeno {g} gol in {k} su {n} {venue}.',
+      '{team} ha segnato almeno {g} gol in appena {k} su {n} {venue}.','Cosa mostrano i risultati recenti'],
+    fr:['{team} a concédé beaucoup de buts sur cet échantillon','{team} a concédé au moins {g} buts dans {k} de ses {n} {venue}.',
+      '{team} n’a marqué au moins {g} buts que dans {k} de ses {n} {venue}.','Ce que montrent les derniers scores'],
+    id:['{team} banyak kebobolan dalam sampel ini','{team} kebobolan sedikitnya {g} gol dalam {k} dari {n} {venue}.',
+      '{team} mencetak sedikitnya {g} gol hanya dalam {k} dari {n} {venue}.','Apa yang terlihat dari skor terakhir'],
+  };
+  function contentOnly(html) {
+    return html.replace(/^(<p\b[^>]*>)\s*(?:(?:⚡|📊|🧮|👁️?)\s*<strong\b[^>]*>|<strong\b[^>]*\bdata-i18n="arhiva\.sect\.[^"]+"[^>]*>)[^<]*<\/strong>\s*/u,'$1')
+      .replace(/\*\*/g,'');
+  }
+  function editorialMarkup(data,lang,facts,retrospective=false) {
+    const c=editorialCopy[lang]||editorialCopy.en;
+    const role=team=>c.sizes[team.home?0:1];
+    const {selection}=data;
+    const evidence=(type,title,body)=>`<div class="report-argument report-argument-${type}"><h4>${title}</h4>${body}</div>`;
+    const originalThesis=data.thesis.map(contentOnly).join('');
+    const estimate=selection?`<p class="report-estimate"><span>${c.selection}</span> <strong>${stripTags(selection.market)} · ${escapeText(selection.probability)}</strong></p>`:'';
+    const panel=(type,title,body)=>evidence(type,title,`<p>${escapeText(body)}</p>`);
+    const reading=(headline,body)=>`<section class="pro-editorial">${estimate}<p class="report-premise">${retrospective?c.retrospective:c.premise}</p><div class="report-thesis"><p>${escapeText(headline)}</p></div>${body}</section>`;
+    const fill=(template,team,k,g)=>template.replace(/\{([a-z]+)\}/g,(_,key)=>({
+      team:team.name,k,g,n:team.n,venue:role(team),w:team.wins,d:team.draws,
+      win:lang==='ro'?(team.wins===1?'victorie':'victorii'):(team.wins===1?'win':'wins'),
+      draw:lang==='ro'?(team.draws===1?'egal':'egaluri'):(team.draws===1?'draw':'draws'),
+    })[key]);
+    if (facts?.covered) {
+      const {covered,opponent}=facts;
+      const [title,supportCopy,riskCopy,winless]=resultCopy[lang]||resultCopy.en;
+      if ((covered.wins+covered.draws)*opponent.n<=opponent.wins*covered.n) {
+        const conflict=fill(supportCopy,covered,covered.wins+covered.draws)+(opponent.wins>0?' '+fill(riskCopy,opponent,opponent.wins):'');
+        return reading(c.contrary,panel('risk',c.risk,conflict));
+      }
+      const support=panel('support',c.support,fill(supportCopy,covered,covered.wins+covered.draws));
+      if (opponent.wins===0) return reading(fill(winless,opponent),support);
+      const risk=panel('risk',c.risk,fill(riskCopy,opponent,opponent.wins));
+      return reading(fill(title,covered),support+risk);
+    }
+    if (!facts?.home || !selection?.goals) {
+      const argument = data.selectionArgument ? `<p class="report-recorded-reason">${escapeText(data.selectionArgument)}</p>` : '';
+      return `<section class="pro-editorial">${estimate}${selection?argument:`<div class="report-thesis">${originalThesis}</div>`}</section>`;
+    }
+    const {home,away}=facts;
+    const [more,less]=home.threshold*away.n>=away.threshold*home.n?[home,away]:[away,home];
+    const [,,cleared,scored]=totalsCopy[lang]||totalsCopy.en;
+    const [venues,quiet,heavy,defensive,ownGoals,concedes,exception,once,scoreless]=venueGoalsCopy[lang]||venueGoalsCopy.en;
+    const phrase=(template,team,k,g)=>template.replace(/\{([a-z]+)\}/g,(_,key)=>({
+      team:team.name, k, g, n:team.n, venue:venues[team.home?0:1], unit:(goalUnits[lang]||goalUnits.en)[g===1?0:1],
+      score:team.worst?`${team.worst.scored}–${team.worst.conceded}`:'', opponent:team.worst?.opponent,
+    })[key]);
+    const lowScoring = less.n-less.scoring;
+    const resistance = less.concededBelow > lowScoring && less.concededBelow > 0;
+    const outlier = less.worst?.opponent && less.concededBelow === less.n-1
+      && less.worst.conceded - less.worst.scored >= 3 && less.worst.conceded * 2 > less.conceded;
+    if (more.threshold*2<=more.n) {
+      const [exposed,allowed,rareOwn,neutral]=alternativeGoalsCopy[lang]||alternativeGoalsCopy.en;
+      const allowedHigh=team=>team.n-(team.concededBelow??team.n);
+      const vulnerable=allowedHigh(home)*away.n>allowedHigh(away)*home.n?home:away;
+      const other=vulnerable===home?away:home;
+      if (allowedHigh(vulnerable)*2>vulnerable.n) {
+        const support=panel('support',c.support,phrase(allowed,vulnerable,allowedHigh(vulnerable),selection.goals));
+        const counter=panel('risk',c.risk,phrase(rareOwn,other,other.threshold,selection.goals));
+        return reading(phrase(exposed,vulnerable),support+counter);
+      }
+      const summary=[home,away].filter(team=>team.total*2>team.n).map(team=>fill(cleared,team,team.total)).join(' ');
+      return reading(neutral,(summary?panel('support',c.support,summary):'')
+        +panel('risk',c.risk,phrase(rareOwn,more,more.threshold,selection.goals)));
+    }
+    const support=panel('support',c.support,phrase(ownGoals,more,more.threshold,selection.goals));
+    if (resistance) {
+      const counter=phrase(concedes,less,less.concededBelow,selection.goals-1)+(outlier?' '+phrase(exception,less):'');
+      return reading(phrase(outlier?heavy:defensive,less),support+panel('risk',c.risk,counter));
+    }
+    const quietSide=lowScoring>=less.scoring;
+    const headline=quietSide?phrase(quiet,less,less.scoring):fill(scored,more,more.scoring,more.scored);
+    const counter=[
+      !quietSide&&lowScoring>0?phrase(scoreless,less,lowScoring):'',
+      more.once>0?phrase(once,more,more.once):'',
+    ].filter(Boolean).join(' ');
+    return reading(headline,support+(counter?panel('risk',c.risk,counter):''));
+  }
+  function stripTags(value) {
+    // Source selection text has already been HTML-escaped; decoded text is never assigned as markup.
+    return value.replace(/[<>"']/g,char=>({'<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[char]);
+  }
+  function recordMarkup(data,lang) {
+    if (data.selection) return '';
+    const c=editorialCopy[lang]||editorialCopy.en;
+    const items=data.markets.map(market=>plain(market).replace(/^(?:\s|[-–🔒🎯💎]|\*\*)+/u,'').replace(/\*\*/g,'')
+      .match(/^.+?\s+[—–-]\s+\d+(?:[.,]\d+)?\s*%/u)?.[0])
+      .filter(Boolean);
+    if (!items.length) return '';
+    return `<details class="report-original"><summary>${c.record}</summary><ul>${items.map(item=>`<li>${stripTags(item)}</li>`).join('')}</ul></details>`;
+  }
   function comparison(data,container,lang) {
     if(!root.PoseidonProContext)return '';
-    const heading=container.closest('.pro-card')?.querySelector('.pro-card-head')?.textContent||'';
+    const header=container.closest('.pro-card')?.querySelector('.pro-card-head');
+    const heading=header?.querySelector?.('h3')?.textContent||header?.textContent||'';
     const pair=heading.replace(/^\s*💎\s*/,'').split(' · ')[0].split(' – ');
     if(pair.length!==2)return '';
     const facts=root.PoseidonProContext.extract({evidence:data.evidence.join(''),context:data.context.join(''),home:pair[0].trim(),away:pair[1].trim(),language:lang});
@@ -82,7 +339,7 @@
     const sides=[facts.home,facts.away];
     const heads=sides.map((team,i)=>`<div><span class="report-team-role">${w[i]}</span><h4>${escapeText(team.name)}</h4><span class="report-team-sample">${team.sample} ${w[5]}</span>${team.rank!=null?`<p>${w[6]} ${team.rank} · ${team.points} ${w[7]}</p>`:''}</div>`).join('');
     const rows=[[w[2],facts.home.scored,facts.away.scored],[w[3],facts.home.conceded,facts.away.conceded],[w[4],facts.home.over25.hits+'/'+facts.home.over25.n,facts.away.over25.hits+'/'+facts.away.over25.n]];
-    return `<div class="report-team-heads">${heads}</div><div class="report-team-rows">${rows.map(([label,h,a])=>`<div><b>${escapeText(h)}</b><span>${label}</span><b>${escapeText(a)}</b></div>`).join('')}</div><details class="report-context-detail"><summary>${w[8]}</summary>${data.context.join('')}${data.evidence.join('')}</details>`;
+    return `<div class="report-team-heads">${heads}</div><div class="report-team-rows">${rows.map(([label,h,a])=>`<div><b>${escapeText(h)}</b><span>${label}</span><b>${escapeText(a)}</b></div>`).join('')}</div>${data.context.length?`<details class="report-context-detail"><summary>${w[8]}</summary>${data.context.map(contentOnly).join('')}</details>`:''}`;
   }
   function reviewMarkup(html,lang) {
     const neutral={en:'Market',ro:'Piața',es:'Mercado',it:'Mercato',fr:'Marché',id:'Pasar'};
@@ -98,33 +355,50 @@
     return text;
   }
   let serial=0;
-  function enhance(container) {
+  const sourceStates=new WeakMap();
+  const activePanels=new WeakMap();
+  function enhance(container, refresh=false) {
     // i18n translates hidden source variants too. Do not freeze their display until selected.
     const languageVariant = container.closest('[data-lang]');
     if (languageVariant && languageVariant.hidden) return;
-    if (container.dataset.proEnhanced || container.closest('.pro-locked, [data-pro-locked]')) return;
-    const original=container.innerHTML;
+    if ((!refresh && container.dataset.proEnhanced) || container.closest('.pro-locked, [data-pro-locked]')) return;
+    const original=sourceStates.get(container) ?? container.innerHTML;
     const data=sections(original);
-    if (!data.thesis.length) return; // Unknown document structure: leave the original readable.
-    const lang=container.closest('[data-lang]')?.getAttribute('data-lang') || document.documentElement.lang || 'en';
+    if (!data.thesis.length && !container.dataset.proMemberReport) return;
+    sourceStates.set(container,original);
+    const active=activePanels.get(container) ?? 0;
+    const lang=container.lang || container.closest('[data-lang]')?.getAttribute('data-lang') || document.documentElement.lang || 'en';
     const w=words[lang]||words.en;
+    if (!data.thesis.length && data.other.length) {
+      data.thesis=data.other.filter(line=>!tierPrefix.test(plain(line))).map(contentOnly);
+    }
     const id='pro-report-'+(++serial);
     function block(title,items,css) {return items.length?`<section class="report-section ${css||''}"><h3>${title}</h3>${items.join('')}</section>`:'';}
-    const thesis=data.thesis.map(s=>s.replace(/<strong\b[^>]*(?:data-i18n="arhiva\.sect\.verdict")[^>]*>[\s\S]*?<\/strong>\s*/,'').replace(/^(<p[^>]*>)\s*⚡\s*<strong>[^<]*<\/strong>\s*/,'$1'));
-    const analysis=block(w[3],thesis,'report-thesis')+block(w[6],data.markets.map(marketMarkup),'report-markets')+block(w[4],data.evidence)+block(w[5],data.watch)+data.other.join('');
-    const context=comparison(data,container,lang)||(data.context.join('')+block(w[4],data.evidence));
+    const published=structuredSelection(container.poseidonProSelection,lang);
+    if (published) {
+      if (data.selection && (data.selection.goals !== published.goals || data.selection.key && data.selection.key !== published.key)) data.selectionArgument='';
+      data.selection=published;
+    }
+    const fixture=Number(container.dataset.proFixture), dossiers=root.PoseidonProContext;
+    const facts= data.selection?.goals
+      ? dossiers?.goalEvidence?.(container.poseidonProDossier,fixture,data.selection.goals)
+      : dossiers?.resultEvidence?.(container.poseidonProDossier,fixture,data.selection?.key);
+    const analysis=editorialMarkup(data,lang,facts,Date.parse(container.poseidonProDossier?.match_date)<=Date.now());
+    const context=(comparison(data,container,lang)||(data.context.map(contentOnly).join('')+block(w[4],data.evidence.map(contentOnly))))+block(w[5],data.watch.map(contentOnly));
     const review=data.review.map(html=>reviewMarkup(html,lang)).join('');
     container.dataset.proEnhanced='true';
     container.classList.add('pro-report');
-    container.innerHTML=`<div class="report-kicker">${w[10]}</div><div class="report-tabs" role="tablist" aria-label="${w[10]}">${[0,1,2].map((n)=>`<button type="button" id="${id}-tab-${n}" role="tab" aria-selected="${n===0}" aria-controls="${id}-panel-${n}">${w[n]}</button>`).join('')}</div>${[analysis,context||`<p>${w[9]}</p>`,review||`<p>${w[8]}</p>`].map((content,n)=>`<div class="report-panel" role="tabpanel" id="${id}-panel-${n}" aria-labelledby="${id}-tab-${n}" ${n?'hidden':''}>${content}</div>`).join('')}<details class="report-original"><summary>${w[7]}</summary><div>${original}</div></details>`;
-    // Clones must not be translated a second time into old labels. Original remains untouched.
+    container.innerHTML=`<div class="report-tabs" role="tablist" aria-label="${w[10]}">${[0,1,2].map((n)=>`<button type="button" id="${id}-tab-${n}" role="tab" aria-selected="${n===active}" aria-controls="${id}-panel-${n}" tabindex="${n===active?0:-1}">${w[n]}</button>`).join('')}</div>${[analysis,context||`<p>${w[9]}</p>`,review||`<p>${w[8]}</p>`].map((content,n)=>`<div class="report-panel" role="tabpanel" id="${id}-panel-${n}" aria-labelledby="${id}-tab-${n}" ${n!==active?'hidden':''}>${content}</div>`).join('')}${recordMarkup(data,lang)}`;
+    container.hidden=false;
+    // Clones must not be translated a second time into old labels.
     container.querySelectorAll('.report-panel [data-i18n]').forEach(el=>el.removeAttribute('data-i18n'));
     const tabs=Array.from(container.querySelectorAll('.report-tabs [role="tab"]'));
-    function activate(n) {tabs.forEach((tab,i)=>{tab.setAttribute('aria-selected',String(i===n));container.querySelector('#'+id+'-panel-'+i).hidden=i!==n;});}
+    function activate(n) {activePanels.set(container,n);tabs.forEach((tab,i)=>{tab.setAttribute('aria-selected',String(i===n));tab.tabIndex=i===n?0:-1;container.querySelector('#'+id+'-panel-'+i).hidden=i!==n;});}
     tabs.forEach((tab,n)=>{tab.addEventListener('click',()=>activate(n));tab.addEventListener('keydown',e=>{if (!['ArrowLeft','ArrowRight','Home','End'].includes(e.key)) return;e.preventDefault();const next=e.key==='Home'?0:e.key==='End'?2:(n+(e.key==='ArrowRight'?1:2))%3;activate(next);tabs[next].focus();});});
   }
-  function scan() {document.querySelectorAll('.pro-card .pro-visible').forEach(enhance);}
-  const api={sections,stripTier,cleanReview,marketMarkup,reviewMarkup,words,enhance,scan};
+  function scan() {document.querySelectorAll('.pro-card .pro-visible').forEach(container=>enhance(container));}
+  function sourceMarkup(container) {return sourceStates.get(container) ?? container?.innerHTML;}
+  const api={sections,stripTier,cleanReview,editorialMarkup,recordMarkup,structuredSelection,reviewMarkup,words,enhance,scan,sourceMarkup};
   if (typeof module!=='undefined'&&module.exports) module.exports=api;
   if (typeof document==='undefined') return;
   root.PoseidonProReport=api;

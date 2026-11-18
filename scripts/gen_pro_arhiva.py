@@ -562,7 +562,7 @@ def shell(
       <a href="{sus}metodologie.html" data-i18n="nav.metodologie">Metodologie</a>
       <a class="patreon" href="{sus}index.html#abonament" data-i18n="nav.abonamente">Abonamente</a>
     </nav>
-    <script src="{sus}assets/i18n-lite.js" data-sus="{sus}"></script>
+    <script src="{sus}assets/i18n-lite.js?v=20261118b" data-sus="{sus}"></script>
   </div>
 </header>
 

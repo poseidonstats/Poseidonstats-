@@ -98,7 +98,7 @@ async function initI18n() {
 }
 
 function mountLangSwitcher() {
-  const nav = document.querySelector("header nav");
+  const nav = document.querySelector("#home-nav, header nav");
   if (!nav || nav.querySelector(".lang-switcher")) return;
   const wrap = document.createElement("span");
   wrap.className = "lang-switcher";
@@ -204,21 +204,29 @@ function _instaleazaUrmarireClicuri() {
 if (typeof document !== "undefined") {
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", _instaleazaUrmarireClicuri); else _instaleazaUrmarireClicuri();
 }
-// 7 oct 2026 — pe telefon cardul e un RÂND: tap pe antet deschide corpul (xG, piețe)
+// Only the selected prediction expands. The dossier button is a separate action.
 if (typeof document !== "undefined") {
+  function toggleMatchReport(header) {
+    const card = header.closest(".match-report");
+    const open = !card.classList.contains("open");
+    const previous = document.querySelector("#matches .match-report.open");
+    if (previous && previous !== card) {
+      previous.classList.remove("open");
+      previous.querySelector(".match-header").setAttribute("aria-expanded", "false");
+    }
+    card.classList.toggle("open", open);
+    header.setAttribute("aria-expanded", String(open));
+  }
   document.addEventListener("click", (ev) => {
-    if (window.innerWidth > 600) return;
-    const h = ev.target.closest && ev.target.closest(".match-header"); if (!h || ev.target.closest("a, button")) return;
-    const open = h.parentElement.classList.toggle("open");
-    h.setAttribute("aria-expanded", String(open));
+    const header = ev.target.closest?.("#matches .match-report .match-header");
+    if (header) toggleMatchReport(header);
   });
   document.addEventListener("keydown", (ev) => {
-    if (window.innerWidth > 600 || !["Enter", " "].includes(ev.key)) return;
-    const h = ev.target.closest && ev.target.closest(".match-header");
-    if (!h || ev.target.closest("a, button")) return;
+    if (!["Enter", " "].includes(ev.key)) return;
+    const header = ev.target.closest?.("#matches .match-report .match-header");
+    if (!header) return;
     ev.preventDefault();
-    const open = h.parentElement.classList.toggle("open");
-    h.setAttribute("aria-expanded", String(open));
+    toggleMatchReport(header);
   });
 }
 // 7 oct 2026 — pe telefon filtrele stau pliate sub un buton „Filtre ▾” (6 selectoare = un ecran întreg înainte de meciuri)
@@ -396,7 +404,7 @@ function rezumatExemplu(clasa = "") {
   let verif = ""; const v = grup.querySelector(".pro-verificat");
   if (v) { const c = v.cloneNode(true); c.querySelectorAll("a").forEach(a => a.remove()); verif = text(c); }
   return `<div class="unlock-exemplu ${clasa}">
-    <div class="unlock-exemplu-h">${tt("unlock.exemplu.h", "Din exemplul de analiză Pro, publicat înainte de meci:")}</div>
+    <div class="unlock-exemplu-h">${tt("unlock.exemplu.h", "Din arhiva analizelor Pro")}</div>
     ${cap ? `<div class="unlock-exemplu-meci">${esc(cap)}</div>` : ""}
     <p class="unlock-exemplu-verdict">${esc(verdict)}</p>
     ${verif ? `<p class="unlock-exemplu-verif">${esc(verif)}</p>` : ""}
@@ -718,7 +726,8 @@ async function renderSimulator() {
 
 /* ============== INDEX (predicții) ============== */
 async function renderIndex() {
-  const ziRO = iso => { try { return new Date(iso).toLocaleDateString("sv-SE", { timeZone: "Europe/Bucharest" }); } catch (e) { return String(iso || "").slice(0, 10); } };  // 24 oct 2026: ziua României (local, ca testele să poată rula funcția izolat)
+  const formatDay = new Intl.DateTimeFormat("sv-SE", { timeZone: "Europe/Bucharest" });
+  const aziRO = formatDay.format(new Date());
   // F3 — încarc și calibration.json pt eligibilitatea per piață (badge data-driven).
   // Fallback grațios: dacă lipsește, MARKET_CERT={} → marketState cade pe PROMOTED (ca înainte).
   const [data, calib] = await Promise.all([loadPredictions(), fetchJSON(CALIB_URL)]);
@@ -735,7 +744,15 @@ async function renderIndex() {
   const matches = data.matches;
 
   // Populate filters
-  const days = [...new Set(matches.map(m => ziRO(m.match_date)))].sort();   // 24 oct 2026: zile pe ora României
+  const byDay = new Map();
+  for (const match of matches) {
+    const timestamp = Date.parse(match.match_date);
+    if (!Number.isFinite(timestamp)) continue;
+    const day = formatDay.format(timestamp);
+    if (!byDay.has(day)) byDay.set(day, []);
+    byDay.get(day).push(match);
+  }
+  const days = [...byDay.keys()].sort();
   const leagues = [...new Set(matches.map(m => m.league))].sort();
   const countries = [...new Set(matches.map(m => m.country))].sort();
   const selDay = document.getElementById("filter-day");
@@ -746,12 +763,15 @@ async function renderIndex() {
   const selSort = document.getElementById("filter-sort");
   const chkCalib = document.getElementById("filter-calibrated-only");
   const chkCalibMk = document.getElementById("filter-calibrated-markets");
+  const setInitialDay = selDay.options.length === 1 && !selDay.value && byDay.has(aziRO);
   [[selDay, days], [selLeague, leagues], [selCountry, countries]].forEach(([select, values]) => {
     const existing = new Set(Array.from(select.options, option => option.value));
     values.forEach(value => {
       if (!existing.has(value)) { select.add(new Option(value, value)); existing.add(value); }
     });
   });
+
+  if (setInitialDay) selDay.value = aziRO;
 
   // Pe baza calibrată (afișată). Returnează valoarea pentru piața selectată.
   function probForMarket(m, mk) {
@@ -775,6 +795,9 @@ async function renderIndex() {
     );
   }
 
+  const lockedAllDays = matches.filter(isLocked).length;
+  const lockedToday = (byDay.get(aziRO) || []).filter(isLocked).length;
+
   function update() {
     const fd = selDay.value;
     const fl = selLeague.value;
@@ -782,8 +805,8 @@ async function renderIndex() {
     const fmk = selMarket.value;
     const fmin = parseFloat(selMinProb.value) || 0;
     const calibOnly = chkCalib.checked;
-    let filtered = matches.filter(m => {
-      if (fd && !m.match_date.startsWith(fd)) return false;
+    const dayMatches = fd ? byDay.get(fd) || [] : matches;
+    const filtered = dayMatches.filter(m => {
       if (fl && m.league !== fl) return false;
       if (fc && m.country !== fc) return false;
       if (calibOnly && !m.calibrated) return false;
@@ -809,14 +832,10 @@ async function renderIndex() {
     // Blocatele merg mereu cronologic: n-avem după ce altceva să le ordonăm onest.
     blocate.sort((a, b) => a.match_date.localeCompare(b.match_date));
 
-    // 2 oct 2026 — cifra onestă: blocatele de AZI separat de cele din toată fereastra (7 zile); „2117 azi” era fereastra întreagă.
-    const aziRO = new Date().toLocaleDateString("sv-SE", { timeZone: "Europe/Bucharest" });
-    const blocateAzi = blocate.filter(m => ziRO(m.match_date) === aziRO).length;
     const member = PRED_SURSA === "membru";
-    document.getElementById("match-count").textContent = blocate.length && !member
-      ? tt("freemium.count", "{free} predicții complete, gratuite. Alte {today} meciuri calculate de model pentru azi și {locked} meciuri în total pe următoarele 7 zile; le deblochezi pe toate cu Basic, 5 $/lună, intrând cu contul Patreon.")
-          .replace("{free}", deschise.length).replace("{today}", nUnits(blocateAzi)).replace("{locked}", nUnits(blocate.length))
-      : tt("match.count", "{shown} meciuri afișate (din {total} totale).").replace("{shown}", member ? filtered.length : deschise.length).replace("{total}", matches.length);
+    const shown = member ? filtered.length : deschise.length + Math.min(blocate.length, LOCKED_PREVIEW);
+    document.getElementById("match-count").textContent = tt("match.count", "{shown} meciuri afișate (din {total} totale).")
+      .replace("{shown}", shown).replace("{total}", dayMatches.length);
 
     const matchesEl = document.getElementById("matches");
     matchesEl.classList.toggle("only-calibrated-markets", !!(chkCalibMk && chkCalibMk.checked));
@@ -829,7 +848,7 @@ async function renderIndex() {
     if (member) {
       html += blocate.map(m => renderLockedMatch(m, true)).join("");
     } else if (blocate.length) {
-      html += renderUnlockCta(blocate.length, blocateAzi);
+      html += renderUnlockCta(lockedAllDays, lockedToday);
       html += blocate.slice(0, LOCKED_PREVIEW).map(m => renderLockedMatch(m)).join("");
       if (blocate.length > LOCKED_PREVIEW) {
         html += `<p class="locked-more muted">` + tt("freemium.more", "… și încă {n} meciuri analizate, nelistate aici.").replace("{n}", nUnits(blocate.length - LOCKED_PREVIEW)) + `</p>`;
@@ -838,16 +857,16 @@ async function renderIndex() {
     matchesEl.innerHTML = html;
   }
 
-  [selDay, selLeague, selCountry, selMarket, selMinProb, selSort].forEach(s => s.addEventListener("change", update));
-  chkCalib.addEventListener("change", update);
-  if (chkCalibMk) chkCalibMk.addEventListener("change", update);
-  document.getElementById("filter-reset").addEventListener("click", () => {
+  [selDay, selLeague, selCountry, selMarket, selMinProb, selSort, chkCalib, chkCalibMk].filter(Boolean).forEach(control => {
+    control.onchange = update;
+  });
+  document.getElementById("filter-reset").onclick = () => {
     selDay.value = ""; selLeague.value = ""; selCountry.value = "";
     selMarket.value = ""; selMinProb.value = "0.70"; selSort.value = "time";
     chkCalib.checked = false;
     if (chkCalibMk) chkCalibMk.checked = false;
     update();
-  });
+  };
   update();
 }
 
@@ -1027,6 +1046,7 @@ function selectMatchReportTab(button) {
   report.querySelectorAll(".report-tabs [role=tab]").forEach(tab => {
     const selected = tab === button;
     tab.setAttribute("aria-selected", String(selected));
+    tab.setAttribute("tabindex", selected ? "0" : "-1");
     report.querySelectorAll(".report-panel").forEach(panel => {
       if (panel.id === tab.getAttribute("aria-controls")) panel.hidden = !selected;
     });
@@ -1059,20 +1079,20 @@ function renderMatch(m, filterMarket = "", member = false) {
   const score = (h, a) => Number.isInteger(h) && h >= 0 && Number.isInteger(a) && a >= 0 ? `${h}–${a}` : "—";
   const row = (label, value, key, extra = "") => `<div class="report-market market ${isFilteredMarket(key, filterMarket) ? "market-filtered" : ""}" data-market="${key}"><div class="report-market-line"><span class="label">${esc(label)}</span><strong class="val">${prob(value)}</strong></div>${matchReportMeter(value)}${extra}</div>`;
   const result = (values, labels, keys) => `<div class="report-results">${values.map((v, i) => `<div class="report-result market ${isFilteredMarket(keys[i], filterMarket) ? "market-filtered" : ""}"><span class="label">${esc(labels[i])}</span><strong class="val">${prob(v)}</strong>${keys[i].endsWith("H") ? warnMark("raw") : ""}</div>`).join("")}</div>${values.every(validMatchProbability) ? `<div class="report-split" aria-hidden="true">${values.map(v => `<span style="flex:${v}"></span>`).join("")}</div>` : ""}`;
-  const tabs = ["overview", "goals", "half"].map((name, i) => `<button type="button" role="tab" id="${id}-${name}" aria-controls="${id}-${name}-panel" aria-selected="${name === active}">${esc(c[i])}</button>`).join("");
+  const tabs = ["overview", "goals", "half"].map((name, i) => `<button type="button" role="tab" id="${id}-${name}" aria-controls="${id}-${name}-panel" aria-selected="${name === active}" tabindex="${name === active ? 0 : -1}">${esc(c[i])}</button>`).join("");
   const panel = name => `class="report-panel" id="${id}-${name}-panel" role="tabpanel" aria-labelledby="${id}-${name}"${active === name ? "" : " hidden"}`;
   const freeTag = m.free ? `<span class="free-tag">${tt("freemium.tag", "GRATUIT AZI")}</span>` : "";
   const xgValid = [m.xg_home, m.xg_away].every(v => typeof v === "number" && Number.isFinite(v) && v >= 0);
   const htBtts = m.prob_ht_btts;
   const dossier = member && typeof window !== "undefined" ? window.PoseidonDossier?.button(m) || "" : "";
-  return `<div class="match match-report ${m.calibrated ? "" : "uncalibrated"} ${m.free ? "match-free" : ""}${filterMarket ? " open" : ""}" data-fid="${Number.isSafeInteger(m.fixture_id) ? m.fixture_id : ""}">
-    <div class="match-header" role="button" tabindex="0" aria-expanded="${filterMarket || (typeof window !== "undefined" && window.innerWidth > 600) ? "true" : "false"}" aria-controls="${id}-body">
+  return `<div class="match match-report ${m.calibrated ? "" : "uncalibrated"} ${m.free ? "match-free" : ""}" data-fid="${Number.isSafeInteger(m.fixture_id) ? m.fixture_id : ""}">
+    <div class="report-summary"><div class="match-header" role="button" tabindex="0" aria-expanded="false" aria-controls="${id}-body">
       <div class="match-title"><div class="match-teams"><span class="team home">${esc(m.home_team)}</span><span class="vs">vs</span><span class="team away">${esc(m.away_team)}</span></div><div class="match-meta"><span class="liga">${esc(m.country)} · ${esc(m.league)}</span><span class="when">${matchWhen(m)}</span>${calibTag}${freeTag}</div></div><span class="match-chev" aria-hidden="true"></span>
-    </div>${dossier ? `<div class="match-dossier-action">${dossier}</div>` : ""}<div class="match-body" id="${id}-body">
+    </div>${dossier ? `<div class="match-dossier-action">${dossier}</div>` : ""}</div><div class="match-body" id="${id}-body">
     <nav class="report-tabs" role="tablist" aria-label="${esc(c[3])}">${tabs}</nav>
-    <section ${panel("overview")}><div class="report-heading"><h3>${esc(c[4])}</h3><span>${tt("match.phase.ft", "Final · 90 min")}</span></div>
-    ${result([m.prob_home, m.prob_draw, m.prob_away], [m.home_team, c[5], m.away_team], ["1", "X", "2"])}
-    <div class="report-section"><div class="report-heading"><h3>${esc(c[6])}</h3><span>${esc(c[7])}</span></div><div class="report-xg"><strong>${number(m.xg_home)}<small>${esc(m.home_team)}</small></strong><strong>${number(m.xg_away)}<small>${esc(m.away_team)}</small></strong></div>${xgValid ? xgBar(m.xg_home, m.xg_away) : ""}<p class="report-note">${esc(c[17])}</p><div class="report-score"><strong>${score(m.top_score_h, m.top_score_a)}</strong><div>${esc(c[8])}<small>${prob(m.top_score_prob)}</small></div></div></div>
+    <section ${panel("overview")}><div class="report-overview-grid"><div class="report-overview-result"><div class="report-heading"><h3>${esc(c[4])}</h3><span>${tt("match.phase.ft", "Final · 90 min")}</span></div>
+    ${result([m.prob_home, m.prob_draw, m.prob_away], [m.home_team, c[5], m.away_team], ["1", "X", "2"])}</div>
+    <div class="report-section report-overview-xg"><div class="report-heading"><h3>${esc(c[6])}</h3><span>${esc(c[7])}</span></div><div class="report-xg"><strong>${number(m.xg_home)}<small>${esc(m.home_team)}</small></strong><strong>${number(m.xg_away)}<small>${esc(m.away_team)}</small></strong></div>${xgValid ? xgBar(m.xg_home, m.xg_away) : ""}<p class="report-note">${esc(c[17])}</p><div class="report-score"><strong>${score(m.top_score_h, m.top_score_a)}</strong><div>${esc(c[8])}<small>${prob(m.top_score_prob)}</small></div></div></div></div>
     <div class="report-section"><h3>${esc(c[9])}</h3><div class="report-dc">${row("1X", m.prob_1x, "1X", skillMark("dc_1x", m.prob_1x))}${row("X2", m.prob_x2, "X2", skillMark("dc_x2", m.prob_x2))}${row("12", m.prob_12, "12", skillMark("dc_12", m.prob_12))}</div></div></section>
     <section ${panel("goals")}><div class="report-heading"><h3>${esc(c[1])}</h3><span>${tt("match.phase.ft", "Final · 90 min")}</span></div>
     ${row(`${c[11]} 1.5`, m.prob_over_1_5, "O1.5", marketCertMark("O1.5"))}
@@ -1351,9 +1371,9 @@ function loadProReport() {
   if (typeof document === "undefined" || !document.head || !document.querySelector(".pro-card .pro-visible")) return;
   if (window.PoseidonProReport) { window.PoseidonProReport.scan(); return; }
   if (document.getElementById("pro-report-script")) return;
-  const css = document.createElement("link"); css.rel = "stylesheet"; css.href = "assets/pro-report.css?v=20261117"; document.head.appendChild(css);
-  const script = document.createElement("script"); script.id = "pro-report-script"; script.src = "assets/pro-context.js?v=20261117";
-  script.onload = () => { const report = document.createElement("script"); report.src = "assets/pro-report.js?v=20261117"; document.head.appendChild(report); };
+  const css = document.createElement("link"); css.rel = "stylesheet"; css.href = "assets/pro-report.css?v=20261118c"; document.head.appendChild(css);
+  const script = document.createElement("script"); script.id = "pro-report-script"; script.src = "assets/pro-context.js?v=20261118c";
+  script.onload = () => { const report = document.createElement("script"); report.src = "assets/pro-report.js?v=20261118c"; document.head.appendChild(report); };
   script.onerror = script.onload; // Context extraction is optional; keep the source-text report available.
   document.head.appendChild(script);
 }
@@ -1376,20 +1396,65 @@ function proAnalysisText(item, language) {
     ? { text: translated, lang: language }
     : { text: item.analysis, lang: "ro" };
 }
+function createProAnalysisCard(item, language, dossier = null) {
+  const analysis = proAnalysisText(item, language);
+  const card = document.createElement("article");
+  card.className = "pro-card pro-card-full";
+  const heading = document.createElement("div");
+  heading.className = "pro-card-head";
+  const teams = document.createElement("h3");
+  teams.textContent = [item.match?.home, item.match?.away].filter(Boolean).join(" – ");
+  heading.append(teams);
+  if (item.match?.league) {
+    const league = document.createElement("p");
+    league.textContent = item.match.league;
+    heading.append(league);
+  }
+  card.append(heading);
+  const content = document.createElement("div");
+  content.className = "pro-visible";
+  content.hidden = true;
+  content.dataset.proMemberReport = "true";
+  content.lang = analysis.lang;
+  const fixture = Number(item.match?.fixture_id);
+  if (Number.isSafeInteger(fixture) && fixture > 0) content.dataset.proFixture = String(fixture);
+  content.poseidonProDossier = dossier;
+  content.poseidonProSelection = item.provenance?.inputs?.picks;
+  content.innerHTML = _md(analysis.text);
+  card.append(content);
+  return card;
+}
+function setProAnalysisDossier(card, dossier) {
+  const content = card.querySelector(".pro-visible[data-pro-fixture]");
+  if (!content || String(dossier?.fixture_id) !== content.dataset.proFixture) return;
+  content.poseidonProDossier = dossier;
+  window.PoseidonProReport?.enhance(content, true);
+}
 // 30 oct 2026: zi selectabilă în zona Pro; o cerere veche nu suprascrie ziua/limba curentă.
 let PRO_ZI = null;
 let PRO_CERERE = 0;
+let PRO_MECI = null;
+let PRO_DOSAR_CONTROLLER = null;
 async function renderProAnalize(zi) {
   const cerere = ++PRO_CERERE;
+  PRO_DOSAR_CONTROLLER?.abort();
+  PRO_DOSAR_CONTROLLER = null;
   const M = (typeof window !== "undefined") ? window.PoseidonMembers : null;
   const el = document.getElementById("pro-analize");
   if (!el) return;
-  if (!M || !M.MEMBERS_API || M.tier() !== "pro") { el.innerHTML = ""; return; }
+  const rutaAnalize = pro => {
+    const link = document.getElementById("home-nav-analyses");
+    if (link) link.href = pro ? "#pro-analize" : "analize/index.html";
+    const arhiva = document.getElementById("home-nav-analyses-archive");
+    if (arhiva) arhiva.hidden = !pro;
+  };
+  if (!M || !M.MEMBERS_API || M.tier() !== "pro") { rutaAnalize(false); el.innerHTML = ""; return; }
   const azi = ziRO(new Date().toISOString());
   const valida = value => typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value)
     && value <= azi && Number.isFinite(new Date(value + "T12:00:00Z").getTime())
     && new Date(value + "T12:00:00Z").toISOString().slice(0, 10) === value;
   const data = valida(zi) ? zi : valida(PRO_ZI) ? PRO_ZI : azi;
+  if (data !== PRO_ZI) PRO_MECI = null;
   PRO_ZI = data;
   await i18nGata();
   if (cerere !== PRO_CERERE || M.tier() !== "pro") return;
@@ -1401,15 +1466,21 @@ async function renderProAnalize(zi) {
   const loc = document.querySelector(".pro-today"); if (loc) loc.remove();
   const prima = document.querySelector("main.container > section, main.container > *"); const main = document.querySelector("main.container");
   if (main && prima && prima !== el) main.insertBefore(el, prima);
-  const dataText = new Intl.DateTimeFormat(_loc(), { day: "numeric", month: "long", year: "numeric" }).format(new Date(data + "T12:00:00Z"));
   el.innerHTML = `<h2 data-i18n="pro.analize.h2">${tt("pro.analize.h2", "Analizele tale Pro")}</h2>
-    <label for="pro-date"><span data-i18n="filters.day">${tt("filters.day", "Zi:")}</span> <input id="pro-date" type="date" value="${data}" max="${azi}"></label>
-    <p class="muted"><span data-date="${data}">${esc(dataText)}</span></p><div id="pro-content" aria-live="polite"><p class="muted">…</p></div>`;
+    <div class="pro-feed-controls">
+      <div class="pro-day-choice">
+        <label for="pro-date" data-i18n="filters.day">${tt("filters.day", "Zi:")}</label>
+        <input id="pro-date" type="date" value="${data}" max="${azi}">
+      </div>
+      <div id="pro-match-choice" class="pro-match-choice" hidden></div>
+    </div><div id="pro-content" aria-live="polite"><p class="muted">…</p></div>`;
   el.querySelector("#pro-date").addEventListener("change", e => renderProAnalize(e.target.value));
   const continut = el.querySelector("#pro-content");
   try {
     const r = await fetch(`${M.MEMBERS_API}/api/analize/${data}`, { headers: { authorization: "Bearer " + localStorage.getItem("poseidon_members_token") }, cache: "no-store" });
     if (!activa()) return;
+    if (r.ok || r.status === 404) rutaAnalize(true);
+    if (r.status === 401 || r.status === 403) rutaAnalize(false);
     if (!r.ok) {
       // 6 oct 2026: mesaj după oră și cod — „apar după 07:45” doar dimineața; după aceea e o problemă a noastră, spusă ca atare
       const oraRO = Number(new Date().toLocaleTimeString("en-GB", { timeZone: "Europe/Bucharest", hour: "2-digit", hour12: false }));
@@ -1424,10 +1495,51 @@ async function renderProAnalize(zi) {
     if (!activa()) return;
     if (!d || !Array.isArray(d.items) || (d.date && d.date !== data)) throw new Error("Invalid Pro analyses response");
     if (!d.items.length) { continut.innerHTML = `<p class="muted">${tt("pro.zi.gol", "Nu sunt analize Pro publicate pentru această zi.")}</p>`; return; }
-    // 7 oct 2026: analiza în limba aleasă pe site (analysis_en/es/it din arhivă, traduse de traduce_analize.py); fără traducere → româna
-    const txt = it => proAnalysisText(it, limba).text;
-    const nota = d.items.some(it => limba !== "ro" && !it[`analysis_${limba}`]) ? `<p class="muted">${tt("pro.azi.ro_only", "Traducerea apare în câteva minute; până atunci textul e în română.")}</p>` : "";
-    continut.innerHTML = nota + d.items.map(it => `<article class="pro-card pro-card-full"><div class="pro-card-head">${_md(it.match?.home)} – ${_md(it.match?.away)} · ${_md(it.match?.league)}</div><div class="pro-visible">${_md(txt(it))}</div></article>`).join("");
-    loadProReport();
+    continut.removeAttribute("aria-live");
+    const meciuri = d.items.map((item, index) => {
+      const match = item.match || {};
+      const fixture = String(match.fixture_id ?? "");
+      const id = /^[1-9]\d{0,14}$/.test(fixture) ? Number(fixture) : null;
+      const echipe = [match.home, match.away].filter(Boolean).join(" – ");
+      const label = echipe || match.league || `${tt("dashboard.table.match", "Meci")} ${index + 1}`;
+      return { item, id, label, key: id ?? `${label}|${match.league ?? ""}` };
+    });
+    const alegere = el.querySelector("#pro-match-choice");
+    alegere.innerHTML = `<label for="pro-match-select" data-i18n="dashboard.table.match">${esc(tt("dashboard.table.match", "Meci"))}</label>
+      <select id="pro-match-select" aria-controls="pro-active-report">${meciuri.map(({ label }, index) => `<option value="${index}">${esc(label)}</option>`).join("")}</select>`;
+    alegere.hidden = false;
+    continut.innerHTML = '<div id="pro-active-report"></div>';
+    const selector = alegere.querySelector("#pro-match-select");
+    const raport = continut.querySelector("#pro-active-report");
+    const afiseaza = () => {
+      if (!activa()) return;
+      const meci = meciuri[Number(selector.value)];
+      if (!meci) return;
+      PRO_MECI = meci.key;
+      PRO_DOSAR_CONTROLLER?.abort();
+      PRO_DOSAR_CONTROLLER = null;
+      const card = createProAnalysisCard(meci.item, limba);
+      raport.replaceChildren();
+      if (limba !== "ro" && proAnalysisText(meci.item, limba).lang === "ro") {
+        const nota = document.createElement("p");
+        nota.className = "muted";
+        nota.textContent = tt("pro.azi.ro_only", "Traducerea apare în câteva minute; până atunci textul e în română.");
+        raport.append(nota);
+      }
+      raport.append(card);
+      loadProReport();
+      if (!meci.id || typeof M.getProtected !== "function") return;
+      const controller = new AbortController();
+      PRO_DOSAR_CONTROLLER = controller;
+      return M.getProtected(`/api/dosar/${data}/${meci.id}`, controller.signal)
+        .then(raspuns => raspuns.ok ? raspuns.json() : null)
+        .then(dosar => {
+          if (dosar && activa() && !controller.signal.aborted) setProAnalysisDossier(card, dosar);
+        })
+        .catch(() => {}); // The archived analysis remains available if the dossier cannot be loaded.
+    };
+    selector.value = String(Math.max(0, meciuri.findIndex(meci => meci.key === PRO_MECI)));
+    selector.addEventListener("change", afiseaza);
+    afiseaza();
   } catch (e) { if (!activa()) return; console.warn("[membri] analize", e); continut.innerHTML = `<p class="muted">${tt("pro.azi.retea", "Nu am putut contacta serverul membrilor. Reîncarcă pagina; analizele sunt și în #analize-pro pe Discord.")}</p>`; }
 }

@@ -14,8 +14,8 @@
 <link rel="canonical" href="https://poseidonstats.com/">
 <meta property="og:type" content="website">
 <link rel="stylesheet" href="assets/style.css?v=20261026-market-choice1">
-<link rel="stylesheet" href="assets/home-modern.css?v=20261118-paywall-wrap">
-<link rel="stylesheet" href="assets/member-dossier.css?v=20261118">
+<link rel="stylesheet" href="assets/home-modern.css?v=20261118b">
+<link rel="stylesheet" href="assets/member-dossier.css?v=20261118b">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#1e3a8a">
 <link rel="apple-touch-icon" href="assets/icon-192.png">
@@ -148,24 +148,28 @@ Statistici informative. Modelul poate greși. Verifică sursa. 18+.
       <span class="brand-pulse"></span>
     </a>
     <p class="tagline" data-i18n="tagline">Probabilități publicate înainte de meci · <strong>track record verificabil</strong> · dataset public</p>
-    <nav aria-label="Navigare principală" data-i18n-attr="aria-label:dashboard.nav.label">
-      <a href="index.html" class="active" data-i18n="dashboard.nav.home">Acasă</a>
-      <a href="#dashboard" data-i18n="nav.predictii" data-conversion="predictions" data-conversion-source="header">Predicții</a>
-      <a href="analize/index.html" data-i18n="nav.analize" data-conversion="analyses" data-conversion-source="header">Analize</a>
-      <a href="track-record.html" data-i18n="nav.trackrecord" data-conversion="track-record" data-conversion-source="header">Track record</a>
-      <a href="metodologie.html" data-i18n="nav.metodologie" data-conversion="methodology" data-conversion-source="header">Metodologie</a>
-      <a class="patreon" href="#abonament" data-i18n="nav.abonamente" data-conversion="plan-intent" data-conversion-source="header">Abonamente</a>
-      <details class="nav-more"><summary data-i18n="dashboard.nav.more">Mai mult</summary><div>
-        <a href="predictii/index.html" data-i18n="nav.ligi">Pe ligi</a>
-        <a href="simulator.html" data-i18n="nav.simulator">Simulator</a>
-        <a href="istoric.html" data-i18n="nav.istoric">Istoric</a>
-        <a href="#intrebari" data-i18n="faq.h2">Întrebări frecvente</a>
-        <a href="mailto:contact@poseidonstats.com" data-i18n="footer.contact">Contact:</a>
-      </div></details>
-    </nav>
     <div id="members-bar" class="members-bar"></div>
   </div>
 </header>
+
+<div class="home-nav-bar">
+  <nav id="home-nav" class="container" aria-label="Navigare principală" data-i18n-attr="aria-label:dashboard.nav.label">
+    <a href="#dashboard" data-i18n="nav.predictii" data-conversion="predictions" data-conversion-source="header">Predicții</a>
+    <a id="home-nav-analyses" href="analize/index.html" data-i18n="nav.analize" data-conversion="analyses" data-conversion-source="header">Analize</a>
+    <details class="nav-more"><summary data-i18n="dashboard.nav.more">Mai mult</summary><div>
+      <a href="index.html" data-i18n="dashboard.nav.home" aria-current="page">Acasă</a>
+      <a id="home-nav-analyses-archive" href="analize/index.html" data-i18n="dashboard.analysis.readarchive" hidden>Citește analizele din arhivă</a>
+      <a href="track-record.html" data-i18n="nav.trackrecord" data-conversion="track-record" data-conversion-source="header">Track record</a>
+      <a href="metodologie.html" data-i18n="nav.metodologie" data-conversion="methodology" data-conversion-source="header">Metodologie</a>
+      <a class="patreon" href="#abonament" data-i18n="nav.abonamente" data-conversion="plan-intent" data-conversion-source="header">Abonamente</a>
+      <a href="predictii/index.html" data-i18n="nav.ligi">Pe ligi</a>
+      <a href="simulator.html" data-i18n="nav.simulator">Simulator</a>
+      <a href="istoric.html" data-i18n="nav.istoric">Istoric</a>
+      <a href="#intrebari" data-i18n="faq.h2">Întrebări frecvente</a>
+      <a href="mailto:contact@poseidonstats.com" data-i18n="footer.contact">Contact:</a>
+    </div></details>
+  </nav>
+</div>
 
 <main class="container">
 
@@ -191,7 +195,7 @@ Statistici informative. Modelul poate greși. Verifică sursa. 18+.
 
     </div></section>
 
-  <section class="dashboard-grid simplify-demo" id="dashboard" data-conversion-view="dashboard">
+  <section class="dashboard-grid simplify-demo" id="dashboard" tabindex="-1" data-conversion-view="dashboard">
 <div class="dashboard-column dashboard-prediction-panel">
       <div class="dashboard-panel-heading"><h2 data-i18n="simplify.demo.title">Încearcă predicțiile</h2><label class="dashboard-date-wrap"><span data-i18n="filters.day">Zi:</span><select id="dashboard-date" aria-label="Zi:" data-i18n-attr="aria-label:filters.day"></select></label></div>
       <div class="dashboard-demo-controls">
@@ -233,7 +237,7 @@ Statistici informative. Modelul poate greși. Verifică sursa. 18+.
     </details>
   </section>
 
-<section class="conversion-plans" id="abonament" aria-labelledby="conversion-plans-title" data-conversion-view="planstrip">
+<section class="conversion-plans" id="abonament" tabindex="-1" aria-labelledby="conversion-plans-title" data-conversion-view="planstrip">
       <div class="conversion-plans-heading">
         <h2 id="conversion-plans-title"><span class="conversion-visitor-title" data-i18n="conversion.plans.title">Alege accesul potrivit</span><span class="conversion-member-title" data-i18n="conversion.plans.membertitle">Mai mult context cu Pro</span></h2>
         <a href="#abonament-detalii" data-i18n="conversion.details" data-conversion="plan-intent" data-conversion-source="planstrip">Compară toate beneficiile</a>
@@ -369,7 +373,7 @@ Statistici informative. Modelul poate greși. Verifică sursa. 18+.
   <!-- Exemplul Pro — PRIMUL pe pagină (2 oct 2026, Andreea). 6 oct: ÎN AFARA markerilor PROOF_STATIC/DAILY_STATIC — pe 3 oct gen_static_daily l-a șters pentru că era între markeri. -->
   <section class="pro-sample" id="exemplu-pro" data-conversion-view="sample">
     <h2 data-i18n="pro.h2">Exemplu de analiză Pro</h2>
-    <p class="pro-sample-intro" data-i18n="pro.intro">Pe site vezi <strong>cifrele</strong>. Abonații Pro primesc, pe site și pe Discord, și <strong>de ce</strong> — context real (clasament, formă, H2H, absențe) reconciliat cu modelul, cu capcanele marcate. Mai jos, analiza de azi, completă, publicată înainte de meci. Rezultatul și verificarea pick-urilor apar a doua zi, în arhivă:</p>
+    <p class="pro-sample-intro" data-i18n="pro.intro">Un exemplu din arhiva analizelor Pro.</p>
 
     <details class="home-analysis-disclosure">
       <summary><span data-i18n="oferta.exemplu">Vezi exemplul de analiză ↓</span></summary>
@@ -618,7 +622,7 @@ Statistici informative. Modelul poate greși. Verifică sursa. 18+.
       <div class="dashboard-benefit"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="15" cy="17" r="11"/><circle cx="15" cy="17" r="6"/><path d="m15 17 12-12M21 5h6v6"/></svg><span><strong data-i18n="support.noads">Zero reclame</strong><small data-i18n="support.noads.desc">Zero link-uri către case de pariuri. Strict informativ.</small></span></div>
       <a href="metodologie.html" class="gold-button" data-i18n="nav.metodologie">Metodologie</a>
     </div>
-  </section><section class="faq" id="intrebari">
+  </section><section class="faq" id="intrebari" tabindex="-1">
     <h2 data-i18n="faq.h2">Întrebări frecvente</h2>
     <details class="faq-item">
       <summary data-i18n="faq.q1">Ce primesc gratuit și ce e cu plată?</summary>
@@ -737,9 +741,9 @@ Statistici informative. Modelul poate greși. Verifică sursa. 18+.
   <div class="dossier-body" data-dossier-body></div>
 </dialog>
 <script src="assets/members.js?v=20261118-dossier"></script>
-<script src="assets/member-dossier.js?v=20261118"></script>
-<script src="assets/app.js?v=20261118-dossier"></script>
+<script src="assets/member-dossier.js?v=20261118b"></script>
+<script src="assets/app.js?v=20261118b"></script>
 <script src="assets/citire.js?v=20261024-onestitate3"></script>
-<script src="assets/home-dashboard.js?v=20261118-dossier"></script>
+<script src="assets/home-dashboard.js?v=20261118b"></script>
 </body>
 </html>

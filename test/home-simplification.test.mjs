@@ -123,7 +123,7 @@ test('tabbed Pro demonstration uses only the actual generated sample, truthful l
   }
   const visible=bodies.en.querySelector('.pro-visible'), sourceHTML=visible.innerHTML;
   visible.innerHTML='<div id="pro-report-existing-tab-0">enhanced</div>';
-  visible.querySelector=selector=>selector==='.report-original > div'?{innerHTML:sourceHTML}:null;
+  doc.defaultView={PoseidonProReport:{sourceMarkup:node=>node===visible?sourceHTML:node?.innerHTML}};
   const refreshed=dashboard.renderProSummary(doc,translate,'en',null);
   assert(refreshed.includes(sourceHTML));assert(!refreshed.includes('pro-report-existing-tab-0'),'rerender must use original source, not duplicate tab IDs');
   const italian=dashboard.renderProSummary(doc,translate,'it',null);
@@ -160,7 +160,7 @@ test('initial hash, hashchange and native fragment clicks reveal disclosures whi
     env.listeners.click({target:{closest:selector=>selector==='a[href^="#"]'?anchor:null}});assert.equal(outer.open,true);
     const calls=[];env.nodes['filter-reset']={click:()=>calls.push('reset')};
     for(const id of ['filter-day','filter-league','filter-minprob'])env.nodes[id]={value:'stale',dispatchEvent:()=>{}};
-    outer.open=false;dashboard.revealMatch(env.doc,source);assert(outer.open);assert.deepEqual(calls,['reset']);assert.equal(env.nodes['filter-day'].value,source.match_date.slice(0,10));
+    outer.open=false;dashboard.revealMatch(env.doc,source);assert(outer.open);assert.deepEqual(calls,['reset']);assert.equal(env.nodes['filter-day'].value,dashboard.dayOf(source.match_date));
   } finally {globalThis.fetch=priorFetch;}
 });
 
