@@ -19,7 +19,8 @@ function environment(search='',storage=new Map()) {
     addEventListener:(type,callback)=>{(listeners[type] ||= []).push(callback);},
     IntersectionObserver:class {constructor(callback){this.callback=callback;observers.push(this);}observe(){}unobserve(){}disconnect(){}}};
   const ready=()=>Object.assign(root.goatcounter,{
-    get_data:vars=>({p:vars.path,r:'https://example.test/?email=person@example.test',t:vars.title,e:!!vars.event,q:root.location.search}),
+    get_data:vars=>({p:vars.path,r:'https://example.test/?email=person@example.test',t:vars.title,e:!!vars.event,q:root.location.search,
+      ...(vars.no_session ? {ns:vars.no_session} : {})}),
     count(vars){calls.push(this.get_data(vars));}
   });
   return {root,calls,timers,listeners,observers,ready,runTimers(){let n=0;while(timers.size&&n<100){const [id,fn]=timers.entries().next().value;timers.delete(id);fn();n++;}return n;}};
@@ -59,6 +60,67 @@ test('a throwing counter cannot start an infinite retry loop or block navigation
   const env=environment();const funnel=tracker(env);env.ready();let attempts=0;
   env.root.goatcounter.count=()=>{attempts++;throw Error('blocked');};
   assert.doesNotThrow(()=>funnel.mount());env.runTimers();assert(attempts<=21);assert.equal(env.timers.size,0);
+});
+
+test('each homepage store link emits one private event for its store and preserves navigation',()=>{
+  const env=environment('?email=person@example.test');
+  const funnel=tracker(env);
+  funnel.mount();
+  funnel.mount();
+  const html=readFileSync(new URL('../index.html',import.meta.url),'utf8');
+  const storeLinks=[...html.matchAll(/<a href="(https:\/\/(?:apps\.apple\.com|play\.google\.com)\/[^"]+)"/g)];
+  assert.equal(storeLinks.length,4);
+  for(const [,href] of storeLinks){
+    const anchor=link({href});
+    const target={closest:selector=>anchor.closest(selector)};
+    env.listeners.click[0]({
+      target,
+      preventDefault:()=>assert.fail('the store link must retain its native navigation')
+    });
+    assert.equal(anchor.getAttribute('href'),href);
+    assert.equal(env.listeners.click.length,1);
+    assert.equal(env.calls.length,0);
+  }
+  env.ready();
+  env.runTimers();
+  assert.equal(env.calls[0].ns,undefined);
+  assert.deepEqual(env.calls.slice(1).map(({p,e,q,ns})=>[p,e,q,ns]),[
+    ['funnel/app-outbound/app-store',true,'',true],
+    ['funnel/app-outbound/google-play',true,'',true],
+    ['funnel/app-outbound/app-store',true,'',true],
+    ['funnel/app-outbound/google-play',true,'',true]
+  ]);
+});
+
+test('store middle-clicks support localized URLs and ignore other destinations',()=>{
+  const env=environment();
+  const funnel=tracker(env);
+  env.ready();
+  funnel.mount();
+  const apple='https://apps.apple.com/fr/app/poseidon-stats/id6824537161?ct=campaign';
+  const play='https://play.google.com/store/apps/details?id=com.poseidonstats.app&hl=fr';
+  for(const href of [apple,play]){
+    const target=link({href});
+    env.listeners.auxclick[0]({type:'auxclick',target,button:2});
+    env.listeners.auxclick[0]({type:'auxclick',target,button:1});
+  }
+  const target=link({href:apple});
+  env.listeners.click[0]({target,defaultPrevented:true});
+  env.listeners.click[0]({target});
+  env.listeners.click[0]({target});
+  for(const href of [
+    'https://play.google.com/store/account/subscriptions?package=com.poseidonstats.app',
+    'https://play.google.com/store/apps/details?id=another.app',
+    'https://apps.apple.com/fr/app/other-app/id123',
+    'https://apps.apple.com.example.test/fr/app/poseidon-stats/id6824537161'
+  ]) env.listeners.click[0]({target:link({href})});
+  assert.deepEqual(env.calls.map(({p,ns})=>[p,ns]),[
+    ['/',undefined],
+    ['funnel/app-outbound/app-store',true],
+    ['funnel/app-outbound/google-play',true],
+    ['funnel/app-outbound/app-store',true],
+    ['funnel/app-outbound/app-store',true]
+  ]);
 });
 
 test('campaign allowlists reject PII, tokens, long IDs, unexpected keys and arbitrary values',()=>{

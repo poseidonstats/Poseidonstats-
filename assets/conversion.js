@@ -39,6 +39,19 @@
       return url.protocol === 'https:' || url.protocol === 'http:' ? url.origin : '';
     } catch (_) { return ''; }
   }
+  function downloadStore(href) {
+    if (!href || !href.startsWith('https://')) return null;
+    try {
+      const url = new URL(href);
+      if (url.origin === 'https://apps.apple.com' &&
+          /^\/(?:[a-z]{2}\/)?app\/(?:[^/]+\/)?id6824537161\/?$/.test(url.pathname)) return 'app-store';
+      if (url.origin === 'https://play.google.com' && url.pathname === '/store/apps/details') {
+        const ids = url.searchParams.getAll('id');
+        if (ids.length === 1 && ids[0] === 'com.poseidonstats.app') return 'google-play';
+      }
+    } catch (_) {}
+    return null;
+  }
   function create(root) {
     const doc = root.document, queue = [], seen = new Set();
     const query = campaignQuery(root.location && root.location.search);
@@ -94,7 +107,11 @@
       try { root.sessionStorage.setItem(storageKey, '1'); } catch (_) {}
       return true;
     }
-    function event(path) { return send({path, title: path, referrer, event: true}); }
+    function event(path, noSession = false) {
+      const payload = {path, title: path, referrer, event: true};
+      if (noSession) payload.no_session = true;
+      return send(payload);
+    }
     function track(action, source, tier) {
       if (!ACTIONS.includes(action) || !SOURCES.includes(source) || (tier && tier !== 'basic' && tier !== 'pro')) return false;
       return event('funnel/' + action + '/' + source + (tier ? '/' + tier : ''));
@@ -160,13 +177,24 @@
       if (mounted) { flush(); return; }
       mounted = true;
       doc.querySelectorAll('a.plan-btn-basic,a.plan-btn-pro,a.pro-cta').forEach(decoratePlan);
-      doc.addEventListener('click', ev => {
+      function onClick(ev) {
+        const middle = ev.type === 'auxclick';
+        if (middle && ev.button !== 1) return;
         const element = ev.target && ev.target.closest && ev.target.closest('a,button');
         if (!element) return;
+        const store = downloadStore(element.getAttribute('href'));
+        if (store) {
+          // Count each navigation even when the same visitor clicks twice in a session.
+          if (!ev.defaultPrevented) event('funnel/app-outbound/' + store, true);
+          return;
+        }
+        if (middle) return;
         decoratePlan(element);
         const target = classify(element);
         if (target) track(target.action, target.source, target.tier);
-      }, {passive: true});
+      }
+      doc.addEventListener('click', onClick, {passive: true});
+      doc.addEventListener('auxclick', onClick, {passive: true});
       const script = doc.querySelector('script[data-goatcounter]');
       if (script) script.addEventListener('load', flush);
       if (typeof root.addEventListener === 'function') root.addEventListener('pageshow', flush);
