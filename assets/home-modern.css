@@ -125,7 +125,9 @@ body.home-modern:has(.home-nav-bar) { overflow-x: clip; }
 .home-modern .google-play-badge { display: inline-block; max-width: 100%; border-radius: 7px; }
 .home-modern .google-play-badge img { display: block; height: 52px; width: auto; max-width: 100%; }
 .home-modern .google-play-badge:focus-visible { outline: 2px solid var(--dash-gold); outline-offset: 6px; }
+.home-modern .footer-app-downloads { justify-content: center; }
 .home-modern .footer-app-downloads .google-play-pending { min-height: 30px; padding-block: 3px; }
+.home-modern .footer-app-downloads .app-store-badge img,
 .home-modern .footer-app-downloads .google-play-badge img { height: 40px; }
 .home-modern :is(.gold-button, .outline-button) { display: inline-flex; align-items: center; justify-content: center; gap: 12px; min-height: 43px; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: 650; }
 .home-modern .gold-button { background: linear-gradient(#ffe68c, #e9b23e); border: 1px solid #ffdc75; color: #171b20; box-shadow: 0 3px 12px #0004; }

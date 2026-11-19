@@ -131,7 +131,7 @@ test('homepage market filters use translated labels and homepage assets use thei
     for (const language of languages) assert(dictionary[language][key]);
   }
   assert(html.includes('assets/app.js?v=20261119-native-pro-anchor'));
-  assert(html.includes('assets/home-modern.css?v=20261119-native-pro-anchor'));
+  assert(html.includes('assets/home-modern.css?v=20261119-footer-app-store'));
   assert(html.includes('assets/members.js?v=20261119-functions'));
   assert(html.includes('assets/member-dossier.js?v=20261119-public-pro-anchor'));
   assert(html.includes('assets/member-dossier.css?v=20261119-native-pro-anchor'));
