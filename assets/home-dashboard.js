@@ -145,12 +145,13 @@
     let id;
     try { id = decodeURIComponent(String(fragment || '').replace(/^#/,'')); } catch (_) { return null; }
     if (!id) return null;
-    const target = doc.getElementById(id);
+    const destination = id === 'exemplu-pro' ? doc.getElementById('public-pro-demo') : null;
+    const target = destination || doc.getElementById(id);
     if (!target) return null;
     for (let node = target; node; node = node.parentElement) {
       if (node.tagName === 'DETAILS') node.open = true;
     }
-    if (id === 'exemplu-pro' && target.querySelector) {
+    if (id === 'exemplu-pro' && !destination && target.querySelector) {
       const sample = target.querySelector('details');
       if (sample) sample.open = true;
     }
@@ -237,7 +238,7 @@
     });
     view.addEventListener('hashchange', () => {
       stopRestoration();
-      openTargetDetails(doc, view.location.hash);
+      openTargetDetails(doc, view.location.hash, view.location.hash === '#exemplu-pro');
     });
     return () => {
       if (watchInput) inputEvents.forEach(name => view.removeEventListener(name, stopRestoration));
@@ -512,8 +513,8 @@
       const source = doc.querySelector('#exemplu-pro [data-sample-fixture]');
       doc.querySelectorAll('[data-dashboard-pro-summary]').forEach(element => {
         element.innerHTML = renderProSummary(doc,tr,lang,tier);
-        if (tier === 'pro') dossiers?.clearSample?.(element);
-        else dossiers?.mountPublicSample?.(element,source,lang);
+        const memberAction = tier ? element.querySelector('.dashboard-report-action') : null;
+        dossiers?.mountPublicSample?.(element,source,lang,memberAction);
       });
 
       if (doc.defaultView && doc.defaultView.PoseidonProReport) doc.defaultView.PoseidonProReport.scan();
@@ -553,7 +554,14 @@
     });
     doc.addEventListener('click', event => {
       const fragment = event.target.closest('a[href^="#"]');
-      if (fragment) openTargetDetails(doc,fragment.getAttribute('href'));
+      const href = fragment?.getAttribute('href');
+      const target = href ? openTargetDetails(doc,href) : null;
+      if (href === '#exemplu-pro' && target?.id === 'public-pro-demo' && !event.defaultPrevented
+          && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey) {
+        event.preventDefault();
+        if (view.location.hash === '#public-pro-demo') target.scrollIntoView({block:'start'});
+        else view.location.hash = '#public-pro-demo';
+      }
       const match = event.target.closest('[data-dashboard-fixture]');
       if (match && dashboardPredictions()) {
         const source = dashboardPredictions().matches.find(m => String(m.fixture_id) === match.getAttribute('data-dashboard-fixture'));
@@ -562,7 +570,7 @@
         }
       }
       const sample = event.target.closest('[data-dashboard-analysis]');
-      if (sample) {openTargetDetails(doc,'#exemplu-pro');const detail=doc.querySelector('#exemplu-pro details');if(detail) detail.open=true;}
+      if (sample && target?.id !== 'public-pro-demo') openTargetDetails(doc,'#exemplu-pro');
     });
     doc.addEventListener('change', event => {if(event.target.matches('.lang-select')) setTimeout(render,0);});
     const view = doc.defaultView;

@@ -666,7 +666,7 @@
     return sampleRequests.get(day);
   }
 
-  async function mountPublicSample(target, source, lang) {
+  async function mountPublicSample(target, source, lang, memberAction) {
     sampleRenders.get(target)?.controller.abort();
     const fixture = Number(source?.dataset.sampleFixture), day = source?.dataset.sampleDay;
     if (!Number.isSafeInteger(fixture) || fixture < 1 || !/^\d{4}-\d{2}-\d{2}$/.test(day)) return;
@@ -714,6 +714,7 @@
       }
       card.append(heading,body);
       target.replaceChildren(card);
+      if (memberAction) target.append(memberAction);
       watchResult(editorial,state,report);
     } catch (_) { /* The generator's selected public sample remains available. */ }
   }
@@ -768,7 +769,7 @@
   root.PoseidonDossier = {
     setPredictions, predictions:()=>authorized() ? verifiedPredictions : null, publicFixtureIds, button, copy:words,
     loadCatalog, catalog, openPro, openProForMatch, switchLanguage,
-    mountPublicSample, clearSample:target=>sampleRenders.get(target)?.controller.abort(),
+    mountPublicSample,
     recentDays:()=>[siteDay.format(new Date(Date.now()-86_400_000)),siteDay.format(new Date())],
   };
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded",mount);

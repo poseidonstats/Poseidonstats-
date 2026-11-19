@@ -608,3 +608,15 @@ test('dashboard rows expose each probability and access cell with its table head
   assert.match(mobile,/\.dashboard-reading-row \.citire \{ box-sizing: border-box; width: 100%; min-width: 0; max-width: 100%;/);
   assert.match(css,/\.dashboard-reading-row \.citire \{[^}]*overflow-wrap: anywhere;[^}]*border-left: 3px solid #c9a227;/);
 });
+
+test('legacy example links prefer the native public sample and preserve the static fallback',()=>{
+  const native={id:'public-pro-demo',scrollIntoView:o=>assert.equal(o.block,'start')};
+  const detail={open:false};
+  const legacy={id:'exemplu-pro',querySelector:()=>detail};
+  const doc={getElementById:id=>[native,legacy].find(node=>node.id===id)};
+  assert.equal(dashboard.openTargetDetails(doc,'#exemplu-pro',true),native);
+  assert.equal(detail.open,false);
+  assert.equal(dashboard.openTargetDetails(doc,'#public-pro-demo'),native);
+  assert.equal(dashboard.openTargetDetails({getElementById:id=>id==='exemplu-pro'?legacy:null},'#exemplu-pro'),legacy);
+  assert.equal(detail.open,true);
+});
