@@ -165,6 +165,9 @@ $PY ~/poseidon-site/scripts/gen_dataset.py >> "$LOG" 2>&1 || echo "[$(ts)] [WARN
 
 # 2. Git add/commit/push
 cd ~/poseidon-site
+# 19 nov 2026 — badge-ul Google Play se activează în aceeași publicare cu index.html.
+"$PY" scripts/google_play_badge.py index.html >> "$LOG" 2>&1 || \
+    echo "[$(ts)] [WARN] Google Play badge refresh failed (publish continuă)" >> "$LOG"
 if [ -z "$(git status --porcelain data/ index.html sitemap.xml predictii/)" ]; then
     echo "[$(ts)] No changes to publish." >> "$LOG"
     exit 0
