@@ -846,7 +846,15 @@
     "approved.faq.resultsText": "Auditul publică perioadele și eșantioanele evaluate. Performanța istorică nu garantează rezultatele viitoare.",
     "approved.nav.account": "Cont",
     "approved.nav.menu": "Meniu",
-    "redesign.edition.backMatch": "Înapoi la meci"
+    "redesign.edition.backMatch": "Înapoi la meci",
+    "redesign.edition.matchEstimate": "Estimarea modelului pentru acest meci.",
+    "redesign.edition.resultLoading": "Se caută rezultatul publicat…",
+    "redesign.edition.resultPending": "Rezultat în așteptarea verificării",
+    "redesign.edition.resultConfirmed": "Rezultat confirmat",
+    "redesign.edition.selectionConfirmed": "Selecție confirmată",
+    "redesign.edition.selectionMissed": "Selecție ratată",
+    "redesign.edition.resultUnavailable": "Date despre rezultat indisponibile",
+    "redesign.edition.resultError": "Rezultatul nu a putut fi încărcat"
   },
   "en": {
     "lang.name": "English",
@@ -1696,7 +1704,15 @@
     "approved.faq.resultsText": "The audit publishes the periods and samples evaluated. Historical performance does not guarantee future results.",
     "approved.nav.account": "Account",
     "approved.nav.menu": "Menu",
-    "redesign.edition.backMatch": "Back to the match"
+    "redesign.edition.backMatch": "Back to the match",
+    "redesign.edition.matchEstimate": "The model’s estimate for this match.",
+    "redesign.edition.resultLoading": "Looking for the published result…",
+    "redesign.edition.resultPending": "Result pending verification",
+    "redesign.edition.resultConfirmed": "Result confirmed",
+    "redesign.edition.selectionConfirmed": "Selection confirmed",
+    "redesign.edition.selectionMissed": "Selection missed",
+    "redesign.edition.resultUnavailable": "Result data unavailable",
+    "redesign.edition.resultError": "Could not load the result"
   },
   "es": {
     "lang.name": "Español",
@@ -2545,7 +2561,15 @@
     "approved.faq.resultsText": "La auditoría publica los períodos y las muestras evaluados. El rendimiento histórico no garantiza resultados futuros.",
     "approved.nav.account": "Cuenta",
     "approved.nav.menu": "Menú",
-    "redesign.edition.backMatch": "Volver al partido"
+    "redesign.edition.backMatch": "Volver al partido",
+    "redesign.edition.matchEstimate": "La estimación del modelo para este partido.",
+    "redesign.edition.resultLoading": "Buscando el resultado publicado…",
+    "redesign.edition.resultPending": "Resultado pendiente de verificación",
+    "redesign.edition.resultConfirmed": "Resultado confirmado",
+    "redesign.edition.selectionConfirmed": "Selección acertada",
+    "redesign.edition.selectionMissed": "Selección fallada",
+    "redesign.edition.resultUnavailable": "Datos del resultado no disponibles",
+    "redesign.edition.resultError": "No se pudo cargar el resultado"
   },
   "it": {
     "lang.name": "Italiano",
@@ -3394,7 +3418,15 @@
     "approved.faq.resultsText": "L’audit pubblica i periodi e i campioni valutati. Le prestazioni storiche non garantiscono i risultati futuri.",
     "approved.nav.account": "Accedi",
     "approved.nav.menu": "Menu",
-    "redesign.edition.backMatch": "Torna alla partita"
+    "redesign.edition.backMatch": "Torna alla partita",
+    "redesign.edition.matchEstimate": "La stima del modello per questa partita.",
+    "redesign.edition.resultLoading": "Ricerca del risultato pubblicato…",
+    "redesign.edition.resultPending": "Risultato in attesa di verifica",
+    "redesign.edition.resultConfirmed": "Risultato confermato",
+    "redesign.edition.selectionConfirmed": "Selezione confermata",
+    "redesign.edition.selectionMissed": "Selezione mancata",
+    "redesign.edition.resultUnavailable": "Dati del risultato non disponibili",
+    "redesign.edition.resultError": "Impossibile caricare il risultato"
   },
   "fr": {
     "lang.name": "Français",
@@ -4243,7 +4275,15 @@
     "approved.faq.resultsText": "L’audit publie les périodes et les échantillons évalués. Les performances historiques ne garantissent pas les résultats futurs.",
     "approved.nav.account": "Compte",
     "approved.nav.menu": "Menu",
-    "redesign.edition.backMatch": "Retour au match"
+    "redesign.edition.backMatch": "Retour au match",
+    "redesign.edition.matchEstimate": "L’estimation du modèle pour ce match.",
+    "redesign.edition.resultLoading": "Recherche du résultat publié…",
+    "redesign.edition.resultPending": "Résultat en attente de vérification",
+    "redesign.edition.resultConfirmed": "Résultat confirmé",
+    "redesign.edition.selectionConfirmed": "Sélection confirmée",
+    "redesign.edition.selectionMissed": "Sélection manquée",
+    "redesign.edition.resultUnavailable": "Données du résultat indisponibles",
+    "redesign.edition.resultError": "Impossible de charger le résultat"
   },
   "id": {
     "lang.name": "Bahasa Indonesia",
@@ -5092,6 +5132,14 @@
     "approved.faq.resultsText": "Audit memublikasikan periode dan sampel yang dievaluasi. Kinerja historis tidak menjamin hasil mendatang.",
     "approved.nav.account": "Akun",
     "approved.nav.menu": "Menu",
-    "redesign.edition.backMatch": "Kembali ke pertandingan"
+    "redesign.edition.backMatch": "Kembali ke pertandingan",
+    "redesign.edition.matchEstimate": "Estimasi model untuk pertandingan ini.",
+    "redesign.edition.resultLoading": "Mencari hasil yang dipublikasikan…",
+    "redesign.edition.resultPending": "Hasil menunggu verifikasi",
+    "redesign.edition.resultConfirmed": "Hasil terkonfirmasi",
+    "redesign.edition.selectionConfirmed": "Pilihan terkonfirmasi",
+    "redesign.edition.selectionMissed": "Pilihan meleset",
+    "redesign.edition.resultUnavailable": "Data hasil tidak tersedia",
+    "redesign.edition.resultError": "Hasil tidak dapat dimuat"
   }
 }

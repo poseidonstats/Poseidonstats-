@@ -331,3 +331,25 @@ test('public sample keeps league and Pro denominators on the exact archived prim
  const idVerdict=report.dossierReport('⚡ <strong>Putusan:</strong> Tim tuan rumah diunggulkan.<br>',item,null,day,'id','id',true);
  assert.match(idVerdict, /Tim tuan rumah diunggulkan/);
 });
+
+test('public Pro preview displays published arguments and handles a missing second argument', t=>{
+ t.mock.method(Date,'now',()=>Date.parse('2026-11-19T15:00:00Z'));
+ const day='2026-11-19';
+ const item={match:{fixture_id:17},site_published_at_utc:day+'T07:00:00Z',provenance:{
+  original_kickoff_utc:day+'T13:00:00Z',generated_at_utc:day+'T06:30:00Z',
+  inputs:{picks:[{rol:'Principal',key:'over_1_5',p:76}]},
+ }};
+ const verdict='<p>⚡ <strong>Verdict:</strong> Text din articol.</p>';
+ const context='<p>📊 <strong>Context:</strong> Echipa gazdă era pe locul 4.</p>';
+ const evidence='<p>🧮 <strong>Modelul și echipele:</strong> Cinci meciuri acasă analizate.</p>';
+ const edition={compact:true,label:key=>key,metric:(...values)=>values.filter(Boolean).join(' · ')};
+ const render=html=>report.dossierReport(html,item,null,day,'ro','ro',true,edition);
+ const preview=render(verdict+context+evidence);
+ assert.match(preview,/Pronostic publicat înainte de meci/);
+ assert.match(preview,/76%.*matchEstimate/);
+ assert.match(preview,/<h4 lang="ro">arguments<\/h4>.*Cinci meciuri acasă analizate.*Echipa gazdă era pe locul 4/);
+ assert.match(preview,/<p role="status" data-sample-result>resultLoading<\/p>/);
+ assert.doesNotMatch(preview,/Verificare rezultat ·/);
+ assert.match(render(verdict+evidence),/<h4 lang="ro">arguments<\/h4><p>Cinci meciuri acasă analizate\.<\/p><\/section>/);
+ assert.doesNotMatch(render(verdict),/>arguments<\/h4>/);
+});

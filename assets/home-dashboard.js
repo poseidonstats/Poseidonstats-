@@ -557,7 +557,7 @@
       doc.querySelectorAll('[data-dashboard-pro-summary]').forEach(element => {
         element.innerHTML = renderProSummary(doc,tr,lang,tier);
         const memberAction = tier ? element.querySelector('.dashboard-report-action') : null;
-        dossiers?.mountPublicSample?.(element,source,lang,memberAction,predictions);
+        dossiers?.mountPublicSample?.(element,source,lang,memberAction,predictions,history);
       });
 
       if (doc.defaultView && doc.defaultView.PoseidonProReport) doc.defaultView.PoseidonProReport.scan();

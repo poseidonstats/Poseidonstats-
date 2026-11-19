@@ -622,9 +622,13 @@
     samples:"Eșantionul editorial cuprinde {home} meciuri acasă și {away} în deplasare.", verification:"Verificarea rezultatului", original:"Textul integral publicat înainte de meci",
     read:"Citește analiza completă", heading:"Dosar Pro", basic:"Vezi dosarul Basic", stats:"Dosarul statistic Basic",
     oneXtwo:"Probabilități 1 / X / 2", back:"Înapoi la analiza Pro", backMatch:"Înapoi la meci",
+    matchEstimate:"Estimarea modelului pentru acest meci.",
+    resultLoading:"Se caută rezultatul publicat…", resultPending:"Rezultat în așteptarea verificării",
+    resultConfirmed:"Rezultat confirmat", selectionConfirmed:"Selecție confirmată", selectionMissed:"Selecție ratată",
+    resultUnavailable:"Date despre rezultat indisponibile", resultError:"Rezultatul nu a putut fi încărcat",
   };
   const label = key => tt("redesign.edition." + key,fallback[key]);
-  const metric = (name,value,detail) => `<div class="edition-metric"><span>${esc(name)}</span><strong>${esc(value)}</strong><small>${esc(detail)}</small></div>`;
+  const metric = (name,value,detail,explanation = "") => `<div class="edition-metric"><span>${esc(name)}</span><strong>${esc(value)}</strong><small>${esc(detail)}</small>${explanation ? `<small>${esc(explanation)}</small>` : ""}</div>`;
   function originalReading(html,lang) {
     const original = text("details",undefined,"edition-original");
     original.append(text("summary",label("original")));
@@ -752,6 +756,67 @@
     }
     review.addEventListener("toggle",load);
     load();
+  }
+
+  function archiveSampleResult(archive,state) {
+    if (archive.querySelector(".intro h1 [data-date]")?.dataset.date !== state.day) return null;
+    const id = "m" + state.fixture;
+    const candidates = [...archive.querySelectorAll(`.pro-archive-match[id="${id}"] article.pro-card-full, article[id="${id}"]`)];
+    const archiveLanguage = card => card.closest("[data-lang]")?.dataset.lang || "ro";
+    const card = [state.sourceLang,"en","ro"].map(lang=>candidates.find(item=>archiveLanguage(item)===lang)).find(Boolean);
+    const score = card?.querySelector("[data-i18n='arhiva.rezfinal']")?.textContent.match(/\b\d+\s*[-–]\s*\d+\b/)?.[0];
+    if (!score) return null;
+
+    // Only the archive's principal row can settle the editorial selection.
+    const rows = [...card.querySelectorAll(".pro-verificare .audit-table tbody tr")]
+      .filter(row=>row.cells[0]?.querySelector('[data-archive-role="principal"]'));
+    const row = rows.length===1 && rows[0];
+    const normalize = value => value?.trim().replace(/\s+/g," ").replace(/(\d),(\d)/g,"$1.$2");
+    const selection = state.selection;
+    let outcome;
+    if (row && selection && archiveLanguage(card)===state.sourceLang
+      && normalize(row.cells[1]?.textContent)===normalize(selection.market)
+      && normalize(row.cells[2]?.textContent)===normalize(selection.probability)) {
+      const markers = row.cells[3]?.querySelectorAll("[data-i18n^='arhiva.semn.']");
+      const marker = markers?.length===1 && markers[0].dataset.i18n;
+      if (marker==="arhiva.semn.da") outcome = "selectionConfirmed";
+      if (marker==="arhiva.semn.nu") outcome = "selectionMissed";
+    }
+    return {score:score.replace(/\s*[-–]\s*/,"–"),outcome};
+  }
+
+  async function watchSampleResult(surfaces,state,history,report) {
+    if (Date.now() < state.kickoff) return;
+    const panels = surfaces.map(surface=>surface.querySelector("[data-sample-result]"));
+    const rows = Array.isArray(history?.days) && history.days.find(day=>day?.date===state.day)?.matches;
+    const matches = Array.isArray(rows) ? rows.filter(match=>match?.fixture_id===state.fixture) : [];
+    const pending = matches.length===1 && matches[0].ft_h==null && matches[0].ft_a==null
+      && Array.isArray(matches[0].picks) && matches[0].picks.some(pick=>pick?.outcome==="PENDING");
+    const path = `analize/${state.day}.html`;
+    let result, status = pending ? "resultPending" : "resultUnavailable";
+    try {
+      const response = await fetch(path,{credentials:"omit",signal:state.controller.signal});
+      if (response.ok) {
+        const archive = new DOMParser().parseFromString(await response.text(),"text/html");
+        result = archiveSampleResult(archive,state);
+        if (result) status = "resultConfirmed";
+      } else if (response.status!==404 && response.status!==410) {
+        status = "resultError";
+      }
+    } catch (_) {
+      status = "resultError";
+    }
+    if (state.controller.signal.aborted) return;
+    for (const panel of panels) {
+      if (!panel?.isConnected) continue;
+      panel.dataset.resultState = status;
+      panel.textContent = label(status) + (result ? " · " + result.score : "");
+      if (!result) continue;
+      if (result.outcome) panel.append(text("span",label(result.outcome),"edition-selection-outcome"));
+      const link = text("a",report.archiveReviewLabels(state.lang).open,"edition-result-link");
+      link.href = path + "#m" + state.fixture;
+      panel.after(link);
+    }
   }
 
   async function fetchDossier(state, message) {
@@ -896,7 +961,7 @@
     return sampleRequests.get(day);
   }
 
-  async function mountPublicSample(target, source, lang, memberAction, predictions) {
+  async function mountPublicSample(target, source, lang, memberAction, predictions, history) {
     publicPredictions = predictions;
     sampleRenders.get(target)?.controller.abort();
     const fixture = Number(source?.dataset.sampleFixture), day = source?.dataset.sampleDay;
@@ -933,6 +998,8 @@
       });
       full.addEventListener("close",()=>show.focus({preventScroll:true}));
       const html = _md(analysis.text);
+      state.sourceLang = analysis.lang;
+      state.selection = report.sections(html).selection;
       const meta = matchMetadata(item,lang);
       for (const surface of [card,full]) {
         const compact = surface === card;
@@ -976,8 +1043,7 @@
       card.append(show,full);
       target.replaceChildren(card);
       if (memberAction) target.append(memberAction);
-      watchResult(card.querySelector(".edition-content"),state,report);
-      watchResult(full,state,report);
+      watchSampleResult([card,full],state,history,report);
     } catch (_) { /* The generator's selected public sample remains available. */ }
   }
 

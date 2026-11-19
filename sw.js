@@ -1,5 +1,33 @@
-/* Network-first for public static pages and assets. Keep the last successful response for offline use. */
-const CACHE = "poseidon-v114";
+/* Public responses only. Keep the homepage and its versioned assets together. */
+const CACHE = "poseidon-v115";
+const RELEASE = "20261119-pro-indicators";
+const PREVIOUS_CACHE = "poseidon-v114";
+const PREVIOUS_RELEASE = "20261119-pro-mobile";
+// Update with RELEASE when these static files change. The daily dictionary is validated separately.
+const RELEASE_ASSET_SHA256 = {
+  "assets/app.js": "ad5ed443d549d7019dd3196e596f7ea47e639ad6a44368fdb60e2164aa55e43a",
+  "assets/home-dashboard.js": "235fe52dfdb54950a48a90206da201a711ad89a88bddf9a11050dde0450fa91f",
+  "assets/member-dossier.css": "ad2846535906b2ac472b41f9368675d3e2dd3a5f5acd4f9ab883fe841f463881",
+  "assets/member-dossier.js": "643e9f8a9fc2af5529f0e8a31fe902aa163456109de9a500660155cca01c6c75",
+  "assets/pro-report.js": "6c324b3ff88a4539eef242981a8d35a37f7e8e3f96833e509d156e3b6835a44f",
+};
+const PREVIOUS_ASSET_SHA256 = {
+  "assets/app.js": "2aa585eaab7725a8ce3519b7cb6a0f612beb6cd90c17bccf37ca9304479d3a24",
+  "assets/home-dashboard.js": "f191ffc190eb384a092d96693fcca1a58e99b994ef7d05fd405be44cfcea135c",
+  "assets/i18n.json": "ba6939b8ad75ded353022dc221908afb3dd8f2253f40aa1f0228d74f694703c5",
+  "assets/member-dossier.css": "e2beee6ef1dbdefae383d7386e69cfe158d8d3645d0e886629a084e3f6e6ce3e",
+  "assets/member-dossier.js": "494ec7148e84af592b0485267090d8fe1d25c48bcd0359e65358e99c19ce0388",
+  "assets/pro-report.js": "2a39b657e8b4e5a0cd739907d6c8701023dc223b55cc56c75707eb35b092d679",
+};
+const HOME_PATHS = ["", "index.html"];
+const HOME_ASSETS = [
+  "assets/app.js",
+  "assets/home-dashboard.js",
+  "assets/member-dossier.css",
+  "assets/member-dossier.js",
+];
+const I18N_PATH = "assets/i18n.json";
+const RELEASE_PATHS = new Set([...Object.keys(RELEASE_ASSET_SHA256), I18N_PATH]);
 const SHELL = [
   "./",
   "./index.html",
@@ -45,6 +73,13 @@ function relativePath(url) {
     : null;
 }
 
+function releaseUrl(path, version) {
+  const url = new URL(path, SCOPE);
+  // v114 falls back from ?v= to bare URLs on a network error.
+  url.searchParams.set(version === PREVIOUS_RELEASE ? "v" : "release", version);
+  return url.href;
+}
+
 function isPublicPath(path) {
   return path !== null && (path === "" || /^(?:assets|data|analize|predictii|en)\//.test(path)
     || /^(?:index|simulator|istoric|track-record|metodologie|statistici-pariuri|terms|privacy)\.html$/.test(path)
@@ -62,6 +97,38 @@ function isPublicRequest(request) {
 function cacheable(response) {
   return response.ok && !/\b(?:no-store|private)\b/i.test(response.headers.get("cache-control") || "")
     && (!response.url || isPublicPath(relativePath(new URL(response.url))));
+}
+
+async function hasDigest(response, expected) {
+  const bytes = await crypto.subtle.digest("SHA-256", await response.clone().arrayBuffer());
+  const hash = Array.from(new Uint8Array(bytes), byte => byte.toString(16).padStart(2, "0")).join("");
+  return hash === expected;
+}
+
+async function matchesRelease(path, response) {
+  if (!cacheable(response)) return false;
+  if (HOME_PATHS.includes(path)) {
+    const html = await response.clone().text();
+    return HOME_ASSETS.every(asset => html.includes(`${asset}?release=${RELEASE}"`));
+  }
+  if (path === I18N_PATH) {
+    const dictionary = await response.clone().json().catch(() => null);
+    return ["ro", "en"].every(lang => Boolean(dictionary?.[lang]?.["redesign.edition.resultPending"]));
+  }
+  return hasDigest(response, RELEASE_ASSET_SHA256[path]);
+}
+
+async function fetchRelease(request, path, cache, fallbackKey = request) {
+  try {
+    const response = await fetch(request, { cache: "no-cache" });
+    if (await matchesRelease(path, response)) {
+      await cache.put(fallbackKey, response.clone());
+      return response;
+    }
+  } catch (_) {
+    // Use the installed release on a network or cache write failure.
+  }
+  return (await cache.match(fallbackKey)) || offlineResponse(request);
 }
 
 function offlineResponse(request) {
@@ -104,7 +171,17 @@ button.addEventListener("click",()=>location.reload());
 self.addEventListener("install", event => {
   event.waitUntil((async () => {
     const cache = await caches.open(CACHE);
-    await Promise.allSettled(SHELL.map(async path => {
+    // Both home entry points and the scoped assets must be ready before activation.
+    const requiredPaths = [...HOME_PATHS, ...RELEASE_PATHS];
+    await Promise.all(requiredPaths.map(async path => {
+      const request = new Request(RELEASE_PATHS.has(path) ? releaseUrl(path, RELEASE) : new URL(path, SCOPE),
+        { cache: "reload" });
+      const response = await fetch(request);
+      if (!await matchesRelease(path, response)) throw new Error("Release resource unavailable: " + path);
+      await cache.put(request, response.clone());
+      if (RELEASE_PATHS.has(path)) await cache.put(new URL(path, SCOPE).href, response);
+    }));
+    await Promise.allSettled(SHELL.filter(path => !requiredPaths.includes(relativePath(new URL(path, SCOPE)))).map(async path => {
       const request = new Request(new URL(path, SCOPE), { cache: "reload" });
       const response = await fetch(request);
       if (cacheable(response)) await cache.put(request, response);
@@ -116,6 +193,19 @@ self.addEventListener("install", event => {
 self.addEventListener("activate", event => {
   event.waitUntil((async () => {
     const keys = await caches.keys();
+    if (keys.includes(PREVIOUS_CACHE)) {
+      const [old, current] = await Promise.all([caches.open(PREVIOUS_CACHE), caches.open(CACHE)]);
+      // v114 could cache current bytes under its old URL during rollout. Verify the body.
+      await Promise.allSettled(Object.entries(PREVIOUS_ASSET_SHA256).map(async ([path, expected]) => {
+        const url = releaseUrl(path, PREVIOUS_RELEASE);
+        for (const key of [url, new URL(path, SCOPE).href]) {
+          const response = await old.match(key);
+          if (!response || !cacheable(response) || !await hasDigest(response, expected)) continue;
+          await current.put(url, response);
+          break;
+        }
+      }));
+    }
     if (keys.includes(LEGACY_CACHE)) {
       const [old, current] = await Promise.all([caches.open(LEGACY_CACHE), caches.open(CACHE)]);
       const requests = await old.keys();
@@ -135,6 +225,28 @@ self.addEventListener("activate", event => {
 self.addEventListener("fetch", event => {
   const request = event.request;
   if (!isPublicRequest(request)) return;
+  const url = new URL(request.url);
+  const path = relativePath(url);
+  if (request.mode === "navigate" && HOME_PATHS.includes(path)) {
+    event.respondWith(caches.open(CACHE).then(cache => fetchRelease(request, path, cache, new URL(path, SCOPE).href)));
+    return;
+  }
+  const singleVersion = url.searchParams.size === 1;
+  const currentRelease = singleVersion && url.searchParams.get("release") === RELEASE;
+  const previousRelease = singleVersion && url.searchParams.get("v") === PREVIOUS_RELEASE;
+  if (RELEASE_PATHS.has(path) && (currentRelease || previousRelease)) {
+    event.respondWith((async () => {
+      const cache = await caches.open(CACHE);
+      // The daily publisher also updates the public audit copy in the dictionary.
+      if (path === I18N_PATH && currentRelease) return fetchRelease(request, path, cache);
+      const existing = await cache.match(request);
+      if (existing) return existing;
+      // The host serves current bytes for all query strings. Do not request an old URL from it.
+      if (previousRelease) return offlineResponse(request);
+      return fetchRelease(request, path, cache);
+    })());
+    return;
+  }
   const network = fetch(request);
   const cache = caches.open(CACHE);
   event.waitUntil(network.then(async response => {
@@ -145,9 +257,8 @@ self.addEventListener("fetch", event => {
   }).catch(() => {}));
   event.respondWith(network.catch(async () => {
     const available = await cache;
-    const url = new URL(request.url);
     const fingerprinted = url.searchParams.size === 1 && url.searchParams.has("v")
-      && relativePath(url).startsWith("assets/");
+      && path.startsWith("assets/");
     return (await available.match(request)) ||
       (fingerprinted && await available.match(url.origin + url.pathname)) ||
       offlineResponse(request);

@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { createContext, runInContext } from 'node:vm';
@@ -130,9 +131,21 @@ test('homepage market filters use translated labels and homepage assets use thei
     assert.equal(key,`filters.market.${market}`);
     for (const language of languages) assert(dictionary[language][key]);
   }
-  const release='20261119-pro-mobile';
+  const release='20261119-pro-indicators';
   for (const asset of ['app.js','member-dossier.js','member-dossier.css','home-dashboard.js']) {
-    assert(html.includes(`assets/${asset}?v=${release}`));
+    assert(html.includes(`assets/${asset}?release=${release}`));
+  }
+  const app=readFileSync(new URL('../assets/app.js',import.meta.url),'utf8');
+  for (const asset of ['i18n.json','pro-report.js']) {
+    assert(app.includes(`assets/${asset}?release=${release}`));
+  }
+  const worker=readFileSync(new URL('../sw.js',import.meta.url),'utf8');
+  assert(worker.includes(`const RELEASE = "${release}";`));
+  const releaseHashes=worker.match(/const RELEASE_ASSET_SHA256 = \{([\s\S]*?)\n\};/)?.[1] ?? '';
+  for (const asset of ['app.js','member-dossier.js','member-dossier.css','home-dashboard.js','pro-report.js']) {
+    const bytes=readFileSync(new URL(`../assets/${asset}`,import.meta.url));
+    const digest=createHash('sha256').update(bytes).digest('hex');
+    assert(releaseHashes.includes(`"assets/${asset}": "${digest}"`), `Update the service worker release for ${asset}`);
   }
   assert(html.includes('assets/home-modern.css?v=20261119-approved-design'));
   assert(html.includes('assets/members.js?v=20261119-functions'));

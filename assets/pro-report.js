@@ -203,19 +203,29 @@
     const reviewStatus = (publicSample || edition) && !review ? ` · ${Date.now() < kickoff ? awaiting : unavailable}` : '';
     if (edition) {
       const label=edition.label;
-      const publicationTime=publishedOnTime ? new Intl.DateTimeFormat(lang,{hour:'2-digit',minute:'2-digit',timeZone:'Europe/Bucharest',timeZoneName:'short'}).format(receipt) : '';
+      const hasPublicationTime = publicSample ? Number.isFinite(receipt) && receipt <= Date.now() : publishedOnTime;
+      const publicationTime=hasPublicationTime ? new Intl.DateTimeFormat(lang==='en'?'en-GB':lang,
+        {hour:'2-digit',minute:'2-digit',timeZone:'Europe/Bucharest',timeZoneName:'short'}).format(receipt) : '';
       const note=[pickLabel,publicationTime].filter(Boolean).join(' · ');
       const metrics=edition.metric(label('pick'),selection?.market || '—',note)
-        + edition.metric(label('probability'),selection?.probability || '—',selection?.market || '') + evidence;
+        + edition.metric(label('probability'),selection?.probability || '—',selection?.market || '',
+          publicSample && selection?.probability ? label('matchEstimate') : '') + evidence;
       const writing=(key,blocks)=>blocks.length ? `<section class="edition-paragraph" lang="${escapeText(sourceLang)}"><h4 lang="${escapeText(lang)}">${escapeText(label(key))}</h4>${blocks.map(contentOnly).join('')}</section>` : '';
       const counts=item.provenance?.inputs?.cifre;
       const home=counts?.gazda_acasa?.n, away=counts?.oaspeti_depl?.n;
       const limitation=[home,away].every(n=>Number.isSafeInteger(n) && n>=0)
         ? [`<p lang="${escapeText(lang)}">${escapeText(label('samples').replace('{home}',home).replace('{away}',away))}</p>`] : [];
-      const reviewBlock=`<section class="edition-paragraph"><h4>${escapeText(label('verification'))}</h4><details class="dossier-review"${review?' open':' data-review-lookup'}><summary>${w[2]}${reviewStatus}</summary><div data-dossier-review-content aria-live="polite">${review || `<p>${w[8]}</p>`}</div></details></section>`;
+      const verificationHeading = `<h4>${escapeText(label('verification'))}</h4>`;
+      const reviewBlock=publicSample
+        ? `<section class="edition-paragraph">${edition.compact ? '' : verificationHeading}<p role="status" data-sample-result>${escapeText(Date.now() < kickoff ? awaiting : label('resultLoading'))}</p></section>`
+        : `<section class="edition-paragraph">${verificationHeading}<details class="dossier-review"${review?' open':' data-review-lookup'}><summary>${w[2]}${reviewStatus}</summary><div data-dossier-review-content aria-live="polite">${review || `<p>${w[8]}</p>`}</div></details></section>`;
+      // The preview quotes the published reasoning. Keep the complete article in its own view.
+      const excerpts = [data.selectionArgument && `<p>${escapeText(data.selectionArgument)}</p>`,
+        ...data.evidence,...data.context].filter(Boolean).slice(0,2);
       return `<div class="edition-metrics">${metrics}</div>` +
         writing('verdict',data.thesis.length ? data.thesis : data.other.slice(0,1)) +
-        (edition.compact ? '' : writing('arguments',[...data.evidence,...data.context]) + writing('limitations',limitation)) + reviewBlock;
+        (edition.compact ? writing('arguments',excerpts)
+          : writing('arguments',[...data.evidence,...data.context]) + writing('limitations',limitation)) + reviewBlock;
     }
     return `${selection?`<p class="dossier-published"><span>${pickLabel}</span> · <strong>${escapeText(selection.market)} · ${escapeText(selection.probability)}</strong></p>`:''}${(!publicSample && reading) || `<div lang="${escapeText(sourceLang)}">${conclusion}</div>`}${evidence}<details class="dossier-review"${review?'':' data-review-lookup'}><summary>${w[2]}${reviewStatus}</summary><div data-dossier-review-content aria-live="polite">${review || `<p>${w[8]}</p>`}</div></details>`;
   }
