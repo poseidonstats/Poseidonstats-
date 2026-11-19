@@ -89,9 +89,13 @@ def test_varianta_engleza_are_pickurile_si_tabelul_in_engleza():
     en = A.html_analiza({**ITEM, "analysis": EN}, v, GENERAT, "en")
     assert (
         "Over 1.5 goals" in en
-        and "<td>Base</td><td>Over 1.5 goals</td><td>88%</td>" in en
+        and '<td><span data-i18n="arhiva.rol.baza" data-archive-role="baza">Supporting selection</span></td><td>Over 1.5 goals</td><td>88%</td>'
+        in en
     )
-    assert "<td>Main</td><td>1X</td><td>82%</td>" in en
+    assert (
+        '<td><span data-i18n="arhiva.rol.principal" data-archive-role="principal">Main selection</span></td><td>1X</td><td>82%</td>'
+        in en
+    )
     romana = re.findall(
         r"\b(Peste|goluri|Bază|Principal|marchează|ieșit|Liderul)\b", _text_vizibil(en)
     )
@@ -101,8 +105,14 @@ def test_varianta_engleza_are_pickurile_si_tabelul_in_engleza():
 def test_varianta_romana_ramane_cum_era():
     v = A.verifica(ITEM, REZ)
     ro = A.html_analiza(ITEM, v, GENERAT)
-    assert "<li>Bază: <strong>Peste 1,5 goluri</strong> — 88%" in ro
-    assert "<td>Bază</td><td>Peste 1,5 goluri</td><td>88%</td>" in ro
+    assert (
+        '<li><span data-i18n="arhiva.rol.baza" data-archive-role="baza">Selecție de context</span>: <strong>Peste 1,5 goluri</strong> — 88%'
+        in ro
+    )
+    assert (
+        '<td><span data-i18n="arhiva.rol.baza" data-archive-role="baza">Selecție de context</span></td><td>Peste 1,5 goluri</td><td>88%</td>'
+        in ro
+    )
 
 
 def test_lectia_se_traduce_pe_fraze_si_textul_romanesc_ramane_acelasi():
@@ -153,7 +163,10 @@ def test_formatul_vechi_al_pickurilor_se_traduce_si_in_tabel():
     html_en = A.html_analiza(
         {**item, "analysis": en}, A.verifica(item, REZ), GENERAT, "en"
     )
-    assert "<td>Safe pick</td><td>Over 1.5 goals</td><td>70%</td>" in html_en
+    assert (
+        '<td><span data-i18n="arhiva.rol.baza" data-archive-role="baza">Supporting selection</span></td><td>Over 1.5 goals</td><td>70%</td>'
+        in html_en
+    )
     romana = re.findall(r"\b(Peste|goluri|Bază|Siguranță)\b", _text_vizibil(html_en))
     assert romana == [], romana
 
@@ -166,7 +179,10 @@ def test_pagina_zilei_trimite_limba_fiecarei_variante():
         None,
     )
     en = pagina[pagina.index('<div data-lang="en"') :]
-    assert "<td>Base</td><td>Over 1.5 goals</td>" in en
+    assert (
+        '<td><span data-i18n="arhiva.rol.baza" data-archive-role="baza">Supporting selection</span></td><td>Over 1.5 goals</td>'
+        in en
+    )
 
 
 def test_fragmentul_meciului_ramane_unic_indiferent_de_limba():
@@ -182,3 +198,43 @@ def test_fragmentul_meciului_ramane_unic_indiferent_de_limba():
     assert '<div class="pro-archive-match" id="m1596968" data-lang-grup>' in page
     assert '<div class="pro-archive-match" id="m1596969">' in page
     assert page.count('<article class="pro-card pro-card-full">') == 13
+
+
+def test_arhiva_publica_localizeaza_doar_prezentarea_selectiei():
+    from archive_copy import localize_frozen_archive
+
+    old = (
+        '<div data-lang="en"><p><strong data-i18n="arhiva.sect.piete">Markets picked:</strong></p>'
+        "<ul><li>🔒 <strong>Safe pick: Over 1.5 goals — 70%.</strong> Bedford score first.</li>"
+        "<li>💎 <strong>Bold:</strong> no bold pick today — no odds market reaches 55%.</li>"
+        "<li>🎯 <strong>Main:</strong> 1X — <strong>82%</strong>. It's an odds pick.</li></ul>"
+        "<p>Base Camp Wins 2–1</p>"
+        "<table><tr><td>Safe pick</td><td>Over 1.5 goals</td><td>70%</td><td>✅</td></tr></table></div>"
+    )
+    new = localize_frozen_archive(old)
+    assert localize_frozen_archive(new) == new
+    assert "Supporting selection</span>: Over 1.5 goals — 70%" in new
+    assert "no alternative selection today — no eligible market reaches 55%" in new
+    assert "Alternative selection." in new and "It's an odds pick" not in new
+    assert "<td>Over 1.5 goals</td><td>70%</td><td>✅</td>" in new
+    assert "Base Camp Wins 2–1" in new
+
+
+def test_sectiunea_localizata_cu_doua_puncte_e_deosebita_de_selectia_principala():
+    for header in ("Selezioni:", "Pick:", "Pronósticos :", "Pronostics:"):
+        source = EN.replace("**Picks:**", f"**{header}**")
+        parsed = A.parseaza(source)
+        assert parsed["model"] == "65% win."
+        assert len(parsed["picks"]) == 3
+        assert A.piata_din_linie(parsed["picks"][0]) == "Over 1.5 goals"
+        assert A.piata_din_linie(parsed["picks"][1]) == "1X"
+
+
+def test_lipsa_selectiei_spaniole_pastreaza_pragul_arhivat():
+    from archive_copy import display_pick
+
+    for old in ("hoy sin pick atrevido", "hoy no hay pick atrevido"):
+        assert (
+            display_pick(f"{old}: ningún mercado elegible supera el 55 %.", "es")
+            == "hoy no hay selección alternativa: ningún mercado elegible supera el 55 %."
+        )

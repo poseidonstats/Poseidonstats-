@@ -110,8 +110,10 @@
       const name = row.dossierOnly ? `<strong>${title}</strong>` : `<a href="#matches" data-dashboard-fixture="${escapeHTML(row.fixture_id)}" title="${escapeHTML(`${row.home} – ${row.away}`)}">${title}</a>`;
       const country = countries?.label(row.country, loc) || row.country;
       const competition = escapeHTML([country, row.league].filter(Boolean).join(' · '));
-      const probabilityCells = row.probabilities.map((value,i) =>
-        `<td class="dashboard-prob" role="cell" headers="dashboard-th-${i}"><span class="dashboard-prob-key" aria-hidden="true">${['1','X','2'][i]}</span>${escapeHTML(pct(value))}</td>`).join('');
+      const probabilityCells = row.dossierOnly
+        ? `<td class="dashboard-stats-only" role="cell" colspan="3">${escapeHTML(tr('dashboard.table.statsOnly'))}</td>`
+        : row.probabilities.map((value,i) =>
+          `<td class="dashboard-prob" role="cell" headers="dashboard-th-${i}"><span class="dashboard-prob-key" aria-hidden="true">${['1','X','2'][i]}</span>${escapeHTML(pct(value))}</td>`).join('');
       return `<tr class="dashboard-match-row" role="row"${readingAttributes}><td class="dashboard-time-cell" role="cell" headers="dashboard-th-time"><time datetime="${escapeHTML(row.match_date)}">${escapeHTML(time)}</time></td>` +
         `<td class="dashboard-team" role="cell" headers="dashboard-th-match">${name}<small title="${competition}">${competition}</small>${dossier}</td>` + probabilityCells +
         `<td class="dashboard-access-cell" role="cell" headers="dashboard-th-access"><span class="${row.locked ? 'dashboard-lock' : 'dashboard-free'}">${row.locked ? '🔒 ' : ''}${escapeHTML(dossier ? dossiers.copy().member : tr(row.locked ? 'dashboard.access.locked' : 'dashboard.access.free'))}</span></td></tr>${reading}`;

@@ -31,6 +31,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from scor90 import _gol, scor_90  # noqa: E402
 import provenienta_pro as PP  # noqa: E402
 from gen_pro_sample import _data_ro, _inline, parseaza, piata_din_linie  # noqa: E402  (aceeași parsare ca exemplul de pe prima pagină)
+from archive_copy import NO_PICKS_LOCALIZED, display_pick, lesson_copy, role_badge  # noqa: E402
 
 SITE = Path(__file__).resolve().parent.parent
 OUT = SITE / "analize"
@@ -395,8 +396,11 @@ def _recuperare(f: Path, d: dict) -> dict:
     return {
         key: d[key]
         for key in (
-            "generated_at_utc", "published_at_utc", "recovery_kind",
-            "recovery_of", "recovery_of_sha256",
+            "generated_at_utc",
+            "published_at_utc",
+            "recovery_kind",
+            "recovery_of",
+            "recovery_of_sha256",
         )
     }
 
@@ -414,7 +418,8 @@ def citeste_arhiva() -> list[dict]:
                 **it,
                 "_archive_excluded": bool(
                     recovery is not None
-                    or d.get("exclude_from_forward_test") or d.get("published_late")
+                    or d.get("exclude_from_forward_test")
+                    or d.get("published_late")
                 ),
                 "_deliveries": delivery,
             }
@@ -552,7 +557,7 @@ def shell(
 <header>
   <div class="container">
     <a class="brand" href="{sus}index.html"><img src="{sus}assets/icon-192.png" alt="POSEIDON" width="36" height="36"> <span>POSEIDON</span></a>
-    <p class="tagline" data-i18n="arhiva.tagline">Analize Pro arhivate · text original neschimbat · verificare la 90 de minute</p>
+    <p class="tagline" data-i18n="arhiva.tagline">Analize Pro din arhivă · verificarea rezultatelor</p>
     <nav>
       <a href="{sus}index.html" data-i18n="nav.predictii">Predicții</a>
       <a href="{sus}predictii/index.html" data-i18n="nav.ligi">Pe ligi</a>
@@ -562,7 +567,7 @@ def shell(
       <a href="{sus}metodologie.html" data-i18n="nav.metodologie">Metodologie</a>
       <a class="patreon" href="{sus}index.html#abonament" data-i18n="nav.abonamente">Abonamente</a>
     </nav>
-    <script src="{sus}assets/i18n-lite.js?v=20261118e" data-sus="{sus}"></script>
+    <script src="{sus}assets/i18n-lite.js?v=20261119-audit" data-sus="{sus}"></script>
   </div>
 </header>
 
@@ -624,22 +629,33 @@ def html_analiza(item: dict, v: dict, generat: str, lang: str = "ro") -> str:
         f"{_et('arhiva.cifre.scor', 'scor probabil')} {H.escape(str(m.get('score', '')))}"
     )
     # pick-urile din textul tradus, pe tip (emoji): fiecare tip apare o dată într-o analiză; rândul „fără pick curajos” nu are pereche în verificare
-    traduse: dict[str, tuple[str, str]] = {}
+    traduse: dict[str, str] = {}
     if lang != "ro":
         for linie in p["picks"]:
             if linie[:1] in TIP and linie[:1] not in traduse:
-                traduse[linie[:1]] = (eticheta_din_linie(linie), piata_din_linie(linie))
+                traduse[linie[:1]] = piata_din_linie(linie)
     emoji = {nume: e for e, nume in TIP.items()}
     if traduse:
-        picks_html = "".join(f"<li>{_inline(linie)}</li>" for linie in p["picks"])
+        picks_html = "".join(
+            f"<li>{display_pick(_inline(linie), lang)}</li>" for linie in p["picks"]
+        )
     else:
         picks_html = "".join(
-            f"<li>{H.escape(pk['tip'])}: <strong>{_inline(pk['piata'])}</strong>"
-            + (f" — {pk['prob']}%" if pk.get("prob") is not None else "")
-            + (f" — {_inline(pk['motiv'])}" if pk.get("motiv") else "")
+            f"<li>{role_badge(pk['tip'], lang)}: <strong>{_inline(pk['piata'])}</strong>"
+            + display_pick(
+                (f" — {pk['prob']}%" if pk.get("prob") is not None else "")
+                + (f" — {_inline(pk['motiv'])}" if pk.get("motiv") else ""),
+                lang,
+            )
             + "</li>"
             for pk in v["picks"]
         )
+    nota_selectii = (
+        '<p class="muted" data-i18n="arhiva.selectii.ro">Unele selecții sunt afișate în limba română.</p>'
+        if lang != "ro"
+        and any(not traduse.get(emoji.get(pk["tip"], "")) for pk in v["picks"])
+        else ""
+    )
     ver = ""
     if rez:
         rand = []
@@ -654,12 +670,9 @@ def html_analiza(item: dict, v: dict, generat: str, lang: str = "ro") -> str:
                     else '<span data-i18n="arhiva.semn.neev">– neevaluabil din scor</span>'
                 )
             )
-            tip, piata = traduse.get(emoji.get(pk["tip"], ""), ("", ""))
-            tip_html, piata_html = (
-                (H.escape(tip), _inline(piata))
-                if tip and piata
-                else (H.escape(pk["tip"]), _inline(pk["piata"]))
-            )
+            piata = traduse.get(emoji.get(pk["tip"], ""), "") or pk["piata"]
+            tip_html = role_badge(pk["tip"], lang)
+            piata_html = _inline(piata)
             rand.append(
                 f"<tr><td>{tip_html}</td><td>{piata_html}</td><td>{'' if pk.get('prob') is None else str(pk['prob']) + '%'}</td><td>{semn}</td></tr>"
             )
@@ -667,9 +680,9 @@ def html_analiza(item: dict, v: dict, generat: str, lang: str = "ro") -> str:
         pr = v["p_rezultat"]
         lectie = " ".join(
             (
-                f"<span data-i18n=\"{cheie}\" data-i18n-vars='{_vars(var)}'>{H.escape(text)}</span>"
+                f"<span data-i18n=\"{cheie}\" data-i18n-vars='{_vars(var)}'>{H.escape(lesson_copy(cheie, var, text))}</span>"
                 if var
-                else f'<span data-i18n="{cheie}">{H.escape(text)}</span>'
+                else f'<span data-i18n="{cheie}">{H.escape(lesson_copy(cheie, var, text))}</span>'
             )
             for cheie, var, text in v.get("lectie_fraze") or []
         ) or H.escape(v["lectie"])
@@ -685,7 +698,7 @@ def html_analiza(item: dict, v: dict, generat: str, lang: str = "ro") -> str:
         ver = f"""
       <div class="pro-verificare">
         <h4 data-i18n="arhiva.verif.h" data-i18n-vars='{{"scor":"{rez["gh"]}-{rez["ga"]}{f" ({rez['hth']}-{rez['hta']})" if rez.get("hth") is not None else ""}"}}'>Verificarea de a doua zi · {rez["gh"]}-{rez["ga"]}{f" (pauză {rez['hth']}-{rez['hta']})" if rez.get("hth") is not None else ""}</h4>
-        <div class="table-wrap"><table class="audit-table"><thead><tr><th data-i18n="arhiva.th.pick">Pick</th><th data-i18n="arhiva.th.piata">Piața</th><th data-i18n="arhiva.th.anuntat">Anunțat</th><th data-i18n="arhiva.th.rezultat">Rezultat</th></tr></thead><tbody>{"".join(rand) or '<tr><td colspan="4">Analiza nu are pick-uri în formatul standard.</td></tr>'}</tbody></table></div>
+        <div class="table-wrap"><table class="audit-table"><thead><tr><th data-i18n="arhiva.th.pick">Tip de selecție</th><th data-i18n="arhiva.th.piata">Piața</th><th data-i18n="arhiva.th.anuntat">Anunțat</th><th data-i18n="arhiva.th.rezultat">Rezultat</th></tr></thead><tbody>{"".join(rand) or NO_PICKS_LOCALIZED}</tbody></table></div>
         <p>{" ".join(extra)}</p>
         <p class="pro-lectie"><strong data-i18n="arhiva.lectia">Lecția:</strong> {lectie}</p>
       </div>"""
@@ -693,11 +706,11 @@ def html_analiza(item: dict, v: dict, generat: str, lang: str = "ro") -> str:
     <article class="pro-card pro-card-full">
       <div class="pro-card-head">{H.escape(m["home"])} – {H.escape(m["away"])} · {liga} · <span data-date="{m.get("date", "")[:10]}">{_data_ro(m.get("date", ""))}</span> · {scor}</div>
       <div class="pro-visible">
-        <p class="muted" data-i18n="arhiva.model.arhivat" data-i18n-vars='{_vars({"cifre": cifre, "ora": ora or "—"})}'>Cifrele arhivate: {cifre}. Ora din arhivă: {ora or "—"}. Textul original este reprodus neschimbat; eligibilitatea prospectivă se verifică separat.</p>
+        <p class="muted" data-i18n="arhiva.model.arhivat" data-i18n-vars='{_vars({"cifre": cifre, "ora": ora or "—"})}'>Cifre din fișa arhivată: {cifre}. Ora din arhivă: {ora or "—"}. Selecțiile și probabilitățile provin din fișa păstrată. Eligibilitatea prospectivă se verifică separat.</p>
         <p><strong data-i18n="arhiva.sect.verdict">Verdict:</strong> {_p(p["verdict"])}</p>
         <p><strong data-i18n="arhiva.sect.context">Context:</strong> {_p(p["context"])}</p>
         <p><strong data-i18n="arhiva.sect.model">Modelul vs realitate:</strong> {_p(p["model"])}</p>
-        <p><strong data-i18n="arhiva.sect.piete">Piețele alese:</strong></p><ul>{picks_html or '<li class="muted">—</li>'}</ul>
+        <p><strong data-i18n="arhiva.sect.piete">Piețele alese:</strong></p><ul>{picks_html or '<li class="muted">—</li>'}</ul>{nota_selectii}
         <p><strong data-i18n="arhiva.sect.urmarit">De urmărit:</strong> {_p(p["urmarit"])}</p>{ver}
       </div>
     </article>"""
@@ -722,7 +735,11 @@ def html_recuperare(recovery: dict | None) -> str:
         + f'>{H.escape(text)} <time datetime="{published}">{published}</time></p>'
         for lang, text in notices.items()
     )
-    return '<div data-lang-grup data-pro-archive-kind="recovered-late">' + variants + "</div>"
+    return (
+        '<div data-lang-grup data-pro-archive-kind="recovered-late">'
+        + variants
+        + "</div>"
+    )
 
 
 def bilant(zile: list[dict], rez: dict) -> tuple[dict, list[dict]]:
@@ -805,26 +822,29 @@ def html_index(zile: list[dict], tot: dict, pe_zi: list[dict], azi: str) -> str:
         hit = d["k"] / d["n"]
         wlo = wilson_lo(d["k"], d["n"])
         medie = d["sp"] / d["np"] if d["np"] else None
-        rows += f"<tr><td>{t}</td><td>{d['n']}</td><td>{hit * 100:.1f}%</td><td>{wlo * 100:.1f}%</td><td>{'' if medie is None else f'{medie:.1f}%'}</td><td>{'' if medie is None else f'{(hit * 100 - medie):+.1f} pp'}</td></tr>"
+        rows += f"<tr><td>{role_badge(t, 'ro')}</td><td>{d['n']}</td><td>{hit * 100:.1f}%</td><td>{wlo * 100:.1f}%</td><td>{'' if medie is None else f'{medie:.1f}%'}</td><td>{'' if medie is None else f'{(hit * 100 - medie):+.1f} pp'}</td></tr>"
     if not rows:
         rows = '<tr><td colspan="6" data-i18n="arhiva.bilant.faraeligibile">Nicio predicție eligibilă evaluabilă încă; arhiva descriptivă nu dovedește o rată prospectivă.</td></tr>'
     zile_html = "".join(
         f'<li><a href="{r["zi"]}.html"><span data-date="{r["zi"]}">{_data_ro(r["zi"])}</span></a> — <span data-i18n="arhiva.zi.linie" data-i18n-vars=\'{{"n":"{r["n"]}"}}\'>{r["n"]} analize</span>'
         + (
-            f', <span data-i18n="arhiva.zi.baza" data-i18n-vars=\'{{"a":"{r["baza"][0]}/{r["baza"][1]}","b":"{r["princ"][0]}/{r["princ"][1]}"}}\'>bază {r["baza"][0]}/{r["baza"][1]}, principal {r["princ"][0]}/{r["princ"][1]}</span>'
+            f', <span data-i18n="arhiva.zi.baza" data-i18n-vars=\'{{"a":"{r["baza"][0]}/{r["baza"][1]}","b":"{r["princ"][0]}/{r["princ"][1]}"}}\'>selecții de context {r["baza"][0]}/{r["baza"][1]}, selecții principale {r["princ"][0]}/{r["princ"][1]}</span>'
             if r["rez"]
             else ', <span data-i18n="arhiva.zi.nerez">rezultate încă nerezolvate</span>'
         )
-        + html_recuperare(r.get("_recovery")) + "</li>"
+        + html_recuperare(r.get("_recovery"))
+        + "</li>"
         for r in reversed(pe_zi)
     )
     n_tot = sum(len(z["items"]) for z in zile)
     n_eligible = sum(r["eligibile"] for r in pe_zi)
     n_excluded = sum(sum(r["excluderi"].values()) for r in pe_zi)
-    intro_vars = _vars({
-        "n": str(n_tot),
-        "de_la": f'<span data-date="{zile[0]["zi"]}">{_data_ro(zile[0]["zi"])}</span>',
-    })
+    intro_vars = _vars(
+        {
+            "n": str(n_tot),
+            "de_la": f'<span data-date="{zile[0]["zi"]}">{_data_ro(zile[0]["zi"])}</span>',
+        }
+    )
     date_vars = _vars({"data": f'<span data-date="{azi}">{_data_ro(azi)}</span>'})
     corp = f"""
   <section class="intro">
@@ -840,7 +860,7 @@ def html_index(zile: list[dict], tot: dict, pe_zi: list[dict], azi: str) -> str:
       <li>forma recentă cu scoruri, clasamentul, absențele relevante, H2H când spune ceva</li>
       <li>unde contextul <strong>susține</strong> modelul și unde <strong>îl contrazice</strong></li>
       <li>capcanele pe care modelul numeric nu le vede</li>
-      <li>pick-urile analizei: Bază, Principal, Curajos, fiecare cu probabilitatea anunțată</li>
+      <li>selecțiile analizei, cu probabilitatea publicată pentru fiecare</li>
     </ul></div>
     <p class="muted" data-i18n="plans.glosar">xG în analizele POSEIDON = golurile așteptate de modelul nostru pentru fiecare echipă, calibrat pe meciurile trecute, nu xG din șuturi.</p>
     <p data-i18n="plans.get.after">A doua zi revenim la aceeași analiză: ce am spus înainte de meci rămâne neschimbat, arătăm unde modelul și contextul au avut dreptate, unde au greșit și unde rezultatul a fost pur și simplu zgomot. Nu promitem profit. Nu vindem „ponturi sigure”. Nu schimbăm predicțiile după rezultat.</p>
@@ -855,11 +875,11 @@ def html_index(zile: list[dict], tot: dict, pe_zi: list[dict], azi: str) -> str:
   </section>
 
   <section class="audit">
-    <h2 data-i18n="arhiva.bilant.h" data-i18n-vars='{date_vars}'>Bilanțul pick-urilor, până la <span data-date="{azi}">{_data_ro(azi)}</span></h2>
+    <h2 data-i18n="arhiva.bilant.h" data-i18n-vars='{date_vars}'>Bilanțul selecțiilor, până la <span data-date="{azi}">{_data_ro(azi)}</span></h2>
     <p data-i18n="arhiva.bilant.prospectiv">Bilanț prospectiv: numai analize cu intrări și versiune identificate prin hash, start original UTC și livrare observată înainte de start. Prima analiză eligibilă per meci, apoi primul pick per rol; alegerea nu folosește rezultatul. Fiecare rol este calculat separat. N numără pick-urile evaluabile la 90 de minute, nu toate analizele din arhivă. „Anunțat” este media probabilităților; Wilson jos este limita inferioară 95 %, fără garanția independenței perfecte dintre meciuri.</p>
     <p class="muted" data-i18n="arhiva.bilant.cohorta" data-i18n-vars='{{"total":"{n_tot}","elig":"{n_eligible}","excl":"{n_excluded}"}}'>Arhivă descriptivă: {n_tot} analize. Eligibile prospectiv: {n_eligible}; excluse sau duplicate: {n_excluded}. Analizele vechi fără dovada originală de publicare rămân lizibile, în afara acestui bilanț.</p>
-    <div class="table-wrap"><table class="audit-table"><thead><tr><th data-i18n="arhiva.th.pick">Pick</th><th>N</th><th data-i18n="arhiva.th.iesit">A ieșit</th><th data-i18n="arhiva.th.wlo">Wilson jos</th><th data-i18n="arhiva.th.anuntat">Anunțat</th><th data-i18n="arhiva.th.dif">Diferența</th></tr></thead><tbody>{rows}</tbody></table></div>
-    <p class="muted" data-i18n="arhiva.bilant.note">Bază = piața cu probabilitatea cea mai mare din model; Principal = pick-ul analizei; Curajos = pick de cotă, cu risc declarat. Bilanțul e pe pick-uri, nu pe bani: o rată mare pe probabilități mari nu înseamnă profit.</p>
+    <div class="table-wrap"><table class="audit-table"><thead><tr><th data-i18n="arhiva.th.pick">Tip de selecție</th><th>N</th><th data-i18n="arhiva.th.iesit">A ieșit</th><th data-i18n="arhiva.th.wlo">Wilson jos</th><th data-i18n="arhiva.th.anuntat">Anunțat</th><th data-i18n="arhiva.th.dif">Diferența</th></tr></thead><tbody>{rows}</tbody></table></div>
+    <p class="muted" data-i18n="arhiva.bilant.note">Bilanțul evaluează separat fiecare tip de selecție. Rata de reușită nu măsoară profitul.</p>
   </section>
 
   <section>
@@ -869,7 +889,7 @@ def html_index(zile: list[dict], tot: dict, pe_zi: list[dict], azi: str) -> str:
 """
     return shell(
         "Analize Pro arhivate, cu verificarea de a doua zi | POSEIDON",
-        f"Toate analizele Pro POSEIDON de până ieri ({n_tot}), neschimbate, cu scorul final și verificarea automată a fiecărui pick. Inclusiv cele care au greșit.",
+        f"Toate analizele Pro POSEIDON din arhivă ({n_tot}), cu scorul final și verificarea automată a fiecărei selecții. Inclusiv cele care au greșit.",
         f"{BASE}/analize/index.html",
         corp,
     )
@@ -898,7 +918,9 @@ def html_zi(z: dict, rez: dict, prev: str | None, nxt: str | None) -> str:
 
     # Cu recuperare, nota de publicare este distinctă de textele originale.
     # Fără recuperare concatenarea cu șirul gol păstrează corpul analizelor.
-    arts = html_recuperare(z.get("_recovery")) + "".join(_multi(it) for it in z["items"])
+    arts = html_recuperare(z.get("_recovery")) + "".join(
+        _multi(it) for it in z["items"]
+    )
     nav = " · ".join(
         x
         for x in [
@@ -913,13 +935,15 @@ def html_zi(z: dict, rez: dict, prev: str | None, nxt: str | None) -> str:
         if x
     )
     n_rez = sum(1 for it in z["items"] if rez.get(it["match"]["fixture_id"]))
-    title_vars = _vars({
-        "data": f'<span data-date="{z["zi"]}">{_data_ro(z["zi"])}</span>',
-    })
+    title_vars = _vars(
+        {
+            "data": f'<span data-date="{z["zi"]}">{_data_ro(z["zi"])}</span>',
+        }
+    )
     corp = f"""
   <section class="intro">
     <h1 data-i18n="arhiva.zi.h1" data-i18n-vars='{title_vars}'>Analizele Pro din <span data-date="{z["zi"]}">{_data_ro(z["zi"])}</span></h1>
-    <p data-i18n="arhiva.zi.descriptiv" data-i18n-vars='{{"n":"{len(z["items"])}","rez":"{n_rez}"}}'>{len(z["items"])} analize arhivate, reproduse neschimbate; {n_rez} cu rezultat final și verificarea de a doua zi. <a href="index.html">Ce e Pro și bilanțul tuturor pick-urilor →</a></p>
+    <p data-i18n="arhiva.zi.descriptiv" data-i18n-vars='{{"n":"{len(z["items"])}","rez":"{n_rez}"}}'>{len(z["items"])} analize din arhivă, dintre care {n_rez} cu rezultat final și verificare. <a href="index.html">Vezi bilanțul selecțiilor →</a></p>
     <p class="muted">{nav}</p>
   </section>
   {arts}
@@ -931,7 +955,7 @@ def html_zi(z: dict, rez: dict, prev: str | None, nxt: str | None) -> str:
     )
     return shell(
         f"Analize Pro {_data_ro(z['zi'])}, cu rezultate | POSEIDON",
-        f"{len(z['items'])} analize Pro din {_data_ro(z['zi'])} ({primele}…), textul de dinaintea meciului neschimbat, scorul final și verificarea fiecărui pick.",
+        f"{len(z['items'])} analize Pro din {_data_ro(z['zi'])} ({primele}…), selecții și probabilități din fișele arhivate, scorul final și verificarea fiecărei selecții.",
         f"{BASE}/analize/{z['zi']}.html",
         corp,
     )

@@ -2,11 +2,26 @@
 // poseidon_lang), traduce [data-i18n] din assets/i18n.json, pune selectorul de limbă în nav și arată varianta [data-lang] potrivită.
 (function () {
   var LANGS = ["ro", "en", "es", "it", "fr", "id"], NUME = { ro: "🇷🇴 Română", en: "🇬🇧 English", es: "🇪🇸 Español", it: "🇮🇹 Italiano", fr: "🇫🇷 Français", id: "🇮🇩 Bahasa Indonesia" };  // 14 oct 2026: + fr, + id
-  function lang() { try { var s = localStorage.getItem("poseidon_lang"); if (LANGS.indexOf(s) >= 0) return s; } catch (e) {} var b = (navigator.language || "ro").slice(0, 2).toLowerCase(); return LANGS.indexOf(b) >= 0 ? b : "en"; }  // 14 oct 2026: limbile pe care nu le avem cad pe engleză
+  var englishLeague = /^\/en\/predictions\//.test(location.pathname);
+  function lang() { try { var s = localStorage.getItem("poseidon_lang"); if (LANGS.indexOf(s) >= 0) return s; } catch (e) {} if (englishLeague) return "en"; var b = (navigator.language || "ro").slice(0, 2).toLowerCase(); return LANGS.indexOf(b) >= 0 ? b : "en"; }
   var L = lang(); var sus = (document.currentScript && document.currentScript.getAttribute("data-sus")) || "";
   var pageLanguage = document.documentElement.lang || "ro";
   var editionPath = location.pathname;
   var hasEditions = /^\/(?:statistici-pariuri\.html|en\/betting-odds-statistics\.html)$/.test(editionPath);
+  function openLeagueEdition(selected) {
+    if (!/^\/(?:predictii|en\/predictions)\//.test(editionPath)) return false;
+    var language = selected === "en" ? "en" : "ro";
+    var link = document.querySelector('link[hreflang="' + language + '"]');
+    if (!link) return false;
+    var current = new URL(location.href);
+    var destination = new URL(link.getAttribute("href"), current);
+    var expected = language === "en" ? /^\/en\/predictions\// : /^\/predictii\//;
+    if (!expected.test(destination.pathname) || destination.pathname === current.pathname) return false;
+    current.pathname = destination.pathname;
+    location.assign(current.href);
+    return true;
+  }
+  if (englishLeague && L !== "en" && openLeagueEdition(L)) return;
   // Generated public pages keep their content; theme their shared shell here so regeneration stays safe.
   function temaPublica() {
     var canonical = document.querySelector('link[rel="canonical"]');
@@ -97,7 +112,7 @@
         else if (!document.getElementById('pro-report-script')) {
           var style = document.createElement('link'); style.rel = 'stylesheet'; style.href = sus + 'assets/pro-report.css?v=20261118e'; document.head.appendChild(style);
           var report = document.createElement('script'); report.id = 'pro-report-script'; report.src = sus + 'assets/pro-context.js?v=20261118e';
-          report.onload = function () { var ui = document.createElement('script'); ui.src = sus + 'assets/pro-report.js?v=20261118e'; document.head.appendChild(ui); };
+          report.onload = function () { var ui = document.createElement('script'); ui.src = sus + 'assets/pro-report.js?v=20261119-audit'; document.head.appendChild(ui); };
           report.onerror = report.onload;
           document.head.appendChild(report);
         }
@@ -119,6 +134,23 @@
       el.innerHTML = v;
     });
     var locale = { ro: "ro-RO", en: "en-GB", es: "es-ES", it: "it-IT", fr: "fr-FR", id: "id-ID" }[L];
+    var ints = new Intl.NumberFormat(locale);
+    document.querySelectorAll("[data-match-count]").forEach(function (el) {
+      var raw = el.getAttribute("data-match-count");
+      var n = Number(raw);
+      if (!/^\d+$/.test(raw) || !Number.isSafeInteger(n)) return;
+      var key = n === 1 ? "n.meci1" : "n.meciuri";
+      var label = (I[L] && I[L][key]) || (I.ro && I.ro[key]);
+      if (!label) return;
+      var roDe = L === "ro" && n >= 20 && (n % 100 === 0 || n % 100 >= 20);
+      el.textContent = label.replace("{n}", ints.format(n) + (roDe ? " de" : ""));
+    });
+    document.querySelectorAll("[data-decimal]").forEach(function (el) {
+      var value = el.getAttribute("data-decimal");
+      if (!/^-?\d+(?:\.\d{1,12})?$/.test(value)) return;
+      var decimals = (value.split(".")[1] || "").length;
+      el.textContent = new Intl.NumberFormat(locale, {minimumFractionDigits:decimals, maximumFractionDigits:decimals}).format(Number(value));
+    });
     if (L !== "ro" && typeof window !== "undefined" && window.PoseidonCountry) {
       document.querySelectorAll("[data-country-label]").forEach(function (el) {
         el.textContent = window.PoseidonCountry.label(el.getAttribute("data-country-label"), locale);
@@ -141,10 +173,28 @@
       editionNotice.hidden = L === pageLanguage;
     }
     document.querySelectorAll("[data-lang]").forEach(function (el) { el.hidden = el.getAttribute("data-lang") !== L; });
-    // dacă nu există varianta în limba aleasă, rămâne româna
-    document.querySelectorAll("[data-lang-grup]").forEach(function (g) { var are = g.querySelector('[data-lang="' + L + '"]'); if (!are) { var en = g.querySelector('[data-lang="en"]'), ro = g.querySelector('[data-lang="ro"]'), alt = en || ro; if (alt) { alt.hidden = false; if (alt === ro && L !== "ro" && !g.querySelector(".nota-ro")) { var n = document.createElement("p"); n.className = "muted nota-ro"; n.textContent = (I[L] && I[L]["arhiva.nota_ro"]) || ""; if (n.textContent) g.insertBefore(n, ro); } } } });
-    // analizele mai vechi de 7 oct 2026 nu au traducere (articol fără grup de limbi): notă scurtă
-    if (L !== "ro") document.querySelectorAll("article.pro-card-full").forEach(function (a) { if (!a.closest("[data-lang-grup]") && !a.querySelector(".nota-ro")) { var n = document.createElement("p"); n.className = "muted nota-ro"; n.textContent = (I[L] && I[L]["arhiva.nota_ro"]) || ""; var v = a.querySelector(".pro-visible"); if (n.textContent && v) v.insertBefore(n, v.firstChild); } });
+    document.querySelectorAll("[data-lang-grup]").forEach(function (group) {
+      if (group.querySelector('[data-lang="' + L + '"]')) return;
+      var english = group.querySelector('[data-lang="en"]');
+      var fallback = english || group.querySelector('[data-lang="ro"]');
+      if (!fallback) return;
+      fallback.hidden = false;
+      var family = english ? "en" : "ro";
+      fallback.setAttribute("lang", family);
+      if (document.body.classList.contains("analysis-modern")) archiveLanguageNotice(I, group, fallback, family);
+    });
+    if (L !== "ro" && document.body.classList.contains("analysis-modern")) document.querySelectorAll("article.pro-card-full").forEach(function (article) {
+      if (article.closest("[data-lang-grup]")) return;
+      var body = article.querySelector(".pro-visible");
+      if (body) archiveLanguageNotice(I, body, body.firstChild, "ro");
+    });
+  }
+  function archiveLanguageNotice(I, container, before, language) {
+    if (container.querySelector(".nota-ro")) return;
+    var notice = document.createElement("p");
+    notice.className = "muted nota-ro";
+    notice.textContent = (I[L] && I[L]["arhiva.nota_" + language]) || "";
+    if (notice.textContent) container.insertBefore(notice, before);
   }
   function selector() {
     var nav = document.querySelector("nav"); if (!nav || nav.querySelector(".lang-switcher")) return;
@@ -154,6 +204,7 @@
     w.querySelector("select").addEventListener("change", function (e) {
       var selected = e.target.value;
       try { localStorage.setItem("poseidon_lang", selected); } catch (x) {}
+      if (openLeagueEdition(selected)) return;
       if (hasEditions) {
         var edition = selected === "ro" ? "ro" : "en";
         var link = document.querySelector('a[hreflang="' + edition + '"]');
@@ -166,5 +217,5 @@
     });
   }
   selector();
-  fetch(sus + "assets/i18n.json?v=20261118e", { cache: "no-cache" }).then(function (r) { return r.json(); }).then(traduceCandGata).catch(function () {});
+  fetch(sus + "assets/i18n.json?v=20261119-audit", { cache: "no-cache" }).then(function (r) { return r.json(); }).then(traduceCandGata).catch(function () {});
 })();

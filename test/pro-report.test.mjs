@@ -2,6 +2,19 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync,readdirSync} from 'node:fs';
 import report from '../assets/pro-report.js';
+
+test('tagged archive role persists for selection recognition and stays out of presentation', () => {
+  const role='<span data-i18n="arhiva.rol.principal" data-archive-role="principal">Main selection</span>';
+  const odds='<strong>'+role+':</strong> Over 1.5 — 81%. Reason.';
+  const body='<p>🎯 <strong>Model selections</strong></p><ul><li>'+odds+'</li></ul>';
+  const parsed=report.sections(body);
+  assert.equal(parsed.original,body);
+  assert.equal(parsed.selection.market,'Over 1.5');
+  assert.equal(parsed.selection.probability,'81%');
+  assert.doesNotMatch(parsed.markets.join(''),/Main selection|data-archive-role/);
+  const review='<table><tr><td>'+role+'</td><td>Over 1.5</td><td>81%</td><td>WIN</td></tr></table>';
+  assert.equal(report.cleanReview(review),'<table><tr><td>Over 1.5</td><td>81%</td><td>WIN</td></tr></table>');
+});
 import protectedContext from '../assets/pro-context.js';
 import {proSample,plain,marketProbability} from './helpers/pro-sample.mjs';
 const source=readFileSync(new URL('../analize/2026-11-16.html',import.meta.url),'utf8');
@@ -154,8 +167,8 @@ test('EN → RO → EN only freezes the selected language, keeping review labels
  delete globalThis.document;
 });
 test('historical mixed Markdown/strong prefixes preserve market, probability and balanced markup',()=>{
- const html=readFileSync(new URL('../analize/2026-07-30.html',import.meta.url),'utf8');
- const original=html.match(/<li>(Principal: <strong>🎯 \*\*Principal: Pafos nu pierde \(1X\)<\/strong>[\s\S]*?)<\/li>/)?.[1];assert(original,'real archived regression fixture exists');
+ // Frozen legacy prefix from the 30 July Pafos report, independent of the display migration.
+ const original='Principal: <strong>🎯 **Principal: Pafos nu pierde (1X)</strong> — 66%.';
  const stripped=report.stripTier(original);assert(stripped.startsWith('<strong>Pafos nu pierde (1X)</strong>'));assert(stripped.includes('66%'));assert.equal((stripped.match(/<strong>/g)||[]).length,(stripped.match(/<\/strong>/g)||[]).length);
  for(const label of ['Atrevido','Coraggioso','Sécurité','Seguridad','Safety','Sicurezza','Aman','Keamanan','Main pick','Bold pick','Safe','Banker','Core','Foundation']){
   assert.equal(report.stripTier('💎 <strong>'+label+':</strong> X2 — 66%'),'X2 — 66%');

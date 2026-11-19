@@ -28,6 +28,13 @@ def test_pagina_liga_are_titlul_si_h1_noi():
     assert "data-i18n-vars-en='{\"liga\": \"Premier League\"}'>Predicții Premier League</h1>" in html
 
 
+def test_sample_and_bias_expose_raw_values_for_localization():
+    html = G.profil_calibrare({"n": 194, "bias_pp": 3.9, "calibrated": True}, "Test",
+                              nume_i18n="Test", vars_en="")
+    assert '<span data-match-count="194">194 de meciuri</span>' in html
+    assert '<span data-decimal="3.9">3.9</span>' in html
+
+
 def test_pagina_zi_are_titlu_pe_rezultate_si_echipele_in_descriere():
     zi = {"date": "2026-09-29", "totals": {"wins": 3, "losses": 1}, "matches": [
         {"home": "Czech Republic", "away": "England", "league": "UEFA Nations League", "country": "World", "ft_h": 0, "ft_a": 2, "time": "21:45", "picks": [{"market": "Over 1.5", "prob": 83, "outcome": "WIN"}]},

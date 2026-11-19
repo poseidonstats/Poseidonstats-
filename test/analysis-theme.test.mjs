@@ -32,7 +32,7 @@ class Element {
   closest(selector) { return this.matches(selector) ? this : this.parentElement?.closest(selector) || null; }
 }
 
-async function run({canonical = 'https://poseidonstats.com/analize/index.html', pathname = '/analize/index.html', language = 'ro', preloaded = false, fallback = false, prefix = '../', entries = [], loading = false} = {}) {
+async function run({canonical = 'https://poseidonstats.com/analize/index.html', pathname = '/analize/index.html', language = 'ro', preloaded = false, fallback = false, prefix = '../', entries = [], loading = false, alternates = []} = {}) {
   const head = new Element('head'), body = new Element('body'), header = body.appendChild(new Element('header'));
   const container = header.appendChild(new Element('div', {class:'container'}));
   const brand = container.appendChild(new Element('a', {class:'brand', href:'../index.html'})); brand.innerHTML = '<img>POSEIDON';
@@ -40,8 +40,9 @@ async function run({canonical = 'https://poseidonstats.com/analize/index.html', 
   const nav = container.appendChild(new Element('nav')); nav.appendChild(new Element('a', {href:'../index.html', 'data-i18n':'nav.predictii'}));
   const script = container.appendChild(new Element('script', {'data-sus':prefix}));
   if (canonical) head.appendChild(new Element('link', {rel:'canonical', href:canonical}));
+  alternates.forEach(([lang, href]) => head.appendChild(new Element('link', {rel:'alternate', hreflang:lang, href})));
   if (preloaded) for (const name of ['home-modern', 'pages-modern']) head.appendChild(new Element('link', {rel:'stylesheet', href:`https://poseidonstats.com/assets/${name}.css`}));
-  const requests = [], storage = [], location = {href:`https://poseidonstats.com${pathname}`, pathname, reload() { this.reloaded = true; }};
+  const requests = [], storage = [], location = {href:`https://poseidonstats.com${pathname}`, pathname, reload() { this.reloaded = true; }, assign(url) { this.assigned = new URL(url, this.href).pathname; }};
   const root = new Element('html'); root.appendChild(head); root.appendChild(body);
   const mainQueries = [], listeners = {}, contentElements = [];
   const document = {head, body, documentElement:root, currentScript:script, baseURI:location.href, readyState: loading ? "loading" : "complete",
@@ -71,6 +72,31 @@ async function run({canonical = 'https://poseidonstats.com/analize/index.html', 
   return {document, body, head, brand, nav, tagline, script, container, requests, storage, location, context, mainQueries, article, group, english, romanian, contentElements, finishParsing() { document.readyState = "interactive"; listeners.DOMContentLoaded?.(); }};
 }
 
+test('the English league edition honours a saved French preference and the selector routes to the equivalent English league', async () => {
+  const englishPath = '/en/predictions/england-premier-league.html';
+  const multiPath = '/predictii/anglia-premier-league.html';
+  const url = path => 'https://poseidonstats.com' + path;
+  const alternates = [['ro', url(multiPath)], ['en', url(englishPath)]];
+  const french = await run({pathname:englishPath, canonical:url(englishPath), language:'fr', prefix:'../../', alternates});
+  assert.equal(french.location.assigned, multiPath);
+  const multilingual = await run({pathname:multiPath, canonical:url(multiPath), language:'fr', alternates});
+  multilingual.nav.querySelector('.lang-switcher').querySelector('select').events.change({target:{value:'en'}});
+  assert.equal(multilingual.location.assigned, englishPath);
+});
+
+test('calibration sample counts and bias are formatted at render time', async () => {
+  const entries = [
+    {tag:'span', attrs:{'data-match-count':'194'}},
+    {tag:'span', attrs:{'data-decimal':'3.9'}},
+  ];
+  const path = '/predictii/anglia-premier-league.html';
+  const french = await run({pathname:path, canonical:'https://poseidonstats.com'+path, language:'fr', entries});
+  assert.equal(french.contentElements[0].textContent, '194 matchs');
+  assert.equal(french.contentElements[1].textContent, '3,9');
+  const romanian = await run({pathname:path, canonical:'https://poseidonstats.com'+path, language:'ro', entries});
+  assert.equal(romanian.contentElements[0].textContent, '194 de meciuri');
+});
+
 test('archive index and dated canonical paths get the navy theme before content parsing', async () => {
   for (const filename of ['index.html','2026-10-22.html','2026-07-09.html']) {
     const state = await run({canonical:`https://poseidonstats.com/analize/${filename}`, pathname:'/preview.html'});
@@ -83,7 +109,7 @@ test('archive index and dated canonical paths get the navy theme before content 
     assert.match(state.brand.innerHTML, /POSEIDON<span>STATS/);
     assert.match(state.brand.innerHTML, /<svg/);
     assert.equal(state.brand.getAttribute('href'), '../index.html');
-    assert.deepEqual(state.requests, ['../assets/i18n.json?v=20261118e']);
+    assert.deepEqual(state.requests, ['../assets/i18n.json?v=20261119-audit']);
   }
 });
 
@@ -117,7 +143,7 @@ test('missing canonical falls back to analysis pathname, but canonical unknown r
     assert.equal(state.body.className, ''); assert.equal(state.brand.innerHTML, '<img>POSEIDON');
     assert.equal(state.head.querySelectorAll('link[rel="stylesheet"]').length, 0);
     assert.equal(state.nav.querySelectorAll('details').length, 0);
-    assert.deepEqual(state.requests, ['../assets/i18n.json?v=20261118e']);
+    assert.deepEqual(state.requests, ['../assets/i18n.json?v=20261119-audit']);
   }
 });
 
@@ -138,6 +164,8 @@ test('all six languages translate the new nav while the original selector contin
 test('original language fallback reveals English and keeps the old Romanian archive notice', async () => {
   const state = await run({language:'it',fallback:true});
   assert.equal(state.english.hidden, false); assert.equal(state.romanian.hidden, true);
+  assert.equal(state.english.getAttribute('lang'), 'en');
+  assert.equal(state.group.querySelector('.nota-ro').textContent, dictionary.it['arhiva.nota_en']);
   assert.equal(state.article.getAttribute('id'), 'original-match');
   assert.equal(state.article.querySelector('.nota-ro').textContent, dictionary.it['arhiva.nota_ro']);
   assert.equal(state.article.querySelector('.pro-visible').children.length, 1);
@@ -157,7 +185,7 @@ test('prediction, nested archive and future English helper routes use real root 
     assert.equal(active[0].getAttribute('href'), `${prefix}${pathname.startsWith('/en/') ? 'en/predictions/index.html' : 'predictii/index.html'}`);
     assert(state.nav.querySelector('summary').classList.contains('active'));
     assert.equal(state.nav.querySelector('a[data-i18n="nav.analize"]').getAttribute('href'), `${prefix}analize/index.html`);
-    assert.deepEqual(state.requests,[`${prefix}assets/i18n.json?v=20261118e`]);
+    assert.deepEqual(state.requests,[`${prefix}assets/i18n.json?v=20261119-audit`]);
   }
 });
 
@@ -167,7 +195,7 @@ test('root statistics use local assets and do not falsely mark another section a
   assert.deepEqual(state.head.querySelectorAll('link[rel="stylesheet"]').map(link => link.getAttribute('href')), ['assets/home-modern.css?v=20261118e','assets/pages-modern.css?v=20261118e']);
   assert.equal(state.brand.getAttribute('href'),'index.html');
   assert.equal(state.nav.querySelectorAll('a').filter(link => link.classList.contains('active')).length,0);
-  assert.deepEqual(state.requests,['assets/i18n.json?v=20261118e']);
+  assert.deepEqual(state.requests,['assets/i18n.json?v=20261119-audit']);
 });
 
 test('every existing public HTML using lite is accepted with its actual canonical and prefix', async () => {
@@ -185,7 +213,7 @@ test('every existing public HTML using lite is accepted with its actual canonica
     const state = await run({canonical,pathname:new URL(canonical).pathname,prefix});
     assert(state.body.classList.contains('secondary-modern'), file.pathname);
     assert.equal(state.script.parentElement,state.container);
-    assert.deepEqual(state.requests,[`${prefix}assets/i18n.json?v=20261118e`]);
+    assert.deepEqual(state.requests,[`${prefix}assets/i18n.json?v=20261119-audit`]);
     assert.equal(state.nav.querySelectorAll('.lang-switcher').length,1);
   }
 });

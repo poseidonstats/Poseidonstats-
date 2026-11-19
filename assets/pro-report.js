@@ -11,7 +11,7 @@
   };
   const marketCopy = {
     ro: ['Liga','grupa albă','grupa roșie','Meciurile echipelor','acasă','în deplasare','Istoric Pro · aceeași piață','{hits} din {n}','de meciuri','decontate','Estimări similare','Date indisponibile','0 selecții eligibile','Rezultate până la {cutoff}','O selecție principală pe meci și piață, publicată înainte de start și decontată înainte de data acestui meci.'],
-    en: ['League','White Group','Red Group','Teams’ matches','at home','away','Pro history · same market','{hits} of {n}','matches','settled','Similar estimates','Data unavailable','0 eligible picks','Results as of {cutoff}','One main pick per fixture and market, published before kickoff and settled before this fixture date.'],
+    en: ['League','White Group','Red Group','Teams’ matches','at home','away','Pro history · same market','{hits} of {n}','matches','settled','Similar estimates','Data unavailable','0 eligible selections','Results as of {cutoff}','One main selection per fixture and market, published before kickoff and settled before this fixture date.'],
     es: ['Liga','grupo blanco','grupo rojo','Partidos de los equipos','en casa','fuera','Historial Pro · mismo mercado','{hits} de {n}','partidos','liquidadas','Estimaciones similares','Datos no disponibles','0 selecciones elegibles','Resultados hasta {cutoff}','Una selección principal por partido y mercado, publicada antes del inicio y liquidada antes de la fecha del partido.'],
     it: ['Campionato','girone bianco','girone rosso','Partite delle squadre','in casa','in trasferta','Storico Pro · stesso mercato','{hits} su {n}','partite','refertate','Stime simili','Dati non disponibili','0 selezioni idonee','Risultati al {cutoff}','Una selezione principale per partita e mercato, pubblicata prima del calcio d’inizio e risolta prima della data della partita.'],
     fr: ['Championnat','groupe blanc','groupe rouge','Matchs des équipes','à domicile','à l’extérieur','Historique Pro · même marché','{hits} sur {n}','matchs','résolues','Estimations similaires','Données indisponibles','0 sélections admissibles','Résultats au {cutoff}','Une sélection principale par match et marché, publiée avant le coup d’envoi et résolue avant la date du match.'],
@@ -19,7 +19,7 @@
   };
   const archiveCopy = {
     ro: ['Pronostic publicat înainte de meci','Pronostic arhivat','Rezultat final','Vezi verificarea în arhivă'],
-    en: ['Pick published before kickoff','Archived pick','Final score','View the review in the archive'],
+    en: ['Selection published before kickoff','Archived selection','Final score','View the review in the archive'],
     es: ['Pronóstico publicado antes del inicio','Pronóstico archivado','Resultado final','Ver la revisión en el archivo'],
     it: ['Pronostico pubblicato prima del calcio d’inizio','Pronostico archiviato','Risultato finale','Vedi la verifica in archivio'],
     fr: ['Pronostic publié avant le coup d’envoi','Pronostic archivé','Score final','Voir la vérification dans les archives'],
@@ -113,7 +113,7 @@
     return `<div class="dossier-reading"><h3>${title}</h3><p>${fill(comparison)} ${fill(concentration)}</p></div>`;
   }
   function dossierReport(html,item,dossier,day,lang,sourceLang=lang) {
-    const data=sections(html);
+    const data=presentationSections(sections(html),sourceLang);
     const structured=structuredSelection(item.provenance?.inputs?.picks,lang);
     const selection=structured || data.selection;
     const dossierApi=root.PoseidonProContext;
@@ -137,13 +137,14 @@
   // Observed historical tier labels; anchored to the start, never narrative words.
   const tierNames = 'Base|Main pick|Main|Bold pick|Bold|Curajos|Arriesgado|Atrevido|Coraggioso|Bază|Baza|Principal|Principale|Principali|Audaz|Audace|Audacieux|Utama|Berani|Dasar|Siguranță|Safe pick|Safe|Safety|Seguridad|Sicurezza|Sécurité|Aman|Keamanan|Banker|Core|Foundation|Value pick|Risky pick|Audacios';
   const tierPrefix = new RegExp('^(?:\\s|-|[🔒🎯💎]|\\*|<strong>)*?(?:'+tierNames+')\\s*:\\s*(?:\\*\\*)?\\s*(?:</strong>)?\\s*','iu');
+  const taggedTierPrefix = /^(?:\s|-|[🔒🎯💎]|\*|<strong>)*?<span\b[^>]*\bdata-archive-role=(["'])(baza|principal|curajos)\1[^>]*>[^<]*<\/span>\s*:\s*(?:<\/strong>)?\s*/iu;
   const tierCell = new RegExp('^(?:'+tierNames+')$','iu');
   const primaryPrefix = /^(?:[-–]\s*|🎯\s*|\*\*\s*)*(?:Main(?: pick)?|Principal(?:e)?|Utama)\s*:/iu;
   function plain(html) { return html.replace(/<[^>]*>/g, '').trim(); }
   function stripTier(html) {
     let text=html, prefix;
     // Some archived generators prepended a tier to a source line which already had one.
-    while ((prefix=text.match(tierPrefix))) {
+    while ((prefix=text.match(taggedTierPrefix) || text.match(tierPrefix))) {
       const opens=(prefix[0].match(/<strong>/g)||[]).length;
       const closes=(prefix[0].match(/<\/strong>/g)||[]).length;
       text='<strong>'.repeat(Math.max(0,opens-closes))+text.slice(prefix[0].length);
@@ -151,7 +152,8 @@
     return text;
   }
   function recordedSelection(inner) {
-    if (!primaryPrefix.test(plain(inner))) return null;
+    const tagged = inner.match(taggedTierPrefix);
+    if (tagged ? tagged[2] !== 'principal' : !primaryPrefix.test(plain(inner))) return null;
     const match=plain(stripTier(inner)).match(/^(.+?)\s+[—–-]\s+(\d+(?:[.,]\d+)?\s*%)(?:\s|[.—–]|$)/u);
     if (!match) return null;
     const [,market,probability]=match;
@@ -201,7 +203,9 @@
         for (const item of items) {
           const inner=item.replace(/^<(?:li|p)\b[^>]*>/i,'').replace(/<\/(?:li|p)>$/i,'');
           // A declined selection is not a historical prediction. Retain it in the original report only.
-          if (/^(?:-?\s*💎\s*)?(?:<strong>)?(?:Bold|Curajos|Arriesgado|Audaz|Audace|Audacieux|Berani)[^:]*:/i.test(inner) && !/\d+(?:[.,]\d+)?\s*%/.test(inner.split(/[—–]/)[0]) && /no bold|no odds|no hay|ningún|nessun|aucun|sin |fără|nu |tidak /i.test(plain(inner))) continue;
+          const alternative = inner.match(taggedTierPrefix)?.[2] === 'curajos'
+            || /^(?:-?\s*💎\s*)?(?:<strong>)?(?:Bold|Curajos|Arriesgado|Audaz|Audace|Audacieux|Berani)[^:]*:/i.test(inner);
+          if (alternative && !/^.+?\s+[—–-]\s+\d+(?:[.,]\d+)?\s*%/u.test(plain(stripTier(inner)))) continue;
           const selection=recordedSelection(inner);
           if (selection) {
             const argument = plain(stripTier(inner)).match(/^[\s\S]*?\d+(?:[.,]\d+)?\s*%[.·]\s*(.+)$/u)?.[1] || '';
@@ -218,14 +222,31 @@
     return out;
   }
   function isMarketsHeading(block,text) {
-    return /arhiva\.sect\.piete/.test(block)||/^🎯\s*(?:Picks\b|Pronostic(?:uri|i)?\b|Pilihan\b|Previsioni\b|Pronósticos\b)/iu.test(text);
+    return /arhiva\.sect\.piete/.test(block)||/^🎯\s*(?:Picks\b|Pronostic(?:uri|i)?\b|Pilihan\b|Previsioni\b|Pronósticos\b|Model selections\b|Selecții\b|Selecciones\b|Selezioni\b|Sélections\b)/iu.test(text);
+  }
+  const legacyAdvice = {
+    ro: [/E pick de cotă, cu risc asumat\./gu,'Selecție alternativă, cu risc mai ridicat.',/E pick de cotă\./gu,'Selecție alternativă.'],
+    en: [/It['’]s an odds pick, with the risk accepted\./gu,'Higher-risk alternative selection.',/It['’]s an odds pick\./gu,'Alternative selection.'],
+    es: [/Es un pick de cuota, con riesgo asumido\./gu,'Selección alternativa de mayor riesgo.',/Es un pick de cuota\./gu,'Selección alternativa.'],
+    it: [/È un pick di quota, con rischio assunto\./gu,'Selezione alternativa con rischio più elevato.',/È un pick di quota\./gu,'Selezione alternativa.'],
+    fr: [/C['’]est un pick de cote, avec un risque assumé\./gu,'Sélection alternative plus risquée.',/C['’]est un pick de cote\./gu,'Sélection alternative.'],
+    id: [/Ini pick odds, dengan risiko yang disadari\./gu,'Pilihan alternatif dengan risiko lebih tinggi.',/Ini pick odds\./gu,'Pilihan alternatif.'],
+  };
+  function presentationSections(data, lang) {
+    const copy = legacyAdvice[lang];
+    if (!copy) return data;
+    const [withRisk, riskCopy, generic, genericCopy] = copy;
+    const display = value => value.replace(withRisk,riskCopy).replace(generic,genericCopy);
+    for (const key of ['thesis','context','evidence','watch','markets','other']) data[key] = data[key].map(display);
+    data.selectionArgument = display(data.selectionArgument);
+    return data;
   }
   function cleanReview(html) {
     // The first audit column is an editorial tier, not an outcome. Keep every market and result.
     return html.replace(/<tr\b[^>]*>([\s\S]*?)<\/tr>/gi,(row,inside)=>{
       const first=inside.match(/^\s*<(td|th)\b[^>]*>([\s\S]*?)<\/\1>/i);
       if (!first) return row;
-      if (/arhiva\.th\.pick/.test(first[0]) || tierCell.test(plain(first[2]))) return row.replace(first[0],'');
+      if (/arhiva\.th\.pick|\bdata-archive-role=/.test(first[0]) || tierCell.test(plain(first[2]))) return row.replace(first[0],'');
       return row;
     });
   }
@@ -491,9 +512,10 @@
     const original=sourceStates.get(container) ?? container.innerHTML;
     const data=sections(original);
     if (!data.thesis.length && !container.dataset.proMemberReport) return;
+    const lang=container.lang || container.closest('[data-lang]')?.getAttribute('data-lang') || document.documentElement.lang || 'en';
+    presentationSections(data,lang);
     sourceStates.set(container,original);
     const active=activePanels.get(container) ?? 0;
-    const lang=container.lang || container.closest('[data-lang]')?.getAttribute('data-lang') || document.documentElement.lang || 'en';
     const w=words[lang]||words.en;
     if (!data.thesis.length && data.other.length) {
       data.thesis=data.other.filter(line=>!tierPrefix.test(plain(line))).map(contentOnly);

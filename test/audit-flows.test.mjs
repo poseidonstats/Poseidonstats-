@@ -89,11 +89,14 @@ test('rendering History after a language change keeps each market once and prese
   market.add = option => market.options.push(option);
   market.replaceChildren = (...options) => { market.options = options; market.value = options[0].value; };
   const context = runtime({ getElementById: id => nodes.get(id) },
+    slice('function esc(s) {', '/* ============== TRACK RECORD'),
+    slice('const SIM_MARKETS = {', 'async function renderSimulator()'),
     slice('let _histData = null;', 'function fmtDayDate('));
   Object.assign(context, { i18nGata: async () => {}, HISTORY_URL: 'history.json',
     Option: class { constructor(text, value) { Object.assign(this, { text, value }); } },
     honestEmptyHtml: () => '',
-    fetchJSON: async () => ({ days: [{ date: '2026-11-17', status: 'resolved', totals: { wins: 1, losses: 1, picks: 2 },
+    fetchJSON: async () => ({ cumulated_markets: [{key:'1x2_home', name:'1 (Home)', tier:'NOISE', n:2, wins:1, losses:1,
+      hit_pct:50.5, wlo_pct:12.3, base_rate_pct:49.5, lift_pp:1}], days: [{ date: '2026-11-17', status: 'resolved', totals: { wins: 1, losses: 1, picks: 2 },
       matches: [{ picks: [{ market: 'Over 2.5', outcome: 'WIN' }, { market: '1X', outcome: 'LOSS' }, { market: '1X', outcome: 'WIN' }] }] }] }),
     fmtDayDate: value => value, renderHistMatch: match => match.picks.map(pick => pick.market).join(', '),
   });
@@ -105,6 +108,30 @@ test('rendering History after a language change keeps each market once and prese
   assert.deepEqual(Array.from(market.options, option => option.value), ['', '1X', 'Over 2.5']);
   assert.equal(market.value, '1X');
   assert.doesNotMatch(nodes.get('days-list').innerHTML, /Over 2\.5/);
+  context.LANG = 'fr';
+  await context.renderIstoric();
+  const summary = nodes.get('cumulat-stats').innerHTML;
+  assert.match(summary, /Marché/);
+  assert.match(summary, /Victoire à domicile/);
+  assert.match(summary, /50,5\s*%/);
+  assert.match(summary, /Bruit statistique/);
+  assert.doesNotMatch(summary, />NOISE</);
+  assert.doesNotMatch(summary, /<th>Piață<\/th>|<th>Bază<\/th>|1 \(Home\)/);
+  assert.notEqual(market.options.find(option => option.value === 'Over 2.5').text, 'Over 2.5');
+});
+
+test('simulator distinguishes the failed prediction export from a successful empty export', async () => {
+  const result = node('sim-gen-result'), matches = node('sim-matches');
+  const nodes = new Map([[result.id, result], [matches.id, matches]]);
+  const context = runtime({ getElementById: id => nodes.get(id) },
+    slice('async function renderSimulator()', '\nasync function renderIndex'));
+  Object.assign(context, {i18nGata: async () => {}, showPredictionSource: () => {}, LANG: 'en',
+    loadPredictions: async () => ({data:null, sursa:'public'})});
+  await context.renderSimulator();
+  assert.match(result.innerHTML, /could not be loaded/i);
+  context.loadPredictions = async () => ({data:{matches:[]}, sursa:'public'});
+  await context.renderSimulator();
+  assert.match(result.innerHTML, /no published matches/i);
 });
 
 test('Escape closes a visible match explanation and returns focus to its originating button', () => {

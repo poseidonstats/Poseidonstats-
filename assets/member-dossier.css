@@ -17,6 +17,10 @@
 .dossier-open:focus-visible,
 .member-dossier :focus-visible { outline: 3px solid #a07920; outline-offset: 2px; }
 .dashboard-team .dossier-open { margin-top: .25rem; }
+.home-modern .dashboard-table .dashboard-stats-only { color: var(--dash-muted); font-size: .78rem; text-align: center; white-space: normal; }
+@media (max-width: 600px) {
+  .home-modern .dashboard-match-row .dashboard-stats-only { grid-column: 1 / -1; grid-row: 3; text-align: left; }
+}
 body:has(.member-dossier[open]) { overflow: hidden; }
 .member-dossier {
   position: fixed;
@@ -85,7 +89,8 @@ body:has(.member-dossier[open]) { overflow: hidden; }
 .member-dossier :is(th, td) small { display: block; font-size: .7rem; font-weight: 500; line-height: 1.25; }
 .member-dossier td small { color: #445d50; }
 .member-dossier table + .dossier-note { margin-top: .5rem; }
-.dossier-results-title { margin: 1rem 0 .35rem; font-size: .95rem; }
+.home-modern .member-dossier .dossier-results-title,
+.member-dossier .dossier-results-title { margin: 1rem 0 .35rem; color: #152c26; font-size: .95rem; }
 .dossier-results { display: grid; grid-template-columns: 1fr 1fr; gap: .8rem; }
 .dossier-results-table th, .dossier-results-table td { font-size: .75rem; }
 .dossier-results-table caption { padding: .4rem; background: #e8eee4; text-align: left; font-weight: 750; }

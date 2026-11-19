@@ -5,7 +5,7 @@ const CALIB_URL = "data/calibration.json";
 const FORWARD_URL = "data/forward.json";
 const HISTORY_URL = "data/history.json";
 const SCORECARD_URL = "data/scorecard.json";
-const I18N_URL = "assets/i18n.json?v=20261118e";
+const I18N_URL = "assets/i18n.json?v=20261119-audit";
 
 // Scorecard skill per piață (din backtest OOS), folosit pentru contextul piețelor.
 let SCORECARD = {};                       // key -> card (label, tier, threshold, skill_stars, lift_pp, hit)
@@ -734,9 +734,11 @@ async function renderSimulator() {
   if (prediction.sameSession && !prediction.sameSession()) return renderSimulator();
   showPredictionSource(prediction);
   const { data, sursa } = prediction;
-  if (!data || !data.matches) {
-    const msg = `<p class="muted">${tt("sim.nodata",
-      "Datele zilei nu sunt încă publicate. Revino după actualizarea de dimineață.")}</p>`;
+  if (!Array.isArray(data?.matches) || data.matches.length === 0) {
+    const message = Array.isArray(data?.matches)
+      ? tt("sim.nodata", "Fișierul de predicții nu conține meciuri publicate.")
+      : tt("sim.load_error", "Predicțiile nu s-au putut încărca. Reîncarcă pagina.");
+    const msg = `<p class="muted">${message}</p>`;
     if (genEl) genEl.innerHTML = msg;
     if (el) el.innerHTML = "";
     return;
@@ -1353,6 +1355,30 @@ if (document.getElementById("matches")) renderHome();
 
 let _histData = null;
 
+function historyMarketLabel(name, key) {
+  const byKey = {
+    "1x2_home": "home", "1x2_draw": "draw", "1x2_away": "away",
+    dc_1x: "dc_1x", dc_x2: "dc_x2", over_1_5: "over_1_5",
+    over_2_5: "over_2_5", over_3_5: "over_3_5", under_3_5: "under_3_5", btts: "btts",
+  };
+  const byName = {
+    "1 (Home)": "home", "X (Draw)": "draw", "2 (Away)": "away", "1X": "dc_1x", X2: "dc_x2",
+    "Over 1.5": "over_1_5", "Over 2.5": "over_2_5", "Over 3.5": "over_3_5",
+    "Under 3.5": "under_3_5", BTTS: "btts",
+  };
+  const label = (Object.hasOwn(byKey, key) && byKey[key]) || (Object.hasOwn(byName, name) && byName[name]);
+  if (label === "over_3_5") return tt("audit.piata.over_3_5", name);
+  return label ? tt(`mk.${label}`, name) : name;
+}
+
+function historyTierLabel(tier) {
+  const keys = {
+    "STRONG ROBUST": "strong_robust", ROBUST: "robust", PROMISING: "promising",
+    "PRE-PROMISING": "pre_promising", NOISE: "noise", DROP: "drop",
+  };
+  return Object.hasOwn(keys, tier) ? tt(`tier.${keys[tier]}`, tier) : tier;
+}
+
 async function renderIstoric() {
   await i18nGata();
   const data = await fetchJSON(HISTORY_URL);
@@ -1371,7 +1397,10 @@ async function renderIstoric() {
   // Cumulat per piață
   const cumHtml = (data.cumulated_markets || []).length
     ? `<table class="cumulat-table">
-        <thead><tr><th>Piață</th><th>N</th><th>WIN</th><th>LOSS</th><th>Hit %</th><th>Wlo 95%</th><th>Bază</th><th>Lift</th><th>Tier</th></tr></thead>
+        <thead><tr><th>${tt("arhiva.th.piata", "Piața")}</th><th>N</th>
+        <th>${tt("istoric.th.win", "Reușite")}</th><th>${tt("istoric.th.loss", "Ratate")}</th>
+        <th>${tt("proof.th.hit", "Acuratețe")}</th><th>${tt("proof.th.wlo", "Wilson jos")}</th>
+        <th>${tt("istoric.th.base", "Rată de bază")}</th><th>${tt("istoric.th.lift", "Diferență")}</th><th>${tt("proof.th.tier", "Nivel")}</th></tr></thead>
         <tbody>${data.cumulated_markets.map(m => {
           const tierClass = m.tier === "STRONG ROBUST" ? "tier-elite"
             : m.tier === "ROBUST" ? "tier-strong"
@@ -1380,15 +1409,15 @@ async function renderIstoric() {
             : m.tier === "DROP" ? "tier-drop"
             : "tier-noise";
           return `<tr>
-            <td><strong>${esc(m.name)}</strong></td>
-            <td>${m.n}</td>
-            <td class="num-win">${m.wins}</td>
-            <td class="num-loss">${m.losses}</td>
-            <td>${m.hit_pct.toFixed(1)}%</td>
-            <td>${m.wlo_pct.toFixed(1)}%</td>
-            <td>${m.base_rate_pct != null ? m.base_rate_pct.toFixed(1) + "%" : "—"}</td>
-            <td>${m.lift_pp != null ? (m.lift_pp >= 0 ? "+" : "") + m.lift_pp.toFixed(1) + " pp" : "—"}</td>
-            <td><span class="tier-badge ${tierClass}">${m.tier}</span></td>
+            <td><strong>${esc(historyMarketLabel(m.name, m.key))}</strong></td>
+            <td>${m.n.toLocaleString(_loc())}</td>
+            <td class="num-win">${m.wins.toLocaleString(_loc())}</td>
+            <td class="num-loss">${m.losses.toLocaleString(_loc())}</td>
+            <td>${simPct(m.hit_pct / 100, 1)}</td>
+            <td>${simPct(m.wlo_pct / 100, 1)}</td>
+            <td>${m.base_rate_pct != null ? simPct(m.base_rate_pct / 100, 1) : "—"}</td>
+            <td>${m.lift_pp != null ? m.lift_pp.toLocaleString(_loc(), {minimumFractionDigits:1, maximumFractionDigits:1, signDisplay:"always"}) + " pp" : "—"}</td>
+            <td><span class="tier-badge ${tierClass}">${esc(historyTierLabel(m.tier))}</span></td>
           </tr>`;
         }).join("")}</tbody>
       </table>
@@ -1401,7 +1430,7 @@ async function renderIstoric() {
   for (const d of data.days) for (const m of d.matches) for (const p of m.picks) allPicks.add(p.market);
   const sel = document.getElementById("filter-market");
   const selected = sel.value;
-  sel.replaceChildren(sel.options[0], ...[...allPicks].sort().map(m => new Option(m, m)));
+  sel.replaceChildren(sel.options[0], ...[...allPicks].sort().map(m => new Option(historyMarketLabel(m), m)));
   sel.value = allPicks.has(selected) ? selected : "";
 
   // Hook filters
@@ -1481,12 +1510,12 @@ function renderHistMatch(m) {
     const mark = p.outcome === "WIN" ? "✓"
       : p.outcome === "LOSS" ? "✗"
       : "⏳";
-    return `<span class="pick-row ${cls}">★ ${esc(p.market)} ${p.prob}% <span class="pick-mark">${mark}</span></span>`;
+    return `<span class="pick-row ${cls}">★ ${esc(historyMarketLabel(p.market))} ${simPct(p.prob / 100)} <span class="pick-mark">${mark}</span></span>`;
   }).join(" ");
 
   const calMark = m.calibrated_lg
-    ? `<span class="ok-tag">✓ calibrată</span>`
-    : `<span class="warn-tag">⚠️ ligă slab calibrată</span>`;
+    ? `<span class="ok-tag">${tt("ligi.cal.ok", "✓ calibrată")}</span>`
+    : `<span class="warn-tag">⚠️ ${tt("ligi.cal.slaba", "calibrare slabă")}</span>`;
 
   return `<div class="hist-match">
     <div class="hist-match-head">
@@ -1512,7 +1541,7 @@ function loadProReport() {
   PRO_REPORT_LOAD = new Promise((resolve,reject) => {
     const script = document.createElement("script"); script.id = "pro-report-script"; script.src = "assets/pro-context.js?v=20261118e";
     script.onload = script.onerror = () => {
-      const report = document.createElement("script"); report.src = "assets/pro-report.js?v=20261118e";
+      const report = document.createElement("script"); report.src = "assets/pro-report.js?v=20261119-audit";
       report.onload = () => resolve(window.PoseidonProReport);
       report.onerror = () => { PRO_REPORT_LOAD = null; css.remove(); script.remove(); report.remove(); reject(new Error("Pro report unavailable")); };
       document.head.appendChild(report);
@@ -1544,10 +1573,11 @@ function proAnalysisForFixture(data, day, fixture) {
     && typeof item.analysis === "string" && item.analysis.trim()) || null;
 }
 function proAnalysisText(item, language) {
-  const translated = language !== "ro" && item["analysis_" + language];
-  return typeof translated === "string" && translated.trim()
-    ? { text: translated, lang: language }
-    : { text: item.analysis, lang: "ro" };
+  for (const lang of [language, "en", "ro"]) {
+    const text = lang === "ro" ? item.analysis : item["analysis_" + lang];
+    if (typeof text === "string" && text.trim()) return { text, lang };
+  }
+  return { text: "", lang: "ro" };
 }
 // 30 oct 2026: zi selectabilă în zona Pro; o cerere veche nu suprascrie ziua/limba curentă.
 let PRO_ZI = null;
@@ -1599,10 +1629,8 @@ async function renderProAnalize(zi) {
     if (r.ok || r.status === 404) rutaAnalize(true);
     if (r.status === 401 || r.status === 403) rutaAnalize(false);
     if (!r.ok) {
-      // 6 oct 2026: mesaj după oră și cod — „apar după 07:45” doar dimineața; după aceea e o problemă a noastră, spusă ca atare
-      const oraRO = Number(new Date().toLocaleTimeString("en-GB", { timeZone: "Europe/Bucharest", hour: "2-digit", hour12: false }));
-      const msg = (r.status === 404 && data === azi && oraRO < 8)
-        ? tt("pro.azi.devreme", "Analizele Pro de azi apar după 07:45. Până atunci: #analize-pro pe Discord.")
+      const msg = (r.status === 404 && data === azi)
+        ? tt("pro.azi.devreme", "Analizele Pro de azi nu sunt încă disponibile pe site.")
         : (r.status === 401 || r.status === 403)
           ? tt("pro.azi.sesiune", "Sesiunea a expirat — apasă „Intră cu Patreon” ca să vezi analizele.")
           : tt("pro.zi.lipsa", "Analizele pentru această zi nu sunt disponibile pe site (cod {cod}).").replace("{cod}", r.status);

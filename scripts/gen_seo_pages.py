@@ -174,15 +174,20 @@ PIATA_KEY = {"prob_over_1_5": "piata.o15", "prob_over_2_5": "piata.o25", "prob_o
 
 
 def n_meciuri(n: int) -> str:
-    """„un meci” / „7 meciuri” / „20 de meciuri” ca span tradus (n.meci1 / n.meciuri)."""
-    return ('<span data-i18n="n.meci1">un meci</span>' if n == 1
-            else f'<span data-i18n="n.meciuri" data-i18n-vars=\'{_v({"n": cu_de(n)})}\'>{cu_de(n)} meciuri</span>')
+    """Numărul rămâne brut în HTML pentru flexiune și formatare în limba activă."""
+    label = "un meci" if n == 1 else f"{cu_de(n)} meciuri"
+    return f'<span data-match-count="{n}">{label}</span>'
+
+
+def zecimal(value: float, precision: int = 1) -> str:
+    raw = f"{value:.{precision}f}"
+    return f'<span data-decimal="{raw}">{raw}</span>'
 
 
 def cu_de(n: int) -> str:
     """Numeralul românesc: „7 meciuri" dar „20 de meciuri" (ultimele două cifre 0 sau ≥20)."""
     r = n % 100
-    return f"{nr_ro(n)} de" if (r == 0 or r >= 20) else nr_ro(n)
+    return f"{nr_ro(n)} de" if n >= 20 and (r == 0 or r >= 20) else nr_ro(n)
 
 
 def plural(n: int, unu: str, multi: str) -> str:
@@ -277,7 +282,7 @@ def shell(*, titlu: str, descriere: str, canonical: str, corp: str,
       <a href="{sus}metodologie.html" data-i18n="nav.metodologie">Metodologie</a>
       <a class="patreon" href="{sus}index.html#abonament" data-i18n="nav.abonamente">Abonamente</a>
     </nav>
-{script_tari}    <script src="{sus}assets/i18n-lite.js?v=20261118e" data-sus="{sus}"></script>
+{script_tari}    <script src="{sus}assets/i18n-lite.js?v=20261119-audit" data-sus="{sus}"></script>
   </div>
 </header>
 
@@ -381,12 +386,12 @@ def profil_calibrare(intrare: dict | None, nume: str, n_marcate: int = 0,
     directie = ('<span data-i18n="ligi.prof.mai_multe">mai multe</span>' if bias > 0 else '<span data-i18n="ligi.prof.mai_putine">mai puține</span>')
     marker = ('<span class="ok-tag" data-i18n="ligi.cal.ok">✓ calibrată</span>' if ok
               else '<span class="warn-tag" data-i18n="ligi.cal.slaba">calibrare slabă</span>')
-    _vars_expl = _v({"n": n_meciuri(n), "liga": nume_i18n, "bias": f"{abs(bias):.1f}", "dir": directie})
+    _vars_expl = _v({"n": n_meciuri(n), "liga": nume_i18n, "bias": zecimal(abs(bias)), "dir": directie})
     explicatie = (
         f'<span data-i18n="ligi.prof.expl" data-i18n-vars=\'{_vars_expl}\'{vars_en}>'
         f"Pe backtest-ul de calibrare (ianuarie–mai 2026, ratings înghețate la 31 decembrie "
         f"2025), modelul a văzut <strong>{n_meciuri(n)}</strong> din {e(nume)}. "
-        f"Golurile pe care le aștepta erau cu <strong>{abs(bias):.1f}%</strong> {directie} "
+        f"Golurile pe care le aștepta erau cu <strong>{zecimal(abs(bias))}%</strong> {directie} "
         f"decât cele marcate efectiv — exact abaterea pe care o corectează calibrarea per-ligă.</span>"
     )
     if ok:
@@ -448,7 +453,7 @@ def jurnal_liga(zile: list[dict], tara: str, liga: str) -> str:
     tabel = (f'<table class="cumulat-table"><thead><tr><th data-i18n="ligi.jur.th.piata">Piață</th><th>N</th>'
              f"<th>WIN</th><th>LOSS</th></tr></thead><tbody>{randuri}</tbody></table>")
     if n < PRAG_TIER_MIN:
-        _vj = _v({"n": str(n), "pred": plural(n, "predicție rezolvată", "predicții rezolvate"), "w": str(wins), "nim": plural(wins, "nimerită", "nimerite"), "l": str(losses), "rat": plural(losses, "ratată", "ratate"), "prag": str(PRAG_TIER_MIN)})
+        _vj = _v({"n": str(n), "w": str(wins), "l": str(losses), "prag": str(PRAG_TIER_MIN)})
         nota = (f'<p data-i18n="ligi.jur.putine" data-i18n-vars=\'{_vj}\'><strong>{n}</strong> {plural(n, "predicție rezolvată", "predicții rezolvate")} '
                 f'până acum ({wins} {plural(wins, "nimerită", "nimerite")}, '
                 f'{losses} {plural(losses, "ratată", "ratate")}). '
@@ -457,7 +462,7 @@ def jurnal_liga(zile: list[dict], tara: str, liga: str) -> str:
                 f"îl prezentăm ca atare. Cifra care contează acum e cea globală, de pe "
                 f'<a href="../track-record.html">track record</a>.</p>')
     else:
-        _vj = _v({"n": str(n), "w": str(wins), "nim": plural(wins, "nimerită", "nimerite"), "l": str(losses), "rat": plural(losses, "ratată", "ratate"), "hit": f"{hit:.1f}", "wlo": f"{wlo:.1f}"})
+        _vj = _v({"n": str(n), "w": str(wins), "l": str(losses), "hit": zecimal(hit), "wlo": zecimal(wlo)})
         nota = (f'<p data-i18n="ligi.jur.ok" data-i18n-vars=\'{_vj}\'><strong>{n}</strong> predicții rezolvate: {wins} '
                 f'{plural(wins, "nimerită", "nimerite")}, {losses} '
                 f'{plural(losses, "ratată", "ratate")} '
@@ -515,7 +520,7 @@ def pagina_liga(tara: str, liga: str, slug: str, nume: str, *,
     if meciuri:
         prima = min(datetime.fromisoformat(m["match_date"].replace("Z", "+00:00")) for m in meciuri)
         _iso = prima.astimezone(TZ).date().isoformat()
-        _n = ('<span data-i18n="n.meci1">un meci</span>' if n_meci == 1 else f'<span data-i18n="n.meciuri" data-i18n-vars=\'{{"n":"{cu_de(n_meci)}"}}\'>{cu_de(n_meci)} meciuri</span>')
+        _n = n_meciuri(n_meci)
         rezumat = (f'<span data-i18n="ligi.rez.main" data-i18n-vars=\'{_v({"n": _n, "liga": nume_i18n, "z": str(FEREASTRA_ZILE), "data": f"<span data-date=\"{_iso}\">{data_ro(prima.astimezone(TZ))}</span>"})}\'{vars_en}>'
                    f"Modelul a analizat <strong>{_n}</strong> din {e(nume)} în următoarele {FEREASTRA_ZILE} zile, primul pe <span data-date=\"{_iso}\">{data_ro(prima.astimezone(TZ))}</span>.</span>")
         if libere:

@@ -75,13 +75,16 @@ def _sectiune(text: str, marker: str, urmatoarele: tuple[str, ...]) -> str:
 
 
 def _titlu_picks(text: str) -> str:
-    """Rândul-titlu al secțiunii de picks: „🎯 **Picks**” în română, dar traducerile îl scriu „Pronostici”, „Pilihan”, „Pronósticos”, „Pronostics”
-    (24 oct 2026, audit: parserul literal „🎯 **Picks” pierdea picks-urile din variantele traduse). Titlul = primul rând „🎯 **…**” fără „:” (pick-ul
-    Principal e „🎯 **Principal:**”)."""
+    """Recunoaște titlul separat, inclusiv „🎯 **Selezioni:**” și „🎯 **Pick:**”."""
+    titles = (
+        "picks?", "selecții", "selecciones", "selections", "sélections",
+        "selezioni", "pilihan", "pronostici", "pronósticos", "pronostics",
+    )
+    known = re.compile(r"^🎯\s+\*\*(?:" + "|".join(titles) + r")(?:\s*:)?\*\*\s*:?$", re.I)
     for linie in text.splitlines():
         t = linie.strip()
-        if re.match(r"^🎯 \*\*[^:*]+\*\*\s*$", t):
-            return t[: t.index("**", 5) + 2] if "**" in t[5:] else t
+        if known.fullmatch(t) or re.fullmatch(r"🎯 \*\*[^:*]+\*\*", t):
+            return t
     return "🎯 **Picks"
 
 

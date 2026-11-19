@@ -6,14 +6,14 @@
     ro: {
       open: "Dosarul meciului", member: "Membru", close: "Închide", tabs: ["Echipe", "Goluri", "Reprize", "Cornere"],
       scope: "Meciuri din competiție", scopes: ["Acasă / deplasare", "Toate meciurile"],
-      home: "Acasă", away: "În deplasare", matches: "meciuri", metric: "Indicator",
-      updated: "Date disponibile la", season: "Sezon", loading: "Se încarcă dosarul…",
+      home: "Acasă", away: "În deplasare", match: "meci", matches: "meciuri", metric: "Indicator",
+      updated: "Date până la", season: "Sezon", loading: "Se încarcă dosarul…",
       missing: "Dosarul nu este disponibil pentru acest meci.", partial: "Acoperire parțială. Numitorul arată meciurile cu date confirmate din selecția curentă.",
       emptyHistory: "Încă nu avem meciuri confirmate în această competiție și în acest sezon.",
       emptyScope: "Nu avem meciuri confirmate pentru terenul selectat.", emptyHalves: "Nu avem scoruri confirmate la pauză pentru selecția curentă.",
       cornerCoverage: "Meciuri cu date / meciuri selectate. Valorile lipsă sunt marcate cu —.",
       perGame: "/ meci", latest: "Rezultate · cele mai recente primele",
-      headers: ["Data", "Adversar", "Echipă–adversar"], outcomes: ["Victorii", "Egaluri", "Înfrângeri", "Puncte / meci"],
+      headers: ["Data", "Adversar", "Scor (echipa prima)"], outcomes: ["Victorii", "Egaluri", "Înfrângeri", "Puncte / meci"],
       goals: ["Goluri marcate", "Goluri primite", "Peste 2,5", "Ambele echipe au marcat", "Fără gol marcat", "Fără gol primit"],
       halves: ["Marcate în prima repriză", "Primite în prima repriză", "Marcate în a doua repriză", "Primite în a doua repriză", "În avantaj la pauză", "La egalitate la pauză", "Condusă la pauză"],
       corners: ["Cornere obținute", "Cornere cedate", "Total în meci"],
@@ -21,16 +21,16 @@
       viewEditorial: "Vezi analiza Pro", editorial: "Analiza Pro", editorialLoading: "Se încarcă analiza…", editorialMissing: "Nu există o analiză Pro publicată pentru acest meci.",
     },
     en: {
-      open: "Match details", member: "Member", close: "Close", tabs: ["Teams", "Goals", "Halves", "Corners"],
+      open: "Match dossier", member: "Member", close: "Close", tabs: ["Teams", "Goals", "By half", "Corners"],
       scope: "Matches in this competition", scopes: ["Home / away", "All matches"],
-      home: "Home", away: "Away", matches: "matches", metric: "Metric",
-      updated: "Data available at", season: "Season", loading: "Loading the dossier…",
+      home: "Home", away: "Away", match: "match", matches: "matches", metric: "Metric",
+      updated: "Data as of", season: "Season", loading: "Loading the dossier…",
       missing: "The dossier is unavailable for this match.", partial: "Partial coverage. The denominator shows matches with confirmed data in this selection.",
       emptyHistory: "There are no confirmed matches in this competition and season yet.",
       emptyScope: "There are no confirmed matches for the selected venue.", emptyHalves: "There are no confirmed half-time scores for this selection.",
       cornerCoverage: "Matches with data / selected matches. Missing values show as —.",
       perGame: "/ match", latest: "Results · most recent first",
-      headers: ["Date", "Opponent", "Team–opponent"], outcomes: ["Wins", "Draws", "Losses", "Points / match"],
+      headers: ["Date", "Opponent", "Score (team first)"], outcomes: ["Wins", "Draws", "Losses", "Points / match"],
       goals: ["Goals scored", "Goals conceded", "Over 2.5", "Both teams scored", "Failed to score", "Clean sheets"],
       halves: ["First-half goals scored", "First-half goals conceded", "Second-half goals scored", "Second-half goals conceded", "Ahead at half-time", "Level at half-time", "Behind at half-time"],
       corners: ["Corners won", "Corners conceded", "Match total"],
@@ -38,16 +38,16 @@
       viewEditorial: "View Pro analysis", editorial: "Pro analysis", editorialLoading: "Loading the analysis…", editorialMissing: "No Pro analysis was published for this match.",
     },
     es: {
-      open: "Ficha del partido", member: "Miembro", close: "Cerrar", tabs: ["Equipos", "Goles", "Partes", "Córneres"],
+      open: "Ficha del partido", member: "Miembro", close: "Cerrar", tabs: ["Equipos", "Goles", "Por parte", "Córneres"],
       scope: "Partidos en esta competición", scopes: ["Local / visitante", "Todos los partidos"],
-      home: "Local", away: "Visitante", matches: "partidos", metric: "Indicador",
-      updated: "Datos al", season: "Temporada", loading: "Cargando la ficha…",
+      home: "Local", away: "Visitante", match: "partido", matches: "partidos", metric: "Indicador",
+      updated: "Datos hasta", season: "Temporada", loading: "Cargando la ficha…",
       missing: "La ficha de este partido no está disponible.", partial: "Cobertura parcial. El denominador indica los partidos seleccionados con datos confirmados.",
       emptyHistory: "Aún no hay partidos confirmados en esta competición y temporada.",
       emptyScope: "No hay partidos confirmados en la sede seleccionada.", emptyHalves: "No hay resultados confirmados al descanso para esta selección.",
       cornerCoverage: "Partidos con datos / partidos seleccionados. Los valores ausentes se muestran con —.",
       perGame: "/ partido", latest: "Resultados · más recientes primero",
-      headers: ["Fecha", "Rival", "Equipo–rival"], outcomes: ["Victorias", "Empates", "Derrotas", "Puntos / partido"],
+      headers: ["Fecha", "Rival", "Marcador (equipo primero)"], outcomes: ["Victorias", "Empates", "Derrotas", "Puntos / partido"],
       goals: ["Goles a favor", "Goles en contra", "Más de 2,5", "Ambos equipos marcaron", "Sin marcar", "Portería a cero"],
       halves: ["Goles a favor en la primera parte", "Goles en contra en la primera parte", "Goles a favor en la segunda parte", "Goles en contra en la segunda parte", "En ventaja al descanso", "Empate al descanso", "En desventaja al descanso"],
       corners: ["Córneres a favor", "Córneres en contra", "Total en el partido"],
@@ -55,16 +55,16 @@
       viewEditorial: "Ver análisis Pro", editorial: "Análisis Pro", editorialLoading: "Cargando el análisis…", editorialMissing: "No se ha publicado un análisis Pro para este partido.",
     },
     it: {
-      open: "Scheda della partita", member: "Membro", close: "Chiudi", tabs: ["Squadre", "Gol", "Tempi", "Corner"],
+      open: "Scheda della partita", member: "Membro", close: "Chiudi", tabs: ["Squadre", "Gol", "Per tempo", "Corner"],
       scope: "Partite in questa competizione", scopes: ["Casa / trasferta", "Tutte le partite"],
-      home: "In casa", away: "In trasferta", matches: "partite", metric: "Indicatore",
-      updated: "Dati al", season: "Stagione", loading: "Caricamento della scheda…",
+      home: "In casa", away: "In trasferta", match: "partita", matches: "partite", metric: "Indicatore",
+      updated: "Dati aggiornati al", season: "Stagione", loading: "Caricamento della scheda…",
       missing: "La scheda non è disponibile per questa partita.", partial: "Copertura parziale. Il denominatore indica le partite selezionate con dati confermati.",
       emptyHistory: "Nessuna partita confermata in questa competizione e stagione.",
       emptyScope: "Nessuna partita confermata per il campo selezionato.", emptyHalves: "Nessun risultato confermato all’intervallo per questa selezione.",
       cornerCoverage: "Partite con dati / partite selezionate. I valori mancanti sono indicati con —.",
       perGame: "/ partita", latest: "Risultati · dal più recente",
-      headers: ["Data", "Avversario", "Squadra–avversario"], outcomes: ["Vittorie", "Pareggi", "Sconfitte", "Punti / partita"],
+      headers: ["Data", "Avversario", "Risultato (squadra per prima)"], outcomes: ["Vittorie", "Pareggi", "Sconfitte", "Punti / partita"],
       goals: ["Gol fatti", "Gol subiti", "Oltre 2,5", "Entrambe a segno", "Nessun gol fatto", "Nessun gol subito"],
       halves: ["Gol fatti nel primo tempo", "Gol subiti nel primo tempo", "Gol fatti nel secondo tempo", "Gol subiti nel secondo tempo", "In vantaggio all’intervallo", "In parità all’intervallo", "In svantaggio all’intervallo"],
       corners: ["Corner a favore", "Corner concessi", "Totale nella partita"],
@@ -72,16 +72,16 @@
       viewEditorial: "Vedi analisi Pro", editorial: "Analisi Pro", editorialLoading: "Caricamento dell’analisi…", editorialMissing: "Nessuna analisi Pro è stata pubblicata per questa partita.",
     },
     fr: {
-      open: "Fiche du match", member: "Membre", close: "Fermer", tabs: ["Équipes", "Buts", "Mi-temps", "Corners"],
+      open: "Fiche du match", member: "Membre", close: "Fermer", tabs: ["Équipes", "Buts", "Par mi-temps", "Corners"],
       scope: "Matchs dans cette compétition", scopes: ["Domicile / extérieur", "Tous les matchs"],
-      home: "Domicile", away: "Extérieur", matches: "matchs", metric: "Indicateur",
+      home: "Domicile", away: "Extérieur", match: "match", matches: "matchs", metric: "Indicateur",
       updated: "Données au", season: "Saison", loading: "Chargement de la fiche…",
       missing: "La fiche de ce match est indisponible.", partial: "Couverture partielle. Le dénominateur indique les matchs sélectionnés aux données confirmées.",
       emptyHistory: "Aucun match confirmé dans cette compétition et cette saison.",
       emptyScope: "Aucun match confirmé sur le terrain sélectionné.", emptyHalves: "Aucun score à la mi-temps confirmé pour cette sélection.",
       cornerCoverage: "Matchs avec données / matchs sélectionnés. Les valeurs manquantes sont indiquées par —.",
       perGame: "/ match", latest: "Résultats · du plus récent au plus ancien",
-      headers: ["Date", "Adversaire", "Équipe–adversaire"], outcomes: ["Victoires", "Nuls", "Défaites", "Points / match"],
+      headers: ["Date", "Adversaire", "Score (équipe en premier)"], outcomes: ["Victoires", "Nuls", "Défaites", "Points / match"],
       goals: ["Buts marqués", "Buts encaissés", "Plus de 2,5", "Les deux équipes ont marqué", "Aucun but marqué", "Aucun but encaissé"],
       halves: ["Buts marqués en première mi-temps", "Buts encaissés en première mi-temps", "Buts marqués en seconde mi-temps", "Buts encaissés en seconde mi-temps", "En tête à la pause", "À égalité à la pause", "Menée à la pause"],
       corners: ["Corners obtenus", "Corners concédés", "Total dans le match"],
@@ -89,16 +89,16 @@
       viewEditorial: "Voir l’analyse Pro", editorial: "Analyse Pro", editorialLoading: "Chargement de l’analyse…", editorialMissing: "Aucune analyse Pro n’a été publiée pour ce match.",
     },
     id: {
-      open: "Ringkasan pertandingan", member: "Anggota", close: "Tutup", tabs: ["Tim", "Gol", "Babak", "Sepak pojok"],
+      open: "Ringkasan pertandingan", member: "Anggota", close: "Tutup", tabs: ["Tim", "Gol", "Per babak", "Sepak pojok"],
       scope: "Pertandingan dalam kompetisi ini", scopes: ["Kandang / tandang", "Semua pertandingan"],
-      home: "Kandang", away: "Tandang", matches: "pertandingan", metric: "Indikator",
+      home: "Kandang", away: "Tandang", match: "pertandingan", matches: "pertandingan", metric: "Indikator",
       updated: "Data per", season: "Musim", loading: "Memuat ringkasan…",
       missing: "Ringkasan tidak tersedia untuk pertandingan ini.", partial: "Cakupan sebagian. Penyebut menunjukkan jumlah pertandingan terpilih dengan data terkonfirmasi.",
       emptyHistory: "Belum ada pertandingan terkonfirmasi pada kompetisi dan musim ini.",
       emptyScope: "Tidak ada pertandingan terkonfirmasi untuk lokasi terpilih.", emptyHalves: "Tidak ada skor paruh waktu terkonfirmasi untuk pilihan ini.",
       cornerCoverage: "Pertandingan dengan data / pertandingan terpilih. Data yang tidak tersedia ditandai dengan —.",
       perGame: "/ laga", latest: "Hasil · terbaru dulu",
-      headers: ["Tanggal", "Lawan", "Tim–lawan"], outcomes: ["Menang", "Seri", "Kalah", "Poin / laga"],
+      headers: ["Tanggal", "Lawan", "Skor (tim lebih dulu)"], outcomes: ["Menang", "Seri", "Kalah", "Poin / laga"],
       goals: ["Gol dicetak", "Gol kebobolan", "Di atas 2,5", "Kedua tim mencetak gol", "Tanpa gol", "Tanpa kebobolan"],
       halves: ["Gol dicetak pada babak pertama", "Gol kebobolan pada babak pertama", "Gol dicetak pada babak kedua", "Gol kebobolan pada babak kedua", "Unggul saat jeda", "Imbang saat jeda", "Tertinggal saat jeda"],
       corners: ["Sepak pojok didapat", "Sepak pojok lawan", "Total dalam laga"],
@@ -239,7 +239,9 @@
     const coverage = group => {
       const location = all ? "" : (group.home ? c.home : c.away) + " · ";
       const n = group.matches.length, total = group.total;
-      return location + (kind === "halves" ? `${n} / ${total}` : n) + " " + c.matches;
+      const halves = kind === "halves";
+      const noun = (halves ? total : n) === 1 ? c.match : c.matches;
+      return location + (halves ? `${n} / ${total}` : n) + " " + noun;
     };
     headerRow(table, [[c.metric], ...groups.map(group => [group.name, coverage(group)])]);
     const values = groups.map(group => rowValues(kind,group,number,c));
@@ -388,7 +390,8 @@
     body.replaceChildren();
     if (data) {
       const cutoff = new Intl.DateTimeFormat(state.lang === "en" ? "en-GB" : state.lang,
-        { dateStyle:"short",timeStyle:"short",timeZone:"Europe/Bucharest" });
+        { day:"numeric",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit",
+          timeZone:"Europe/Bucharest",timeZoneName:"short" });
       const asOf = timed(data.as_of);
       const info = [data.league, data.season && c.season + " " + data.season,
         Number.isFinite(asOf) && c.updated + " " + cutoff.format(asOf)].filter(Boolean).join(" · ");
@@ -397,16 +400,9 @@
       body.append(text("p",item.match.league,"dossier-note"));
     }
     if (tier() === "pro" && (data || item)) {
-      const editorial = text("details",undefined,"dossier-analysis");
-      editorial.open = state.editorialOpen ?? true;
-      const summary = text("summary",c.editorial,"dossier-open");
-      summary.dataset.dossierEditorial = "";
-      const target = text("section",c.editorialLoading,"dossier-editorial");
-      target.id = "dossier-editorial";
-      target.setAttribute("aria-live","polite");
-      editorial.append(summary,target);
-      body.append(editorial);
-      showEditorial(state,target);
+      const anchor = document.createComment("Pro analysis");
+      body.append(anchor);
+      showEditorial(state, anchor);
     }
     if (data) {
       const stats = text("div");
@@ -422,31 +418,57 @@
   const stillOpen = state => current === state && dialog.open
     && (state.fromPro ? tier() === "pro" : authorized());
 
-  async function showEditorial(state, target) {
-    const c = state.copy;
+  async function lookupEditorial(state) {
     try {
-      let item = state.item;
-      if (!item) {
-        const response = await root.PoseidonMembers.getProtected("/api/analize/" + state.day,state.controller.signal);
-        if (!stillOpen(state) || tier() !== "pro") return;
-        if (response.status === 401 || response.status === 403) { target.textContent = c.login; return; }
-        if (!response.ok && response.status !== 404) throw new Error("Pro archive unavailable");
-        item = proAnalysisForFixture(response.ok ? await response.json() : null,state.day,state.fixture);
-        state.item = item;
+      const response = await root.PoseidonMembers.getProtected("/api/analize/" + state.day,state.controller.signal);
+      if (response.status === 401 || response.status === 403) return { status: "login" };
+      if (response.status === 404) return {};
+      if (!response.ok) return { status: "retry" };
+      const payload = await response.json();
+      if (!Array.isArray(payload?.items) || (payload.date && payload.date !== state.day)) return { status: "retry" };
+      return { item: proAnalysisForFixture(payload,state.day,state.fixture) };
+    } catch (_) {
+      return { status: "retry" };
+    }
+  }
+
+  async function showEditorial(state, anchor) {
+    const c = state.copy;
+    let target;
+    try {
+      const { item, status } = state.item ? { item: state.item } : await (state.editorialLookup ??= lookupEditorial(state));
+      if (!anchor.isConnected || !stillOpen(state) || tier() !== "pro") return;
+      if (status) {
+        const message = text("p",c[status],"dossier-note dossier-editorial-status");
+        message.setAttribute("role","status");
+        anchor.replaceWith(message);
+        return;
       }
-      if (!stillOpen(state) || tier() !== "pro") return;
-      if (!item?.analysis) { target.textContent = c.editorialMissing; return; }
+      if (!item?.analysis?.trim()) return;
+      state.item = item;
+      const editorial = text("details",undefined,"dossier-analysis");
+      editorial.open = state.editorialOpen ?? (state.fromPro === true);
+      const summary = text("summary",c.editorial,"dossier-open");
+      summary.dataset.dossierEditorial = "";
+      target = text("section",c.editorialLoading,"dossier-editorial");
+      target.id = "dossier-editorial";
+      target.setAttribute("aria-live","polite");
+      editorial.append(summary,target);
+      anchor.replaceWith(editorial);
       const report = await loadProReport();
-      if (!stillOpen(state) || tier() !== "pro") return;
+      if (!target.isConnected || !stillOpen(state) || tier() !== "pro") return;
       const analysis = proAnalysisText(item,state.lang);
       target.innerHTML = report.dossierReport(_md(analysis.text), item,state.dossier,state.day,state.lang,analysis.lang);
       for (const selector of state.openDetails || []) target.querySelector(selector)?.setAttribute("open", "");
       watchResult(target,state,report);
       if (analysis.lang !== state.lang) {
-        target.prepend(text("p",tt("pro.azi.ro_only","Traducerea nu este disponibilă. Textul este în română."),"dossier-note"));
+        const english = analysis.lang === "en";
+        const language = tt(english ? "dashboard.language.english" : "dashboard.language.romanian", english ? "English" : "română");
+        const notice = tt("dashboard.analysis.fallback","Textul analizei este disponibil în {language}.").replace("{language}",language);
+        target.prepend(text("p",notice,"dossier-note"));
       }
     } catch (_) {
-      if (stillOpen(state) && tier() === "pro") target.textContent = c.retry;
+      if (target?.isConnected && stillOpen(state) && tier() === "pro") target.textContent = c.retry;
     }
   }
 

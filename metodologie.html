@@ -112,7 +112,7 @@ Statistici informative. Modelul poate greși. Verifică sursa. 18+.
     <h3 data-i18n="metod.h3.4">4. Simulare Monte Carlo (200k–1M iterații)</h3>
     <p data-i18n="metod.p.4">Pentru fiecare meci, lambda_home și lambda_away sunt sample-uite din distribuții Normal posteriori (cu varianța din bootstrap), apoi se simulează golurile cu Poisson. Probabilitățile <em>1X2, Over/Under, BTTS, scor exact</em> se obțin din 200k+ partide simulate.</p>
 
-    <h3 data-i18n="metod.h3.5">5. Dixon-Coles correction</h3>
+    <h3 data-i18n="metod.h3.5">5. Corecția Dixon–Coles</h3>
     <p data-i18n="metod.p.5">Poisson clasic sub-estimează scoruri low (0-0, 1-0, 0-1, 1-1). Corecția <code>ρ</code>, fitată pe meciurile recente, ajustează matricea Poisson pe scorurile mici.</p>
 
     <h3 data-i18n="metod.h3.wb">Whitelist & blacklist ligi</h3>
@@ -146,6 +146,6 @@ Statistici informative. Modelul poate greși. Verifică sursa. 18+.
   </div>
 </footer>
 
-<script src="assets/app.js?v=20261118f"></script>
+<script src="assets/app.js?v=20261119-audit"></script>
 </body>
 </html>
