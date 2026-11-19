@@ -21,11 +21,11 @@
       viewEditorial: "Vezi analiza Pro", editorial: "Analiza Pro", editorialLoading: "Se încarcă analiza…", editorialMissing: "Nu există o analiză Pro publicată pentru acest meci.",
     },
     en: {
-      open: "Match dossier", member: "Member", close: "Close", tabs: ["Teams", "Goals", "By half", "Corners"],
+      open: "Match stats", member: "Member", close: "Close", tabs: ["Teams", "Goals", "By half", "Corners"],
       scope: "Matches in this competition", scopes: ["Home / away", "All matches"],
       home: "Home", away: "Away", match: "match", matches: "matches", metric: "Metric",
-      updated: "Data as of", season: "Season", loading: "Loading the dossier…",
-      missing: "The dossier is unavailable for this match.", partial: "Partial coverage. The denominator shows matches with confirmed data in this selection.",
+      updated: "Data as of", season: "Season", loading: "Loading match stats…",
+      missing: "Match stats are unavailable.", partial: "Partial coverage. The denominator shows matches with confirmed data in this selection.",
       emptyHistory: "There are no confirmed matches in this competition and season yet.",
       emptyScope: "There are no confirmed matches for the selected venue.", emptyHalves: "There are no confirmed half-time scores for this selection.",
       cornerCoverage: "Matches with data / selected matches. Missing values show as —.",
@@ -35,7 +35,7 @@
       halves: ["First-half goals scored", "First-half goals conceded", "Second-half goals scored", "Second-half goals conceded", "Ahead at half-time", "Level at half-time", "Behind at half-time"],
       corners: ["Corners won", "Corners conceded", "Match total"],
       login: "Renew your member session.", retry: "Try again in a moment.",
-      viewEditorial: "View Pro analysis", editorial: "Pro analysis", editorialLoading: "Loading the analysis…", editorialMissing: "No Pro analysis was published for this match.",
+      viewEditorial: "View Pro report", editorial: "Pro match report", editorialLoading: "Loading the Pro report…", editorialMissing: "No Pro report was published for this match.",
     },
     es: {
       open: "Ficha del partido", member: "Miembro", close: "Cerrar", tabs: ["Equipos", "Goles", "Por parte", "Córneres"],
@@ -399,7 +399,7 @@
     } else if (item?.match?.league) {
       body.append(text("p",item.match.league,"dossier-note"));
     }
-    if (tier() === "pro" && (data || item)) {
+    if (tier() === "pro" && (state.fixture || item)) {
       const anchor = document.createComment("Pro analysis");
       body.append(anchor);
       showEditorial(state, anchor);
@@ -578,7 +578,8 @@
     if (!authorized()) return;
     const kickoff = timed(trigger.dataset.dossierKickoff), fixture = Number(trigger.dataset.dossierFixture);
     if (!Number.isSafeInteger(fixture) || fixture < 1 || !Number.isFinite(kickoff)) return;
-    return start({ fixture,kickoff,trigger,day:siteDay.format(kickoff) });
+    const focusRoot = trigger.closest("#dashboard-predictions, #matches");
+    return start({ fixture,kickoff,trigger,focusRoot,day:siteDay.format(kickoff) });
   }
 
   function openPro(trigger, item, day) {
@@ -631,8 +632,11 @@
       state.controller.abort();
       dialog.querySelector("[data-dossier-body]").replaceChildren();
       const byId = state.trigger.id && document.getElementById(state.trigger.id);
-      const trigger = state.trigger.isConnected ? state.trigger : byId || [...(state.focusRoot?.querySelectorAll("[data-pro-match]") || [])]
-        .find(link => link.dataset.proMatch === state.matchLabel && link.dataset.proDay === state.day);
+      const equivalent = state.matchLabel
+        ? [...(state.focusRoot?.querySelectorAll("[data-pro-match]") || [])]
+          .find(link => link.dataset.proMatch === state.matchLabel && link.dataset.proDay === state.day)
+        : state.focusRoot?.querySelector(`[data-dossier-fixture="${state.fixture}"]`);
+      const trigger = state.trigger.isConnected ? state.trigger : byId || equivalent;
       trigger?.focus({ preventScroll:true });
     });
   }

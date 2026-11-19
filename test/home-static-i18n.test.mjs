@@ -130,13 +130,13 @@ test('homepage market filters use translated labels and homepage assets use thei
     assert.equal(key,`filters.market.${market}`);
     for (const language of languages) assert(dictionary[language][key]);
   }
-  assert(html.includes('assets/app.js?v=20261119-audit'));
-  assert(html.includes('assets/home-modern.css?v=20261119-play'));
-  assert(html.includes('assets/members.js?v=20261118f'));
-  assert(html.includes('assets/member-dossier.js?v=20261119-audit'));
+  assert(html.includes('assets/app.js?v=20261119-functions'));
+  assert(html.includes('assets/home-modern.css?v=20261119-functions'));
+  assert(html.includes('assets/members.js?v=20261119-functions'));
+  assert(html.includes('assets/member-dossier.js?v=20261119-functions'));
   assert(html.includes('assets/member-dossier.css?v=20261119-audit'));
   assert(html.includes('assets/conversion.js?v=20261024-conversion1'));
-  assert(html.includes('assets/home-dashboard.js?v=20261119-audit'));
+  assert(html.includes('assets/home-dashboard.js?v=20261119-functions'));
   // The per-metric TEST-N honesty contract superseded reading-frozen1. Check the current asset and cache key together.
   const readingSource=readFileSync(new URL('../assets/citire.js',import.meta.url),'utf8');
   assert(readingSource.includes('nN(t.familia)') && readingSource.includes('nN(t.interval)') && readingSource.includes('nN(t.directia)'));

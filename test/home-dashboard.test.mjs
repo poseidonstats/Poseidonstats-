@@ -14,7 +14,15 @@ const i18n = read('assets/i18n.json');
 const tr = key => i18n.en[key] || key;
 // Only the three shared archive hrefs changed; their translated copy stays protected.
 const archiveLinkKeys = new Set(['plans.get.after','pro.arhiva','pro.card.maine']);
+const englishReportCopy = {
+  'pro.azi.sesiune': 'Your session expired. Select “Sign in with Patreon” to see the reports.',
+  'pro.azi.retea': 'Could not reach the members server. Reload the page. Reports are also available in #analize-pro on Discord.',
+  'pro.zi.lipsa': 'Pro reports for this day are unavailable (code {cod}).',
+  'pro.zi.gol': 'No Pro reports have been published for this day.',
+  'dashboard.analysis.member': 'View your Pro reports',
+};
 function preservedValue(key,value,lang) {
+  if (lang === 'en' && Object.hasOwn(englishReportCopy,key)) return englishReportCopy[key];
   if (archiveLinkKeys.has(key)) return value.replace('href="analize/index.html"','href="/analize/index.html"');
   if (key === 'ligilinks.foot' && lang === 'en') return value.replace('href="predictii/index.html"','href="en/predictions/index.html"');
   return value;

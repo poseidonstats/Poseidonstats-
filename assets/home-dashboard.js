@@ -156,6 +156,97 @@
     if (scroll && target.scrollIntoView) target.scrollIntoView({block:'start'});
     return target;
   }
+  function afterBrowserScroll(view, restore) {
+    view.requestAnimationFrame(() => view.requestAnimationFrame(restore));
+  }
+  function mountFragmentHistory(view, readSaved) {
+    const history = view.history;
+    if (!history?.replaceState) return;
+    const entries = new Map();
+    const marker = () => history.state?.poseidonHomeEntry;
+    const currentEntry = () => {
+      const hash = view.location.hash;
+      let id = marker();
+      if (!id || (entries.has(id) && entries.get(id).hash !== hash)) {
+        id = view.crypto?.randomUUID?.() || Date.now().toString(36) + Math.random().toString(36).slice(2);
+        try { history.replaceState({...history.state, poseidonHomeEntry:id}, ''); }
+        catch (_) { return null; }
+      }
+      if (!entries.has(id)) entries.set(id, {hash, y:view.scrollY});
+      return entries.get(id);
+    };
+    let active = currentEntry();
+    view.addEventListener('scroll', () => {
+      if (active?.hash === view.location.hash) active.y = Math.max(0,view.scrollY);
+    }, {passive:true});
+    const traverse = () => {
+      const stored = entries.get(marker());
+      const offset = stored?.hash === view.location.hash ? stored.y : readSaved();
+      const entry = currentEntry();
+      if (active === entry) return;
+      active = entry;
+      if (!entry || !Number.isFinite(offset)) return;
+      afterBrowserScroll(view, () => {
+        if (active === entry && view.location.hash === entry.hash) view.scrollTo(0,offset);
+      });
+    };
+    view.addEventListener('popstate', traverse);
+    view.addEventListener('hashchange', traverse);
+  }
+  function mountAnchorNavigation(doc) {
+    const view = doc.defaultView;
+    if (!view?.location || !view.addEventListener) return () => {};
+    const fragment = view.location.hash;
+    const page = () => view.location.pathname + view.location.hash;
+    const storageKey = () => 'poseidon.home.scroll:' + (view.history?.state?.poseidonHomeEntry || '');
+    const type = view.performance?.getEntriesByType?.('navigation')?.[0]?.type;
+    const readSaved = () => {
+      try {
+        const saved = JSON.parse(view.sessionStorage.getItem(storageKey()));
+        if (saved?.page === page() && Number.isFinite(saved.y) && saved.y >= 0) return saved.y;
+      } catch (_) { /* Native restoration remains available when storage is blocked. */ }
+      return null;
+    };
+    mountFragmentHistory(view, readSaved);
+    const savedY = ['reload','back_forward'].includes(type) ? readSaved() : null;
+    view.addEventListener('pagehide', () => {
+      try {
+        view.sessionStorage.setItem(storageKey(), JSON.stringify({page:page(), y:Math.max(0,view.scrollY)}));
+      } catch (_) { /* Storage may be unavailable in this browser. */ }
+    });
+    let moved = false;
+    const stopRestoration = () => { moved = true; };
+    const inputEvents = ['touchstart', 'wheel', 'pointerdown', 'keydown'];
+    const watchInput = fragment || savedY !== null;
+    if (watchInput) inputEvents.forEach(name => view.addEventListener(name, stopRestoration, {passive:true}));
+    const restore = () => {
+      if (!moved && view.location.hash === fragment && savedY !== null) view.scrollTo(0, savedY);
+    };
+    // WebKit can jump to the fragment while the first layout is still changing.
+    // Restore after the browser and again after the asynchronously loaded dashboard.
+    view.addEventListener('pageshow', event => {
+      if (!event.persisted) {
+        if (savedY !== null) afterBrowserScroll(view, restore);
+        return;
+      }
+      const destination = page(), offset = readSaved();
+      if (offset !== null) afterBrowserScroll(view, () => {
+        if (page() === destination) view.scrollTo(0,offset);
+      });
+    });
+    view.addEventListener('hashchange', () => {
+      stopRestoration();
+      openTargetDetails(doc, view.location.hash);
+    });
+    return () => {
+      if (watchInput) inputEvents.forEach(name => view.removeEventListener(name, stopRestoration));
+      const hash = view.location.hash;
+      // A fresh deep link may need to reveal a section populated after initial layout.
+      const initialLink = fragment && hash === fragment && !moved && type !== 'reload' && type !== 'back_forward';
+      openTargetDetails(doc, hash, Boolean(initialLink));
+      if (savedY !== null && !moved) view.requestAnimationFrame(restore);
+    };
+  }
   function revealMatch(doc, source) {
     openTargetDetails(doc,'#matches');
     const reset = doc.getElementById('filter-reset');
@@ -299,6 +390,7 @@
     });
   }
   async function mount(doc) {
+    const finishNavigation = mountAnchorNavigation(doc);
     if (!doc.querySelector('[data-dashboard-kpis]')) return;
     mountNavigation(doc);
     if (typeof i18nGata === 'function') await i18nGata();
@@ -466,7 +558,6 @@
     const view = doc.defaultView;
     if (view && view.addEventListener) {
       view.addEventListener('resize',renderCharts);
-      view.addEventListener('hashchange',() => openTargetDetails(doc,view.location && view.location.hash,true));
     }
     const evidence = doc.getElementById('dashboard-evidence-details');
     if (evidence) evidence.addEventListener('toggle',() => {if (evidence.open) renderCharts();});
@@ -474,12 +565,13 @@
     if (dossiers) view.addEventListener('poseidon:member-predictions', () => {renderDates();renderLeagues();renderTable();});
     if (dossiers) view.addEventListener('poseidon:dossier-catalog', () => {renderLeagues();renderTable();});
     render();
-    openTargetDetails(doc,view && view.location && view.location.hash,true);
     try {
       const response = await fetch('analize/index.html',{credentials:'omit'});
       if (response.ok) archive = new DOMParser().parseFromString(await response.text(),'text/html');
     } catch (_) { /* Current real sample remains available if the archive cannot load. */ }
     renderAnalyses();
+    try { await view?.PoseidonHomeLayoutReady; } catch (_) { /* Still open reachable page sections. */ }
+    finishNavigation();
   }
   return {escapeHTML,dayOf,availableDays,chooseDay,isPublic,normalizeSearch,leagueChoices,selectRows,extractMetrics,cumulativeResolved,renderRows,renderChart,openTargetDetails,revealMatch,chooseAnalysisLanguage,analysisLanguageNotice,decorateLanguageSelector,watchLanguageSelector,decorateMemberLogin,watchMemberLogin,ensureProofNotice,analysisAction,renderProSummary,membershipTier,observeMembership,mount};
 });

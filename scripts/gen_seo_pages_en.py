@@ -105,7 +105,7 @@ def shell_en(*, title: str, description: str, canonical: str, body: str, jsonld:
       <a href="{up}metodologie.html">Methodology</a>
       <a href="{up}index.html#abonament">💎 Membership</a>
     </nav>
-    <script src="{up}assets/i18n-lite.js?v=20261119-audit" data-sus="{up}"></script>
+    <script src="{up}assets/i18n-lite.js?v=20261119-functions" data-sus="{up}"></script>
   </div>
 </header>
 

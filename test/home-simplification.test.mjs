@@ -56,14 +56,19 @@ function mountedDocument(){
   const nodes={'dashboard-date':control(day),'dashboard-search':control(),'dashboard-search-clear':control(),'dashboard-league-menu':control(),'dashboard-leagues':control(),'dashboard-predictions':control(),'dashboard-table-status':control()};
   const listeners={},viewListeners={};
   const doc={documentElement:{lang:'en'},body:{classList:{contains:()=>false}},
-    defaultView:{innerWidth:390,location:{hash:''},addEventListener:(type,fn)=>{viewListeners[type]=fn;}},
+    defaultView:{
+      innerWidth:390,location:{pathname:'/',hash:''},
+      addEventListener:(type,fn)=>{viewListeners[type]=fn;},
+      removeEventListener:(type,fn)=>{if (viewListeners[type]===fn) delete viewListeners[type];},
+    },
     querySelector:selector=>selector==='[data-dashboard-kpis]'?{}:null,
     querySelectorAll:()=>[],getElementById:id=>nodes[id]||null,
     addEventListener:(type,fn)=>{listeners[type]=fn;}};
   return {doc,nodes,listeners,viewListeners};
 }
-async function withMounted(run,failed=false){
+async function withMounted(run,failed=false,prepare){
   const env=mountedDocument(),priorFetch=globalThis.fetch,priorT=globalThis.t,requests=[];
+  prepare?.(env);
   globalThis.t=translate;
   globalThis.fetch=async path=>{requests.push(path);if(failed)throw Error('explicit export failure');return {ok:path!=='analize/index.html',json:async()=>({'data/predictions.json':predictions,'data/history.json':history,'data/audit.json':audit})[path]};};
   try {await dashboard.mount(env.doc);await run({...env,requests});}
@@ -150,18 +155,77 @@ test('fragment reveal opens every current ancestor, handles moved targets and le
 
 test('initial hash, hashchange and native fragment clicks reveal disclosures while fixture reset behavior survives',async()=>{
   const env=mountedDocument(),outer={tagName:'DETAILS',open:false,parentElement:null};
-  const target={parentElement:outer,scrollIntoView:()=>{}};
-  env.nodes.matches=target;env.nodes.intrebari={parentElement:outer,scrollIntoView:()=>{}};env.doc.defaultView.location.hash='#matches';
+  const scrolled=[];
+  const target={parentElement:outer,scrollIntoView:()=>scrolled.push('matches')};
+  env.nodes.matches=target;
+  env.nodes.intrebari={parentElement:outer,scrollIntoView:()=>scrolled.push('intrebari')};
+  env.doc.defaultView.location.hash='#matches';
   const priorFetch=globalThis.fetch;globalThis.fetch=async path=>({ok:path!=='analize/index.html',json:async()=>({'data/predictions.json':predictions,'data/history.json':history,'data/audit.json':audit})[path]});
   try {
     await dashboard.mount(env.doc);assert.equal(outer.open,true);
     outer.open=false;env.doc.defaultView.location.hash='#intrebari';env.viewListeners.hashchange();assert.equal(outer.open,true);
+    assert.deepEqual(scrolled,['matches'],'restore a fresh deep link once and let the browser own later fragment traversal');
     outer.open=false;const anchor={getAttribute:()=> '#matches'};
     env.listeners.click({target:{closest:selector=>selector==='a[href^="#"]'?anchor:null}});assert.equal(outer.open,true);
     const calls=[];env.nodes['filter-reset']={click:()=>calls.push('reset')};
     for(const id of ['filter-day','filter-league','filter-minprob'])env.nodes[id]={value:'stale',dispatchEvent:()=>{}};
     outer.open=false;dashboard.revealMatch(env.doc,source);assert(outer.open);assert.deepEqual(calls,['reset']);assert.equal(env.nodes['filter-day'].value,dashboard.dayOf(source.match_date));
   } finally {globalThis.fetch=priorFetch;}
+});
+
+test('reload with a retained fragment restores the saved viewport without scrolling to the old target',async()=>{
+  const moves=[],saved=[];
+  await withMounted(({doc,viewListeners})=>{
+    assert.deepEqual(moves,[[0,15]]);
+    doc.defaultView.scrollY=85;
+    viewListeners.pagehide();
+    assert.deepEqual(saved,[{page:'/#matches',y:85}]);
+  },false,({doc,nodes})=>{
+    const view=doc.defaultView;
+    view.location.hash='#matches';
+    view.performance={getEntriesByType:()=>[{type:'reload'}]};
+    view.sessionStorage={
+      getItem:()=>JSON.stringify({page:'/#matches',y:15}),
+      setItem:(_key,value)=>saved.push(JSON.parse(value)),
+    };
+    view.requestAnimationFrame=fn=>fn();
+    view.scrollTo=(x,y)=>moves.push([x,y]);
+    nodes.matches={scrollIntoView:()=>moves.push('old fragment')};
+  });
+});
+
+test('fragment history returns to each entry’s viewport after the user scrolls away from its target',async()=>{
+  const moves=[];
+  await withMounted(({doc,viewListeners})=>{
+    const view=doc.defaultView;
+    const matchesEntry=view.history.state;
+    assert.equal(matchesEntry.externalState,'retained');
+    view.scrollY=0;
+    viewListeners.scroll();
+    view.location.hash='#dashboard';
+    view.history.state=null;
+    viewListeners.popstate();
+    assert.deepEqual(moves,[],'a new fragment keeps native scrolling');
+    const dashboardEntry=view.history.state;
+    view.scrollY=975;
+    viewListeners.scroll();
+    view.location.hash='#matches';
+    view.history.state=matchesEntry;
+    viewListeners.popstate();
+    viewListeners.hashchange();
+    view.location.hash='#dashboard';
+    view.history.state=dashboardEntry;
+    viewListeners.popstate();
+    viewListeners.hashchange();
+    assert.deepEqual(moves,[[0,0],[0,975]]);
+  },false,({doc})=>{
+    const view=doc.defaultView;
+    view.location.hash='#matches';
+    view.scrollY=3066;
+    view.history={state:{externalState:'retained'},replaceState(state){this.state=state;}};
+    view.requestAnimationFrame=fn=>fn();
+    view.scrollTo=(x,y)=>moves.push([x,y]);
+  });
 });
 
 async function withMountedCharts(journal, run) {

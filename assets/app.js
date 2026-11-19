@@ -5,7 +5,7 @@ const CALIB_URL = "data/calibration.json";
 const FORWARD_URL = "data/forward.json";
 const HISTORY_URL = "data/history.json";
 const SCORECARD_URL = "data/scorecard.json";
-const I18N_URL = "assets/i18n.json?v=20261119-audit";
+const I18N_URL = "assets/i18n.json?v=20261119-functions";
 
 // Scorecard skill per piață (din backtest OOS), folosit pentru contextul piețelor.
 let SCORECARD = {};                       // key -> card (label, tier, threshold, skill_stars, lift_pp, hit)
@@ -155,6 +155,7 @@ async function loadPredictions(isCurrent) {
   return { sursa: "public", data: await fetchJSON(PRED_URL) };
 }
 
+let PRED_NEEDS_LOGIN = false;
 function showPredictionSource({ sursa, eroare }) {
   PRED_SURSA = sursa;
   const M = (typeof window !== "undefined") ? window.PoseidonMembers : null;
@@ -173,11 +174,30 @@ function showPredictionSource({ sursa, eroare }) {
         const rep = document.getElementById("repere-azi"); if (rep && mt && mt.parentNode) mt.parentNode.insertBefore(rep, mt.nextSibling);
       } catch (e) {}
     }
-    // 6 oct 2026: abonat valid, dar datele membrilor n-au venit (9 zile de KV gol au trecut neobservate) → spunem clar, nu lacăte tăcute
-    document.querySelector(".membru-eroare")?.remove();
-    if (tier && sursa === "public" && eroare && eroare !== 401 && eroare !== 403) {
-      const b = document.getElementById("match-count");
-      if (b) b.insertAdjacentHTML("beforebegin", `<p class="membru-eroare">⚠️ ${tt("membru.eroare", "Ești membru, dar datele complete nu s-au încărcat (cod {cod}). Reîncarcă peste câteva minute; dacă persistă, scrie-ne pe Discord, #discutii.").replace("{cod}", eroare)}</p>`);
+    if (tier) {
+      if (PRED_NEEDS_LOGIN) M.refreshBar?.(false);
+      PRED_NEEDS_LOGIN = false;
+    } else if (eroare === 401 || eroare === 403) {
+      PRED_NEEDS_LOGIN = true;
+      M.refreshBar?.(true);
+    }
+    const previous = document.querySelector(".membru-eroare");
+    const dataUnavailable = tier && sursa === "public" && eroare;
+    if (PRED_NEEDS_LOGIN || dataUnavailable) {
+      const anchor = document.getElementById("dashboard-table-status") || document.getElementById("match-count");
+      if (anchor) {
+        const notice = previous || document.createElement("p");
+        if (!previous) {
+          notice.className = "membru-eroare";
+          notice.setAttribute("role", "status");
+          anchor.insertAdjacentElement("afterend", notice);
+        }
+        notice.textContent = PRED_NEEDS_LOGIN
+          ? tt("members.sessionEnded", "Sesiunea de membru s-a încheiat. Intră din nou cu Patreon.")
+          : tt("membru.eroare", "Ești membru, dar datele complete nu s-au încărcat (cod {cod}). Reîncarcă peste câteva minute; dacă persistă, scrie-ne pe Discord, #discutii.").replace("{cod}", eroare);
+      }
+    } else {
+      previous?.remove();
     }
     // 29 sept — diagnostic: browserul spune worker-ului ce sursă a afișat (apare în `wrangler tail`); fără header, fără preflight
     try { fetch(`${M.MEMBERS_API}/api/ping?sursa=${sursa}&tier=${tier || "none"}&v=${SCRIPT_V}`, { mode: "no-cors", cache: "no-store" }).catch(() => {}); } catch {}
@@ -228,6 +248,17 @@ function _instaleazaUrmarireClicuri() {
 }
 if (typeof document !== "undefined") {
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", _instaleazaUrmarireClicuri); else _instaleazaUrmarireClicuri();
+}
+// Home wires its own menu in home-dashboard.js.
+if (typeof document !== "undefined") {
+  document.addEventListener("keydown", event => {
+    if (event.key !== "Escape") return;
+    const menu = event.target.closest?.(".secondary-modern header nav .nav-more[open]");
+    if (!menu) return;
+    event.preventDefault();
+    menu.open = false;
+    menu.querySelector("summary").focus({ preventScroll: true });
+  });
 }
 // Only the selected prediction expands. The dossier button is a separate action.
 if (typeof document !== "undefined") {
@@ -991,7 +1022,7 @@ async function renderIndex() {
 }
 
 async function renderHome() {
-  if (await renderIndex()) renderProAnalize();
+  if (await renderIndex()) await renderProAnalize();
 }
 
 function pickBadge(name, prob, stars = 0) {
@@ -1348,7 +1379,7 @@ async function renderTrackRecord() {
   document.getElementById("forward-stats").innerHTML = fwdHtml;
 }
 
-if (document.getElementById("matches")) renderHome();
+if (document.getElementById("matches")) window.PoseidonHomeLayoutReady = renderHome();
 
 
 /* ============== ISTORIC (pagina istoric.html) ============== */
@@ -1606,6 +1637,9 @@ async function renderProAnalize(zi) {
   if (cerere !== PRO_CERERE || M.tier() !== "pro") return;
   const limba = LANG;
   const activa = () => cerere === PRO_CERERE && LANG === limba && M.tier() === "pro";
+  const dateLabel = new Intl.DateTimeFormat(limba === "en" ? "en-GB" : limba, {
+    day: "numeric", month: "short", year: "numeric", timeZone: "Europe/Bucharest",
+  }).format(new Date(data + "T12:00:00Z"));
   // 7 oct 2026: pentru Pro, analizele stau EXACT unde se uită membrul — în secțiunea „Exemplu Pro”, în locul listei cu lacăt
   // „Încă N analize azi în Pro” (Andreea, logată Pro, nu le-a găsit: secțiunea era după lista de 164 de meciuri).
   // 7 oct 2026 (Andreea): pentru Pro, analizele sunt PRIMA secțiune a paginii — înaintea exemplului și a listei; lista cu lacăt dispare
@@ -1616,11 +1650,14 @@ async function renderProAnalize(zi) {
     <div class="pro-feed-controls">
       <div class="pro-day-choice">
         <label for="pro-date" data-i18n="filters.day">${tt("filters.day", "Zi:")}</label>
-        <input id="pro-date" type="date" value="${data}" max="${azi}">
+        <div class="pro-date-field">
+          <input id="pro-date" type="date" value="${data}" max="${azi}" lang="${limba === "en" ? "en-GB" : limba}">
+          <span class="pro-date-label" aria-hidden="true">${esc(dateLabel)}</span>
+        </div>
       </div>
       <div id="pro-match-choice" class="pro-match-choice" hidden></div>
       <div id="pro-active-report" class="pro-feed-action" hidden></div>
-    </div><div id="pro-content" aria-live="polite"><p class="muted">…</p></div>`;
+    </div><div id="pro-content" aria-live="polite"><p class="muted">${limba === "en" ? tt("pro.azi.loading", "Loading Pro reports…") : "…"}</p></div>`;
   el.querySelector("#pro-date").addEventListener("change", e => renderProAnalize(e.target.value));
   const continut = el.querySelector("#pro-content");
   try {

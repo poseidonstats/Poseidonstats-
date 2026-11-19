@@ -24,6 +24,8 @@ body.home-modern {
 .home-modern .tagline strong { color: #d5b86e; font-weight: 500; }
 /* Keep the navigation in view while the branding and membership panel scroll away. */
 html:has(.home-nav-bar) { scroll-padding-top: 45px; }
+/* The shared overflow-x:hidden makes body a scroll container and breaks sticky. */
+body.home-modern:has(.home-nav-bar) { overflow-x: clip; }
 .home-modern .home-nav-bar {
   position: sticky;
   top: 0;
@@ -707,6 +709,10 @@ body.home-modern.tier-pro .simplify-activation { display: none; }
   .home-modern .simplify-full-predictions .filters { margin-inline: 0; }
 }
 
+@media (max-width: 350px) {
+  .home-modern #home-nav > a, .home-modern #home-nav > .nav-more > summary { padding-inline: 3px; }
+}
+
 /* Keep match names readable and avoid a duplicate fixed navigation control. */
 .home-modern .simplify-demo .dashboard-table th:nth-child(2),
 .home-modern .simplify-demo .dashboard-table td.dashboard-team { text-align: left; }
@@ -966,7 +972,23 @@ body.home-modern .salt-meciuri { display: none; }
   color-scheme: dark;
   font: inherit;
 }
-.home-modern #pro-analize #pro-date { width: 9.5rem; }
+.home-modern #pro-analize .pro-date-field { position: relative; }
+.home-modern #pro-analize .pro-date-label { display: none; }
+.home-modern #pro-analize #pro-date { width: 11rem; }
+@media (forced-colors: none) {
+  .home-modern #pro-analize #pro-date:not(:focus-visible) { color: transparent; }
+  .home-modern #pro-analize #pro-date:not(:focus-visible)::-webkit-datetime-edit { color: transparent; }
+  .home-modern #pro-analize #pro-date:not(:focus-visible)::-webkit-date-and-time-value { color: transparent; }
+  .home-modern #pro-analize #pro-date:not(:focus-visible) + .pro-date-label {
+    position: absolute;
+    display: block;
+    inset-inline: 12px 34px;
+    inset-block-start: 50%;
+    transform: translateY(-50%);
+    color: #edf2f5;
+    pointer-events: none;
+  }
+}
 .home-modern #pro-analize .pro-match-field {
   position: relative;
   display: grid;

@@ -35,7 +35,7 @@
     document.body.classList.add("home-modern", "secondary-modern", analysis ? "analysis-modern" : prediction ? "prediction-modern" : "stats-modern");
     var currentKey = analysis ? "nav.analize" : prediction ? "nav.ligi" : "";
     ["home-modern", "pages-modern"].forEach(function (name) {
-      var href = sus + "assets/" + name + ".css?v=20261118e";
+      var href = sus + "assets/" + name + ".css?v=20261119-functions";
       var absolute = new URL(href, document.baseURI);
       var present = document.getElementById("public-" + name + "-style") || Array.prototype.some.call(document.querySelectorAll('link[rel="stylesheet"]'), function (link) {
         var existing = new URL(link.getAttribute("href"), document.baseURI);
@@ -89,6 +89,12 @@
     lien(menu, "istoric.html", "nav.istoric", "Istoric");
     lien(menu, "index.html#intrebari", "faq.h2", "Întrebări frecvente");
     lien(menu, "mailto:contact@poseidonstats.com", "footer.contact", "Contact:");
+    more.addEventListener("keydown", function (event) {
+      if (event.key !== "Escape" || !more.open) return;
+      event.preventDefault();
+      more.open = false;
+      summary.focus({ preventScroll: true });
+    });
     nav.appendChild(more);
   }
   temaPublica();
@@ -217,5 +223,5 @@
     });
   }
   selector();
-  fetch(sus + "assets/i18n.json?v=20261119-audit", { cache: "no-cache" }).then(function (r) { return r.json(); }).then(traduceCandGata).catch(function () {});
+  fetch(sus + "assets/i18n.json?v=20261119-functions", { cache: "no-cache" }).then(function (r) { return r.json(); }).then(traduceCandGata).catch(function () {});
 })();

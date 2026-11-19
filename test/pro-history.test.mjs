@@ -95,6 +95,17 @@ test('default Pro date follows Bucharest day; native calendar retrieves yesterda
   assert.doesNotMatch(h.element('pro-analize').innerHTML, /data-date="2026-10-29"/);
 });
 
+test('visible Pro date follows the site language while the native input keeps its ISO value', async () => {
+  const h = harness({ language: 'fr' });
+  await h.render();
+  assert.match(h.element('pro-analize').innerHTML, /<span class="pro-date-label" aria-hidden="true">30 oct\. 2026<\/span>/);
+  h.context.LANG = 'en';
+  await h.change('2026-10-29');
+  assert.match(h.element('pro-analize').innerHTML, /<span class="pro-date-label" aria-hidden="true">29 Oct 2026<\/span>/);
+  assert.equal(h.element('pro-date').value, '2026-10-29');
+  assert.equal(h.element('pro-date').max, '2026-10-30');
+});
+
 test('historical 404 replaces old analysis and never promises it will arrive after 07:45', async () => {
   const h = harness({ fetchImpl: async url => url.endsWith('2026-10-29') ? reply({}, 404) : reply(payload('2026-10-30', 'STALE-TODAY')) });
   await h.render(); assert.equal(h.open().item.analysis,'STALE-TODAY');

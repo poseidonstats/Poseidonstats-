@@ -75,20 +75,32 @@
       if (captureaza(window.location.search, localStorage)) history.replaceState({}, "", window.location.pathname + window.location.hash);
     } catch {}
   }
-  function init() {
+  let loginRequired = false;
+  function refreshBar(relogin = loginRequired) {
+    loginRequired = relogin;
     if (typeof window === "undefined") return;
     const bara = document.getElementById("members-bar");
     if (bara && MEMBERS_API) {
       const tier = tierDinToken(token());
       if (!tier) sterge();
-      bara.innerHTML = textBara(tier, MEMBERS_API);
-      if (new URLSearchParams(window.location.search).get("members") === "none") bara.innerHTML += textNone();
+      const noTier = new URLSearchParams(window.location.search).get("members") === "none";
+      const state = tier || (relogin ? "login" : noTier ? "none" : "guest");
+      if (bara.dataset.accountState === state) return;
+      bara.dataset.accountState = state;
+      bara.innerHTML = state === "login"
+        ? `<a class="members-login" href="${MEMBERS_API}/login" data-i18n="simplify.activation.login">Intră cu Patreon</a>`
+        : textBara(tier, MEMBERS_API) + (noTier ? textNone() : "");
+      for (const item of bara.querySelectorAll("[data-i18n]")) {
+        const key = item.dataset.i18n;
+        const translation = root.t?.(key);
+        if (translation && translation !== key) item.innerHTML = translation;
+      }
       const out = bara.querySelector("[data-members-logout]");
       if (out) out.addEventListener("click", (e) => { e.preventDefault(); sterge(); location.reload(); });
     }
   }
   const api = {
-    MEMBERS_API, tokenDinUrl, captureaza, tierDinToken, incarcaPredictii, textBara, textNone,
+    MEMBERS_API, tokenDinUrl, captureaza, tierDinToken, incarcaPredictii, textBara, textNone, refreshBar,
     tier: () => tierDinToken(token()),
     getProtected: (path, signal) => fetch(MEMBERS_API + path, {
       headers: { authorization: "Bearer " + token() }, credentials: "omit", cache: "no-store", signal,
@@ -111,6 +123,6 @@
       return { ...result, sameSession };
     },
   };
-  if (typeof window !== "undefined") { root.PoseidonMembers = api; document.addEventListener("DOMContentLoaded", init); }
+  if (typeof window !== "undefined") { root.PoseidonMembers = api; document.addEventListener("DOMContentLoaded", () => refreshBar()); }
   if (typeof module !== "undefined" && module.exports) module.exports = { tokenDinUrl, captureaza, tierDinToken, incarcaPredictii, textBara, textNone };
 })(typeof window !== "undefined" ? window : globalThis);
