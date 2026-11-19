@@ -369,15 +369,15 @@ test('concise login decoration preserves destination and full accessible labels 
   assert.deepEqual(options,{childList:true,subtree:true});
   inserted=true;callback();
   assert.equal(attributes.href,'https://members.invalid/login');
-  assert.equal(visible,'Sign in');
-  assert.equal(attributes['data-i18n'],'dashboard.nav.login');
+  assert.equal(visible,'Account');
+  assert.equal(attributes['data-i18n'],'approved.nav.account');
   assert.equal(attributes['data-i18n-attr'],'aria-label:members.login,title:members.login');
   assert.equal(attributes['aria-label'],i18n.en['members.login']);
   assert.equal(attributes.title,i18n.en['members.login']);
   callback();
   assert.equal(textWrites,1,'an unchanged label cannot trigger an observer text-mutation loop');
   language='fr';dashboard.decorateMemberLogin(doc,translate);
-  assert.equal(visible,'Connexion');
+  assert.equal(visible,'Compte');
   assert.equal(attributes['aria-label'],i18n.fr['members.login']);
   assert.equal(attributes.title,i18n.fr['members.login']);
   assert.equal(attributes.href,'https://members.invalid/login');

@@ -130,18 +130,31 @@ test('homepage market filters use translated labels and homepage assets use thei
     assert.equal(key,`filters.market.${market}`);
     for (const language of languages) assert(dictionary[language][key]);
   }
-  assert(html.includes('assets/app.js?v=20261119-native-pro-anchor'));
-  assert(html.includes('assets/home-modern.css?v=20261119-footer-app-store'));
+  const release='20261119-pro-mobile';
+  for (const asset of ['app.js','member-dossier.js','member-dossier.css','home-dashboard.js']) {
+    assert(html.includes(`assets/${asset}?v=${release}`));
+  }
+  assert(html.includes('assets/home-modern.css?v=20261119-approved-design'));
   assert(html.includes('assets/members.js?v=20261119-functions'));
-  assert(html.includes('assets/member-dossier.js?v=20261119-public-pro-anchor'));
-  assert(html.includes('assets/member-dossier.css?v=20261119-native-pro-anchor'));
   assert(html.includes('assets/conversion.js?v=20261119-app-outbound'));
-  assert(html.includes('assets/home-dashboard.js?v=20261119-native-pro-anchor'));
   // The per-metric TEST-N honesty contract superseded reading-frozen1. Check the current asset and cache key together.
   const readingSource=readFileSync(new URL('../assets/citire.js',import.meta.url),'utf8');
   assert(readingSource.includes('nN(t.familia)') && readingSource.includes('nN(t.interval)') && readingSource.includes('nN(t.directia)'));
   assert(html.includes('assets/citire.js?v=20261024-onestitate3'));
   assert(!html.includes('assets/citire.js?v=20261024-reading-frozen1'));
+});
+
+test('approved presentation keys are translated in every locale with matching placeholders', () => {
+  const keys=Object.keys(dictionary.ro).filter(key=>key.startsWith('redesign.') || key.startsWith('approved.'));
+  assert(keys.includes('redesign.edition.basicSummary'));
+  assert(keys.includes('redesign.edition.backMatch'));
+  assert(keys.includes('approved.audit.period'));
+  for (const language of languages) for (const key of keys) {
+    const translated=dictionary[language][key];
+    assert(translated?.trim(), `${language}: ${key}`);
+    const placeholders=text=>[...text.matchAll(/\{\w+\}/g)].map(match=>match[0]).sort();
+    assert.deepEqual(placeholders(translated),placeholders(dictionary.ro[key]),`${language}: ${key}`);
+  }
 });
 
 test('historical proof notice stays singular, translates on rerender, and links to the current audit', () => {

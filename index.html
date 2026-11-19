@@ -14,8 +14,8 @@
 <link rel="canonical" href="https://poseidonstats.com/">
 <meta property="og:type" content="website">
 <link rel="stylesheet" href="assets/style.css?v=20261119-native-pro-anchor">
-<link rel="stylesheet" href="assets/home-modern.css?v=20261119-footer-app-store">
-<link rel="stylesheet" href="assets/member-dossier.css?v=20261119-native-pro-anchor">
+<link rel="stylesheet" href="assets/home-modern.css?v=20261119-approved-design">
+<link rel="stylesheet" href="assets/member-dossier.css?v=20261119-pro-mobile">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#1e3a8a">
 <link rel="apple-touch-icon" href="assets/icon-192.png">
@@ -148,59 +148,52 @@ Statistici informative. Modelul poate greși. Verifică sursa. 18+.
       <span class="brand-pulse"></span>
     </a>
     <p class="tagline" data-i18n="tagline">Probabilități publicate înainte de meci · <strong>track record verificabil</strong> · dataset public</p>
+    <div class="home-nav-bar">
+      <nav id="home-nav" aria-label="Navigare principală" data-i18n-attr="aria-label:dashboard.nav.label">
+        <a class="home-nav-direct" href="index.html" data-i18n="dashboard.nav.home" aria-current="page">Acasă</a>
+        <a href="#dashboard" data-i18n="nav.predictii" data-conversion="predictions" data-conversion-source="header">Predicții</a>
+        <a id="home-nav-analyses" href="analize/index.html" data-i18n="dashboard.nav.analysis" data-conversion="analyses" data-conversion-source="header">Analize</a>
+        <a class="home-nav-direct" href="track-record.html" data-i18n="redesign.nav.results">Rezultate</a>
+        <a class="home-nav-direct" href="metodologie.html" data-i18n="nav.metodologie" data-conversion="methodology" data-conversion-source="header">Metodologie</a>
+        <a class="home-nav-direct" href="#abonament" data-i18n="nav.abonamente" data-conversion="plan-intent" data-conversion-source="header">Abonamente</a>
+        <details class="nav-more"><summary data-i18n="approved.nav.menu">Meniu</summary><div>
+          <a href="index.html" data-i18n="dashboard.nav.home" aria-current="page">Acasă</a>
+          <a class="home-nav-mobile" href="#dashboard" data-i18n="nav.predictii">Predicții</a>
+          <a id="home-nav-analyses-archive" href="analize/index.html" data-i18n="dashboard.analysis.readarchive" hidden>Citește analizele din arhivă</a>
+          <a href="track-record.html" data-i18n="nav.trackrecord" data-conversion="track-record" data-conversion-source="header">Track record</a>
+          <a href="metodologie.html" data-i18n="nav.metodologie" data-conversion="methodology" data-conversion-source="header">Metodologie</a>
+          <a class="patreon" href="#abonament" data-i18n="nav.abonamente" data-conversion="plan-intent" data-conversion-source="header">Abonamente</a>
+          <a href="predictii/index.html" data-i18n="nav.ligi">Pe ligi</a>
+          <a href="simulator.html" data-i18n="nav.simulator">Simulator</a>
+          <a href="istoric.html" data-i18n="nav.istoric">Istoric</a>
+          <a href="#intrebari" data-i18n="faq.h2">Întrebări frecvente</a>
+          <a href="mailto:contact@poseidonstats.com" data-i18n="footer.contact">Contact:</a>
+        </div></details>
+      </nav>
+    </div>
     <div id="members-bar" class="members-bar"></div>
   </div>
 </header>
 
-<div class="home-nav-bar">
-  <nav id="home-nav" class="container" aria-label="Navigare principală" data-i18n-attr="aria-label:dashboard.nav.label">
-    <a href="#dashboard" data-i18n="nav.predictii" data-conversion="predictions" data-conversion-source="header">Predicții</a>
-    <a id="home-nav-analyses" href="analize/index.html" data-i18n="dashboard.nav.analysis" data-conversion="analyses" data-conversion-source="header">Analize</a>
-    <details class="nav-more"><summary data-i18n="dashboard.nav.more">Mai mult</summary><div>
-      <a href="index.html" data-i18n="dashboard.nav.home" aria-current="page">Acasă</a>
-      <a id="home-nav-analyses-archive" href="analize/index.html" data-i18n="dashboard.analysis.readarchive" hidden>Citește analizele din arhivă</a>
-      <a href="track-record.html" data-i18n="nav.trackrecord" data-conversion="track-record" data-conversion-source="header">Track record</a>
-      <a href="metodologie.html" data-i18n="nav.metodologie" data-conversion="methodology" data-conversion-source="header">Metodologie</a>
-      <a class="patreon" href="#abonament" data-i18n="nav.abonamente" data-conversion="plan-intent" data-conversion-source="header">Abonamente</a>
-      <a href="predictii/index.html" data-i18n="nav.ligi">Pe ligi</a>
-      <a href="simulator.html" data-i18n="nav.simulator">Simulator</a>
-      <a href="istoric.html" data-i18n="nav.istoric">Istoric</a>
-      <a href="#intrebari" data-i18n="faq.h2">Întrebări frecvente</a>
-      <a href="mailto:contact@poseidonstats.com" data-i18n="footer.contact">Contact:</a>
-    </div></details>
-  </nav>
-</div>
 
 <main class="container">
 
   <section class="dashboard-opening"><div class="dashboard-hero">
-      <svg class="stadium-scene" viewBox="0 0 1440 460" preserveAspectRatio="xMidYMid slice" aria-hidden="true" fill="none">
-        <path d="M-100 130Q720-200 1540 130M-100 160Q720-165 1540 160M-100 190Q720-130 1540 190" stroke="#6889a1" stroke-width="2" opacity=".35"/>
-        <path d="M-70 390Q720 130 1510 390M-70 410Q720 150 1510 410M-70 430Q720 170 1510 430M-70 450Q720 190 1510 450" stroke="#70869a" stroke-width="10" stroke-dasharray="2 12" opacity=".22"/>
-        <path d="M70 94l80 180M275 48l55 190M497 14l28 190M720 4v185M943 14l-28 190M1165 48l-55 190M1370 94l-80 180" stroke="#b7c8d7" stroke-width="2" opacity=".23"/>
-        <path d="M40 100Q720-110 1400 100" stroke="#adcde0" stroke-width="4" stroke-dasharray="5 54" opacity=".65"/>
-        <path d="M190 438L590 336h260l400 102M470 438l171-102M970 438L799 336M190 438h1060" stroke="#517d71" opacity=".3"/>
-        <ellipse cx="720" cy="410" rx="90" ry="23" stroke="#517d71" opacity=".3"/>
-      </svg>
-      <div class="dashboard-hero-copy">
-        <h1 data-i18n="simplify.hero.title">Vezi probabilitățile.<br><span>Înțelege contextul.</span></h1>
-        <p data-i18n="simplify.hero.sub">5 predicții complete gratuite pe zi. Analizele Pro adaugă forma, absențele și capcanele din spatele cifrelor.</p>
-        <div class="dashboard-hero-actions"><a href="#dashboard" class="gold-button" data-i18n="hero.cta.primary" data-conversion="predictions" data-conversion-source="hero">Vezi predicțiile de azi</a><a href="metodologie.html" class="outline-button" data-i18n="nav.metodologie">Metodologie</a></div>
-        <div class="app-store-download">
-          <a href="https://apps.apple.com/ro/app/poseidon-stats/id6824537161" class="app-store-badge">
-            <img src="assets/app-store-badge.svg" width="156" height="52" alt="Descarcă din App Store · iPhone" data-i18n-attr="alt:app.download">
-          </a>
-          <!-- GOOGLE_PLAY_HERO_START -->
-          <a href="https://play.google.com/store/apps/details?id=com.poseidonstats.app" class="google-play-badge"><img src="assets/google-play/ro.svg" alt="Descarcă de pe Google Play · Android" data-i18n-attr="alt:app.google.download,src:app.google.badge"></a>
-          <!-- GOOGLE_PLAY_HERO_END -->
-        </div>
+    <div class="dashboard-hero-copy">
+      <h1 data-i18n="redesign.hero.title">Analizează meciurile zilei cu probabilități și rezultate verificabile.</h1>
+      <p data-i18n="redesign.hero.subtitle">Vezi gratuit 5 predicții complete pe zi. Basic îți oferă acces la toate predicțiile, iar Pro adaugă analizele editoriale.</p>
+      <div class="dashboard-hero-actions">
+        <a href="#dashboard" class="gold-button" data-i18n="redesign.hero.free" aria-label="Vezi cele 5 predicții gratuite" data-i18n-attr="aria-label:redesign.hero.free" data-conversion="predictions" data-conversion-source="hero">Vezi cele 5 predicții gratuite</a>
+        <a href="#exemplu-pro" class="conversion-visitor-proof" data-i18n="redesign.hero.pro" aria-label="Vezi exemplul Pro" data-i18n-attr="aria-label:redesign.hero.pro" data-conversion="sample" data-conversion-source="hero">Vezi exemplul Pro</a>
+      </div>
+
       </div>
 
     </div></section>
 
   <section class="dashboard-grid simplify-demo" id="dashboard" tabindex="-1" data-conversion-view="dashboard">
 <div class="dashboard-column dashboard-prediction-panel">
-      <div class="dashboard-panel-heading"><h2 data-i18n="simplify.demo.title">Încearcă predicțiile</h2><label class="dashboard-date-wrap"><span data-i18n="filters.day">Zi:</span><select id="dashboard-date" aria-label="Zi:" data-i18n-attr="aria-label:filters.day"></select></label></div>
+      <div class="dashboard-panel-heading"><h2><span class="conversion-visitor-title" data-i18n="redesign.free.title">Cele 5 predicții gratuite</span><span class="conversion-member-title" data-i18n="nav.predictii">Predicții</span></h2><label class="dashboard-date-wrap"><span data-i18n="filters.day">Zi:</span><select id="dashboard-date" aria-label="Zi:" data-i18n-attr="aria-label:filters.day"></select></label></div>
       <div class="dashboard-demo-controls">
         <label for="dashboard-search" data-i18n="simplify.search.label">Caută o echipă</label>
         <div class="dashboard-search-control"><input id="dashboard-search" type="search" autocomplete="off" placeholder="Numele echipei" aria-label="Caută o echipă" data-i18n-attr="placeholder:simplify.search.placeholder,aria-label:simplify.search.label"><button id="dashboard-search-clear" type="button" data-i18n="simplify.search.clear">Șterge</button></div>
@@ -226,15 +219,19 @@ Statistici informative. Modelul poate greși. Verifică sursa. 18+.
       <a href="#matches" class="dashboard-text-link" data-i18n="dashboard.predictions.all">Vezi toate predicțiile</a>
     </div>
     <section class="dashboard-column dashboard-analysis-panel simplify-pro-demo" id="exemplu-pro">
-      <div class="dashboard-panel-heading" id="public-pro-demo"><h2 data-i18n="simplify.pro.title">Cum arată o analiză Pro</h2></div>
+      <div class="dashboard-panel-heading" id="public-pro-demo"><h2 data-i18n="redesign.edition.title">Ce adaugă analiza Pro</h2></div>
       <div data-dashboard-pro-summary></div>
     </section>
   </section>
 
   <section class="simplify-evidence">
-    <div class="dashboard-panel-heading"><h2 data-i18n="simplify.evidence.title">Verifică și ce nu a mers</h2><a href="track-record.html" data-i18n="simplify.evidence.link" data-conversion="track-record" data-conversion-source="dashboard">Auditul complet</a></div>
+    <div class="dashboard-panel-heading"><h2 data-i18n="approved.audit.title">Rezultate verificabile</h2><a href="track-record.html" data-i18n="simplify.evidence.link" data-conversion="track-record" data-conversion-source="dashboard">Auditul complet</a></div>
     <p class="simplify-evidence-note" data-i18n="simplify.evidence.note">Istoricul rezultatelor este public, inclusiv ratările. Verifică perioadele și eșantioanele din audit.</p>
 
+    <p id="approved-audit-period"></p>
+    <div id="approved-audit-metrics" class="approved-audit-grid" aria-live="polite"></div>
+    <p data-i18n="approved.audit.explanation">BSS măsoară îmbunătățirea scorului Brier față de frecvența de referință. Auditul publică limitele evaluării istorice.</p>
+    <a href="metodologie.html" data-i18n="nav.metodologie">Metodologie</a>
     <details class="simplify-disclosure" id="dashboard-evidence-details">
       <summary data-i18n="simplify.metrics.title">Surse, eșantioane și grafice</summary>
       <div class="simplify-disclosure-body"><div class="dashboard-track-summary" id="dashboard-track-summary"></div><div class="dashboard-hero-evidence simplify-duplicate-metrics">
@@ -255,23 +252,44 @@ Statistici informative. Modelul poate greși. Verifică sursa. 18+.
 
 <section class="conversion-plans" id="abonament" tabindex="-1" aria-labelledby="conversion-plans-title" data-conversion-view="planstrip">
       <div class="conversion-plans-heading">
-        <h2 id="conversion-plans-title"><span class="conversion-visitor-title" data-i18n="conversion.plans.title">Alege accesul potrivit</span><span class="conversion-member-title" data-i18n="conversion.plans.membertitle">Mai mult context cu Pro</span></h2>
+        <h2 id="conversion-plans-title"><span class="conversion-visitor-title" data-i18n="nav.abonamente">Abonamente</span><span class="conversion-member-title" data-i18n="conversion.plans.membertitle">Mai mult context cu Pro</span></h2>
         <a href="#abonament-detalii" data-i18n="conversion.details" data-conversion="plan-intent" data-conversion-source="planstrip">Compară toate beneficiile</a>
       </div>
+      <p data-i18n="approved.plans.scope">Prețurile afișate sunt pentru site. Abonamentele din aplicații se cumpără separat.</p>
       <div class="conversion-plan-grid">
         <article class="conversion-plan conversion-plan-free">
           <div class="conversion-plan-head"><h3 data-i18n="conversion.free.name">Gratuit</h3><div class="conversion-price">$0</div></div>
           <p data-i18n="conversion.free.body">5 predicții complete pe zi și tot track record-ul. Fără cont.</p>
+          <ul>
+            <li data-i18n="approved.plan.free.1">5 predicții complete pe zi</li>
+            <li data-i18n="approved.plan.free.2">Dosarele gratuite eligibile</li>
+            <li data-i18n="approved.plan.free.3">Acces la rezultatele publice</li>
+          </ul>
           <a href="#dashboard" class="conversion-plan-cta" data-i18n="conversion.free.cta" data-conversion="predictions" data-conversion-source="planstrip">Vezi gratuit</a>
         </article>
         <article class="conversion-plan conversion-plan-basic">
           <div class="conversion-plan-head"><h3>Basic</h3><div class="conversion-price">$5 <span data-i18n="plans.per">/ lună</span></div></div>
           <p data-i18n="conversion.basic.body">Toate predicțiile și simulatorul. Pentru cine vrea cifrele.</p>
+          <ul>
+            <li data-i18n="approved.plan.basic.1">Toate predicțiile disponibile</li>
+            <li data-i18n="approved.plan.basic.2">Dosare statistice cu eșantioane</li>
+            <li data-i18n="approved.plan.basic.3">Comparații acasă și deplasare</li>
+            <li data-i18n="approved.plan.basic.4">Goluri, reprize și cornere, unde există date</li>
+            <li data-i18n="approved.plan.basic.5">Simulator cu datele de membru</li>
+          </ul>
           <a href="https://www.patreon.com/checkout/PoseidonPredictions?rid=28975826" target="_blank" rel="noopener" class="conversion-plan-cta plan-btn-basic" data-i18n="conversion.basic.cta" data-conversion="plan-outbound" data-conversion-tier="basic" data-conversion-source="planstrip">Alege Basic</a>
         </article>
         <article class="conversion-plan conversion-plan-pro">
           <div class="conversion-plan-head"><h3>Pro</h3><div class="conversion-price">$20 <span data-i18n="plans.per">/ lună</span></div></div>
           <p data-i18n="conversion.pro.body">Tot Basic + analize scrise: formă, absențe, context și capcane.</p>
+          <ul>
+            <li data-i18n="approved.plan.pro.1">Tot ce include Basic</li>
+            <li data-i18n="approved.plan.pro.2">Analize editoriale pentru meciuri selectate</li>
+            <li data-i18n="approved.plan.pro.3">Pronostic editorial și probabilitatea modelului</li>
+            <li data-i18n="approved.plan.pro.4">Frecvența pieței în ligă</li>
+            <li data-i18n="approved.plan.pro.5">Istoricul selecțiilor Pro</li>
+            <li data-i18n="approved.plan.pro.6">Verdict editorial și verificarea rezultatului</li>
+          </ul>
           <a href="https://www.patreon.com/checkout/PoseidonPredictions?rid=28975836" target="_blank" rel="noopener" class="conversion-plan-cta plan-btn-pro" data-i18n="conversion.pro.cta" data-conversion="plan-outbound" data-conversion-tier="pro" data-conversion-source="planstrip">Alege Pro</a>
         </article>
       </div>
@@ -284,10 +302,32 @@ Statistici informative. Modelul poate greși. Verifică sursa. 18+.
     </section>
 
   <section class="simplify-activation">
-    <h2 data-i18n="simplify.activation.title">Plătești pe Patreon. Revii și intri aici.</h2>
+    <h2 data-i18n="approved.access.title">Acces și plată</h2>
+    <div class="approved-access-grid">
+      <div><h3 data-i18n="approved.access.site">Acces pe site</h3>
     <p data-i18n="simplify.activation.body">După alegerea abonamentului, revino pe site și intră cu același cont Patreon. Discordul este opțional.</p>
     <a href="https://poseidon-members.poseidonstats.workers.dev/login" class="gold-button simplify-activation-login" data-i18n="simplify.activation.login" data-conversion="login" data-conversion-source="planstrip">Intră cu Patreon</a>
+      </div>
+      <div><h3 data-i18n="approved.access.billing">Plată lunară</h3><p data-i18n="approved.access.billingText">Patreon încasează la înscriere și reînnoiește lunar. Poți anula din cont. Accesul continuă până la sfârșitul perioadei plătite.</p></div>
+      <div><h3 data-i18n="approved.access.apps">Acces în aplicații</h3><p data-i18n="approved.access.appsText">Abonamentele din aplicații se gestionează separat. Magazinul afișează prețul și perioada înainte de confirmare.</p>
+          <div class="app-store-download">
+          <a href="https://apps.apple.com/ro/app/poseidon-stats/id6824537161" class="app-store-badge">
+            <img src="assets/app-store-badge.svg" width="156" height="52" alt="Descarcă din App Store · iPhone" data-i18n-attr="alt:app.download">
+          </a>
+          <!-- GOOGLE_PLAY_HERO_START -->
+          <a href="https://play.google.com/store/apps/details?id=com.poseidonstats.app" class="google-play-badge"><img src="assets/google-play/ro.svg" alt="Descarcă de pe Google Play · Android" data-i18n-attr="alt:app.google.download,src:app.google.badge"></a>
+          <!-- GOOGLE_PLAY_HERO_END -->
+        </div>
+      </div>
+    </div>
   </section>
+
+<section class="approved-faq">
+  <h2 data-i18n="faq.h2">Întrebări frecvente</h2>
+  <details><summary data-i18n="approved.faq.compare">Care este diferența dintre Basic și Pro?</summary><p data-i18n="approved.faq.compareText">Basic deschide lista completă și dosarele statistice disponibile. Pro include Basic și adaugă analize editoriale pentru meciuri selectate.</p></details>
+  <details><summary data-i18n="approved.faq.payment">Ce fac dacă mi-a fost refuzat cardul?</summary><p><span data-i18n="approved.faq.paymentText">Verifică dacă Patreon îți oferă opțiunea PayPal. Pentru ajutor, scrie la</span> <a href="mailto:contact@poseidonstats.com">contact@poseidonstats.com</a>.</p></details>
+  <details><summary data-i18n="approved.faq.results">Unde verific rezultatele și metoda?</summary><p data-i18n="approved.faq.resultsText">Auditul publică perioadele și eșantioanele evaluate. Performanța istorică nu garantează rezultatele viitoare.</p><p><a href="track-record.html" data-i18n="simplify.evidence.link">Auditul complet</a> · <a href="metodologie.html" data-i18n="nav.metodologie">Metodologie</a></p></details>
+</section>
 
 <section id="pro-analize" class="pro-analize"></section>
 
@@ -788,10 +828,10 @@ Statistici informative. Modelul poate greși. Verifică sursa. 18+.
   <div class="dossier-body" data-dossier-body></div>
 </dialog>
 <script src="assets/members.js?v=20261119-functions"></script>
-<script src="assets/member-dossier.js?v=20261119-public-pro-anchor"></script>
+<script src="assets/member-dossier.js?v=20261119-pro-mobile"></script>
 <script src="assets/country-label.js?v=20261118e"></script>
-<script src="assets/app.js?v=20261119-native-pro-anchor"></script>
+<script src="assets/home-dashboard.js?v=20261119-pro-mobile"></script>
+<script src="assets/app.js?v=20261119-pro-mobile"></script>
 <script src="assets/citire.js?v=20261024-onestitate3"></script>
-<script src="assets/home-dashboard.js?v=20261119-native-pro-anchor"></script>
 </body>
 </html>

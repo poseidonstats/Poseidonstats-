@@ -115,7 +115,9 @@
   const sampleRenders = new WeakMap();
   const catalogDays = new Map();
   let current = null;
-  let dialog;
+  let dialog, nativeDialog, readingPage;
+  let readingEntry = 0;
+  let publicPredictions;
 
   const words = (lang = document.documentElement.lang) => labels[lang] || labels.en;
   const integer = x => Number.isSafeInteger(x) && x >= 0;
@@ -138,9 +140,104 @@
     verifiedPredictions = Array.isArray(data?.matches) ? data : null;
     if (!verifiedPredictions) {
       catalogDays.clear();
-      if (dialog?.open && !current?.publicAccess) dialog.close();
+      if (dossierIsOpen() && !current?.publicAccess) {
+        if (dialog === readingPage?.surface) expireReading(current);
+        else dialog.close();
+      }
     }
     root.dispatchEvent(new Event("poseidon:member-predictions"));
+  }
+
+  const dossierIsOpen = () => !!dialog && (dialog.open || dialog === readingPage?.surface);
+  const listPosition = () => ({x:root.scrollX,y:root.scrollY});
+
+  function clearReadingEntry() {
+    if (!root.history.state?.poseidonDossierReading) return;
+    const {poseidonDossierReading, ...state} = root.history.state;
+    root.history.replaceState(state,"");
+  }
+
+  function returnToMatch() {
+    if (!readingPage || readingPage.closing) return;
+    readingPage.closing = true;
+    root.history.back();
+  }
+
+  // A history entry switches views inside the existing URL. It carries no report or session data.
+  function openReading(source, position, returnFocus) {
+    if (!root.matchMedia("(max-width: 767px)").matches || readingPage) return null;
+    const entry = `${Date.now()}-${++readingEntry}`;
+    try { root.history.pushState({...root.history.state,poseidonDossierReading:entry},""); }
+    catch (_) { return null; }
+    const restoration = root.history.scrollRestoration;
+    root.history.scrollRestoration = "manual";
+    const page = text("main",undefined,"dossier-reading-page");
+    const toolbar = text("div",undefined,"dossier-reading-toolbar");
+    const back = text("button");
+    const arrow = text("span","←");
+    const backLabel = text("span",label("backMatch"));
+    arrow.setAttribute("aria-hidden","true");
+    back.type = "button";
+    back.addEventListener("click",returnToMatch);
+    back.append(arrow,backLabel);
+    toolbar.append(back);
+    const surface = text("article",undefined,source.className + " dossier-reading-surface");
+    surface.lang = source.lang || document.documentElement.lang;
+    page.setAttribute("aria-label",source.getAttribute("aria-label") || label("heading"));
+    surface.append(...source.childNodes);
+    const originalHeading = surface.querySelector(".edition-heading h3, [data-dossier-title]");
+    const heading = text("h1");
+    if (originalHeading) {
+      for (const attr of originalHeading.attributes) heading.setAttribute(attr.name,attr.value);
+      heading.append(...originalHeading.childNodes);
+      originalHeading.replaceWith(heading);
+    }
+    page.append(toolbar,surface);
+    document.body.append(page);
+    readingPage = {entry,page,back,backLabel,surface,source,heading,originalHeading,position,returnFocus,restoration};
+    document.body.classList.add("dossier-reading-active");
+    back.focus({preventScroll:true});
+    root.scrollTo(0,0);
+    return surface;
+  }
+
+  function leaveReading() {
+    const view = readingPage;
+    if (!view) return;
+    readingPage = null;
+    if (nativeDialog.open) nativeDialog.close();
+    if (view.originalHeading) {
+      view.originalHeading.append(...view.heading.childNodes);
+      view.heading.replaceWith(view.originalHeading);
+    }
+    view.source.append(...view.surface.childNodes);
+    view.page.remove();
+    document.body.classList.remove("dossier-reading-active");
+    view.returnFocus()?.focus({preventScroll:true});
+    const restore = () => root.scrollTo(view.position.x,view.position.y);
+    restore();
+    root.history.scrollRestoration = view.restoration;
+    root.requestAnimationFrame(()=>{
+      if (readingPage) return;
+      restore();
+    });
+  }
+
+  function expireReading(state) {
+    if (!state || current !== state || state.expired || dialog !== readingPage?.surface) return;
+    state.expired = true;
+    state.controller.abort();
+    state.item = state.dossier = state.statistics = state.editorialLookup = null;
+    const message = text("p",state.copy.login,"dossier-note");
+    message.setAttribute("role","status");
+    dialog.querySelector("[data-dossier-title]").textContent = label("heading");
+    dialog.querySelector("[data-dossier-body]").replaceChildren(message);
+    readingPage.back.focus({preventScroll:true});
+    root.scrollTo(0,0);
+  }
+
+  function checkReadingAccess() {
+    if (current && dialog === readingPage?.surface && tier() !== "pro") expireReading(current);
   }
 
   async function loadCatalog(day) {
@@ -265,6 +362,7 @@
   function compare(groups, state) {
     const { kind, all, copy: c, number } = state;
     const table = text("table", undefined, "dossier-table");
+    table.setAttribute("role", "table");
     const coverage = group => {
       const location = all ? "" : (group.home ? c.home : c.away) + " · ";
       const n = group.matches.length, total = group.total;
@@ -273,17 +371,26 @@
       return location + (halves ? `${n} / ${total}` : n) + " " + noun;
     };
     headerRow(table, [[c.metric], ...groups.map(group => [group.name, coverage(group)])]);
+    table.tHead.setAttribute("role", "rowgroup");
+    table.tHead.rows[0].setAttribute("role", "row");
+    for (const cell of table.tHead.rows[0].cells) cell.setAttribute("role", "columnheader");
     const values = groups.map(group => rowValues(kind,group,number,c));
     const body = table.createTBody();
+    body.setAttribute("role", "rowgroup");
     const names = { teams:c.outcomes, goals:c.goals, halves:c.halves, corners:c.corners };
     names[kind].forEach((name, i) => {
       const row = body.insertRow(), th = text("th", name);
+      row.setAttribute("role", "row");
+      th.setAttribute("role", "rowheader");
       th.scope = "row";
       row.append(th);
-      values.forEach(team => {
+      values.forEach((team, index) => {
         const { value, note } = team[i];
         const cell = row.insertCell();
-        cell.textContent = value;
+        cell.setAttribute("role", "cell");
+        const teamName = text("span", groups[index].name, "dossier-comparison-team");
+        teamName.setAttribute("aria-hidden", "true");
+        cell.append(teamName, String(value));
         if (note) cell.append(text("small",note));
       });
     });
@@ -423,22 +530,42 @@
     const title = data?.teams.map(team=>team.name) || [item?.match?.home,item?.match?.away];
     dialog.querySelector("[data-dossier-title]").textContent = title.filter(Boolean).join(" – ") || state.matchLabel || c.open;
     body.replaceChildren();
-    if (data) {
-      const cutoff = new Intl.DateTimeFormat(state.lang === "en" ? "en-GB" : state.lang,
-        { day:"numeric",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit",
-          timeZone:"Europe/Bucharest",timeZoneName:"short" });
-      const asOf = timed(data.as_of);
-      const info = [data.league, data.season && c.season + " " + data.season,
-        Number.isFinite(asOf) && c.updated + " " + cutoff.format(asOf)].filter(Boolean).join(" · ");
-      body.append(text("p",info,"dossier-note"));
+    const readingPro = state.readingPro ?? state.fromPro;
+    if (readingPro && item?.match) {
+      body.append(text("p",matchMetadata(item,state.lang),"dossier-note"));
+    } else if (data) {
+      body.append(text("p",dossierMetadata(data,state.lang,c),"dossier-note"));
     } else if (item?.match?.league) {
       body.append(text("p",item.match.league,"dossier-note"));
     }
-    if (!state.publicAccess && tier() === "pro" && (state.fixture || item)) {
+    dialog.classList.toggle("dossier-basic-view",!readingPro);
+    if (!readingPro) {
+      body.prepend(text("h3",label("stats"),"dossier-basic-title"));
+      const feed = authorized() ? verifiedPredictions : publicFixtureIds(publicPredictions).has(state.fixture) ? publicPredictions : null;
+      const match = feed?.matches?.find(m => m.fixture_id === state.fixture && timed(m.match_date) === timed(data?.match_date));
+      let probabilities = match && [match.prob_home,match.prob_draw,match.prob_away];
+      if (!probabilities && state.publicSnapshot && state.archiveMatch) {
+        const m = state.archiveMatch;
+        if ([m.p_home,m.p_draw,m.p_away].every(n=>Number.isFinite(n) && n>=0 && n<=100)) probabilities = [m.p_home,m.p_draw,m.p_away].map(n=>n/100);
+      }
+      if (data && probabilities?.every(n=>Number.isFinite(n) && n>=0 && n<=1)) {
+        const values = text("div",undefined,"dossier-1x2");
+        values.setAttribute("aria-label",label("oneXtwo"));
+        const percent = new Intl.NumberFormat(state.lang,{style:"percent",maximumFractionDigits:1});
+        ["1","X","2"].forEach((key,i)=>{
+          const line = text("span",key + " ");
+          line.append(text("strong",percent.format(probabilities[i])));
+          values.append(line);
+        });
+        body.append(text("h4",label("oneXtwo")),values);
+      }
+    }
+    if (!state.publicAccess && !state.basicOnly && tier() === "pro" && (state.fixture || item)) {
       const anchor = document.createComment("Pro analysis");
       body.append(anchor);
       showEditorial(state, anchor);
     }
+    if (readingPro && (state.fixture || item)) return;
     if (data) {
       const stats = text("div");
       body.append(stats);
@@ -448,6 +575,16 @@
       message.setAttribute("role","status");
       body.append(message);
     }
+  }
+
+  function matchMetadata(item, lang) {
+    const match = item.match;
+    const kickoff = timed(match.match_date ?? item.provenance?.original_kickoff_utc);
+    const date = Number.isFinite(kickoff) ? new Intl.DateTimeFormat(lang === "en" ? "en-GB" : lang,
+      {day:"numeric",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit",
+        timeZone:"Europe/Bucharest",timeZoneName:"short"}).format(kickoff) : "";
+    const country = root.PoseidonCountry?.label?.(match.country,lang) || match.country;
+    return [match.league,country,date].filter(Boolean).join(" · ");
   }
 
   function dossierMetadata(data,lang,c) {
@@ -460,7 +597,7 @@
       Number.isFinite(asOf) && c.updated + " " + cutoff.format(asOf)].filter(Boolean).join(" · ");
   }
 
-  const stillOpen = state => current === state && dialog.open
+  const stillOpen = state => current === state && !state.expired && dossierIsOpen()
     && (state.publicAccess || (state.fromPro ? tier() === "pro" : authorized()));
 
   async function lookupEditorial(state) {
@@ -477,6 +614,27 @@
     }
   }
 
+  const fallback = {
+    basicSummary:"Dosarul Basic compară meciurile gazdelor acasă cu deplasările oaspeților și arată câte meciuri intră în fiecare eșantion.",
+    badge:"Exemplu public · Pro", pick:"Pronostic editorial", probability:"Probabilitatea modelului",
+    league:"Frecvență în ligă", history:"Istoric selecții Pro", outcomes:"{hits} confirmate, {misses} ratate",
+    verdict:"Verdict", arguments:"Argumente", limitations:"Ce poate contrazice analiza",
+    samples:"Eșantionul editorial cuprinde {home} meciuri acasă și {away} în deplasare.", verification:"Verificarea rezultatului", original:"Textul integral publicat înainte de meci",
+    read:"Citește analiza completă", heading:"Dosar Pro", basic:"Vezi dosarul Basic", stats:"Dosarul statistic Basic",
+    oneXtwo:"Probabilități 1 / X / 2", back:"Înapoi la analiza Pro", backMatch:"Înapoi la meci",
+  };
+  const label = key => tt("redesign.edition." + key,fallback[key]);
+  const metric = (name,value,detail) => `<div class="edition-metric"><span>${esc(name)}</span><strong>${esc(value)}</strong><small>${esc(detail)}</small></div>`;
+  function originalReading(html,lang) {
+    const original = text("details",undefined,"edition-original");
+    original.append(text("summary",label("original")));
+    const reading = text("div");
+    reading.lang = lang;
+    reading.innerHTML = html;
+    original.append(reading);
+    return original;
+  }
+
   async function showEditorial(state, anchor) {
     const c = state.copy;
     let target;
@@ -489,10 +647,32 @@
         anchor.replaceWith(message);
         return;
       }
-      if (!item?.analysis?.trim()) return;
+      if (!item?.analysis?.trim()) {
+        if (state.readingPro ?? state.fromPro) {
+          const message = text("p",c.editorialMissing,"dossier-note");
+          message.setAttribute("role","status");
+          anchor.replaceWith(message);
+        }
+        return;
+      }
       state.item = item;
+      if (!(state.readingPro ?? state.fromPro)) {
+        const read = text("button",state.fromPro ? label("back") : c.viewEditorial,"edition-read-member");
+        read.type = "button";
+        read.addEventListener("click",()=>{
+          if (!stillOpen(state) || tier() !== "pro") return;
+          state.readingPro = true;
+          state.focusReturn = "basic";
+          if (dialog === nativeDialog) openMemberReading(state);
+          show(state,state.status);
+          (dialog === readingPage?.surface ? readingPage.back : dialog.querySelector("[data-dossier-close]")).focus();
+        });
+        anchor.replaceWith(read);
+        if (state.focusReturn === "pro") { state.focusReturn = null; read.focus(); }
+        return;
+      }
       const editorial = text("details",undefined,"dossier-analysis");
-      editorial.open = state.editorialOpen ?? (state.fromPro === true);
+      editorial.open = true;
       const summary = text("summary",c.editorial,"dossier-open");
       summary.dataset.dossierEditorial = "";
       target = text("section",c.editorialLoading,"dossier-editorial");
@@ -503,7 +683,26 @@
       const report = await loadProReport();
       if (!target.isConnected || !stillOpen(state) || tier() !== "pro") return;
       const analysis = proAnalysisText(item,state.lang);
-      target.innerHTML = report.dossierReport(_md(analysis.text), item,state.dossier,state.day,state.lang,analysis.lang);
+      const html = _md(analysis.text);
+      target.classList.add("edition-member");
+      target.innerHTML = report.dossierReport(html,item,state.dossier,state.day,state.lang,analysis.lang,false,{compact:false,label,metric});
+      target.append(originalReading(html,analysis.lang));
+      if (state.dossier) {
+        const basic = text("button",label("basic"),"edition-basic");
+        basic.type = "button";
+        basic.addEventListener("click",()=>{
+          if (!stillOpen(state) || tier() !== "pro") return;
+          state.readingPro = false;
+          state.focusReturn = "pro";
+          show(state,state.status);
+          if (dialog === readingPage?.surface) root.scrollTo(0,0);
+          else dialog.scrollTop = 0;
+        });
+        target.append(text("p",label("basicSummary"),"edition-basic-summary"),basic);
+        if (state.focusReturn === "basic") { state.focusReturn = null; basic.focus(); }
+      } else {
+        target.append(text("p",c.missing,"dossier-note"));
+      }
       for (const selector of state.openDetails || []) target.querySelector(selector)?.setAttribute("open", "");
       watchResult(target,state,report);
       if (analysis.lang !== state.lang) {
@@ -545,7 +744,9 @@
         const link = text("a",labels.open);
         link.href = path + "#" + id;
         panel.replaceChildren(line,link);
-        if (state.publicSample) review.querySelector("summary").textContent = line.textContent;
+        if (state.publicSample || target.classList.contains("edition-member")) {
+          review.querySelector("summary").textContent = line.textContent;
+        }
       } catch (_) { /* Keep the localized availability message on a missing archive. */ }
       finally { panel.removeAttribute("aria-busy"); }
     }
@@ -607,11 +808,13 @@
   }
 
   function start(state) {
-    if (!dialog || dialog.open) return false;
+    if (!nativeDialog || dossierIsOpen()) return false;
     current?.controller.abort();
     const lang = document.documentElement.lang;
-    Object.assign(state,{ lang, copy:words(lang), controller:new AbortController() });
+    Object.assign(state,{ lang, copy:words(lang), controller:new AbortController(), position:listPosition() });
     current = state;
+    dialog = nativeDialog;
+    if (state.fromPro) dialog.classList.remove("dossier-basic-view");
     dialog.lang = labels[lang] ? lang : "en";
     const match = state.item?.match;
     const title = [match?.home,match?.away].filter(Boolean).join(" – ");
@@ -621,12 +824,39 @@
     const message = text("p",state.copy.loading);
     message.setAttribute("role","status");
     dialog.querySelector("[data-dossier-body]").replaceChildren(message);
-    dialog.showModal();
-    close.focus({preventScroll:true});
+    if (!state.fromPro || !openMemberReading(state)) {
+      dialog.showModal();
+      close.focus({preventScroll:true});
+    }
     dialog.scrollTop = 0;
-    if (state.matchLabel) fetchCardMatch(state,message);
+    if (state.publicSnapshot) show(state,"missing");
+    else if (state.matchLabel) fetchCardMatch(state,message);
     else if (state.fixture) fetchDossier(state,message);
     else show(state,"missing");
+    return true;
+  }
+
+  function finishMember(state) {
+    if (!state || current !== state) return null;
+    current = null;
+    root.clearInterval(state.accessMonitor);
+    state.controller.abort();
+    nativeDialog.querySelector("[data-dossier-body]").replaceChildren();
+    dialog = nativeDialog;
+    const byId = state.trigger.id && document.getElementById(state.trigger.id);
+    const equivalent = state.matchLabel
+      ? [...(state.focusRoot?.querySelectorAll("[data-pro-match]") || [])]
+        .find(link => link.dataset.proMatch === state.matchLabel && link.dataset.proDay === state.day)
+      : state.focusRoot?.querySelector(`[data-dossier-fixture="${state.fixture}"]`);
+    return state.trigger.isConnected ? state.trigger : byId || equivalent;
+  }
+
+  function openMemberReading(state) {
+    const page = openReading(nativeDialog,state.position,()=>finishMember(state));
+    if (!page) return false;
+    dialog = page;
+    if (nativeDialog.open) nativeDialog.close();
+    state.accessMonitor = root.setInterval(checkReadingAccess,1000);
     return true;
   }
 
@@ -637,7 +867,7 @@
     const publicAccess = trigger.dataset.dossierPublic === "true" && day === siteDay.format(Date.now());
     if (!publicAccess && !authorized()) return;
     const focusRoot = trigger.closest("#dashboard-predictions, #matches");
-    return start({ fixture,kickoff,trigger,focusRoot,day,publicAccess });
+    return start({ fixture,kickoff,trigger,focusRoot,day,publicAccess,basicOnly:trigger.hasAttribute("data-dossier-basic") });
   }
 
   function openPro(trigger, item, day) {
@@ -666,7 +896,8 @@
     return sampleRequests.get(day);
   }
 
-  async function mountPublicSample(target, source, lang, memberAction) {
+  async function mountPublicSample(target, source, lang, memberAction, predictions) {
+    publicPredictions = predictions;
     sampleRenders.get(target)?.controller.abort();
     const fixture = Number(source?.dataset.sampleFixture), day = source?.dataset.sampleDay;
     if (!Number.isSafeInteger(fixture) || fixture < 1 || !/^\d{4}-\d{2}-\d{2}$/.test(day)) return;
@@ -685,50 +916,83 @@
       if (!analysis.text) return;
       const data = dossierMatches(payload.dossier,fixture,day,kickoff) ? payload.dossier : null;
       const copy = words(lang);
-      const card = text("article",undefined,"sample-dossier");
-      const heading = text("div",undefined,"dossier-heading");
-      heading.append(text("h3",[item.match.home,item.match.away].join(" – ")));
-      const body = text("div",undefined,"dossier-body");
-      body.append(text("p",dossierMetadata(data,lang,copy) || item.match.league,"dossier-note"));
-      const full = text("details",undefined,"sample-dossier-reading");
-      full.append(text("summary",copy.editorial,"dossier-open"));
-      const reading = text("div",undefined,"dossier-editorial");
-      reading.lang = analysis.lang;
-      if (analysis.lang !== lang) {
-        const english = analysis.lang === "en";
-        const language = tt(english ? "dashboard.language.english" : "dashboard.language.romanian", english ? "English" : "română");
-        const notice = tt("dashboard.analysis.fallback","Textul analizei este disponibil în {language}.").replace("{language}",language);
-        body.append(text("p",notice,"dossier-note"));
+      const card = text("article",undefined,"sample-dossier edition-preview");
+      const full = text("dialog",undefined,"sample-dossier edition-dialog");
+      const title = [item.match.home,item.match.away].join(" – ");
+      full.setAttribute("aria-label",label("heading") + " · " + title);
+      const close = text("button",copy.close,"edition-close");
+      close.type = "button";
+      close.addEventListener("click",()=>full.close());
+      const show = text("button",label("read"),"edition-open");
+      show.type = "button";
+      if (!root.matchMedia("(max-width: 767px)").matches) show.setAttribute("aria-haspopup","dialog");
+      show.addEventListener("click",()=>{
+        if (!openReading(full,listPosition(),()=>show.isConnected ? show : target.querySelector(".edition-open"))) {
+          full.showModal();
+        }
+      });
+      full.addEventListener("close",()=>show.focus({preventScroll:true}));
+      const html = _md(analysis.text);
+      const meta = matchMetadata(item,lang);
+      for (const surface of [card,full]) {
+        const compact = surface === card;
+        const header = text("header",undefined,"edition-heading");
+        header.append(text("span",label(compact ? "badge" : "heading"),"edition-kicker"),text("h3",title),text("p",meta));
+        if (!compact) header.append(close);
+        const editorial = text("div",undefined,"edition-content");
+        editorial.innerHTML = report.dossierReport(html,item,data,day,lang,analysis.lang,true,{compact,label,metric});
+        surface.append(header,editorial);
+        if (analysis.lang !== lang) {
+          const english = analysis.lang === "en";
+          const language = tt(english ? "dashboard.language.english" : "dashboard.language.romanian", english ? "English" : "română");
+          header.append(text("p",tt("dashboard.analysis.fallback","Textul analizei este disponibil în {language}.").replace("{language}",language)));
+        }
       }
-      reading.innerHTML = report.fullReading(_md(analysis.text),analysis.lang);
-      full.append(reading);
-      const editorial = text("section",undefined,"dossier-editorial");
-      editorial.innerHTML = report.dossierReport(_md(analysis.text),item,data,day,lang,analysis.lang,true);
-      body.append(editorial,full);
-      if (data) {
-        const stats = text("div");
-        body.append(stats);
-        mountStatistics(stats,data,lang,"public-sample-dossier",null,true);
+      full.append(originalReading(html,analysis.lang));
+      const match = predictions?.matches?.find(m => m.fixture_id === fixture && timed(m.match_date) === kickoff);
+      const offerPublic = publicFixtureIds(predictions).has(fixture);
+      const nativeAction = data && match && button(match,offerPublic);
+      let basic;
+      if (nativeAction) {
+        const holder = text("div");
+        holder.innerHTML = nativeAction;
+        basic = holder.firstElementChild;
+        basic.textContent = label("basic");
+        basic.setAttribute("aria-label",label("basic") + " · " + title);
+        basic.dataset.dossierBasic = "";
+      } else if (data) {
+        basic = text("button",label("basic"));
+        basic.setAttribute("aria-haspopup","dialog");
+        basic.setAttribute("aria-controls","member-dossier");
+        basic.addEventListener("click",()=>start({trigger:basic,fixture,day,kickoff,publicAccess:true,publicSnapshot:true,dossier:data,archiveMatch:item.match}));
+      }
+      if (basic) {
+        basic.type = "button";
+        basic.classList.add("edition-basic");
+        full.append(text("p",label("basicSummary"),"edition-basic-summary"),basic);
       } else {
-        body.append(text("p",copy.missing,"dossier-note"));
+        full.append(text("p",copy.missing,"edition-unavailable"));
       }
-      card.append(heading,body);
+      card.append(show,full);
       target.replaceChildren(card);
       if (memberAction) target.append(memberAction);
-      watchResult(editorial,state,report);
+      watchResult(card.querySelector(".edition-content"),state,report);
+      watchResult(full,state,report);
     } catch (_) { /* The generator's selected public sample remains available. */ }
   }
 
   function switchLanguage(lang) {
-    if (!current || !dialog.open || current.lang === lang) return;
+    if (!current || !dossierIsOpen() || current.lang === lang) return;
     const state = current;
     state.lang = lang;
     state.copy = words(lang);
     dialog.lang = labels[lang] ? lang : "en";
     const close = dialog.querySelector("[data-dossier-close]");
     close.textContent = state.copy.close;
-    if (!state.status || state.status === "login") {
-      dialog.querySelector("[data-dossier-body] [role='status']").textContent = state.copy[state.status || "loading"];
+    if (dialog === readingPage?.surface) readingPage.backLabel.textContent = label("backMatch");
+    if (state.expired || !state.status || state.status === "login") {
+      const message = dialog.querySelector("[data-dossier-body] [role='status']");
+      if (message) message.textContent = state.copy[state.expired ? "login" : state.status || "loading"];
       if (!state.item && !state.matchLabel) dialog.querySelector("[data-dossier-title]").textContent = state.copy.open;
       return;
     }
@@ -743,26 +1007,37 @@
   }
 
   function mount() {
-    dialog = document.getElementById("member-dossier");
-    if (!dialog) return;
+    dialog = nativeDialog = document.getElementById("member-dossier");
+    if (!nativeDialog) return;
+    clearReadingEntry(); // A reload cannot reconstruct a private view from history.
+    root.addEventListener("popstate",()=>{
+      if (readingPage && root.history.state?.poseidonDossierReading !== readingPage.entry) leaveReading();
+      else if (!readingPage) clearReadingEntry();
+    });
+    root.addEventListener("pageshow",checkReadingAccess);
+    root.addEventListener("storage",checkReadingAccess);
     document.addEventListener("click",event=>{
       const trigger = event.target.closest("button[data-dossier-fixture]");
       if (trigger) open(trigger);
     });
-    dialog.querySelector("[data-dossier-close]").addEventListener("click",()=>dialog.close());
-    dialog.addEventListener("close",()=>{
-      if (!current || dialog.open) return;
-      const state = current;
-      current = null;
-      state.controller.abort();
-      dialog.querySelector("[data-dossier-body]").replaceChildren();
-      const byId = state.trigger.id && document.getElementById(state.trigger.id);
-      const equivalent = state.matchLabel
-        ? [...(state.focusRoot?.querySelectorAll("[data-pro-match]") || [])]
-          .find(link => link.dataset.proMatch === state.matchLabel && link.dataset.proDay === state.day)
-        : state.focusRoot?.querySelector(`[data-dossier-fixture="${state.fixture}"]`);
-      const trigger = state.trigger.isConnected ? state.trigger : byId || equivalent;
-      trigger?.focus({ preventScroll:true });
+    document.addEventListener("keydown",event=>{
+      if (readingPage && !nativeDialog.open && event.key === "Escape" && !event.defaultPrevented) {
+        event.preventDefault();
+        returnToMatch();
+      }
+    });
+    nativeDialog.querySelector("[data-dossier-close]").addEventListener("click",()=>nativeDialog.close());
+    nativeDialog.addEventListener("cancel",event=>{
+      if (current?.fromPro && current.readingPro === false) {
+        event.preventDefault();
+        current.readingPro = true;
+        current.focusReturn = "basic";
+        show(current,current.status);
+      }
+    });
+    nativeDialog.addEventListener("close",()=>{
+      if (!current || dialog !== nativeDialog || nativeDialog.open) return;
+      finishMember(current)?.focus({preventScroll:true});
     });
   }
 

@@ -1,5 +1,5 @@
 /* Network-first for public static pages and assets. Keep the last successful response for offline use. */
-const CACHE = "poseidon-v112";
+const CACHE = "poseidon-v114";
 const SHELL = [
   "./",
   "./index.html",

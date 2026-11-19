@@ -1,8 +1,8 @@
 /* PoseidonStats dashboard: presentation scoped to the homepage only. */
 body.home-modern {
-  --dash-bg: #020d17; --dash-panel: #061725; --dash-raised: #0a1e2d;
-  --dash-line: #17364b; --dash-gold: #efd06a; --dash-muted: #a7bbcb;
-  --dash-text: #f3f6fa; --dash-green: #68dca4;
+  --dash-bg: #06101d; --dash-panel: #0b192a; --dash-raised: #102339;
+  --dash-line: #25384d; --dash-gold: #e6bd62; --dash-muted: #a2afbf;
+  --dash-text: #f4f6f8; --dash-green: #68dca4;
   background: var(--dash-bg); color: var(--dash-text);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
   font-size: 15px; line-height: 1.6; -webkit-font-smoothing: antialiased;
@@ -1035,4 +1035,182 @@ body.home-modern .salt-meciuri { display: none; }
 @media (max-width: 660px) {
   .home-modern #pro-analize .pro-feed-controls { grid-template-columns: minmax(0, 1fr); }
   .home-modern #pro-analize :is(#pro-date, #pro-match-select, .pro-match-field) { font-size: 16px; }
+}
+
+
+/* Home layout shared by the daily list, editorial example and public results. */
+.home-modern .container { max-width: 1256px; padding-inline: 36px; }
+.home-modern > header { background: var(--dash-bg); padding-block: 8px; }
+.home-modern > header > .container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px 24px;
+}
+.home-modern > header .tagline { display: none; }
+.home-modern > header .home-nav-bar { position: relative; inset: auto; background: transparent; border: 0; }
+.home-modern > header #home-nav { display: flex; flex-wrap: wrap; align-items: center; }
+.home-modern > header .members-bar { width: auto; margin: 0; padding: 0; border: 0; }
+.home-modern .dashboard-opening {
+  background: var(--dash-panel);
+  box-shadow: 0 0 0 100vmax var(--dash-panel);
+  clip-path: inset(0 -100vmax);
+}
+.home-modern .dashboard-opening .dashboard-hero { min-height: 0; padding-block: 24px; }
+.home-modern .dashboard-hero::before { content: none; }
+.home-modern .dashboard-hero h1 { font-size: clamp(2rem, 3.3vw, 3rem); line-height: 1.04; text-wrap: initial; }
+.home-modern .dashboard-hero-copy > p { max-width: 56ch; line-height: 1.5; color: var(--dash-muted); }
+.home-modern .dashboard-hero-actions { align-items: center; }
+.home-modern .dashboard-hero-actions .outline-button { border: 0; background: transparent; color: var(--dash-text); text-decoration: underline; }
+.home-modern .simplify-demo { display: grid; grid-template-columns: minmax(0, 1fr); gap: 30px; background: transparent; border: 0; }
+.home-modern .simplify-demo .dashboard-column { padding-inline: 0; border: 0; }
+@media (max-width: 1050px) {
+  .home-modern > header #home-nav > .home-nav-direct { display: none; }
+}
+@media (max-width: 760px) {
+  .home-modern .container { padding-inline: 16px; }
+  .home-modern > header > .container { gap: 4px 10px; }
+  .home-modern > header .members-bar { order: 0; }
+  .home-modern > header .home-nav-bar { order: 1; }
+  .home-modern .dashboard-opening .dashboard-hero { padding-block: 10px 8px; }
+  .home-modern .dashboard-hero h1 { font-size: clamp(1.8rem, 7.6vw, 2.2rem); margin-bottom: 7px; }
+  .home-modern .dashboard-hero-copy > p { margin-bottom: 10px; font-size: 1rem; line-height: 1.4; }
+}
+
+.home-modern .dashboard-prediction-panel .dashboard-league-tabs { display: none; }
+.home-modern .dashboard-demo-controls {
+  display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  grid-template-areas: "search-label league-label" "search league";
+  gap: 4px 12px; margin-bottom: 0; padding: 12px;
+  border: 1px solid var(--dash-line); border-bottom: 0; border-radius: 10px 10px 0 0;
+  background: var(--dash-panel);
+}
+.home-modern .dashboard-demo-controls label:first-child { grid-area: search-label; }
+.home-modern .dashboard-demo-controls label[for="dashboard-league-menu"] { grid-area: league-label; margin: 0; }
+.home-modern .dashboard-demo-controls label { font-size: .875rem; }
+.home-modern .dashboard-search-control { grid-area: search; display: flex; }
+.home-modern #dashboard-search-clear:disabled { display: none; }
+.home-modern #dashboard-league-menu { grid-area: league; }
+.home-modern .dashboard-table-scroll { border-color: var(--dash-line); border-radius: 0 0 10px 10px; }
+.home-modern .dashboard-table { background: var(--dash-panel); }
+.home-modern .dashboard-match-row .dashboard-time-cell { white-space: normal; }
+.home-modern .dashboard-match-row .dashboard-access-cell .dossier-open { margin: 0 0 0 8px; }
+.home-modern .dashboard-match-row .dashboard-free { background: #1b3044; color: #d8e2eb; border-color: #385268; }
+.home-modern .dashboard-hero-actions .conversion-visitor-proof { display: inline-flex; align-items: center; min-height: 44px; color: var(--dash-text); }
+@media (max-width: 599.99px) {
+  .home-modern .dashboard-demo-controls { padding: 8px; gap: 4px 8px; }
+  .home-modern .dashboard-search-control { flex-wrap: wrap; }
+  .home-modern .dashboard-table-scroll { border: 0; }
+  .home-modern .dashboard-table { background: transparent; }
+  .home-modern .dashboard-match-row { margin-top: 8px; border: 1px solid var(--dash-line); border-radius: 10px; background: var(--dash-panel); }
+  .home-modern .dashboard-match-row:last-child { border-bottom: 1px solid var(--dash-line); }
+  .home-modern .dashboard-match-row .dashboard-time-cell { grid-column: 1 / -1; display: flex; align-items: baseline; gap: 10px; }
+  .home-modern .dashboard-match-row .dashboard-time-cell time { font-size: 16px; font-weight: 700; }
+  .home-modern .dashboard-match-row .dashboard-access-cell { grid-column: 1 / -1; grid-row: 4; display: flex; align-items: center; justify-content: space-between; justify-self: stretch; }
+  .home-modern .dashboard-match-row .dashboard-team { font-size: 18px; }
+  .home-modern .dashboard-match-row .dashboard-access-cell .dossier-open { margin: 0; }
+}
+
+.home-modern #home-nav .home-nav-mobile { display: none; }
+@media (max-width: 760px) {
+  .home-modern > header .container { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 2px 8px; }
+  .home-modern > header .brand { grid-column: 1; grid-row: 1; justify-self: start; }
+  .home-modern > header .members-bar { grid-column: 2; grid-row: 1; }
+  .home-modern > header .members-sub { display: none; }
+  .home-modern > header .home-nav-bar { grid-column: 1 / -1; }
+  .home-modern > header #home-nav { min-height: 44px; justify-content: space-between; padding: 0; }
+  .home-modern > header #home-nav > a { display: none; }
+  .home-modern #home-nav .home-nav-mobile { display: block; }
+  .home-modern .dashboard-hero-actions { gap: 8px; }
+  .home-modern .dashboard-hero-actions .gold-button { width: auto; min-height: 44px; padding-inline: 8px; gap: 4px; font-size: 13px; }
+  .home-modern .dashboard-hero-actions .conversion-visitor-proof { font-size: 13px; }
+  .home-modern .dashboard-prediction-panel .dashboard-panel-heading { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 6px; }
+  .home-modern .dashboard-prediction-panel h2 { font-size: 1.35rem; }
+  .home-modern .dashboard-prediction-panel #dashboard-date { width: 8.1rem; }
+  .home-modern .dashboard-prediction-panel .dashboard-date-wrap { margin: 0; width: auto; }
+}
+
+@media (max-width: 760px) {
+  .home-modern .dashboard-hero-actions { flex-wrap: nowrap; }
+  .home-modern .dashboard-hero-actions .gold-button { flex: 0 1 auto; line-height: 1.25; text-align: center; }
+  .home-modern .dashboard-hero-actions .conversion-visitor-proof { flex: 0 0 auto; }
+  .home-modern .dashboard-match-row .dashboard-team { line-height: 1.25; }
+  .home-modern .dashboard-match-row .dashboard-prob { line-height: 1.25; }
+}
+
+body.home-modern { font-size: 16px; }
+.home-modern .dashboard-prediction-panel .dashboard-panel-heading h2 { padding-left: 0; border-left: 0; }
+.home-modern .dashboard-table .dashboard-match-row .dashboard-prob { color: var(--dash-text); font-weight: 650; }
+.home-modern .dashboard-match-row .dossier-open { border: 1px solid #50677f; background: var(--dash-panel); color: var(--dash-text); }
+.home-modern .dashboard-match-row .dossier-open:hover { background: var(--dash-raised); }
+.home-modern .dashboard-hero-actions .gold-button { background: var(--dash-gold); box-shadow: none; }
+.home-modern :is(#dashboard-search, #dashboard-league-menu, #dashboard-search-clear) { min-height: 44px; }
+@media (max-width: 760px) {
+  .home-modern > header .container { grid-template-columns: minmax(0, 1fr) auto auto; gap: 4px; }
+  .home-modern > header .brand { gap: 3px; }
+  .home-modern > header .brand-name { font-size: 15px; letter-spacing: 0; }
+  .home-modern > header .brand-icon { width: 19px; }
+  .home-modern > header .members-bar { grid-column: 2; grid-row: 1; }
+  .home-modern > header .members-login { padding-inline: 5px; min-height: 44px; }
+  .home-modern > header .home-nav-bar { grid-column: 3; grid-row: 1; }
+  .home-modern > header #home-nav { flex-wrap: nowrap; gap: 4px; }
+  .home-modern > header .lang-switcher { flex: 0 0 44px; width: 44px; }
+  .home-modern > header .lang-select { width: 44px; padding-inline: 4px 12px; }
+  .home-modern > header .nav-more > div { right: 0; min-width: 180px; }
+  .home-modern > header:has(.members-none, .members-badge) .members-bar { grid-column: 1 / -1; grid-row: 2; }
+  .home-modern .dashboard-hero-actions { flex-wrap: wrap; }
+  .home-modern .dashboard-hero-actions :is(.gold-button, .conversion-visitor-proof) { font-size: 16px; }
+  .home-modern .dashboard-hero-actions .gold-button { white-space: nowrap; }
+  .home-modern .dashboard-table .dashboard-match-row :is(.dashboard-prob-key,.dashboard-match-league) { font-size: .875rem; }
+}
+
+.home-modern :is(.simplify-evidence, .conversion-plans, .simplify-activation, .approved-faq) {
+  margin: 36px 0;
+  padding: 0;
+  background: transparent;
+  border: 0;
+}
+.home-modern :is(.simplify-evidence, .conversion-plans, .simplify-activation, .approved-faq) h2 {
+  font-size: clamp(1.55rem, 3vw, 2.05rem);
+  margin: 0 0 8px;
+  padding: 0;
+  border: 0;
+}
+.home-modern .approved-audit-grid, .home-modern .approved-access-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin: 12px 0;
+}
+.home-modern .approved-access-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.home-modern :is(.approved-audit-grid, .approved-access-grid) > div,
+.home-modern .conversion-plan-grid .conversion-plan,
+.home-modern .approved-faq details {
+  padding: 16px;
+  background: var(--dash-panel);
+  border: 1px solid var(--dash-line);
+  border-radius: 10px;
+  box-shadow: none;
+}
+.home-modern .approved-audit-grid strong { display: block; font-size: 1.65rem; font-variant-numeric: tabular-nums; }
+.home-modern .approved-audit-grid span, .home-modern .simplify-evidence > p, .home-modern .conversion-plans > p { color: var(--dash-muted); }
+.home-modern .conversion-plan-grid { margin-top: 12px; }
+.home-modern .conversion-plan-grid .conversion-plan { display: flex; flex-direction: column; gap: 10px; align-items: stretch; }
+.home-modern .conversion-plan-head { display: block; }
+.home-modern .conversion-plan .conversion-price { margin-block-start: 6px; color: var(--dash-text); font-size: 1.75rem; }
+.home-modern .conversion-plan > p { color: var(--dash-muted); font-size: 1rem; margin: 0; }
+.home-modern .conversion-plan ul { margin: 0 0 5px; padding-inline-start: 19px; font-size: 1rem; }
+.home-modern .conversion-plan .conversion-plan-cta { margin-top: auto; max-width: none; min-height: 44px; padding: 10px 16px; font-size: 1rem; color: var(--dash-text); background: var(--dash-raised); border-color: #455b70; }
+.home-modern .conversion-plan-pro .conversion-plan-cta { background: var(--dash-gold); border-color: var(--dash-gold); color: #111a23; }
+.home-modern .approved-access-grid > div { min-width: 0; }
+.home-modern .approved-access-grid h3 { margin: 0 0 6px; }
+.home-modern .approved-access-grid p { font-size: 1rem; }
+.home-modern .approved-access-grid .app-store-download { flex-wrap: wrap; }
+.home-modern .approved-faq details { margin-top: 6px; padding: 0 14px; }
+.home-modern .approved-faq summary { min-height: 44px; padding-block: 10px; cursor: pointer; font-weight: 650; }
+.home-modern .approved-faq p { margin: 0 0 12px; }
+@media (max-width: 760px) {
+  .home-modern .approved-audit-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .home-modern .approved-access-grid, .home-modern .conversion-plan-grid { grid-template-columns: minmax(0, 1fr); }
+  .home-modern :is(.simplify-evidence, .conversion-plans, .simplify-activation, .approved-faq) { margin-block: 28px; }
 }

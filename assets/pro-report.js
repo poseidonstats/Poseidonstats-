@@ -88,7 +88,7 @@
       || record.to>cutoffDay || (!league && record.to>=day))) return null;
     return record;
   }
-  function marketSummary(item,dossier,identity,lang,publicSample) {
+  function marketSummary(item,dossier,identity,lang,publicSample,edition) {
     const [totalLeague, otherLeague, publicPro, leagueSource, proSource] = sampleCopy[lang] || sampleCopy.en;
     const [leagueLabel,white,red,teamsLabel,atHome,away,historyLabel,count,matches,settled,similar,unavailable,empty,cutoffLabel,criteria]=marketCopy[lang]||marketCopy.en;
     const num=new Intl.NumberFormat(lang);
@@ -114,6 +114,15 @@
     const teams=root.PoseidonProContext?.marketFrequency(dossier,identity.fixture,identity.key);
     const record=verifiedRecord(item.pro_market_record,identity,'pro');
     const pro=publicSample && instant(record?.as_of)!==identity.captured ? null : record;
+    if (edition) {
+      const metric = (title,record,description) => {
+        const value = record?.settled ? tally(record.hits,record.settled) : record ? empty : unavailable;
+        const detail = record?.settled ? [identity.market, description, range(record)].join(' · ') : '';
+        return edition.metric(title,value,detail);
+      };
+      return metric(edition.label('league'),league,'FT90') +
+        metric(edition.label('history'),pro,pro ? edition.label('outcomes').replace('{hits}',num.format(pro.hits)).replace('{misses}',num.format(pro.settled-pro.hits)) + ' · FT90' : '');
+    }
     const band=pro?.band;
     const bandCovered=band && validCounts(band) && band.settled>0 && band.settled<=pro.settled
       && band.hits<=pro.hits && band.settled-band.hits<=pro.settled-pro.hits
@@ -169,7 +178,7 @@
     })[key]));
     return `<div class="dossier-reading"><h3>${title}</h3><p>${fill(comparison)} ${fill(concentration)}</p></div>`;
   }
-  function dossierReport(html,item,dossier,day,lang,sourceLang=lang,publicSample=false) {
+  function dossierReport(html,item,dossier,day,lang,sourceLang=lang,publicSample=false,edition=null) {
     const data=presentationSections(sections(html),sourceLang);
     const structured=structuredSelection(item.provenance?.inputs?.picks,lang);
     const selection=structured || data.selection;
@@ -178,7 +187,7 @@
     const key=selection?.key || (selection?.goals ? `over_${selection.goals-1}_5` : null);
     const identity={fixture,day,key,kickoff:item.provenance?.original_kickoff_utc,
       publication:item.provenance?.generated_at_utc,captured:instant(item.provenance?.inputs_captured_at_utc),goals:selection?.goals,market:selection?.market || '',estimate:Number(selection?.probability?.replace('%','').replace(',','.'))};
-    const evidence=key?marketSummary(item,dossier,identity,lang,publicSample):'';
+    const evidence=key?marketSummary(item,dossier,identity,lang,publicSample,edition):'';
     const goals=structured?.goals;
     const facts=goals?dossierApi?.goalEvidence(dossier,fixture,goals):null;
     const snapshot=instant(dossier?.as_of),published=instant(identity.publication);
@@ -191,7 +200,23 @@
     const w=words[lang]||words.en;
     const review=data.review.map(block=>reviewMarkup(block,sourceLang)).join('');
     const [,,,,,awaiting,unavailable] = sampleCopy[lang] || sampleCopy.en;
-    const reviewStatus = publicSample && !review ? ` · ${Date.now() < kickoff ? awaiting : unavailable}` : '';
+    const reviewStatus = (publicSample || edition) && !review ? ` · ${Date.now() < kickoff ? awaiting : unavailable}` : '';
+    if (edition) {
+      const label=edition.label;
+      const publicationTime=publishedOnTime ? new Intl.DateTimeFormat(lang,{hour:'2-digit',minute:'2-digit',timeZone:'Europe/Bucharest',timeZoneName:'short'}).format(receipt) : '';
+      const note=[pickLabel,publicationTime].filter(Boolean).join(' · ');
+      const metrics=edition.metric(label('pick'),selection?.market || '—',note)
+        + edition.metric(label('probability'),selection?.probability || '—',selection?.market || '') + evidence;
+      const writing=(key,blocks)=>blocks.length ? `<section class="edition-paragraph" lang="${escapeText(sourceLang)}"><h4 lang="${escapeText(lang)}">${escapeText(label(key))}</h4>${blocks.map(contentOnly).join('')}</section>` : '';
+      const counts=item.provenance?.inputs?.cifre;
+      const home=counts?.gazda_acasa?.n, away=counts?.oaspeti_depl?.n;
+      const limitation=[home,away].every(n=>Number.isSafeInteger(n) && n>=0)
+        ? [`<p lang="${escapeText(lang)}">${escapeText(label('samples').replace('{home}',home).replace('{away}',away))}</p>`] : [];
+      const reviewBlock=`<section class="edition-paragraph"><h4>${escapeText(label('verification'))}</h4><details class="dossier-review"${review?' open':' data-review-lookup'}><summary>${w[2]}${reviewStatus}</summary><div data-dossier-review-content aria-live="polite">${review || `<p>${w[8]}</p>`}</div></details></section>`;
+      return `<div class="edition-metrics">${metrics}</div>` +
+        writing('verdict',data.thesis.length ? data.thesis : data.other.slice(0,1)) +
+        (edition.compact ? '' : writing('arguments',[...data.evidence,...data.context]) + writing('limitations',limitation)) + reviewBlock;
+    }
     return `${selection?`<p class="dossier-published"><span>${pickLabel}</span> · <strong>${escapeText(selection.market)} · ${escapeText(selection.probability)}</strong></p>`:''}${(!publicSample && reading) || `<div lang="${escapeText(sourceLang)}">${conclusion}</div>`}${evidence}<details class="dossier-review"${review?'':' data-review-lookup'}><summary>${w[2]}${reviewStatus}</summary><div data-dossier-review-content aria-live="polite">${review || `<p>${w[8]}</p>`}</div></details>`;
   }
   // Observed historical tier labels; anchored to the start, never narrative words.

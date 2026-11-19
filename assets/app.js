@@ -5,7 +5,7 @@ const CALIB_URL = "data/calibration.json";
 const FORWARD_URL = "data/forward.json";
 const HISTORY_URL = "data/history.json";
 const SCORECARD_URL = "data/scorecard.json";
-const I18N_URL = "assets/i18n.json?v=20261119-functions";
+const I18N_URL = "assets/i18n.json?v=20261119-pro-mobile";
 
 // Scorecard skill per piață (din backtest OOS), folosit pentru contextul piețelor.
 let SCORECARD = {};                       // key -> card (label, tier, threshold, skill_stars, lift_pp, hit)
@@ -896,7 +896,9 @@ async function renderIndex() {
     byDay.get(day).push(match);
   }
   const days = [...byDay.keys()].sort();
-  const leagues = [...new Set(matches.map(m => m.league))].sort();
+  const competitions = globalThis.PoseidonDashboard?.competitionChoices(matches, _loc());
+  const leagueOptions = new Map((competitions || []).map(option => [option.value,option]));
+  const leagues = competitions ? [...leagueOptions.keys()] : [...new Set(matches.map(m => m.league))].sort();
   const countries = [...new Set(matches.map(m => m.country))].sort();
   const selDay = document.getElementById("filter-day");
   const selLeague = document.getElementById("filter-league");
@@ -908,12 +910,17 @@ async function renderIndex() {
   const chkCalibMk = document.getElementById("filter-calibrated-markets");
   const setInitialDay = selDay.options.length === 1 && !selDay.value && byDay.has(aziRO);
   [[selDay, days], [selLeague, leagues], [selCountry, countries]].forEach(([select, values]) => {
+    if (select === selLeague && competitions) {
+      for (const option of Array.from(select.options)) {
+        if (option.value && !leagueOptions.has(option.value)) option.remove();
+      }
+    }
     const existing = new Map(Array.from(select.options, option => [option.value, option]));
     for (const value of values) {
       const option = existing.get(value);
-      const label = select === selCountry ? countryLabel(value) : value;
+      const label = select === selCountry ? countryLabel(value) : select === selLeague ? leagueOptions.get(value)?.label || value : value;
       if (!option) select.add(new Option(label, value));
-      else if (select === selCountry) option.text = label;
+      else if (select === selCountry || select === selLeague) option.text = label;
     }
   });
 
@@ -948,7 +955,8 @@ async function renderIndex() {
 
   function update() {
     const fd = selDay.value;
-    const fl = selLeague.value;
+    const competition = leagueOptions.get(selLeague.value);
+    const fl = competition?.league || selLeague.value;
     const fc = selCountry.value;
     const fmk = selMarket.value;
     const fmin = parseFloat(selMinProb.value) || 0;
@@ -956,6 +964,7 @@ async function renderIndex() {
     const dayMatches = fd ? byDay.get(fd) || [] : matches;
     const filtered = dayMatches.filter(m => {
       if (fl && m.league !== fl) return false;
+      if (competition && (m.country || '') !== competition.country) return false;
       if (fc && m.country !== fc) return false;
       if (calibOnly && !m.calibrated) return false;
       // Meciul blocat nu are cifre, deci nu poate fi filtrat pe piață sau pe prag.
@@ -1575,7 +1584,7 @@ function loadProReport() {
   PRO_REPORT_LOAD = new Promise((resolve,reject) => {
     const script = document.createElement("script"); script.id = "pro-report-script"; script.src = "assets/pro-context.js?v=20261118e";
     script.onload = script.onerror = () => {
-      const report = document.createElement("script"); report.src = "assets/pro-report.js?v=20261119-public-pro-wording";
+      const report = document.createElement("script"); report.src = "assets/pro-report.js?v=20261119-pro-mobile";
       report.onload = () => resolve(window.PoseidonProReport);
       report.onerror = () => { PRO_REPORT_LOAD = null; css.remove(); script.remove(); report.remove(); reject(new Error("Pro report unavailable")); };
       document.head.appendChild(report);
