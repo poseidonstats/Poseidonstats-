@@ -133,7 +133,7 @@
     verifiedPredictions = Array.isArray(data?.matches) ? data : null;
     if (!verifiedPredictions) {
       catalogDays.clear();
-      if (dialog?.open) dialog.close();
+      if (dialog?.open && !current?.publicAccess) dialog.close();
     }
     root.dispatchEvent(new Event("poseidon:member-predictions"));
   }
@@ -169,11 +169,35 @@
     return [...fromIndex,...justStarted];
   }
 
-  function button(match) {
+  function publicFixtureIds(data) {
+    const none = new Set();
+    const now = Date.now(), today = siteDay.format(now);
+    const generated = timed(data?.generated_at);
+    if (!(generated <= now) || siteDay.format(generated) !== today || !Array.isArray(data?.matches)) return none;
+
+    const free = data.matches.filter(match => match?.free === true);
+    if (free.length === 0 || free.length > 5 || data.freemium?.free !== free.length) return none;
+    const ids = new Set(free.map(match => match.fixture_id));
+    if (ids.size !== free.length || free.some(match => {
+      const kickoff = timed(match.match_date);
+      return !Number.isSafeInteger(match.fixture_id) || match.fixture_id <= 0 || match.locked ||
+        !Number.isFinite(kickoff) || siteDay.format(kickoff) !== today;
+    })) return none;
+    for (const id of ids) {
+      if (data.matches.filter(match => match?.fixture_id === id).length !== 1) ids.delete(id);
+    }
+    return ids;
+  }
+
+  function button(match, offerPublic = false) {
     const kickoff = timed(match.match_date);
     const fid = Number(match.fixture_id);
-    if (!authorized() || !Number.isSafeInteger(fid) || fid < 1 || !Number.isFinite(kickoff)) return "";
-    return `<button type="button" class="dossier-open" data-dossier-fixture="${fid}" data-dossier-kickoff="${new Date(kickoff).toISOString()}" aria-haspopup="dialog" aria-controls="member-dossier" aria-label="${esc(words().open + " · " + (match.home_team || "") + " – " + (match.away_team || ""))}">${words().open}</button>`;
+    if (!Number.isSafeInteger(fid) || fid < 1 || !Number.isFinite(kickoff)) return "";
+    const member = authorized();
+    const publicAccess = !member && offerPublic && match.free === true && !match.locked
+      && siteDay.format(kickoff) === siteDay.format(Date.now());
+    if (!member && !publicAccess) return "";
+    return `<button type="button" class="dossier-open" data-dossier-fixture="${fid}" data-dossier-kickoff="${new Date(kickoff).toISOString()}"${publicAccess ? ' data-dossier-public="true"' : ""} aria-haspopup="dialog" aria-controls="member-dossier" aria-label="${esc(words().open + " · " + (match.home_team || "") + " – " + (match.away_team || ""))}">${words().open}</button>`;
   }
 
   const sum = values => values.reduce((total, value) => total + value, 0);
@@ -399,7 +423,7 @@
     } else if (item?.match?.league) {
       body.append(text("p",item.match.league,"dossier-note"));
     }
-    if (tier() === "pro" && (state.fixture || item)) {
+    if (!state.publicAccess && tier() === "pro" && (state.fixture || item)) {
       const anchor = document.createComment("Pro analysis");
       body.append(anchor);
       showEditorial(state, anchor);
@@ -416,7 +440,7 @@
   }
 
   const stillOpen = state => current === state && dialog.open
-    && (state.fromPro ? tier() === "pro" : authorized());
+    && (state.publicAccess || (state.fromPro ? tier() === "pro" : authorized()));
 
   async function lookupEditorial(state) {
     try {
@@ -508,8 +532,17 @@
 
   async function fetchDossier(state, message) {
     try {
-      const response = await root.PoseidonMembers.getProtected(`/api/dosar/${state.day}/${state.fixture}`,state.controller.signal);
+      const path = `/api/dosar/${state.day}/${state.fixture}`;
+      const response = await (state.publicAccess
+        ? fetch(root.PoseidonMembers.MEMBERS_API + path, {
+            credentials: "omit", cache: "no-store", signal: state.controller.signal,
+          })
+        : root.PoseidonMembers.getProtected(path,state.controller.signal));
       if (!stillOpen(state)) return;
+      if (state.publicAccess && (response.status === 401 || response.status === 403)) {
+        show(state,"missing");
+        return;
+      }
       if (response.status === 401 || response.status === 403) {
         state.status = "login";
         message.textContent = state.copy.login;
@@ -575,11 +608,13 @@
   }
 
   function open(trigger) {
-    if (!authorized()) return;
     const kickoff = timed(trigger.dataset.dossierKickoff), fixture = Number(trigger.dataset.dossierFixture);
     if (!Number.isSafeInteger(fixture) || fixture < 1 || !Number.isFinite(kickoff)) return;
+    const day = siteDay.format(kickoff);
+    const publicAccess = trigger.dataset.dossierPublic === "true" && day === siteDay.format(Date.now());
+    if (!publicAccess && !authorized()) return;
     const focusRoot = trigger.closest("#dashboard-predictions, #matches");
-    return start({ fixture,kickoff,trigger,focusRoot,day:siteDay.format(kickoff) });
+    return start({ fixture,kickoff,trigger,focusRoot,day,publicAccess });
   }
 
   function openPro(trigger, item, day) {
@@ -642,7 +677,7 @@
   }
 
   root.PoseidonDossier = {
-    setPredictions, predictions:()=>authorized() ? verifiedPredictions : null, button, copy:words,
+    setPredictions, predictions:()=>authorized() ? verifiedPredictions : null, publicFixtureIds, button, copy:words,
     loadCatalog, catalog, openPro, openProForMatch, switchLanguage,
     recentDays:()=>[siteDay.format(new Date(Date.now()-86_400_000)),siteDay.format(new Date())],
   };

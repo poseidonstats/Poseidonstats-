@@ -943,6 +943,8 @@ async function renderIndex() {
 
   const lockedAllDays = matches.filter(isLocked).length;
   const lockedToday = (byDay.get(aziRO) || []).filter(isLocked).length;
+  const publicDossiers = !member && typeof window !== "undefined"
+    ? window.PoseidonDossier?.publicFixtureIds?.(data) : null;
 
   function update() {
     const fd = selDay.value;
@@ -994,7 +996,8 @@ async function renderIndex() {
     const openFixture = openReport?.dataset.fid;
     const openTab = openReport?.querySelector('[data-report-tab][aria-selected="true"]')?.dataset.reportTab;
     html += deschise.map(m => renderMatch(m, fmk, member,
-      String(m.fixture_id) === openFixture ? openTab ?? matchReportTab(fmk) : null)).join("");
+      String(m.fixture_id) === openFixture ? openTab ?? matchReportTab(fmk) : null,
+      publicDossiers?.has(m.fixture_id))).join("");
     if (member) {
       html += blocate.map(m => renderLockedMatch(m, true)).join("");
     } else if (blocate.length) {
@@ -1234,7 +1237,7 @@ if (typeof document !== "undefined") {
     selectMatchReportTab(next); next.focus();
   });
 }
-function renderMatch(m, filterMarket = "", member = false, openTab = null) {
+function renderMatch(m, filterMarket = "", member = false, openTab = null, offerPublicDossier = false) {
   if (isLocked(m)) return renderLockedMatch(m, member);
   const c = MATCH_REPORT_COPY[LANG] || MATCH_REPORT_COPY.en;
   const id = `match-report-${++matchReportSequence}`;
@@ -1252,7 +1255,7 @@ function renderMatch(m, filterMarket = "", member = false, openTab = null) {
   const freeTag = m.free ? `<span class="free-tag">${tt("freemium.tag", "GRATUIT AZI")}</span>` : "";
   const xgValid = [m.xg_home, m.xg_away].every(v => typeof v === "number" && Number.isFinite(v) && v >= 0);
   const htBtts = m.prob_ht_btts;
-  const dossier = member && typeof window !== "undefined" ? window.PoseidonDossier?.button(m) || "" : "";
+  const dossier = typeof window !== "undefined" ? window.PoseidonDossier?.button(m, offerPublicDossier) || "" : "";
   return `<div class="match match-report ${m.calibrated ? "" : "uncalibrated"} ${m.free ? "match-free" : ""}${openTab === null ? "" : " open"}" data-fid="${Number.isSafeInteger(m.fixture_id) ? m.fixture_id : ""}">
     <div class="report-summary"><div class="match-header" role="button" tabindex="0" aria-expanded="${openTab !== null}" aria-controls="${id}-body">
       <div class="match-title"><div class="match-teams"><span class="team home">${esc(m.home_team)}</span><span class="vs">vs</span><span class="team away">${esc(m.away_team)}</span></div><div class="match-meta"><span class="liga">${esc(countryLabel(m.country))} · ${esc(m.league)}</span><span class="when">${matchWhen(m)}</span>${calibTag}${freeTag}</div></div><span class="match-chev" aria-hidden="true"></span>

@@ -41,3 +41,44 @@ test('stats-only member rows keep their dossier without drawing empty forecast c
   assert.match(html,/<button>Match dossier<\/button>/);
   assert.doesNotMatch(html,/dashboard-prob|data-reading-fixture/);
 });
+
+test('public buttons are offered only for official free fixtures on the current Bucharest day, in all site languages', () => {
+  const doc = { documentElement: { lang: 'ro' }, readyState: 'loading', addEventListener() {} };
+  const window = { PoseidonMembers: { tier: () => 'none' } };
+  const time = Date.parse('2026-11-18T22:30:00Z');
+  const Clock = class extends Date { constructor(...args) { super(...(args.length ? args : [time])); } static now() { return time; } };
+  runInNewContext(source('member-dossier.js'), { window, document: doc, Date: Clock });
+  const { button, copy, publicFixtureIds } = window.PoseidonDossier;
+  const match = { fixture_id: 7, match_date: '2026-11-19T17:00:00Z', home_team: 'Home', away_team: 'Away', free: true };
+  const snapshot = { generated_at: '2026-11-18T22:00:00Z', freemium: { free: 1 }, matches: [match] };
+  assert(publicFixtureIds(snapshot).has(match.fixture_id));
+  assert(!publicFixtureIds({ ...snapshot, generated_at:'2026-11-18T21:59:59Z' }).size);
+  assert(!publicFixtureIds({ ...snapshot, freemium: { free: 2 } }).size);
+  assert(!publicFixtureIds({ ...snapshot, matches: [match, { ...match, free:false }] }).size);
+  assert.equal(button(match), '');
+  for (const lang of ['ro','en','es','it','fr','id']) {
+    doc.documentElement.lang = lang;
+    assert.match(button(match,true), /data-dossier-public="true"/);
+    assert(button(match,true).includes(copy(lang).open));
+  }
+  assert.equal(button({ ...match, locked: true },true), '');
+  assert.equal(button({ ...match, free: false },true), '');
+  assert.equal(button({ ...match, free: 'true' },true), '');
+  assert.equal(button({ ...match, match_date: '2026-11-18T21:59:59Z' },true), '');
+  assert.equal(button({ ...match, match_date: '2026-11-19T22:00:00Z' },true), '');
+});
+
+test('homepage rows preserve eligibility and identify the free button as public access', () => {
+  const date = '2026-11-19T18:00:00Z';
+  const data = { matches: [
+    { fixture_id: 1, match_date: date, free: true, home_team: 'Home' },
+    { fixture_id: 2, match_date: date, locked: true, home_team: 'Other' },
+  ] };
+  const selection = dashboard.selectRows(data, '2026-11-19');
+  const dossiers = { button: (m, offer) => offer && m.free === true && !m.locked ? '<button>Match dossier</button>' : '',
+    copy: () => ({ member:'Member' }) };
+  const html = dashboard.renderRows(selection.rows, k => k, 'en-GB', dossiers, false, new Set([1]));
+  assert.equal((html.match(/<button>Match dossier<\/button>/g) || []).length, 1);
+  assert.match(html, /dashboard\.access\.free/);
+  assert.doesNotMatch(html, />Member</);
+});

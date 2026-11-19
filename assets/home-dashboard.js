@@ -58,6 +58,7 @@
       rows: matching.slice(0, limit).map(m => ({
         fixture_id: m.fixture_id, match_date: m.match_date, home: m.home_team || '', away: m.away_team || '',
         league: m.league || '', country: m.country || '', locked: !visible(m),
+        ...(isPublic(m) ? {free:true} : {}),
         ...(member && m.dossier_only ? {dossierOnly:true} : {}),
         probabilities: visible(m) && !m.dossier_only ? [probability(m.prob_home), probability(m.prob_draw), probability(m.prob_away)] : [null, null, null]
       }))
@@ -96,13 +97,13 @@
       return Object.entries(vars).reduce((s, [k, v]) => s.split(`{${k}}`).join(String(v)), translated);
     };
   }
-  function renderRows(rows, tr, loc, dossiers = null) {
+  function renderRows(rows, tr, loc, dossiers = null, member = false, publicDossiers = null) {
     const pct = v => v == null ? '—' : `${new Intl.NumberFormat(loc, {maximumFractionDigits:1}).format(v * 100)}%`;
     return rows.map(row => {
       const date = new Date(row.match_date);
       const time = new Intl.DateTimeFormat(loc, {timeZone:TIMEZONE, hour:'2-digit', minute:'2-digit', hour12:false}).format(date);
-      const identity = {fixture_id:row.fixture_id,home_team:row.home,away_team:row.away,match_date:row.match_date,locked:row.locked};
-      const dossier = dossiers ? dossiers.button(identity) : '';
+      const identity = {fixture_id:row.fixture_id,home_team:row.home,away_team:row.away,match_date:row.match_date,locked:row.locked,free:row.free};
+      const dossier = dossiers ? dossiers.button(identity, publicDossiers?.has(row.fixture_id)) : '';
       const readingAPI = !row.dossierOnly && typeof window !== 'undefined' && window.POSEIDON_CITIRE;
       const reading = !row.locked && readingAPI && typeof readingAPI.dashboardRow === 'function' ? readingAPI.dashboardRow(identity) : '';
       const readingAttributes = row.locked || row.dossierOnly ? '' : ` data-reading-fixture="${escapeHTML(row.fixture_id)}" data-reading-home="${escapeHTML(row.home)}" data-reading-away="${escapeHTML(row.away)}" data-reading-kickoff="${escapeHTML(row.match_date)}" data-reading-free="true"`;
@@ -116,7 +117,7 @@
           `<td class="dashboard-prob" role="cell" headers="dashboard-th-${i}"><span class="dashboard-prob-key" aria-hidden="true">${['1','X','2'][i]}</span>${escapeHTML(pct(value))}</td>`).join('');
       return `<tr class="dashboard-match-row" role="row"${readingAttributes}><td class="dashboard-time-cell" role="cell" headers="dashboard-th-time"><time datetime="${escapeHTML(row.match_date)}">${escapeHTML(time)}</time></td>` +
         `<td class="dashboard-team" role="cell" headers="dashboard-th-match">${name}<small title="${competition}">${competition}</small>${dossier}</td>` + probabilityCells +
-        `<td class="dashboard-access-cell" role="cell" headers="dashboard-th-access"><span class="${row.locked ? 'dashboard-lock' : 'dashboard-free'}">${row.locked ? '🔒 ' : ''}${escapeHTML(dossier ? dossiers.copy().member : tr(row.locked ? 'dashboard.access.locked' : 'dashboard.access.free'))}</span></td></tr>${reading}`;
+        `<td class="dashboard-access-cell" role="cell" headers="dashboard-th-access"><span class="${row.locked ? 'dashboard-lock' : 'dashboard-free'}">${row.locked ? '🔒 ' : ''}${escapeHTML(dossier && member ? dossiers.copy().member : tr(row.locked ? 'dashboard.access.locked' : 'dashboard.access.free'))}</span></td></tr>${reading}`;
     }).join('');
   }
   function renderChart(points, tr, loc, id, layout = {}) {
@@ -474,10 +475,12 @@
         const query = search ? search.value : '';
         const member = !!dossiers?.predictions();
         if (member && dateSelect?.value) dossiers.loadCatalog(dateSelect.value);
-        const selection = selectRows(dashboardPredictions(),dateSelect ? dateSelect.value : '',selectedLeague,5,query,member);
+        const data = dashboardPredictions();
+        const selection = selectRows(data,dateSelect ? dateSelect.value : '',selectedLeague,5,query,member);
+        const publicDossiers = member ? null : dossiers?.publicFixtureIds?.(data);
         if (search) search.disabled = false;
         if (clearSearch) clearSearch.disabled = !normalizeSearch(query);
-        table.innerHTML = selection.rows.length ? renderRows(selection.rows,tr,locale(doc),member ? dossiers : null) : `<tr><td colspan="6">${escapeHTML(tr(normalizeSearch(query) ? 'simplify.search.empty' : 'dashboard.table.empty'))}</td></tr>`;
+        table.innerHTML = selection.rows.length ? renderRows(selection.rows,tr,locale(doc),dossiers,member,publicDossiers) : `<tr><td colspan="6">${escapeHTML(tr(normalizeSearch(query) ? 'simplify.search.empty' : 'dashboard.table.empty'))}</td></tr>`;
         if (status) status.textContent = (member
           ? tr('match.count', {shown:selection.rows.length,total:selection.total})
           : tr('dashboard.table.count', {shown:selection.rows.length,total:selection.total,free:selection.free})) + ' · ' + tr('dashboard.table.timezone') + (member ? '' : ' · ' + tr('dashboard.table.rawnote'));
