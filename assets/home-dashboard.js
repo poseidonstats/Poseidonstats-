@@ -238,7 +238,7 @@
     });
     view.addEventListener('hashchange', () => {
       stopRestoration();
-      openTargetDetails(doc, view.location.hash, view.location.hash === '#exemplu-pro');
+      openTargetDetails(doc, view.location.hash);
     });
     return () => {
       if (watchInput) inputEvents.forEach(name => view.removeEventListener(name, stopRestoration));
@@ -337,7 +337,7 @@
     return `<a class="dashboard-analysis-link" href="${escapeHTML(action.href)}"${attrs}>${escapeHTML(tr(action.key))} →</a>`;
   }
   function renderProSummary(doc, tr, lang, tier) {
-    const head = doc.querySelector('#exemplu-pro .pro-card-head');
+    const head = doc.querySelector('#exemplu-pro-source .pro-card-head');
     if (!head) return `<p>${escapeHTML(tr('dashboard.data.unavailable'))}</p>`;
     const card = head.closest('.pro-card');
     if (!card) return `<p>${escapeHTML(tr('dashboard.data.unavailable'))}</p>`;
@@ -505,12 +505,12 @@
     function renderAnalyses() {
       const target = doc.getElementById('dashboard-analyses');
       const tr = translator(), lang = doc.documentElement.lang;
-      const sampleCountry = doc.querySelector('#exemplu-pro [data-sample-country]');
+      const sampleCountry = doc.querySelector('#exemplu-pro-source [data-sample-country]');
       if (sampleCountry && countries) {
         sampleCountry.textContent = countries.label(sampleCountry.getAttribute('data-sample-country'), lang);
       }
       const tier = membershipTier(doc.body);
-      const source = doc.querySelector('#exemplu-pro [data-sample-fixture]');
+      const source = doc.querySelector('#exemplu-pro-source [data-sample-fixture]');
       doc.querySelectorAll('[data-dashboard-pro-summary]').forEach(element => {
         element.innerHTML = renderProSummary(doc,tr,lang,tier);
         const memberAction = tier ? element.querySelector('.dashboard-report-action') : null;
@@ -521,7 +521,7 @@
       if (!target) return;
       const action = analysisAction(membershipTier(doc.body));
       const cards = [];
-      const head = doc.querySelector('#exemplu-pro .pro-card-head');
+      const head = doc.querySelector('#exemplu-pro-source .pro-card-head');
       if (head) {
         const card = head.closest('.pro-card');
         const selection = chooseAnalysisLanguage(lang,Array.from(card.querySelectorAll('[data-lang]'),el => el.getAttribute('data-lang')));

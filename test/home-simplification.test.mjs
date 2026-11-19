@@ -113,7 +113,7 @@ function sampleDocument(){
   markers.forEach((marker,index)=>{const part=block.slice(marker.index,markers[index+1]?.index);const paragraphs=[...part.matchAll(/<p\b[^>]*>([\s\S]*?)<\/p>/g)].map(match=>({textContent:text(match[1])}));const source=part.match(/<div class="pro-visible">([\s\S]*?)<\/div>\s*<\/div>/)?.[1]||part; const visible={innerHTML:source,querySelector:()=>null};bodies[marker[1]]={querySelectorAll:()=>paragraphs,querySelector:selector=>selector==='.pro-visible'?visible:paragraphs[0]||null};});
   const card={querySelectorAll:()=>Object.keys(bodies).map(lang=>({getAttribute:()=>lang})),querySelector:selector=>bodies[selector.match(/data-lang="([a-z]+)"/)?.[1]]||null};
   heading.closest=()=>card;
-  return {doc:{querySelector:selector=>selector==='#exemplu-pro .pro-card-head'?heading:null},heading,bodies};
+  return {doc:{querySelector:selector=>selector==='#exemplu-pro-source .pro-card-head'?heading:null},heading,bodies};
 }
 
 test('tabbed Pro demonstration uses only the actual generated sample, truthful language fallback and existing member routes',()=>{

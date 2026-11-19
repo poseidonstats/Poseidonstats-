@@ -1,5 +1,5 @@
 /* Network-first for public static pages and assets. Keep the last successful response for offline use. */
-const CACHE = "poseidon-v111";
+const CACHE = "poseidon-v112";
 const SHELL = [
   "./",
   "./index.html",
@@ -28,7 +28,7 @@ const SHELL = [
   "./assets/member-dossier.css",
   "./manifest.json",
 ];
-const LEGACY_CACHE = "poseidon-v110";
+const LEGACY_CACHE = "poseidon-v111";
 const SCOPE = new URL(self.registration.scope);
 const OFFLINE_COPY = {
   ro: ["Nu ai conexiune la internet", "Pagina cerută nu este disponibilă offline.", "Încearcă din nou", "Acasă"],

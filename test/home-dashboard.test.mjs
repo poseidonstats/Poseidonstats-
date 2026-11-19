@@ -555,7 +555,7 @@ test('long original content and metric mounts remain reachable inside named clos
   for (const name of ['PRO_SAMPLE_CARD','PRO_TODAY_LIST','PROOF_STATIC','DAILY_STATIC','LEAGUES_LINKS']) {
     assert(legacy.includes(`<!-- ${name}_START -->`));assert(legacy.includes(`<!-- ${name}_END -->`));
   }
-  for (const id of ['exemplu-pro','dovada','repere-azi','abonament-detalii','intrebari','dashboard-analyses']) assert(legacy.includes(`id="${id}"`),id);
+  for (const id of ['exemplu-pro-source','dovada','repere-azi','abonament-detalii','intrebari','dashboard-analyses']) assert(legacy.includes(`id="${id}"`),id);
   assert(disclosure('discord-access-details').includes('id="acces"'));
   assert.match(html,/<div data-dashboard-pro-summary><\/div>/);
   assert.match(html,/<a href="https:\/\/poseidon-members\.poseidonstats\.workers\.dev\/login"[^>]*class="gold-button simplify-activation-login"[^>]*data-conversion="login"/);
@@ -607,6 +607,14 @@ test('dashboard rows expose each probability and access cell with its table head
   assert.match(mobile,/\.dashboard-match-row \.dashboard-team \{[^}]*grid-column: 1 \/ -1;[^}]*overflow-wrap: anywhere;/);
   assert.match(mobile,/\.dashboard-reading-row \.citire \{ box-sizing: border-box; width: 100%; min-width: 0; max-width: 100%;/);
   assert.match(css,/\.dashboard-reading-row \.citire \{[^}]*overflow-wrap: anywhere;[^}]*border-left: 3px solid #c9a227;/);
+});
+
+test('both native example fragments target the visible card in the first HTML response',()=>{
+  const html=readFileSync(new URL('../index.html',import.meta.url),'utf8');
+  const visible=html.slice(html.indexOf('id="exemplu-pro"'),html.indexOf('data-dashboard-pro-summary'));
+  assert.match(visible,/id="public-pro-demo"><h2\b/);
+  assert.match(html,/<section class="pro-sample" id="exemplu-pro-source"/);
+  assert.equal((html.match(/\bid="exemplu-pro"/g)||[]).length,1);
 });
 
 test('legacy example links prefer the native public sample and preserve the static fallback',()=>{

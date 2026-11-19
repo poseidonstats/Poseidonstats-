@@ -350,7 +350,7 @@ body.home-modern:has(.home-nav-bar) { overflow-x: clip; }
 .home-modern footer .muted { color: #a4bccc; font-size: 12px; }
 /* Preserve the existing member and mobile interaction contracts. */
 body.home-modern.is-member .intro, body.home-modern.is-member #dovada,
-body.home-modern.tier-pro #exemplu-pro, body.home-modern.tier-basic #exemplu-pro .pro-card { display: none; }
+body.home-modern.tier-pro #exemplu-pro-source, body.home-modern.tier-basic #exemplu-pro-source .pro-card { display: none; }
 @media (max-width: 1180px) {
   .home-modern .container { padding-inline: 24px; }
   .home-modern header > .container { column-gap: 15px; }

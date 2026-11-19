@@ -169,7 +169,7 @@ function showPredictionSource({ sursa, eroare }) {
       // body.is-member + tier-basic/tier-pro → CSS ascunde intro/dovadă; Basic: exemplul Pro (upsell) coboară SUB lista de meciuri.
       try {
         const mt = document.getElementById("matches");
-        if (tier === "basic") { const ex = document.getElementById("exemplu-pro"); if (ex && mt && mt.parentNode) mt.parentNode.insertBefore(ex, mt.nextSibling); }
+        if (tier === "basic") { const ex = document.getElementById("exemplu-pro-source"); if (ex && mt && mt.parentNode) mt.parentNode.insertBefore(ex, mt.nextSibling); }
         // reperele zilei coboară sub listă: membrul vrea lista imediat (analize Pro → filtre pliate → meciuri)
         const rep = document.getElementById("repere-azi"); if (rep && mt && mt.parentNode) mt.parentNode.insertBefore(rep, mt.nextSibling);
       } catch (e) {}
@@ -235,7 +235,7 @@ function _instaleazaUrmarireClicuri() {
   }
   // 14 oct 2026: secțiunea are ~3.000 px pe telefon, 30 % din ea nu încăpea niciodată pe un ecran de 700 px → contorul nu pornea
   // (2 „văzut” la 79 de vizite). Numărăm capul cardului (un rând), când e pe jumătate vizibil.
-  const ex = document.querySelector("#exemplu-pro .pro-card-head") || document.getElementById("exemplu-pro");
+  const ex = document.getElementById("exemplu-pro");
   if (ex && "IntersectionObserver" in window) {
     const io2 = new IntersectionObserver((es) => { if (es.some(e => e.isIntersecting)) { _gcEvent("vazut/exemplu-pro"); io2.disconnect(); } }, { threshold: 0.5 });
     io2.observe(ex);
@@ -478,7 +478,7 @@ function renderLockedMatch(m, member = false) {
 // 14 oct 2026 — rezumatul exemplului Pro acolo unde ajung vizitatorii (blocul „deblochează” și caseta de abonament): butoanele paginii
 // săreau peste exemplu (antetul → lista de predicții, bannerul și „deblochează” → caseta), deci argumentul nu era nicăieri pe drum.
 function rezumatExemplu(clasa = "") {
-  const card = document.querySelector("#exemplu-pro .pro-card"); if (!card) return "";
+  const card = document.querySelector("#exemplu-pro-source .pro-card"); if (!card) return "";
   const grup = card.querySelector(`[data-lang="${LANG}"]`) || card.querySelector('[data-lang="en"]') || card.querySelector('[data-lang="ro"]') || card;
   const verdictP = grup.querySelector(".pro-visible p"); if (!verdictP) return "";
   const text = el => (el ? el.textContent : "").replace(/\s+/g, " ").trim();

@@ -134,7 +134,7 @@ body:has(.member-dossier[open]) { overflow: hidden; }
   border-radius: .85rem;
 }
 .sample-dossier .dossier-heading { position: static; border-radius: .85rem .85rem 0 0; }
-#public-pro-demo { scroll-margin-top: 65px; }
+#public-pro-demo, .simplify-pro-demo#exemplu-pro { scroll-margin-top: 65px; }
 .home-modern .sample-dossier .dossier-heading h3 {
   margin: 0;
   color: #152c26;
