@@ -508,7 +508,14 @@
       if (sampleCountry && countries) {
         sampleCountry.textContent = countries.label(sampleCountry.getAttribute('data-sample-country'), lang);
       }
-      doc.querySelectorAll('[data-dashboard-pro-summary]').forEach(element => {element.innerHTML = renderProSummary(doc,tr,lang,membershipTier(doc.body));});
+      const tier = membershipTier(doc.body);
+      const source = doc.querySelector('#exemplu-pro [data-sample-fixture]');
+      doc.querySelectorAll('[data-dashboard-pro-summary]').forEach(element => {
+        element.innerHTML = renderProSummary(doc,tr,lang,tier);
+        if (tier === 'pro') dossiers?.clearSample?.(element);
+        else dossiers?.mountPublicSample?.(element,source,lang);
+      });
+
       if (doc.defaultView && doc.defaultView.PoseidonProReport) doc.defaultView.PoseidonProReport.scan();
       if (!target) return;
       const action = analysisAction(membershipTier(doc.body));

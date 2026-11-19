@@ -1,6 +1,6 @@
 .match-dossier-action { padding: 0 .9rem .65rem; }
 .dossier-open,
-.member-dossier button {
+:is(.member-dossier,.sample-dossier) button {
   min-height: 44px;
   padding: .35rem .65rem;
   border: 1px solid #aabbb0;
@@ -13,9 +13,9 @@
   cursor: pointer;
 }
 .dossier-open:hover,
-.member-dossier button:hover { background: #e3edda; }
+:is(.member-dossier,.sample-dossier) button:hover { background: #e3edda; }
 .dossier-open:focus-visible,
-.member-dossier :focus-visible { outline: 3px solid #a07920; outline-offset: 2px; }
+:is(.member-dossier,.sample-dossier) :focus-visible { outline: 3px solid #a07920; outline-offset: 2px; }
 .dashboard-team .dossier-open { margin-top: .25rem; }
 .home-modern .dashboard-table .dashboard-stats-only { color: var(--dash-muted); font-size: .78rem; text-align: center; white-space: normal; }
 @media (max-width: 600px) {
@@ -51,11 +51,11 @@ body:has(.member-dossier[open]) { overflow: hidden; }
 }
 .dossier-heading h2 { margin: 0; color: inherit; font: 650 clamp(1.18rem, 4vw, 1.8rem)/1.18 Georgia, serif; }
 .dossier-body { padding: .65rem clamp(.65rem, 3vw, 1.35rem) 1.25rem; }
-.member-dossier p { margin: 0 0 .55rem; }
-.member-dossier .dossier-note { color: #445d50; font-size: .77rem; }
+:is(.member-dossier,.sample-dossier) p { margin: 0 0 .55rem; }
+:is(.member-dossier,.sample-dossier) .dossier-note { color: #445d50; font-size: .77rem; }
 .dossier-tabs { display: flex; gap: .25rem; margin-bottom: .6rem; }
 .dossier-tabs button { min-width: 0; flex: 1; padding-inline: .2rem; }
-.member-dossier .dossier-tabs button[aria-selected="true"] { background: #14342d; border-color: #14342d; color: #fffef9; }
+:is(.member-dossier,.sample-dossier) .dossier-tabs button[aria-selected="true"] { background: #14342d; border-color: #14342d; color: #fffef9; }
 .dossier-scope { padding: 0; border: 0; margin: 0 0 .6rem; }
 .dossier-scope legend { font-size: .76rem; font-weight: 650; margin-bottom: .18rem; }
 .dossier-scope label {
@@ -72,7 +72,7 @@ body:has(.member-dossier[open]) { overflow: hidden; }
 }
 .dossier-scope label:has(:checked) { background: #e8eee4; border-color: #aabbb0; }
 .dossier-scope input { margin: 0; accent-color: #14342d; }
-.member-dossier table {
+:is(.member-dossier,.sample-dossier) table {
   width: 100%;
   margin: 0;
   border-collapse: collapse;
@@ -86,9 +86,9 @@ body:has(.member-dossier[open]) { overflow: hidden; }
 .dossier-table tbody th { width: 42%; text-align: left; font-size: .8rem; font-weight: 650; background: #f5f6f8; }
 .dossier-table th { overflow-wrap: anywhere; }
 .dossier-table td { width: 29%; text-align: center; font-size: .87rem; font-weight: 700; }
-.member-dossier :is(th, td) small { display: block; font-size: .7rem; font-weight: 500; line-height: 1.25; }
-.member-dossier td small { color: #445d50; }
-.member-dossier table + .dossier-note { margin-top: .5rem; }
+:is(.member-dossier,.sample-dossier) :is(th, td) small { display: block; font-size: .7rem; font-weight: 500; line-height: 1.25; }
+:is(.member-dossier,.sample-dossier) td small { color: #445d50; }
+:is(.member-dossier,.sample-dossier) table + .dossier-note { margin-top: .5rem; }
 .home-modern .member-dossier .dossier-results-title,
 .member-dossier .dossier-results-title { margin: 1rem 0 .35rem; color: #152c26; font-size: .95rem; }
 .dossier-results { display: grid; grid-template-columns: 1fr 1fr; gap: .8rem; }
@@ -127,3 +127,29 @@ body:has(.member-dossier[open]) { overflow: hidden; }
 @media (max-width: 600px) {
   .dossier-results { grid-template-columns: 1fr; }
 }
+.sample-dossier {
+  background: #fffef9;
+  color: #152c26;
+  border: 1px solid #b5c4b9;
+  border-radius: .85rem;
+}
+.sample-dossier .dossier-heading { position: static; border-radius: .85rem .85rem 0 0; }
+#public-pro-demo { scroll-margin-top: 65px; }
+.home-modern .sample-dossier .dossier-heading h3 {
+  margin: 0;
+  color: #152c26;
+  font: 650 clamp(1.18rem, 4vw, 1.65rem)/1.18 Georgia, serif;
+}
+.sample-dossier .dossier-body { min-width: 0; }
+.sample-dossier .dossier-editorial { margin-top: .5rem; }
+.sample-dossier .sample-dossier-reading > summary {
+  display: inline-flex;
+  align-items: center;
+  list-style: none;
+}
+.sample-dossier .sample-dossier-reading > summary::-webkit-details-marker { display: none; }
+.sample-dossier :is(.dossier-review,[data-pro-history],[data-pro-league]) > summary { min-height: 44px; padding-block: .6rem; }
+.sample-dossier .dossier-market-evidence > p { margin: .45rem 0 0; }
+.sample-dossier .dossier-results-title { color: #152c26; }
+
+.sample-dossier-results > summary { min-height: 44px; padding-block: .65rem; cursor: pointer; font-weight: 650; }

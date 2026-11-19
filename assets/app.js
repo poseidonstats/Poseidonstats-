@@ -1575,7 +1575,7 @@ function loadProReport() {
   PRO_REPORT_LOAD = new Promise((resolve,reject) => {
     const script = document.createElement("script"); script.id = "pro-report-script"; script.src = "assets/pro-context.js?v=20261118e";
     script.onload = script.onerror = () => {
-      const report = document.createElement("script"); report.src = "assets/pro-report.js?v=20261119-audit";
+      const report = document.createElement("script"); report.src = "assets/pro-report.js?v=20261119-public-pro";
       report.onload = () => resolve(window.PoseidonProReport);
       report.onerror = () => { PRO_REPORT_LOAD = null; css.remove(); script.remove(); report.remove(); reject(new Error("Pro report unavailable")); };
       document.head.appendChild(report);

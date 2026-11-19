@@ -17,6 +17,14 @@
     fr: ['Championnat','groupe blanc','groupe rouge','Matchs des équipes','à domicile','à l’extérieur','Historique Pro · même marché','{hits} sur {n}','matchs','résolues','Estimations similaires','Données indisponibles','0 sélections admissibles','Résultats au {cutoff}','Une sélection principale par match et marché, publiée avant le coup d’envoi et résolue avant la date du match.'],
     id: ['Liga','grup putih','grup merah','Pertandingan tim','di kandang','tandang','Riwayat Pro · pasar yang sama','{hits} dari {n}','laga','selesai','Estimasi serupa','Data tidak tersedia','0 pilihan yang memenuhi syarat','Hasil hingga {cutoff}','Satu pilihan utama per laga dan pasar, dipublikasikan sebelum sepak mula dan diselesaikan sebelum tanggal laga ini.'],
   };
+  const sampleCopy = {
+    ro: ["meciuri cu acest rezultat al pieței", "pronosticuri confirmate", "Campionatul · sezonul {season}", "Arhiva Pro", "În așteptarea meciului", "Verificarea nu este încă disponibilă"],
+    en: ["matches meeting this market outcome", "confirmed selections", "League · {season} season", "Pro archive", "Awaiting kickoff", "Result review not yet available"],
+    es: ["partidos con este resultado de mercado", "pronósticos confirmados", "Liga · temporada {season}", "Archivo Pro", "En espera del inicio", "La verificación aún no está disponible"],
+    it: ["partite con questo esito di mercato", "pronostici confermati", "Campionato · stagione {season}", "Archivio Pro", "In attesa del calcio d’inizio", "Verifica non ancora disponibile"],
+    fr: ["matchs correspondant à ce résultat du marché", "pronostics confirmés", "Championnat · saison {season}", "Archives Pro", "En attente du coup d’envoi", "Vérification pas encore disponible"],
+    id: ["laga dengan hasil pasar ini", "pilihan yang terkonfirmasi", "Liga · musim {season}", "Arsip Pro", "Menunggu sepak mula", "Verifikasi belum tersedia"],
+  };
   const archiveCopy = {
     ro: ['Pronostic publicat înainte de meci','Pronostic arhivat','Rezultat final','Vezi verificarea în arhivă'],
     en: ['Selection published before kickoff','Archived selection','Final score','View the review in the archive'],
@@ -56,36 +64,50 @@
       || record.to>cutoffDay || (!league && record.to>=day))) return null;
     return record;
   }
-  function marketSummary(item,dossier,identity,lang) {
+  function marketSummary(item,dossier,identity,lang,publicSample) {
+    const [leagueUnit, proUnit, leagueSource, proSource] = sampleCopy[lang] || sampleCopy.en;
     const [leagueLabel,white,red,teamsLabel,atHome,away,historyLabel,count,matches,settled,similar,unavailable,empty,cutoffLabel,criteria]=marketCopy[lang]||marketCopy.en;
     const num=new Intl.NumberFormat(lang);
     const percent=new Intl.NumberFormat(lang,{style:'percent',minimumFractionDigits:2,maximumFractionDigits:2});
     const period=new Intl.DateTimeFormat(lang==='en'?'en-GB':lang,{day:'numeric',month:'short',year:'numeric',timeZone:'UTC'});
-    const cutoff=new Intl.DateTimeFormat(lang==='en'?'en-GB':lang,{dateStyle:'short',timeStyle:'short',timeZone:'Europe/Bucharest'});
+    const cutoff=new Intl.DateTimeFormat(lang==='en'?'en-GB':lang,publicSample
+      ? {day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit',timeZoneName:'short',timeZone:'Europe/Bucharest'}
+      : {dateStyle:'short',timeStyle:'short',timeZone:'Europe/Bucharest'});
     const tally=(hits,n)=>count.replace('{hits}',num.format(hits)).replace('{n}',num.format(n));
     const range=record=>record.from===record.to?period.format(new Date(record.from))
       : period.formatRange(new Date(record.from),new Date(record.to));
     const recordDates=record=>[record.settled?range(record):'',cutoffLabel.replace('{cutoff}',cutoff.format(instant(record.as_of)))].filter(Boolean).join(' · ');
-    const format=(record,unit)=>`${tally(record.hits,record.settled)} ${unit} (${percent.format(record.hits/record.settled)})`;
+    const format=(record,unit)=>`${tally(record.hits,record.settled)} ${lang==='ro' && unit===matches && record.settled%100>0 && record.settled%100<20?'meciuri':unit} (${percent.format(record.hits/record.settled)})`;
     const candidate=verifiedRecord(item.league_record,identity,'league');
-    const league=dossier?.season && candidate?.season!==Number(dossier.season)?null:candidate;
+    const seasonMatches = dossier?.season != null && candidate?.season === Number(dossier.season);
+    const league = publicSample
+      ? ((!dossier || seasonMatches) && instant(candidate?.as_of) === identity.captured ? candidate : null)
+      : (dossier?.season && !seasonMatches ? null : candidate);
     const leaguePhase=league?.phase?.toLowerCase?.();
     const group=leaguePhase==='2. lig white group'?white:leaguePhase==='2. lig red group'?red
       : leaguePhase && leaguePhase!=='regular season'?league.phase:'';
     const leagueName=group?`${leagueLabel}, ${group}`:leagueLabel;
     const teams=root.PoseidonProContext?.marketFrequency(dossier,identity.fixture,identity.key);
-    const pro=verifiedRecord(item.pro_market_record,identity,'pro');
+    const record=verifiedRecord(item.pro_market_record,identity,'pro');
+    const pro=publicSample && instant(record?.as_of)!==identity.captured ? null : record;
     const band=pro?.band;
     const bandCovered=band && validCounts(band) && band.settled>0 && band.settled<=pro.settled
       && band.hits<=pro.hits && band.settled-band.hits<=pro.settled-pro.hits
       && Number.isFinite(band.min_pct) && Number.isFinite(band.max_pct) && band.min_pct>=0 && band.max_pct<=100
       && band.min_pct<=identity.estimate && identity.estimate<=band.max_pct;
-    const notes=pro?`<small>${escapeText(recordDates(pro))}</small>${bandCovered?`<small data-pro-similar>${escapeText(`${similar} (${num.format(band.min_pct)}–${num.format(band.max_pct)}%) · ${tally(band.hits,band.settled)}`)}</small>`:''}<small>${escapeText(criteria)}</small>`:'';
-    const leaguePeriod=league?.settled?`<small>${escapeText(`${leagueName} · ${recordDates(league)}`)}</small>`:'';
+    const notes=pro?`<small>${escapeText((publicSample ? proSource + ' · ' : '') + recordDates(pro))}</small>${!publicSample && bandCovered?`<small data-pro-similar>${escapeText(`${similar} (${num.format(band.min_pct)}–${num.format(band.max_pct)}%) · ${tally(band.hits,band.settled)}`)}</small>`:''}<small>${escapeText(criteria)}</small>`:'';
+    const leaguePeriod=league?.settled?`<small>${escapeText(publicSample
+      ? leagueSource.replace('{season}',String(league.season)) + ' · ' + recordDates(league)
+      : leagueName + ' · ' + recordDates(league))}</small>`:'';
+    const market = publicSample ? ' · ' + identity.market : '';
+    const leagueSummary=`<b>${escapeText(leagueName)}</b>${escapeText(market)} · ${escapeText(league?.settled ? format(league,publicSample ? leagueUnit : matches) : league ? empty : unavailable)}`;
+    const leagueMarkup=publicSample && league?.settled
+      ? `<details data-pro-league><summary>${leagueSummary}</summary>${leaguePeriod}</details>`
+      : `<p data-pro-league>${leagueSummary}</p>`;
     const venues=`<p data-pro-venues><b>${escapeText(teamsLabel)}</b>${teams?teams.map(team=>`<span>${escapeText(`${team.name} ${team.home?atHome:away} · ${team.n?tally(team.hits,team.n):'—'}`)}</span>`).join(''):` · ${escapeText(unavailable)}`}</p>`;
     return `<div class="dossier-market-evidence">
-      <p data-pro-league><b>${escapeText(leagueName)}</b> · ${escapeText(league?.settled ? format(league,matches) : unavailable)}</p>
-      <details data-pro-history><summary><b>${escapeText(historyLabel)}</b> · ${escapeText(pro?.settled?format(pro,settled):pro?empty:unavailable)}</summary>${notes}${leaguePeriod}${venues}</details>
+      ${leagueMarkup}
+      <details data-pro-history><summary><b>${escapeText(historyLabel)}</b>${escapeText(market)} · ${escapeText(pro?.settled?format(pro,publicSample ? proUnit : settled):pro?empty:unavailable)}</summary>${notes}${publicSample?'':leaguePeriod}${venues}</details>
     </div>`;
   }
   const matchReading = {
@@ -112,7 +134,7 @@
     })[key]));
     return `<div class="dossier-reading"><h3>${title}</h3><p>${fill(comparison)} ${fill(concentration)}</p></div>`;
   }
-  function dossierReport(html,item,dossier,day,lang,sourceLang=lang) {
+  function dossierReport(html,item,dossier,day,lang,sourceLang=lang,publicSample=false) {
     const data=presentationSections(sections(html),sourceLang);
     const structured=structuredSelection(item.provenance?.inputs?.picks,lang);
     const selection=structured || data.selection;
@@ -120,19 +142,22 @@
     const fixture=Number(item.match?.fixture_id);
     const key=selection?.key || (selection?.goals ? `over_${selection.goals-1}_5` : null);
     const identity={fixture,day,key,kickoff:item.provenance?.original_kickoff_utc,
-      publication:item.provenance?.generated_at_utc,estimate:Number(selection?.probability?.replace('%','').replace(',','.'))};
-    const evidence=key?marketSummary(item,dossier,identity,lang):'';
+      publication:item.provenance?.generated_at_utc,captured:instant(item.provenance?.inputs_captured_at_utc),market:selection?.market || '',estimate:Number(selection?.probability?.replace('%','').replace(',','.'))};
+    const evidence=key?marketSummary(item,dossier,identity,lang,publicSample):'';
     const goals=structured?.goals;
     const facts=goals?dossierApi?.goalEvidence(dossier,fixture,goals):null;
     const snapshot=instant(dossier?.as_of),published=instant(identity.publication);
     const reading=snapshot<=published?preMatchReading(item,fixture,day,facts,lang):'';
     const conclusion=(data.thesis[0]||data.other[0])?.replace(/^<p\b[^>]*>\s*(?:⚡\s*)?<strong[^>]*>[^<]*<\/strong>\s*/u,'<p>')||'';
     const receipt=instant(item.site_published_at_utc);
-    const publishedOnTime=published<=receipt && receipt<instant(identity.kickoff);
+    const kickoff = instant(identity.kickoff);
+    const publishedOnTime = published<=receipt && receipt<kickoff && (!publicSample || receipt <= Date.now());
     const pickLabel=(archiveCopy[lang]||archiveCopy.en)[publishedOnTime?0:1];
     const w=words[lang]||words.en;
     const review=data.review.map(block=>reviewMarkup(block,sourceLang)).join('');
-    return `${selection?`<p class="dossier-published"><span>${pickLabel}</span> · <strong>${escapeText(selection.market)} · ${escapeText(selection.probability)}</strong></p>`:''}${reading||`<div lang="${escapeText(sourceLang)}">${conclusion}</div>`}${evidence}<details class="dossier-review"${review?'':' data-review-lookup'}><summary>${w[2]}</summary><div data-dossier-review-content aria-live="polite">${review || `<p>${w[8]}</p>`}</div></details>`;
+    const [,,,,awaiting,unavailable] = sampleCopy[lang] || sampleCopy.en;
+    const reviewStatus = publicSample && !review ? ` · ${Date.now() < kickoff ? awaiting : unavailable}` : '';
+    return `${selection?`<p class="dossier-published"><span>${pickLabel}</span> · <strong>${escapeText(selection.market)} · ${escapeText(selection.probability)}</strong></p>`:''}${(!publicSample && reading) || `<div lang="${escapeText(sourceLang)}">${conclusion}</div>`}${evidence}<details class="dossier-review"${review?'':' data-review-lookup'}><summary>${w[2]}${reviewStatus}</summary><div data-dossier-review-content aria-live="polite">${review || `<p>${w[8]}</p>`}</div></details>`;
   }
   // Observed historical tier labels; anchored to the start, never narrative words.
   const tierNames = 'Base|Main pick|Main|Bold pick|Bold|Curajos|Arriesgado|Atrevido|Coraggioso|Bază|Baza|Principal|Principale|Principali|Audaz|Audace|Audacieux|Utama|Berani|Dasar|Siguranță|Safe pick|Safe|Safety|Seguridad|Sicurezza|Sécurité|Aman|Keamanan|Banker|Core|Foundation|Value pick|Risky pick|Audacios';
@@ -546,7 +571,21 @@
   }
   function scan() {document.querySelectorAll('.pro-card .pro-visible').forEach(container=>enhance(container));}
   function sourceMarkup(container) {return sourceStates.get(container) ?? container?.innerHTML;}
-  const api={sections,stripTier,cleanReview,editorialMarkup,recordMarkup,structuredSelection,reviewMarkup,words,enhance,scan,sourceMarkup,dossierReport,archiveReviewLabels};
+  function fullReading(html, lang) {
+    const headings = {
+      ro: 'Selecții', en: 'Selections', es: 'Selecciones', it: 'Selezioni', fr: 'Sélections', id: 'Pilihan',
+    };
+    return html.split(/<br\s*\/?>/i).map(line => line.trim()).filter(Boolean).map(line => {
+      const content = plain(line);
+      const isHeading = isMarketsHeading(line,content) || /^(?:🎯\s*)?Picks\s*:/iu.test(content);
+      const paragraph = isHeading ? `<strong>${headings[lang] || headings.en}</strong>`
+        : stripTier(line).replace(/(^|\s)\*([^*\n]+)\*(?=\s|$)/g,'$1<em>$2</em>');
+      return `<p>${paragraph}</p>`;
+    }).join('');
+  }
+  function scan() {document.querySelectorAll('.pro-card .pro-visible').forEach(container=>enhance(container));}
+  function sourceMarkup(container) {return sourceStates.get(container) ?? container?.innerHTML;}
+  const api={sections,stripTier,cleanReview,editorialMarkup,recordMarkup,structuredSelection,reviewMarkup,words,enhance,scan,sourceMarkup,dossierReport,archiveReviewLabels,fullReading};
   if (typeof module!=='undefined'&&module.exports) module.exports=api;
   if (typeof document==='undefined') return;
   root.PoseidonProReport=api;

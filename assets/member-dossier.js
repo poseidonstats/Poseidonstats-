@@ -108,6 +108,11 @@
   };
   const keys = ["teams", "goals", "halves", "corners"];
   let verifiedPredictions = null;
+  const publicGet = (path, signal) => fetch(root.PoseidonMembers.MEMBERS_API + path, {
+    credentials: "omit", cache: "no-store", signal,
+  });
+  const sampleRequests = new Map();
+  const sampleRenders = new WeakMap();
   const catalogDays = new Map();
   let current = null;
   let dialog;
@@ -333,16 +338,22 @@
     if (kind === "teams") {
       const grid = text("div",undefined,"dossier-results");
       grid.append(...groups.map(group=>results(group,state)));
-      pane.append(text("h3",copy.latest,"dossier-results-title"),grid);
+      if (state.foldResults) {
+        const details = text("details",undefined,"sample-dossier-results");
+        details.append(text("summary",copy.latest),grid);
+        pane.append(details);
+      } else {
+        pane.append(text("h3",copy.latest,"dossier-results-title"),grid);
+      }
     }
     if (focus) tab.focus({ preventScroll: true });
   }
 
-  function mountStatistics(body, data, lang, prefix, previous) {
+  function mountStatistics(body, data, lang, prefix, previous, foldResults = false) {
     const c = words(lang);
     const locale = lang === "en" ? "en-GB" : lang;
     const state = {
-      all:previous?.all ?? false, data, copy:c,
+      all:previous?.all ?? false, data, copy:c, foldResults,
       number:new Intl.NumberFormat(locale,{ minimumFractionDigits:2, maximumFractionDigits:2 }),
       date:new Intl.DateTimeFormat(locale,{ day:"numeric",month:"short",timeZone:"Europe/Bucharest" }),
     };
@@ -439,6 +450,16 @@
     }
   }
 
+  function dossierMetadata(data,lang,c) {
+    if (!data) return "";
+    const cutoff = new Intl.DateTimeFormat(lang === "en" ? "en-GB" : lang,
+      { day:"numeric",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit",
+        timeZone:"Europe/Bucharest",timeZoneName:"short" });
+    const asOf = timed(data.as_of);
+    return [data.league, data.season && c.season + " " + data.season,
+      Number.isFinite(asOf) && c.updated + " " + cutoff.format(asOf)].filter(Boolean).join(" · ");
+  }
+
   const stillOpen = state => current === state && dialog.open
     && (state.publicAccess || (state.fromPro ? tier() === "pro" : authorized()));
 
@@ -503,7 +524,8 @@
     const path = `analize/${state.day}.html`;
     const id = "m" + state.fixture;
     async function load() {
-      if (!review.open || review.dataset.requested) return;
+      if (!review.open && (!state.publicSample || Date.now() < state.kickoff)) return;
+      if (review.dataset.requested) return;
       review.dataset.requested = "true";
       panel.setAttribute("aria-busy","true");
       const lang = state.lang;
@@ -512,7 +534,7 @@
         const response = await fetch(path,{credentials:"omit",signal:state.controller.signal});
         if (!response.ok) return;
         const archive = new DOMParser().parseFromString(await response.text(),"text/html");
-        if (!stillOpen(state) || !target.isConnected || state.lang !== lang) return;
+        if ((state.publicSample ? state.controller.signal.aborted : !stillOpen(state)) || !target.isConnected || state.lang !== lang) return;
         if (archive.querySelector(".intro h1 [data-date]")?.dataset.date !== state.day) return;
         const candidates = [...archive.querySelectorAll(`.pro-archive-match[id="${id}"] article.pro-card-full, article[id="${id}"]`)]
           .filter(card => card.querySelector(".pro-verificare"));
@@ -523,6 +545,7 @@
         const link = text("a",labels.open);
         link.href = path + "#" + id;
         panel.replaceChildren(line,link);
+        if (state.publicSample) review.querySelector("summary").textContent = line.textContent;
       } catch (_) { /* Keep the localized availability message on a missing archive. */ }
       finally { panel.removeAttribute("aria-busy"); }
     }
@@ -629,6 +652,72 @@
     return start({ trigger,day,matchLabel,focusRoot,fromPro:true });
   }
 
+  function samplePayload(day) {
+    if (!sampleRequests.has(day)) {
+      const request = publicGet("/api/exemplu/" + day).then(response => {
+        if (!response.ok) throw new Error("Public sample unavailable");
+        return response.json();
+      }).catch(error => {
+        sampleRequests.delete(day);
+        throw error;
+      });
+      sampleRequests.set(day,request);
+    }
+    return sampleRequests.get(day);
+  }
+
+  async function mountPublicSample(target, source, lang) {
+    sampleRenders.get(target)?.controller.abort();
+    const fixture = Number(source?.dataset.sampleFixture), day = source?.dataset.sampleDay;
+    if (!Number.isSafeInteger(fixture) || fixture < 1 || !/^\d{4}-\d{2}-\d{2}$/.test(day)) return;
+    const controller = new AbortController();
+    const state = { controller, publicSample:true, fixture, day, lang };
+    sampleRenders.set(target,state);
+    try {
+      const [payload, report] = await Promise.all([samplePayload(day),loadProReport()]);
+      if (controller.signal.aborted || !target.isConnected || payload.date !== day || payload.item?.match?.fixture_id !== fixture) return;
+      const item = payload.item;
+      const kickoff = timed(item.match.match_date);
+      if (!Number.isFinite(kickoff) || siteDay.format(kickoff) !== day
+          || timed(item.provenance?.original_kickoff_utc) !== kickoff) return;
+      state.kickoff = kickoff;
+      const analysis = proAnalysisText(item,lang);
+      if (!analysis.text) return;
+      const data = dossierMatches(payload.dossier,fixture,day,kickoff) ? payload.dossier : null;
+      const copy = words(lang);
+      const card = text("article",undefined,"sample-dossier");
+      const heading = text("div",undefined,"dossier-heading");
+      heading.append(text("h3",[item.match.home,item.match.away].join(" – ")));
+      const body = text("div",undefined,"dossier-body");
+      body.append(text("p",dossierMetadata(data,lang,copy) || item.match.league,"dossier-note"));
+      const full = text("details",undefined,"sample-dossier-reading");
+      full.append(text("summary",copy.editorial,"dossier-open"));
+      const reading = text("div",undefined,"dossier-editorial");
+      reading.lang = analysis.lang;
+      if (analysis.lang !== lang) {
+        const english = analysis.lang === "en";
+        const language = tt(english ? "dashboard.language.english" : "dashboard.language.romanian", english ? "English" : "română");
+        const notice = tt("dashboard.analysis.fallback","Textul analizei este disponibil în {language}.").replace("{language}",language);
+        body.append(text("p",notice,"dossier-note"));
+      }
+      reading.innerHTML = report.fullReading(_md(analysis.text),analysis.lang);
+      full.append(reading);
+      const editorial = text("section",undefined,"dossier-editorial");
+      editorial.innerHTML = report.dossierReport(_md(analysis.text),item,data,day,lang,analysis.lang,true);
+      body.append(editorial,full);
+      if (data) {
+        const stats = text("div");
+        body.append(stats);
+        mountStatistics(stats,data,lang,"public-sample-dossier",null,true);
+      } else {
+        body.append(text("p",copy.missing,"dossier-note"));
+      }
+      card.append(heading,body);
+      target.replaceChildren(card);
+      watchResult(editorial,state,report);
+    } catch (_) { /* The generator's selected public sample remains available. */ }
+  }
+
   function switchLanguage(lang) {
     if (!current || !dialog.open || current.lang === lang) return;
     const state = current;
@@ -679,6 +768,7 @@
   root.PoseidonDossier = {
     setPredictions, predictions:()=>authorized() ? verifiedPredictions : null, publicFixtureIds, button, copy:words,
     loadCatalog, catalog, openPro, openProForMatch, switchLanguage,
+    mountPublicSample, clearSample:target=>sampleRenders.get(target)?.controller.abort(),
     recentDays:()=>[siteDay.format(new Date(Date.now()-86_400_000)),siteDay.format(new Date())],
   };
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded",mount);

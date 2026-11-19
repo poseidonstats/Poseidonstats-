@@ -383,7 +383,11 @@ def html_card(
     )
     return "\n".join(
         [
-            '<div class="pro-card" data-public-pro-report>',
+            (
+                '<div class="pro-card" data-public-pro-report'
+                f' data-sample-fixture="{int(m["fixture_id"])}"'
+                f' data-sample-day="{H.escape(zi, quote=True)}">'
+            ),
             f'      <div class="pro-card-head">{head}</div>',
             corp,
             "    </div>",

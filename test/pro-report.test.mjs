@@ -290,3 +290,36 @@ test('protected Markdown labels preserve the context comparison',async()=>{
  const facts=context.extract({evidence,home:'A',away:'B',language:'ro'});
  assert.deepEqual(facts?.away.over25,{hits:3,n:5});
 });
+
+test('public sample keeps league and Pro denominators on the exact archived primary market', ()=>{
+ const day='2026-11-19',capture=day+'T05:00:00Z', kickoff=day+'T13:00:00Z';
+ const base={key:'over_1_5',fixture_id:701,date:day,from:'2026-10-31',to:'2026-11-18',as_of:capture};
+ const item={match:{fixture_id:701,match_date:kickoff},site_published_at_utc:day+'T06:00:00Z',provenance:{
+  original_kickoff_utc:kickoff,generated_at_utc:capture,inputs_captured_at_utc:capture,
+  inputs:{picks:[{rol:'Principal',key:'over_1_5',p:76}]}},
+  league_record:{...base,criteria:'verified_league_ft90_v1',league_id:9,season:2026,phase:'Regular Season',hits:53,settled:86},
+  pro_market_record:{...base,criteria:'verified_pro_primary_ft90_v1',hits:50,settled:55,band:{min_pct:72,max_pct:80,hits:4,settled:4}}};
+ const render=(overrides={},dossier={season:2026},lang='ro')=>report.dossierReport(
+  '⚡ <strong>Verdict:</strong> Verdict specific.<br>',{...item,...overrides},dossier,day,lang,lang,true
+ );
+ const html=render();
+ assert.match(html,/Pronostic publicat înainte de meci[\s\S]*Peste 1,5 goluri în meci · 76%/);
+ assert.match(html,/data-pro-league><summary>.*Peste 1,5.*53 din 86.*61,63\s*%/);
+ assert.match(html,/data-pro-history><summary>.*Peste 1,5.*50 din 55.*90,91\s*%/);
+ assert.match(html,/Arhiva Pro.*Rezultate până la/);
+ assert.match(html,/Campionatul · sezonul 2026/);
+ assert.doesNotMatch(html,/4 din 4|Estimări similare|Peste 2,5/);
+ assert.match(render({},null),/53 din 86/,'verified aggregate can survive missing team data');
+ assert.doesNotMatch(render({},{season:2025}),/53 din 86/,'a conflicting season fails closed');
+ for(const patch of [{key:'over_2_5'},{fixture_id:702},{as_of:day+'T04:00:00Z'},{hits:80,settled:70}]){
+  assert.doesNotMatch(render({pro_market_record:{...item.pro_market_record,...patch}}),/50 din 55|80 din 70|90,91/);
+ }
+ assert.match(render({site_published_at_utc:kickoff}),/Pronostic arhivat/);
+ for(const [language,market] of [['en','Over 1.5'],['fr','Plus de 1,5'],['es','Más de 1,5'],['it','Over 1,5'],['id','Di atas 1,5']]){
+  const summary=render({},null,language);
+  assert(summary.includes(market));
+  assert(summary.includes('53') && summary.includes('86') && summary.includes('50') && summary.includes('55'));
+ }
+ const idVerdict=report.dossierReport('⚡ <strong>Putusan:</strong> Tim tuan rumah diunggulkan.<br>',item,null,day,'id','id',true);
+ assert.match(idVerdict, /Tim tuan rumah diunggulkan/);
+});
