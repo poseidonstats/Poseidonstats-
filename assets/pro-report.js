@@ -18,12 +18,36 @@
     id: ['Liga','grup putih','grup merah','Pertandingan tim','di kandang','tandang','Riwayat Pro · pasar yang sama','{hits} dari {n}','laga','selesai','Estimasi serupa','Data tidak tersedia','0 pilihan yang memenuhi syarat','Hasil hingga {cutoff}','Satu pilihan utama per laga dan pasar, dipublikasikan sebelum sepak mula dan diselesaikan sebelum tanggal laga ini.'],
   };
   const sampleCopy = {
-    ro: ["meciuri cu acest rezultat al pieței", "pronosticuri confirmate", "Campionatul · sezonul {season}", "Arhiva Pro", "În așteptarea meciului", "Verificarea nu este încă disponibilă"],
-    en: ["matches meeting this market outcome", "confirmed selections", "League · {season} season", "Pro archive", "Awaiting kickoff", "Result review not yet available"],
-    es: ["partidos con este resultado de mercado", "pronósticos confirmados", "Liga · temporada {season}", "Archivo Pro", "En espera del inicio", "La verificación aún no está disponible"],
-    it: ["partite con questo esito di mercato", "pronostici confermati", "Campionato · stagione {season}", "Archivio Pro", "In attesa del calcio d’inizio", "Verifica non ancora disponibile"],
-    fr: ["matchs correspondant à ce résultat du marché", "pronostics confirmés", "Championnat · saison {season}", "Archives Pro", "En attente du coup d’envoi", "Vérification pas encore disponible"],
-    id: ["laga dengan hasil pasar ini", "pilihan yang terkonfirmasi", "Liga · musim {season}", "Arsip Pro", "Menunggu sepak mula", "Verifikasi belum tersedia"],
+    ro: [
+      "{hits} din {n}{de} {games} {had} cel puțin {goals} goluri", "{hits} din {n}{de} {games} {met} selecția «{market}»",
+      "{hits} din {n}{de} {picks} «{market}» confirmate", "Campionatul · sezonul {season}", "Arhiva Pro",
+      "În așteptarea meciului", "Verificarea nu este încă disponibilă",
+    ],
+    en: [
+      "{hits} of {n} matches had at least {goals} goals", "{hits} of {n} matches met the selection “{market}”",
+      "{hits} of {n} “{market}” selections confirmed", "League · {season} season", "Pro archive",
+      "Awaiting kickoff", "Result review not yet available",
+    ],
+    es: [
+      "{hits} de {n} partidos con al menos {goals} goles", "{hits} de {n} partidos cumplieron el pronóstico «{market}»",
+      "{hits} de {n} pronósticos «{market}» acertados", "Liga · temporada {season}", "Archivo Pro",
+      "En espera del inicio", "La verificación aún no está disponible",
+    ],
+    it: [
+      "{hits} su {n} partite con almeno {goals} gol", "{hits} su {n} partite hanno rispettato il pronostico «{market}»",
+      "{hits} su {n} pronostici «{market}» confermati", "Campionato · stagione {season}", "Archivio Pro",
+      "In attesa del calcio d’inizio", "Verifica non ancora disponibile",
+    ],
+    fr: [
+      "{hits} matchs sur {n} avec au moins {goals} buts", "{hits} matchs sur {n} ont rempli le pronostic « {market} »",
+      "{hits} pronostics « {market} » confirmés sur {n}", "Championnat · saison {season}", "Archives Pro",
+      "En attente du coup d’envoi", "Vérification pas encore disponible",
+    ],
+    id: [
+      "{hits} dari {n} laga menghasilkan setidaknya {goals} gol", "{hits} dari {n} laga sesuai dengan pilihan “{market}”",
+      "{hits} dari {n} pilihan “{market}” terkonfirmasi", "Liga · musim {season}", "Arsip Pro",
+      "Menunggu sepak mula", "Verifikasi belum tersedia",
+    ],
   };
   const archiveCopy = {
     ro: ['Pronostic publicat înainte de meci','Pronostic arhivat','Rezultat final','Vezi verificarea în arhivă'],
@@ -65,7 +89,7 @@
     return record;
   }
   function marketSummary(item,dossier,identity,lang,publicSample) {
-    const [leagueUnit, proUnit, leagueSource, proSource] = sampleCopy[lang] || sampleCopy.en;
+    const [totalLeague, otherLeague, publicPro, leagueSource, proSource] = sampleCopy[lang] || sampleCopy.en;
     const [leagueLabel,white,red,teamsLabel,atHome,away,historyLabel,count,matches,settled,similar,unavailable,empty,cutoffLabel,criteria]=marketCopy[lang]||marketCopy.en;
     const num=new Intl.NumberFormat(lang);
     const percent=new Intl.NumberFormat(lang,{style:'percent',minimumFractionDigits:2,maximumFractionDigits:2});
@@ -99,15 +123,26 @@
     const leaguePeriod=league?.settled?`<small>${escapeText(publicSample
       ? leagueSource.replace('{season}',String(league.season)) + ' · ' + recordDates(league)
       : leagueName + ' · ' + recordDates(league))}</small>`:'';
-    const market = publicSample ? ' · ' + identity.market : '';
-    const leagueSummary=`<b>${escapeText(leagueName)}</b>${escapeText(market)} · ${escapeText(league?.settled ? format(league,publicSample ? leagueUnit : matches) : league ? empty : unavailable)}`;
+    const publicFormat=(record,template)=>{
+      const n=record.settled;
+      const roDe=n%100===0 || n%100>=20 ? ' de' : '';
+      const fields={
+        hits:num.format(record.hits),n:num.format(n),de:roDe,goals:num.format(identity.goals),
+        games:n===1?'meci':'meciuri',picks:n===1?'pronostic':'pronosticuri',market:identity.market,
+        had:record.hits===1?'a avut':'au avut',met:record.hits===1?'a îndeplinit':'au îndeplinit',
+      };
+      return template.replace(/\{(\w+)\}/g,(_,field)=>fields[field]) + ` (${percent.format(record.hits/n)})`;
+    };
+    const leagueSummary=`<b>${escapeText(leagueName)}</b> · ${escapeText(league?.settled
+      ? (publicSample ? publicFormat(league,identity.goals ? totalLeague : otherLeague) : format(league,matches))
+      : league ? empty : unavailable)}`;
     const leagueMarkup=publicSample && league?.settled
       ? `<details data-pro-league><summary>${leagueSummary}</summary>${leaguePeriod}</details>`
       : `<p data-pro-league>${leagueSummary}</p>`;
     const venues=`<p data-pro-venues><b>${escapeText(teamsLabel)}</b>${teams?teams.map(team=>`<span>${escapeText(`${team.name} ${team.home?atHome:away} · ${team.n?tally(team.hits,team.n):'—'}`)}</span>`).join(''):` · ${escapeText(unavailable)}`}</p>`;
     return `<div class="dossier-market-evidence">
       ${leagueMarkup}
-      <details data-pro-history><summary><b>${escapeText(historyLabel)}</b>${escapeText(market)} · ${escapeText(pro?.settled?format(pro,publicSample ? proUnit : settled):pro?empty:unavailable)}</summary>${notes}${publicSample?'':leaguePeriod}${venues}</details>
+      <details data-pro-history><summary><b>${escapeText(historyLabel)}</b> · ${escapeText(pro?.settled?(publicSample?publicFormat(pro,publicPro):format(pro,settled)):pro?empty:unavailable)}</summary>${notes}${publicSample?'':leaguePeriod}${venues}</details>
     </div>`;
   }
   const matchReading = {
@@ -142,7 +177,7 @@
     const fixture=Number(item.match?.fixture_id);
     const key=selection?.key || (selection?.goals ? `over_${selection.goals-1}_5` : null);
     const identity={fixture,day,key,kickoff:item.provenance?.original_kickoff_utc,
-      publication:item.provenance?.generated_at_utc,captured:instant(item.provenance?.inputs_captured_at_utc),market:selection?.market || '',estimate:Number(selection?.probability?.replace('%','').replace(',','.'))};
+      publication:item.provenance?.generated_at_utc,captured:instant(item.provenance?.inputs_captured_at_utc),goals:selection?.goals,market:selection?.market || '',estimate:Number(selection?.probability?.replace('%','').replace(',','.'))};
     const evidence=key?marketSummary(item,dossier,identity,lang,publicSample):'';
     const goals=structured?.goals;
     const facts=goals?dossierApi?.goalEvidence(dossier,fixture,goals):null;
@@ -155,7 +190,7 @@
     const pickLabel=(archiveCopy[lang]||archiveCopy.en)[publishedOnTime?0:1];
     const w=words[lang]||words.en;
     const review=data.review.map(block=>reviewMarkup(block,sourceLang)).join('');
-    const [,,,,awaiting,unavailable] = sampleCopy[lang] || sampleCopy.en;
+    const [,,,,,awaiting,unavailable] = sampleCopy[lang] || sampleCopy.en;
     const reviewStatus = publicSample && !review ? ` · ${Date.now() < kickoff ? awaiting : unavailable}` : '';
     return `${selection?`<p class="dossier-published"><span>${pickLabel}</span> · <strong>${escapeText(selection.market)} · ${escapeText(selection.probability)}</strong></p>`:''}${(!publicSample && reading) || `<div lang="${escapeText(sourceLang)}">${conclusion}</div>`}${evidence}<details class="dossier-review"${review?'':' data-review-lookup'}><summary>${w[2]}${reviewStatus}</summary><div data-dossier-review-content aria-live="polite">${review || `<p>${w[8]}</p>`}</div></details>`;
   }
@@ -182,7 +217,7 @@
     const match=plain(stripTier(inner)).match(/^(.+?)\s+[—–-]\s+(\d+(?:[.,]\d+)?\s*%)(?:\s|[.—–]|$)/u);
     if (!match) return null;
     const [,market,probability]=match;
-    const total=market.match(/^(?:Peste|Over|Más de|Plus de|Di atas)\s+([12])[.,]5(?:\s+(?:goluri|goals|goles|buts|gol))?$/iu);
+    const total=market.match(/^(?:Peste|Over|Más de|Plus de|Di atas)\s+([123])[.,]5(?:\s+(?:goluri|goals|goles|buts|gol))?$/iu);
     const result={market,probability,goals:total?Number(total[1])+1:null};
     const directional=market.match(/(?:^|\()(1X|X2)\)?$/);
     if (directional) result.key='dc_'+directional[1].toLowerCase();
@@ -194,7 +229,7 @@
     if (primary.length!==1) return null;
     const {key,p,piata}=primary[0];
     if (!Number.isFinite(p) || p<0 || p>100 || typeof key!=='string') return null;
-    const total=key.match(/^over_([12])_5$/);
+    const total=key.match(/^over_([123])_5$/);
     const format={ro:'Peste {n} goluri în meci',en:'Over {n} total goals',es:'Más de {n} goles en el partido',
       it:'Over {n} gol totali',fr:'Plus de {n} buts dans le match',id:'Di atas {n} gol total'}[lang] || 'Over {n} total goals';
     const number=new Intl.NumberFormat(lang,{maximumFractionDigits:2});

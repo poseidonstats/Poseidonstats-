@@ -304,8 +304,8 @@ test('public sample keeps league and Pro denominators on the exact archived prim
  );
  const html=render();
  assert.match(html,/Pronostic publicat înainte de meci[\s\S]*Peste 1,5 goluri în meci · 76%/);
- assert.match(html,/data-pro-league><summary>.*Peste 1,5.*53 din 86.*61,63\s*%/);
- assert.match(html,/data-pro-history><summary>.*Peste 1,5.*50 din 55.*90,91\s*%/);
+ assert.match(html,/data-pro-league><summary>.*53 din 86 de meciuri au avut cel puțin 2 goluri.*61,63\s*%/);
+ assert.match(html,/data-pro-history><summary>.*50 din 55 de pronosticuri.*Peste 1,5.*90,91\s*%/);
  assert.match(html,/Arhiva Pro.*Rezultate până la/);
  assert.match(html,/Campionatul · sezonul 2026/);
  assert.doesNotMatch(html,/4 din 4|Estimări similare|Peste 2,5/);
@@ -315,6 +315,14 @@ test('public sample keeps league and Pro denominators on the exact archived prim
   assert.doesNotMatch(render({pro_market_record:{...item.pro_market_record,...patch}}),/50 din 55|80 din 70|90,91/);
  }
  assert.match(render({site_published_at_utc:kickoff}),/Pronostic arhivat/);
+ for(const [key,description] of [['over_2_5','au avut cel puțin 3 goluri'],['over_3_5','au avut cel puțin 4 goluri'],['dc_1x','au îndeplinit selecția «1X»']]){
+  const markup=render({
+   provenance:{...item.provenance,inputs:{picks:[{rol:'Principal',key,p:60}]}},
+   league_record:{...item.league_record,key},pro_market_record:{...item.pro_market_record,key},
+  });
+  assert(markup.includes(description));
+ }
+
  for(const [language,market] of [['en','Over 1.5'],['fr','Plus de 1,5'],['es','Más de 1,5'],['it','Over 1,5'],['id','Di atas 1,5']]){
   const summary=render({},null,language);
   assert(summary.includes(market));
