@@ -1,27 +1,22 @@
 {
- "generated_at": "2026-11-18T03:26:18+00:00",
+ "generated_at": "2026-11-19T03:48:27+00:00",
  "days": [
   {
-   "date": "2026-11-18",
+   "date": "2026-11-19",
    "status": "in_progress",
    "matches": [
     {
-     "fixture_id": 1591386,
+     "fixture_id": 1648286,
      "time": "12:00",
-     "country": "Turkey",
-     "league": "2. Lig",
-     "home": "Adana Demirspor",
-     "away": "Kastamonuspor 1966",
+     "country": "World",
+     "league": "Friendlies",
+     "home": "Switzerland U17",
+     "away": "Czech Republic U17",
      "calibrated_lg": true,
      "picks": [
       {
        "market": "Over 1.5",
-       "prob": 85,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "Over 2.5",
-       "prob": 66,
+       "prob": 82,
        "outcome": "PENDING"
       }
      ],
@@ -32,22 +27,90 @@
      "snapshot": "dayof"
     },
     {
-     "fixture_id": 1591393,
-     "time": "12:00",
-     "country": "Turkey",
-     "league": "2. Lig",
-     "home": "Isparta 32 Spor",
-     "away": "Somaspor",
+     "fixture_id": 1635326,
+     "time": "15:00",
+     "country": "Uganda",
+     "league": "Premier League",
+     "home": "Entebbe UPPC",
+     "away": "Kataka",
+     "calibrated_lg": true,
+     "picks": [
+      {
+       "market": "1X",
+       "prob": 89,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "Over 1.5",
+       "prob": 77,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "1 (Home)",
+       "prob": 71,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null,
+     "snapshot": "dayof"
+    },
+    {
+     "fixture_id": 1551379,
+     "time": "20:00",
+     "country": "Denmark",
+     "league": "1. Division",
+     "home": "FC Fredericia",
+     "away": "Hillerød",
+     "calibrated_lg": true,
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 78,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null,
+     "snapshot": "dayof"
+    },
+    {
+     "fixture_id": 1609970,
+     "time": "14:00",
+     "country": "Bosnia",
+     "league": "1st League - RS",
+     "home": "Velež Nevesinje",
+     "away": "Rudar Prijedor",
      "calibrated_lg": true,
      "picks": [
       {
        "market": "Over 1.5",
        "prob": 83,
        "outcome": "PENDING"
-      },
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null,
+     "snapshot": "dayof"
+    },
+    {
+     "fixture_id": 1650488,
+     "time": "18:00",
+     "country": "Liberia",
+     "league": "LFA First Division",
+     "home": "Downtown",
+     "away": "Shaita",
+     "calibrated_lg": true,
+     "picks": [
       {
-       "market": "1X",
-       "prob": 81,
+       "market": "Over 1.5",
+       "prob": 84,
        "outcome": "PENDING"
       }
      ],
@@ -59,11 +122,11 @@
     }
    ],
    "totals": {
-    "picks": 4,
+    "picks": 7,
     "wins": 0,
     "losses": 0,
-    "pending": 4,
-    "locked_pending": 175
+    "pending": 7,
+    "locked_pending": 102
    }
   }
  ],
@@ -154,9 +217,9 @@
   }
  ],
  "integritate": {
-  "total": 62191,
+  "total": 62352,
   "pastrate": 39365,
-  "nerezolvate": 13343,
+  "nerezolvate": 13504,
   "inghetate_dupa_start": 344,
   "reprogramate_peste_prag": 3,
   "recalibrare_indisponibila": 8765,

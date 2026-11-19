@@ -1,1427 +1,7 @@
 {
- "generated_at": "2026-11-18T03:26:18+00:00",
- "n_matches": 2517,
+ "generated_at": "2026-11-19T03:48:27+00:00",
+ "n_matches": 2555,
  "matches": [
-  {
-   "fixture_id": 1649036,
-   "match_date": "2026-11-18T03:00:00Z",
-   "country": "World",
-   "league": "CONCACAF Nations League",
-   "home_team": "Nicaragua",
-   "away_team": "Montserrat",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1560981,
-   "match_date": "2026-11-18T04:00:00Z",
-   "country": "Japan",
-   "league": "WE League",
-   "home_team": "JEF United W",
-   "away_team": "Parceiro Nagano W",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1560979,
-   "match_date": "2026-11-18T05:00:00Z",
-   "country": "Japan",
-   "league": "WE League",
-   "home_team": "Albirex Niigata W",
-   "away_team": "Elfen Saitama W",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1560982,
-   "match_date": "2026-11-18T05:00:00Z",
-   "country": "Japan",
-   "league": "WE League",
-   "home_team": "Vegalta Sendai",
-   "away_team": "Tokyo Verdy Beleza W",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1560980,
-   "match_date": "2026-11-18T09:30:00Z",
-   "country": "Japan",
-   "league": "WE League",
-   "home_team": "Cerezo Osaka W",
-   "away_team": "Urawa Reds W",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1560984,
-   "match_date": "2026-11-18T10:00:00Z",
-   "country": "Japan",
-   "league": "WE League",
-   "home_team": "Sanfrecce Hiroshima W",
-   "away_team": "Nojima Stella W",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1591386,
-   "match_date": "2026-11-18T10:00:00Z",
-   "country": "Turkey",
-   "league": "2. Lig",
-   "home_team": "Adana Demirspor",
-   "away_team": "Kastamonuspor 1966",
-   "xg_home": 1.41,
-   "xg_away": 1.91,
-   "prob_home": 0.293,
-   "prob_draw": 0.215,
-   "prob_away": 0.491,
-   "prob_1x": 0.509,
-   "prob_x2": 0.707,
-   "prob_12": 0.785,
-   "prob_over_1_5": 0.846,
-   "prob_over_2_5": 0.656,
-   "prob_over_3_5": 0.444,
-   "prob_btts": 0.609,
-   "prob_ht_over_0_5": 0.777,
-   "prob_ht_over_1_5": 0.447,
-   "prob_ht_btts": 0.266,
-   "prob_ht_btts_calibrated": false,
-   "ht_prob_home": 0.25,
-   "ht_prob_draw": 0.372,
-   "ht_prob_away": 0.378,
-   "ht_top_score_h": 0,
-   "ht_top_score_a": 0,
-   "ht_top_score_prob": 0.233,
-   "xg_home_ht": 0.63,
-   "xg_away_ht": 0.85,
-   "prob_over_2_5_raw": 0.641,
-   "prob_btts_raw": 0.637,
-   "prob_home_raw": 0.284,
-   "prob_draw_raw": 0.224,
-   "prob_away_raw": 0.492,
-   "top_score_h": 1,
-   "top_score_a": 1,
-   "top_score_prob": 0.098,
-   "calibrated": true,
-   "free": true
-  },
-  {
-   "fixture_id": 1591389,
-   "match_date": "2026-11-18T10:00:00Z",
-   "country": "Turkey",
-   "league": "2. Lig",
-   "home_team": "Çorluspor 1947",
-   "away_team": "Muş Menderesspor",
-   "calibrated": true,
-   "locked": true
-  },
-  {
-   "fixture_id": 1591390,
-   "match_date": "2026-11-18T10:00:00Z",
-   "country": "Turkey",
-   "league": "2. Lig",
-   "home_team": "Elazığspor",
-   "away_team": "Menemen Belediyespor",
-   "calibrated": true,
-   "locked": true
-  },
-  {
-   "fixture_id": 1591391,
-   "match_date": "2026-11-18T10:00:00Z",
-   "country": "Turkey",
-   "league": "2. Lig",
-   "home_team": "Belediye Derincespor",
-   "away_team": "Ankaraspor",
-   "calibrated": true,
-   "locked": true
-  },
-  {
-   "fixture_id": 1591392,
-   "match_date": "2026-11-18T10:00:00Z",
-   "country": "Turkey",
-   "league": "2. Lig",
-   "home_team": "Hatayspor",
-   "away_team": "İnegöl Kafkas Gençlik",
-   "calibrated": true,
-   "locked": true
-  },
-  {
-   "fixture_id": 1591393,
-   "match_date": "2026-11-18T10:00:00Z",
-   "country": "Turkey",
-   "league": "2. Lig",
-   "home_team": "Isparta 32 Spor",
-   "away_team": "Somaspor",
-   "xg_home": 2.15,
-   "xg_away": 1.08,
-   "prob_home": 0.612,
-   "prob_draw": 0.197,
-   "prob_away": 0.191,
-   "prob_1x": 0.809,
-   "prob_x2": 0.388,
-   "prob_12": 0.803,
-   "prob_over_1_5": 0.834,
-   "prob_over_2_5": 0.637,
-   "prob_over_3_5": 0.424,
-   "prob_btts": 0.569,
-   "prob_ht_over_0_5": 0.768,
-   "prob_ht_over_1_5": 0.433,
-   "prob_ht_btts": 0.233,
-   "prob_ht_btts_calibrated": false,
-   "ht_prob_home": 0.458,
-   "ht_prob_draw": 0.365,
-   "ht_prob_away": 0.178,
-   "ht_top_score_h": 0,
-   "ht_top_score_a": 0,
-   "ht_top_score_prob": 0.243,
-   "xg_home_ht": 0.96,
-   "xg_away_ht": 0.48,
-   "prob_over_2_5_raw": 0.619,
-   "prob_btts_raw": 0.575,
-   "prob_home_raw": 0.612,
-   "prob_draw_raw": 0.205,
-   "prob_away_raw": 0.183,
-   "top_score_h": 2,
-   "top_score_a": 1,
-   "top_score_prob": 0.095,
-   "calibrated": true,
-   "free": true
-  },
-  {
-   "fixture_id": 1591681,
-   "match_date": "2026-11-18T10:00:00Z",
-   "country": "Turkey",
-   "league": "2. Lig",
-   "home_team": "12 Bingölspor",
-   "away_team": "Sakaryaspor",
-   "calibrated": true,
-   "locked": true
-  },
-  {
-   "fixture_id": 1591682,
-   "match_date": "2026-11-18T10:00:00Z",
-   "country": "Turkey",
-   "league": "2. Lig",
-   "home_team": "Ankara Demirspor",
-   "away_team": "Yeni Orduspor",
-   "calibrated": true,
-   "locked": true
-  },
-  {
-   "fixture_id": 1591687,
-   "match_date": "2026-11-18T10:00:00Z",
-   "country": "Turkey",
-   "league": "2. Lig",
-   "home_team": "Serik Belediyespor",
-   "away_team": "24 Erzincanspor",
-   "calibrated": true,
-   "locked": true
-  },
-  {
-   "fixture_id": 1591688,
-   "match_date": "2026-11-18T10:00:00Z",
-   "country": "Turkey",
-   "league": "2. Lig",
-   "home_team": "Hekimoğlu Trabzon",
-   "away_team": "Kahramanmaraş İstiklalsp",
-   "calibrated": true,
-   "locked": true
-  },
-  {
-   "fixture_id": 1650046,
-   "match_date": "2026-11-18T10:00:00Z",
-   "country": "South-Korea",
-   "league": "WK-League",
-   "home_team": "Suwon FMC",
-   "away_team": "Gyeongju",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1554065,
-   "match_date": "2026-11-18T11:00:00Z",
-   "country": "World",
-   "league": "ASEAN Club Championship",
-   "home_team": "Ho Chi Minh",
-   "away_team": "Buriram United",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1591388,
-   "match_date": "2026-11-18T11:00:00Z",
-   "country": "Turkey",
-   "league": "2. Lig",
-   "home_team": "Arnavutköy Belediyespor",
-   "away_team": "68 Aksaray Belediyespor",
-   "calibrated": true,
-   "locked": true
-  },
-  {
-   "fixture_id": 1591683,
-   "match_date": "2026-11-18T11:00:00Z",
-   "country": "Turkey",
-   "league": "2. Lig",
-   "home_team": "Ankaragücü",
-   "away_team": "Kırklarelispor",
-   "calibrated": true,
-   "locked": true
-  },
-  {
-   "fixture_id": 1551234,
-   "match_date": "2026-11-18T11:30:00Z",
-   "country": "World",
-   "league": "ASEAN Club Championship",
-   "home_team": "Tampines Rovers",
-   "away_team": "Ratchaburi",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1581734,
-   "match_date": "2026-11-18T12:00:00Z",
-   "country": "Poland",
-   "league": "Ekstraliga Women",
-   "home_team": "Rekord Bielsko-Biala W",
-   "away_team": "Lech Poznan W",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1591685,
-   "match_date": "2026-11-18T12:00:00Z",
-   "country": "Turkey",
-   "league": "2. Lig",
-   "home_team": "İnegölspor",
-   "away_team": "Erzin Spor",
-   "calibrated": true,
-   "locked": true
-  },
-  {
-   "fixture_id": 1603828,
-   "match_date": "2026-11-18T12:00:00Z",
-   "country": "Bulgaria",
-   "league": "Third League - Southwest",
-   "home_team": "Natsional Sofia",
-   "away_team": "Kostinbrod",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1603831,
-   "match_date": "2026-11-18T12:00:00Z",
-   "country": "Bulgaria",
-   "league": "Third League - Southwest",
-   "home_team": "Septemvri Simitli",
-   "away_team": "Kyustendil",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1603832,
-   "match_date": "2026-11-18T12:00:00Z",
-   "country": "Bulgaria",
-   "league": "Third League - Southwest",
-   "home_team": "Strumska Slava",
-   "away_team": "Botev Ihtiman",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1609971,
-   "match_date": "2026-11-18T12:00:00Z",
-   "country": "Bosnia",
-   "league": "1st League - RS",
-   "home_team": "FK Romanija Pale",
-   "away_team": "Kozara Gradiška",
-   "calibrated": true,
-   "locked": true
-  },
-  {
-   "fixture_id": 1609972,
-   "match_date": "2026-11-18T12:00:00Z",
-   "country": "Bosnia",
-   "league": "1st League - RS",
-   "home_team": "Slavija",
-   "away_team": "Drina Zvornik",
-   "calibrated": true,
-   "locked": true
-  },
-  {
-   "fixture_id": 1626822,
-   "match_date": "2026-11-18T12:00:00Z",
-   "country": "Bulgaria",
-   "league": "Third League - Northeast",
-   "home_team": "Benkovski Isperih",
-   "away_team": "Septemvri Tervel",
-   "calibrated": true,
-   "locked": true
-  },
-  {
-   "fixture_id": 1626869,
-   "match_date": "2026-11-18T12:00:00Z",
-   "country": "Bulgaria",
-   "league": "Third League - Northeast",
-   "home_team": "Botev Novi Pazar",
-   "away_team": "Aksakovo",
-   "xg_home": 1.72,
-   "xg_away": 1.49,
-   "prob_home": 0.432,
-   "prob_draw": 0.227,
-   "prob_away": 0.341,
-   "prob_1x": 0.659,
-   "prob_x2": 0.568,
-   "prob_12": 0.773,
-   "prob_over_1_5": 0.832,
-   "prob_over_2_5": 0.635,
-   "prob_over_3_5": 0.42,
-   "prob_btts": 0.603,
-   "prob_ht_over_0_5": 0.768,
-   "prob_ht_over_1_5": 0.434,
-   "prob_ht_btts": 0.26,
-   "prob_ht_btts_calibrated": false,
-   "ht_prob_home": 0.333,
-   "ht_prob_draw": 0.382,
-   "ht_prob_away": 0.285,
-   "ht_top_score_h": 0,
-   "ht_top_score_a": 0,
-   "ht_top_score_prob": 0.244,
-   "xg_home_ht": 0.76,
-   "xg_away_ht": 0.68,
-   "prob_over_2_5_raw": 0.616,
-   "prob_btts_raw": 0.627,
-   "prob_home_raw": 0.429,
-   "prob_draw_raw": 0.234,
-   "prob_away_raw": 0.337,
-   "top_score_h": 1,
-   "top_score_a": 1,
-   "top_score_prob": 0.104,
-   "calibrated": true,
-   "free": true
-  },
-  {
-   "fixture_id": 1639359,
-   "match_date": "2026-11-18T12:00:00Z",
-   "country": "World",
-   "league": "ASEAN Club Championship",
-   "home_team": "Pusamania Borneo",
-   "away_team": "Manila Digger",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1645197,
-   "match_date": "2026-11-18T12:00:00Z",
-   "country": "Albania",
-   "league": "Cup",
-   "home_team": "Besa Kavajë",
-   "away_team": "Korabi Peshkopi",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1645198,
-   "match_date": "2026-11-18T12:00:00Z",
-   "country": "Albania",
-   "league": "Cup",
-   "home_team": "Bylis",
-   "away_team": "Besëlidhja Lezhë",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1645199,
-   "match_date": "2026-11-18T12:00:00Z",
-   "country": "Albania",
-   "league": "Cup",
-   "home_team": "Flamurtari",
-   "away_team": "Butrinti Sarandë",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1645200,
-   "match_date": "2026-11-18T12:00:00Z",
-   "country": "Albania",
-   "league": "Cup",
-   "home_team": "Iliria Fushë-Krujë",
-   "away_team": "Luftëtari",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1645203,
-   "match_date": "2026-11-18T12:00:00Z",
-   "country": "Albania",
-   "league": "Cup",
-   "home_team": "Pogradeci",
-   "away_team": "FK Kukesi",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1645820,
-   "match_date": "2026-11-18T12:00:00Z",
-   "country": "Serbia",
-   "league": "Cup",
-   "home_team": "Tekstilac Odžaci",
-   "away_team": "Železničar Pančevo",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1591387,
-   "match_date": "2026-11-18T12:30:00Z",
-   "country": "Turkey",
-   "league": "2. Lig",
-   "home_team": "Aliağa FAŞ",
-   "away_team": "Sebat Gençlikspor",
-   "calibrated": true,
-   "locked": true
-  },
-  {
-   "fixture_id": 1591394,
-   "match_date": "2026-11-18T12:30:00Z",
-   "country": "Turkey",
-   "league": "2. Lig",
-   "home_team": "Şanlıurfaspor",
-   "away_team": "Erbaaspor",
-   "calibrated": true,
-   "locked": true
-  },
-  {
-   "fixture_id": 1591684,
-   "match_date": "2026-11-18T12:30:00Z",
-   "country": "Turkey",
-   "league": "2. Lig",
-   "home_team": "Fethiyespor",
-   "away_team": "Kütahyaspor",
-   "calibrated": true,
-   "locked": true
-  },
-  {
-   "fixture_id": 1591686,
-   "match_date": "2026-11-18T12:30:00Z",
-   "country": "Turkey",
-   "league": "2. Lig",
-   "home_team": "Karacabey Belediyespor",
-   "away_team": "Halide Edip Adıvar",
-   "calibrated": true,
-   "locked": true
-  },
-  {
-   "fixture_id": 1638932,
-   "match_date": "2026-11-18T12:30:00Z",
-   "country": "Bulgaria",
-   "league": "Third League - Northwest",
-   "home_team": "Sevlievo",
-   "away_team": "Akademik Svishtov",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1647531,
-   "match_date": "2026-11-18T12:30:00Z",
-   "country": "Slovenia",
-   "league": "Cup",
-   "home_team": "Tolmin",
-   "away_team": "Brinje-Grosuplje",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1619195,
-   "match_date": "2026-11-18T13:00:00Z",
-   "country": "England",
-   "league": "Professional Development League",
-   "home_team": "Peterborough United U21",
-   "away_team": "Bolton Wanderers Res.",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1635324,
-   "match_date": "2026-11-18T13:00:00Z",
-   "country": "Uganda",
-   "league": "Premier League",
-   "home_team": "Mbarara City",
-   "away_team": "Lugazi",
-   "calibrated": true,
-   "locked": true
-  },
-  {
-   "fixture_id": 1646628,
-   "match_date": "2026-11-18T13:00:00Z",
-   "country": "India",
-   "league": "I-League",
-   "home_team": "Bengaluru United",
-   "away_team": "Sreenidi Deccan",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1648175,
-   "match_date": "2026-11-18T13:30:00Z",
-   "country": "Italy",
-   "league": "Coppa Italia Serie D",
-   "home_team": "Ancona",
-   "away_team": "Ternana",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1648176,
-   "match_date": "2026-11-18T13:30:00Z",
-   "country": "Italy",
-   "league": "Coppa Italia Serie D",
-   "home_team": "Villa Valle",
-   "away_team": "Valenzana",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1648177,
-   "match_date": "2026-11-18T13:30:00Z",
-   "country": "Italy",
-   "league": "Coppa Italia Serie D",
-   "home_team": "Virtus Francavilla",
-   "away_team": "Turris",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1649064,
-   "match_date": "2026-11-18T13:30:00Z",
-   "country": "Italy",
-   "league": "Coppa Italia Serie D",
-   "home_team": "Piacenza",
-   "away_team": "Lucchese",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1650137,
-   "match_date": "2026-11-18T13:30:00Z",
-   "country": "Italy",
-   "league": "Coppa Italia Serie D",
-   "home_team": "Pro Patria",
-   "away_team": "Sanremese",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1534466,
-   "match_date": "2026-11-18T14:00:00Z",
-   "country": "Belarus",
-   "league": "1. Division",
-   "home_team": "Dinamo Minsk II",
-   "away_team": "BATE II",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1581708,
-   "match_date": "2026-11-18T14:00:00Z",
-   "country": "Poland",
-   "league": "Ekstraliga Women",
-   "home_team": "GKS Katowice W",
-   "away_team": "UKS Łódź",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1645811,
-   "match_date": "2026-11-18T15:00:00Z",
-   "country": "Serbia",
-   "league": "Cup",
-   "home_team": "Dubočica",
-   "away_team": "Radnicki NIS",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1649990,
-   "match_date": "2026-11-18T15:00:00Z",
-   "country": "Egypt",
-   "league": "Cup",
-   "home_team": "El Gouna FC",
-   "away_team": "Al Ittihad",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1615817,
-   "match_date": "2026-11-18T15:30:00Z",
-   "country": "Spain",
-   "league": "Tercera División RFEF - Group 11",
-   "home_team": "Binissalem",
-   "away_team": "Formentera",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1568556,
-   "match_date": "2026-11-18T16:00:00Z",
-   "country": "Poland",
-   "league": "III Liga - Group 3",
-   "home_team": "Barycz Sułów",
-   "away_team": "Polonia Nysa",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1615822,
-   "match_date": "2026-11-18T16:00:00Z",
-   "country": "Spain",
-   "league": "Tercera División RFEF - Group 11",
-   "home_team": "PE Sant Jordi",
-   "away_team": "Santanyí",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1647529,
-   "match_date": "2026-11-18T16:00:00Z",
-   "country": "Slovenia",
-   "league": "Cup",
-   "home_team": "Rače",
-   "away_team": "Radomlje",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1647530,
-   "match_date": "2026-11-18T16:00:00Z",
-   "country": "Slovenia",
-   "league": "Cup",
-   "home_team": "Tabor Sežana",
-   "away_team": "Fužinar",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1650482,
-   "match_date": "2026-11-18T16:00:00Z",
-   "country": "Liberia",
-   "league": "LFA First Division",
-   "home_team": "Borough",
-   "away_team": "Black Man Warrior",
-   "calibrated": true,
-   "locked": true
-  },
-  {
-   "fixture_id": 1650484,
-   "match_date": "2026-11-18T16:00:00Z",
-   "country": "Liberia",
-   "league": "LFA First Division",
-   "home_team": "LISCR",
-   "away_team": "Gardnersville",
-   "calibrated": true,
-   "locked": true
-  },
-  {
-   "fixture_id": 1650485,
-   "match_date": "2026-11-18T16:00:00Z",
-   "country": "Liberia",
-   "league": "LFA First Division",
-   "home_team": "Paynesville",
-   "away_team": "Fassell",
-   "calibrated": true,
-   "locked": true
-  },
-  {
-   "fixture_id": 1614291,
-   "match_date": "2026-11-18T17:00:00Z",
-   "country": "Spain",
-   "league": "Tercera División RFEF - Group 6",
-   "home_team": "Roda",
-   "away_team": "Torrellano",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1635325,
-   "match_date": "2026-11-18T17:00:00Z",
-   "country": "Uganda",
-   "league": "Premier League",
-   "home_team": "Vipers",
-   "away_team": "BUL",
-   "calibrated": true,
-   "locked": true
-  },
-  {
-   "fixture_id": 1647646,
-   "match_date": "2026-11-18T17:00:00Z",
-   "country": "Spain",
-   "league": "Copa de la Reina",
-   "home_team": "Levante W",
-   "away_team": "Eibar W",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1648172,
-   "match_date": "2026-11-18T17:00:00Z",
-   "country": "Italy",
-   "league": "Coppa Italia Serie D",
-   "home_team": "Igea Virtus",
-   "away_team": "Modica",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1645824,
-   "match_date": "2026-11-18T17:30:00Z",
-   "country": "Serbia",
-   "league": "Cup",
-   "home_team": "Zemun",
-   "away_team": "Radnicki 1923",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1648171,
-   "match_date": "2026-11-18T17:30:00Z",
-   "country": "Italy",
-   "league": "Coppa Italia Serie D",
-   "home_team": "Clodiense",
-   "away_team": "Cjarlins Muzane",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1638306,
-   "match_date": "2026-11-18T17:45:00Z",
-   "country": "World",
-   "league": "UEFA Champions League Women",
-   "home_team": "Häcken",
-   "away_team": "Manchester City W",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1638333,
-   "match_date": "2026-11-18T17:45:00Z",
-   "country": "World",
-   "league": "UEFA Champions League Women",
-   "home_team": "Real Madrid W",
-   "away_team": "Inter Milano W",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1586638,
-   "match_date": "2026-11-18T18:00:00Z",
-   "country": "Germany",
-   "league": "Regionalliga - Nord",
-   "home_team": "SSV Jeddeloh",
-   "away_team": "Phönix Lübeck",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1598953,
-   "match_date": "2026-11-18T18:00:00Z",
-   "country": "Germany",
-   "league": "Oberliga - Rheinland-Pfalz / Saar",
-   "home_team": "FV Engers 07",
-   "away_team": "TuS Koblenz",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1612183,
-   "match_date": "2026-11-18T18:00:00Z",
-   "country": "Argentina",
-   "league": "Reserve League",
-   "home_team": "Belgrano Córdoba Res.",
-   "away_team": "Independiente Res.",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1612184,
-   "match_date": "2026-11-18T18:00:00Z",
-   "country": "Argentina",
-   "league": "Reserve League",
-   "home_team": "Central Córdoba SdE Res.",
-   "away_team": "Estudiantes La Plata Res",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1612186,
-   "match_date": "2026-11-18T18:00:00Z",
-   "country": "Argentina",
-   "league": "Reserve League",
-   "home_team": "Deportivo Riestra Res.",
-   "away_team": "Atl. Rafaela 2",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1612190,
-   "match_date": "2026-11-18T18:00:00Z",
-   "country": "Argentina",
-   "league": "Reserve League",
-   "home_team": "Lanús Res.",
-   "away_team": "Boca Juniors Res.",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1612191,
-   "match_date": "2026-11-18T18:00:00Z",
-   "country": "Argentina",
-   "league": "Reserve League",
-   "home_team": "Newell's Old Boys Res.",
-   "away_team": "Ferro 2",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1612198,
-   "match_date": "2026-11-18T18:00:00Z",
-   "country": "Argentina",
-   "league": "Reserve League",
-   "home_team": "Vélez Sársfield Res.",
-   "away_team": "Rosario Central Res.",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1614294,
-   "match_date": "2026-11-18T18:00:00Z",
-   "country": "Spain",
-   "league": "Tercera División RFEF - Group 6",
-   "home_team": "Vall de Uxó",
-   "away_team": "Torrent",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1644369,
-   "match_date": "2026-11-18T18:00:00Z",
-   "country": "Spain",
-   "league": "Copa del Rey",
-   "home_team": "Portugalete",
-   "away_team": "Real Unión",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1644384,
-   "match_date": "2026-11-18T18:00:00Z",
-   "country": "Spain",
-   "league": "Copa del Rey",
-   "home_team": "Utebo",
-   "away_team": "Sabadell",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1614292,
-   "match_date": "2026-11-18T18:30:00Z",
-   "country": "Spain",
-   "league": "Tercera División RFEF - Group 6",
-   "home_team": "Saguntino",
-   "away_team": "Jove Español",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1614293,
-   "match_date": "2026-11-18T18:30:00Z",
-   "country": "Spain",
-   "league": "Tercera División RFEF - Group 6",
-   "home_team": "Soneja",
-   "away_team": "Atzeneta",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1581185,
-   "match_date": "2026-11-18T19:00:00Z",
-   "country": "Germany",
-   "league": "Oberliga - Hessen",
-   "home_team": "Darmstadt 98 II",
-   "away_team": "Eddersheim",
-   "xg_home": 2.21,
-   "xg_away": 1.45,
-   "prob_home": 0.545,
-   "prob_draw": 0.197,
-   "prob_away": 0.258,
-   "prob_1x": 0.742,
-   "prob_x2": 0.455,
-   "prob_12": 0.803,
-   "prob_over_1_5": 0.877,
-   "prob_over_2_5": 0.708,
-   "prob_over_3_5": 0.507,
-   "prob_btts": 0.634,
-   "prob_ht_over_0_5": 0.808,
-   "prob_ht_over_1_5": 0.499,
-   "prob_ht_btts": 0.301,
-   "prob_ht_btts_calibrated": false,
-   "ht_prob_home": 0.424,
-   "ht_prob_draw": 0.345,
-   "ht_prob_away": 0.231,
-   "ht_top_score_h": 0,
-   "ht_top_score_a": 0,
-   "ht_top_score_prob": 0.198,
-   "xg_home_ht": 1.0,
-   "xg_away_ht": 0.65,
-   "prob_over_2_5_raw": 0.702,
-   "prob_btts_raw": 0.675,
-   "prob_home_raw": 0.545,
-   "prob_draw_raw": 0.205,
-   "prob_away_raw": 0.251,
-   "top_score_h": 2,
-   "top_score_a": 1,
-   "top_score_prob": 0.089,
-   "calibrated": true,
-   "free": true
-  },
-  {
-   "fixture_id": 1612679,
-   "match_date": "2026-11-18T19:00:00Z",
-   "country": "England",
-   "league": "WSL Cup",
-   "home_team": "London City Lionesses",
-   "away_team": "Brighton W",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1612680,
-   "match_date": "2026-11-18T19:00:00Z",
-   "country": "England",
-   "league": "WSL Cup",
-   "home_team": "Manchester United W",
-   "away_team": "Everton W",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1612681,
-   "match_date": "2026-11-18T19:00:00Z",
-   "country": "England",
-   "league": "WSL Cup",
-   "home_team": "Nottingham Forest W",
-   "away_team": "Liverpool W",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1612682,
-   "match_date": "2026-11-18T19:00:00Z",
-   "country": "England",
-   "league": "WSL Cup",
-   "home_team": "Tottenham Hotspur W",
-   "away_team": "Leicester City WFC",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1612683,
-   "match_date": "2026-11-18T19:00:00Z",
-   "country": "England",
-   "league": "WSL Cup",
-   "home_team": "West Ham W",
-   "away_team": "Wolverhampton W",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1614288,
-   "match_date": "2026-11-18T19:00:00Z",
-   "country": "Spain",
-   "league": "Tercera División RFEF - Group 6",
-   "home_team": "Buñol",
-   "away_team": "Hércules II",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1627125,
-   "match_date": "2026-11-18T19:00:00Z",
-   "country": "England",
-   "league": "Premier League Cup",
-   "home_team": "Nottingham Forest U21",
-   "away_team": "Newcastle United U21",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1644334,
-   "match_date": "2026-11-18T19:00:00Z",
-   "country": "Spain",
-   "league": "Copa del Rey",
-   "home_team": "Alcoyano",
-   "away_team": "Mallorca",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1644346,
-   "match_date": "2026-11-18T19:00:00Z",
-   "country": "Spain",
-   "league": "Copa del Rey",
-   "home_team": "Badajoz",
-   "away_team": "Tenerife",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1644353,
-   "match_date": "2026-11-18T19:30:00Z",
-   "country": "Spain",
-   "league": "Copa del Rey",
-   "home_team": "Deportiva Minera",
-   "away_team": "FC Cartagena",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1644373,
-   "match_date": "2026-11-18T19:30:00Z",
-   "country": "Spain",
-   "league": "Copa del Rey",
-   "home_team": "Reddis",
-   "away_team": "Barakaldo",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1649151,
-   "match_date": "2026-11-18T19:30:00Z",
-   "country": "Brazil",
-   "league": "Copa do Brasil U20",
-   "home_team": "Operário PR U20",
-   "away_team": "Palmeiras U20",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1650156,
-   "match_date": "2026-11-18T19:30:00Z",
-   "country": "Uruguay",
-   "league": "Segunda División",
-   "home_team": "Atenas",
-   "away_team": "Fenix",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1564910,
-   "match_date": "2026-11-18T19:45:00Z",
-   "country": "Northern-Ireland",
-   "league": "Championship",
-   "home_team": "Newington Youth",
-   "away_team": "H&W Welders",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1578779,
-   "match_date": "2026-11-18T19:45:00Z",
-   "country": "Scotland",
-   "league": "Football League - Lowland League",
-   "home_team": "Lochee United",
-   "away_team": "Bo'ness United",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1578789,
-   "match_date": "2026-11-18T19:45:00Z",
-   "country": "Scotland",
-   "league": "Football League - Lowland League",
-   "home_team": "Auchinleck Talbot",
-   "away_team": "Troon FC",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1578790,
-   "match_date": "2026-11-18T19:45:00Z",
-   "country": "Scotland",
-   "league": "Football League - Lowland League",
-   "home_team": "Beith",
-   "away_team": " Johnstone Burgh",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1578791,
-   "match_date": "2026-11-18T19:45:00Z",
-   "country": "Scotland",
-   "league": "Football League - Lowland League",
-   "home_team": "Dunipace",
-   "away_team": "Linlithgow Rose",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1578792,
-   "match_date": "2026-11-18T19:45:00Z",
-   "country": "Scotland",
-   "league": "Football League - Lowland League",
-   "home_team": "East Stirlingshire",
-   "away_team": "Cowdenbeath",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1578793,
-   "match_date": "2026-11-18T19:45:00Z",
-   "country": "Scotland",
-   "league": "Football League - Lowland League",
-   "home_team": "Renfrew",
-   "away_team": "Largs Thistle",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1597403,
-   "match_date": "2026-11-18T19:45:00Z",
-   "country": "England",
-   "league": "Non League Premier - Southern South",
-   "home_team": "Gosport Borough",
-   "away_team": "Chertsey Town",
-   "xg_home": 1.6,
-   "xg_away": 1.71,
-   "prob_home": 0.367,
-   "prob_draw": 0.225,
-   "prob_away": 0.408,
-   "prob_1x": 0.592,
-   "prob_x2": 0.633,
-   "prob_12": 0.775,
-   "prob_over_1_5": 0.846,
-   "prob_over_2_5": 0.655,
-   "prob_over_3_5": 0.442,
-   "prob_btts": 0.618,
-   "prob_ht_over_0_5": 0.78,
-   "prob_ht_over_1_5": 0.452,
-   "prob_ht_btts": 0.276,
-   "prob_ht_btts_calibrated": false,
-   "ht_prob_home": 0.286,
-   "ht_prob_draw": 0.373,
-   "ht_prob_away": 0.34,
-   "ht_top_score_h": 0,
-   "ht_top_score_a": 0,
-   "ht_top_score_prob": 0.23,
-   "xg_home_ht": 0.7,
-   "xg_away_ht": 0.79,
-   "prob_over_2_5_raw": 0.64,
-   "prob_btts_raw": 0.65,
-   "prob_home_raw": 0.361,
-   "prob_draw_raw": 0.232,
-   "prob_away_raw": 0.407,
-   "top_score_h": 1,
-   "top_score_a": 1,
-   "top_score_prob": 0.101,
-   "calibrated": true,
-   "free": true
-  },
-  {
-   "fixture_id": 1597419,
-   "match_date": "2026-11-18T19:45:00Z",
-   "country": "England",
-   "league": "Non League Premier - Southern South",
-   "home_team": "Frome Town",
-   "away_team": "Gloucester City",
-   "calibrated": true,
-   "locked": true
-  },
-  {
-   "fixture_id": 1549554,
-   "match_date": "2026-11-18T20:00:00Z",
-   "country": "Peru",
-   "league": "Primera División",
-   "home_team": "Alianza Atletico",
-   "away_team": "FBC Melgar",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1638301,
-   "match_date": "2026-11-18T20:00:00Z",
-   "country": "World",
-   "league": "UEFA Champions League Women",
-   "home_team": "Chelsea W",
-   "away_team": "Paris Saint Germain W",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1638312,
-   "match_date": "2026-11-18T20:00:00Z",
-   "country": "World",
-   "league": "UEFA Champions League Women",
-   "home_team": "Juventus W",
-   "away_team": "OH Leuven W",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1647622,
-   "match_date": "2026-11-18T20:30:00Z",
-   "country": "Venezuela",
-   "league": "Copa Venezuela",
-   "home_team": "Carabobo FC",
-   "away_team": "Zamora FC",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1631779,
-   "match_date": "2026-11-18T22:00:00Z",
-   "country": "Mexico",
-   "league": "Liga Premier Serie A",
-   "home_team": "Atlético Saltillo",
-   "away_team": "Cañoneros Marina",
-   "calibrated": true,
-   "locked": true
-  },
-  {
-   "fixture_id": 1640402,
-   "match_date": "2026-11-18T22:00:00Z",
-   "country": "Brazil",
-   "league": "Copa Fares Lopes",
-   "home_team": "Uniclinic Atletico Clube",
-   "away_team": "Ceara B",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1640403,
-   "match_date": "2026-11-18T22:00:00Z",
-   "country": "Brazil",
-   "league": "Copa Fares Lopes",
-   "home_team": "Quixada",
-   "away_team": "Guarani De Juazeiro",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1647623,
-   "match_date": "2026-11-18T22:00:00Z",
-   "country": "Venezuela",
-   "league": "Copa Venezuela",
-   "home_team": "Deportivo Tachira FC",
-   "away_team": "Puerto Cabello",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1492451,
-   "match_date": "2026-11-18T22:30:00Z",
-   "country": "Brazil",
-   "league": "Serie A",
-   "home_team": "Coritiba",
-   "away_team": "Santos",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1650157,
-   "match_date": "2026-11-18T22:30:00Z",
-   "country": "Uruguay",
-   "league": "Segunda División",
-   "home_team": "Colón",
-   "away_team": "Oriental",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1492456,
-   "match_date": "2026-11-18T23:00:00Z",
-   "country": "Brazil",
-   "league": "Serie A",
-   "home_team": "remo",
-   "away_team": "Chapecoense-sc",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1645273,
-   "match_date": "2026-11-18T23:00:00Z",
-   "country": "Suriname",
-   "league": "Eerste Divisie",
-   "home_team": "Inter Moengotapoe",
-   "away_team": "FC Inter Wanica",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1647625,
-   "match_date": "2026-11-18T23:00:00Z",
-   "country": "Venezuela",
-   "league": "Copa Venezuela",
-   "home_team": "UCV",
-   "away_team": "Caracas FC",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1492452,
-   "match_date": "2026-11-18T23:30:00Z",
-   "country": "Brazil",
-   "league": "Serie A",
-   "home_team": "Cruzeiro",
-   "away_team": "Palmeiras",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1492453,
-   "match_date": "2026-11-18T23:30:00Z",
-   "country": "Brazil",
-   "league": "Serie A",
-   "home_team": "Flamengo",
-   "away_team": "Atletico Paranaense",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1650230,
-   "match_date": "2026-11-18T23:30:00Z",
-   "country": "Bolivia",
-   "league": "Copa de la División Profesional",
-   "home_team": "Always Ready",
-   "away_team": "Real Potosí",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1492450,
-   "match_date": "2026-11-19T00:30:00Z",
-   "country": "Brazil",
-   "league": "Serie A",
-   "home_team": "Corinthians",
-   "away_team": "Botafogo",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1492454,
-   "match_date": "2026-11-19T00:30:00Z",
-   "country": "Brazil",
-   "league": "Serie A",
-   "home_team": "Gremio",
-   "away_team": "Bahia",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1650229,
-   "match_date": "2026-11-19T01:30:00Z",
-   "country": "Panama",
-   "league": "Liga Panameña de Fútbol",
-   "home_team": "Independiente de La Chorrera",
-   "away_team": "Tauro FC",
-   "calibrated": false,
-   "locked": true
-  },
   {
    "fixture_id": 1640368,
    "match_date": "2026-11-19T08:30:00Z",
@@ -1469,8 +49,40 @@
    "league": "Friendlies",
    "home_team": "Switzerland U17",
    "away_team": "Czech Republic U17",
+   "xg_home": 1.92,
+   "xg_away": 1.23,
+   "prob_home": 0.526,
+   "prob_draw": 0.219,
+   "prob_away": 0.255,
+   "prob_1x": 0.745,
+   "prob_x2": 0.474,
+   "prob_12": 0.781,
+   "prob_over_1_5": 0.822,
+   "prob_over_2_5": 0.621,
+   "prob_over_3_5": 0.409,
+   "prob_btts": 0.579,
+   "prob_ht_over_0_5": 0.769,
+   "prob_ht_over_1_5": 0.438,
+   "prob_ht_btts": 0.253,
+   "prob_ht_btts_calibrated": false,
+   "ht_prob_home": 0.391,
+   "ht_prob_draw": 0.375,
+   "ht_prob_away": 0.234,
+   "ht_top_score_h": 0,
+   "ht_top_score_a": 0,
+   "ht_top_score_prob": 0.242,
+   "xg_home_ht": 0.86,
+   "xg_away_ht": 0.59,
+   "prob_over_2_5_raw": 0.6,
+   "prob_btts_raw": 0.59,
+   "prob_home_raw": 0.526,
+   "prob_draw_raw": 0.225,
+   "prob_away_raw": 0.249,
+   "top_score_h": 1,
+   "top_score_a": 1,
+   "top_score_prob": 0.102,
    "calibrated": true,
-   "locked": true
+   "free": true
   },
   {
    "fixture_id": 1630466,
@@ -1509,8 +121,40 @@
    "league": "1st League - RS",
    "home_team": "Velež Nevesinje",
    "away_team": "Rudar Prijedor",
+   "xg_home": 1.63,
+   "xg_away": 1.51,
+   "prob_home": 0.41,
+   "prob_draw": 0.232,
+   "prob_away": 0.357,
+   "prob_1x": 0.643,
+   "prob_x2": 0.59,
+   "prob_12": 0.768,
+   "prob_over_1_5": 0.826,
+   "prob_over_2_5": 0.625,
+   "prob_over_3_5": 0.409,
+   "prob_btts": 0.599,
+   "prob_ht_over_0_5": 0.775,
+   "prob_ht_over_1_5": 0.446,
+   "prob_ht_btts": 0.27,
+   "prob_ht_btts_calibrated": false,
+   "ht_prob_home": 0.332,
+   "ht_prob_draw": 0.376,
+   "ht_prob_away": 0.292,
+   "ht_top_score_h": 0,
+   "ht_top_score_a": 0,
+   "ht_top_score_prob": 0.235,
+   "xg_home_ht": 0.77,
+   "xg_away_ht": 0.7,
+   "prob_over_2_5_raw": 0.604,
+   "prob_btts_raw": 0.62,
+   "prob_home_raw": 0.407,
+   "prob_draw_raw": 0.239,
+   "prob_away_raw": 0.355,
+   "top_score_h": 1,
+   "top_score_a": 1,
+   "top_score_prob": 0.107,
    "calibrated": true,
-   "locked": true
+   "free": true
   },
   {
    "fixture_id": 1630465,
@@ -1529,6 +173,16 @@
    "league": "ASEAN Club Championship",
    "home_team": "Persib Bandung",
    "away_team": "Shan United",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1645698,
+   "match_date": "2026-11-19T12:00:00Z",
+   "country": "Syria",
+   "league": "Premier League",
+   "home_team": "Shorta",
+   "away_team": "Tishreen",
    "calibrated": false,
    "locked": true
   },
@@ -1609,8 +263,40 @@
    "league": "Premier League",
    "home_team": "Entebbe UPPC",
    "away_team": "Kataka",
+   "xg_home": 2.1,
+   "xg_away": 0.62,
+   "prob_home": 0.712,
+   "prob_draw": 0.183,
+   "prob_away": 0.105,
+   "prob_1x": 0.895,
+   "prob_x2": 0.288,
+   "prob_12": 0.817,
+   "prob_over_1_5": 0.765,
+   "prob_over_2_5": 0.542,
+   "prob_over_3_5": 0.324,
+   "prob_btts": 0.457,
+   "prob_ht_over_0_5": 0.733,
+   "prob_ht_over_1_5": 0.385,
+   "prob_ht_btts": 0.153,
+   "prob_ht_btts_calibrated": false,
+   "ht_prob_home": 0.534,
+   "ht_prob_draw": 0.366,
+   "ht_prob_away": 0.1,
+   "ht_top_score_h": 0,
+   "ht_top_score_a": 0,
+   "ht_top_score_prob": 0.283,
+   "xg_home_ht": 1.01,
+   "xg_away_ht": 0.28,
+   "prob_over_2_5_raw": 0.505,
+   "prob_btts_raw": 0.398,
+   "prob_home_raw": 0.71,
+   "prob_draw_raw": 0.191,
+   "prob_away_raw": 0.099,
+   "top_score_h": 2,
+   "top_score_a": 0,
+   "top_score_prob": 0.142,
    "calibrated": true,
-   "locked": true
+   "free": true
   },
   {
    "fixture_id": 1635328,
@@ -1620,16 +306,6 @@
    "home_team": "Maroons",
    "away_team": "NEC",
    "calibrated": true,
-   "locked": true
-  },
-  {
-   "fixture_id": 1645698,
-   "match_date": "2026-11-19T13:00:00Z",
-   "country": "Syria",
-   "league": "Premier League",
-   "home_team": "Shorta",
-   "away_team": "Tishreen",
-   "calibrated": false,
    "locked": true
   },
   {
@@ -1677,8 +353,8 @@
    "match_date": "2026-11-19T13:45:00Z",
    "country": "Iraq",
    "league": "Iraqi League",
-   "home_team": "Al Kahrabaa",
-   "away_team": "Diyala",
+   "home_team": "Diyala",
+   "away_team": "Al Kahrabaa",
    "calibrated": false,
    "locked": true
   },
@@ -1829,8 +505,40 @@
    "league": "LFA First Division",
    "home_team": "Downtown",
    "away_team": "Shaita",
+   "xg_home": 1.86,
+   "xg_away": 1.39,
+   "prob_home": 0.484,
+   "prob_draw": 0.222,
+   "prob_away": 0.294,
+   "prob_1x": 0.706,
+   "prob_x2": 0.516,
+   "prob_12": 0.778,
+   "prob_over_1_5": 0.837,
+   "prob_over_2_5": 0.642,
+   "prob_over_3_5": 0.428,
+   "prob_btts": 0.602,
+   "prob_ht_over_0_5": 0.778,
+   "prob_ht_over_1_5": 0.449,
+   "prob_ht_btts": 0.266,
+   "prob_ht_btts_calibrated": false,
+   "ht_prob_home": 0.387,
+   "ht_prob_draw": 0.37,
+   "ht_prob_away": 0.243,
+   "ht_top_score_h": 0,
+   "ht_top_score_a": 0,
+   "ht_top_score_prob": 0.232,
+   "xg_home_ht": 0.86,
+   "xg_away_ht": 0.62,
+   "prob_over_2_5_raw": 0.624,
+   "prob_btts_raw": 0.626,
+   "prob_home_raw": 0.483,
+   "prob_draw_raw": 0.228,
+   "prob_away_raw": 0.289,
+   "top_score_h": 1,
+   "top_score_a": 1,
+   "top_score_prob": 0.101,
    "calibrated": true,
-   "locked": true
+   "free": true
   },
   {
    "fixture_id": 1650489,
@@ -1879,8 +587,40 @@
    "league": "1. Division",
    "home_team": "FC Fredericia",
    "away_team": "Hillerød",
+   "xg_home": 1.7,
+   "xg_away": 1.08,
+   "prob_home": 0.516,
+   "prob_draw": 0.239,
+   "prob_away": 0.245,
+   "prob_1x": 0.755,
+   "prob_x2": 0.484,
+   "prob_12": 0.761,
+   "prob_over_1_5": 0.779,
+   "prob_over_2_5": 0.555,
+   "prob_over_3_5": 0.335,
+   "prob_btts": 0.543,
+   "prob_ht_over_0_5": 0.728,
+   "prob_ht_over_1_5": 0.377,
+   "prob_ht_btts": 0.209,
+   "prob_ht_btts_calibrated": false,
+   "ht_prob_home": 0.378,
+   "ht_prob_draw": 0.406,
+   "ht_prob_away": 0.215,
+   "ht_top_score_h": 0,
+   "ht_top_score_a": 0,
+   "ht_top_score_prob": 0.288,
+   "xg_home_ht": 0.76,
+   "xg_away_ht": 0.5,
+   "prob_over_2_5_raw": 0.521,
+   "prob_btts_raw": 0.533,
+   "prob_home_raw": 0.517,
+   "prob_draw_raw": 0.244,
+   "prob_away_raw": 0.239,
+   "top_score_h": 1,
+   "top_score_a": 1,
+   "top_score_prob": 0.114,
    "calibrated": true,
-   "locked": true
+   "free": true
   },
   {
    "fixture_id": 1612181,
@@ -2083,6 +823,26 @@
    "locked": true
   },
   {
+   "fixture_id": 1649447,
+   "match_date": "2026-11-19T22:30:00Z",
+   "country": "Colombia",
+   "league": "Primera B",
+   "home_team": "Ind. Yumbo",
+   "away_team": "Envigado",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1649448,
+   "match_date": "2026-11-19T22:30:00Z",
+   "country": "Colombia",
+   "league": "Primera B",
+   "home_team": "Union Magdalena",
+   "away_team": "Popayan",
+   "calibrated": false,
+   "locked": true
+  },
+  {
    "fixture_id": 1492457,
    "match_date": "2026-11-20T00:30:00Z",
    "country": "Brazil",
@@ -2100,6 +860,26 @@
    "home_team": "Orlando City SC",
    "away_team": "FC Cincinnati",
    "calibrated": true,
+   "locked": true
+  },
+  {
+   "fixture_id": 1647453,
+   "match_date": "2026-11-20T00:45:00Z",
+   "country": "Colombia",
+   "league": "Primera B",
+   "home_team": "Real Cartagena",
+   "away_team": "Tigres FC",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1647454,
+   "match_date": "2026-11-20T00:45:00Z",
+   "country": "Colombia",
+   "league": "Primera B",
+   "home_team": "Real Soacha",
+   "away_team": "Quindio",
+   "calibrated": false,
    "locked": true
   },
   {
@@ -2199,6 +979,36 @@
    "league": "Super League",
    "home_team": "Negeri Sembilan",
    "away_team": "Kuching FA",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1644141,
+   "match_date": "2026-11-20T09:00:00Z",
+   "country": "Turkmenistan",
+   "league": "Ýokary Liga",
+   "home_team": "Köpetdag Aşgabat",
+   "away_team": "Merw",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1644142,
+   "match_date": "2026-11-20T09:00:00Z",
+   "country": "Turkmenistan",
+   "league": "Ýokary Liga",
+   "home_team": "Nebitci",
+   "away_team": "Ahal",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1644143,
+   "match_date": "2026-11-20T09:00:00Z",
+   "country": "Turkmenistan",
+   "league": "Ýokary Liga",
+   "home_team": "Şagadam",
+   "away_team": "Altyn Asyr",
    "calibrated": false,
    "locked": true
   },
@@ -2413,6 +1223,16 @@
    "locked": true
   },
   {
+   "fixture_id": 1628043,
+   "match_date": "2026-11-20T11:15:00Z",
+   "country": "Iraq",
+   "league": "Iraqi League",
+   "home_team": "Al Zawra'a",
+   "away_team": "Al Talaba",
+   "calibrated": false,
+   "locked": true
+  },
+  {
    "fixture_id": 1638044,
    "match_date": "2026-11-20T11:20:00Z",
    "country": "World",
@@ -2539,6 +1359,26 @@
    "league": "First League",
    "home_team": "Shkëndija Haraçinë",
    "away_team": "Bashkimi Kumanovo",
+   "calibrated": true,
+   "locked": true
+  },
+  {
+   "fixture_id": 1559425,
+   "match_date": "2026-11-20T12:00:00Z",
+   "country": "Montenegro",
+   "league": "Second League",
+   "home_team": "Kom",
+   "away_team": "Zeta",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1593966,
+   "match_date": "2026-11-20T12:00:00Z",
+   "country": "Hungary",
+   "league": "NB III - Northeast",
+   "home_team": "Tiszafuredi VSE",
+   "away_team": "Eger",
    "calibrated": true,
    "locked": true
   },
@@ -2779,6 +1619,26 @@
    "league": "AFC U17 Asian Cup",
    "home_team": "Thailand U17",
    "away_team": "Iraq U17",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1645701,
+   "match_date": "2026-11-20T12:00:00Z",
+   "country": "Syria",
+   "league": "Premier League",
+   "home_team": "Foutoua",
+   "away_team": "Al Karama",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1645702,
+   "match_date": "2026-11-20T12:00:00Z",
+   "country": "Syria",
+   "league": "Premier League",
+   "home_team": "Wathba",
+   "away_team": "Horriya",
    "calibrated": false,
    "locked": true
   },
@@ -3093,46 +1953,6 @@
    "locked": true
   },
   {
-   "fixture_id": 1645699,
-   "match_date": "2026-11-20T13:00:00Z",
-   "country": "Syria",
-   "league": "Premier League",
-   "home_team": "Al Ittihad",
-   "away_team": "Jaish",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1645701,
-   "match_date": "2026-11-20T13:00:00Z",
-   "country": "Syria",
-   "league": "Premier League",
-   "home_team": "Foutoua",
-   "away_team": "Al Karama",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1645702,
-   "match_date": "2026-11-20T13:00:00Z",
-   "country": "Syria",
-   "league": "Premier League",
-   "home_team": "Wathba",
-   "away_team": "Horriya",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1645703,
-   "match_date": "2026-11-20T13:00:00Z",
-   "country": "Syria",
-   "league": "Premier League",
-   "home_team": "Hottin",
-   "away_team": "Al Wahda",
-   "calibrated": false,
-   "locked": true
-  },
-  {
    "fixture_id": 1646632,
    "match_date": "2026-11-20T13:00:00Z",
    "country": "India",
@@ -3253,36 +2073,6 @@
    "locked": true
   },
   {
-   "fixture_id": 1644141,
-   "match_date": "2026-11-20T14:00:00Z",
-   "country": "Turkmenistan",
-   "league": "Ýokary Liga",
-   "home_team": "Köpetdag Aşgabat",
-   "away_team": "Merw",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1644142,
-   "match_date": "2026-11-20T14:00:00Z",
-   "country": "Turkmenistan",
-   "league": "Ýokary Liga",
-   "home_team": "Nebitci",
-   "away_team": "Ahal",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1644143,
-   "match_date": "2026-11-20T14:00:00Z",
-   "country": "Turkmenistan",
-   "league": "Ýokary Liga",
-   "home_team": "Şagadam",
-   "away_team": "Altyn Asyr",
-   "calibrated": false,
-   "locked": true
-  },
-  {
    "fixture_id": 1650522,
    "match_date": "2026-11-20T14:20:00Z",
    "country": "Kuwait",
@@ -3339,16 +2129,6 @@
    "league": "Liga III - Serie 6",
    "home_team": "CSM Targu Jiu",
    "away_team": "Păușești",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1649706,
-   "match_date": "2026-11-20T15:00:00Z",
-   "country": "Kosovo",
-   "league": "Superliga",
-   "home_team": "Prishtina",
-   "away_team": "Drenica Skënderaj",
    "calibrated": false,
    "locked": true
   },
@@ -3420,16 +2200,6 @@
    "home_team": "Potkozarje",
    "away_team": "Famos Vojkovići",
    "calibrated": true,
-   "locked": true
-  },
-  {
-   "fixture_id": 1628043,
-   "match_date": "2026-11-20T15:30:00Z",
-   "country": "Iraq",
-   "league": "Iraqi League",
-   "home_team": "Al Zawra'a",
-   "away_team": "Al Talaba",
-   "calibrated": false,
    "locked": true
   },
   {
@@ -3529,6 +2299,36 @@
    "league": "AFC U17 Asian Cup",
    "home_team": "Oman U17",
    "away_team": "Kuwait U17",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1645699,
+   "match_date": "2026-11-20T16:00:00Z",
+   "country": "Syria",
+   "league": "Premier League",
+   "home_team": "Al Ittihad",
+   "away_team": "Jaish",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1645703,
+   "match_date": "2026-11-20T16:00:00Z",
+   "country": "Syria",
+   "league": "Premier League",
+   "home_team": "Hottin",
+   "away_team": "Al Wahda",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1649706,
+   "match_date": "2026-11-20T16:00:00Z",
+   "country": "Kosovo",
+   "league": "Superliga",
+   "home_team": "Prishtina",
+   "away_team": "Drenica Skënderaj",
    "calibrated": false,
    "locked": true
   },
@@ -3693,16 +2493,6 @@
    "locked": true
   },
   {
-   "fixture_id": 1603091,
-   "match_date": "2026-11-20T17:00:00Z",
-   "country": "Saudi-Arabia",
-   "league": "Pro League",
-   "home_team": "Al-Hilal Saudi FC",
-   "away_team": "Al Diriyah",
-   "calibrated": true,
-   "locked": true
-  },
-  {
    "fixture_id": 1603092,
    "match_date": "2026-11-20T17:00:00Z",
    "country": "Saudi-Arabia",
@@ -3729,26 +2519,6 @@
    "league": "Pro League",
    "home_team": "Al Riyadh",
    "away_team": "Al-Hazm",
-   "calibrated": true,
-   "locked": true
-  },
-  {
-   "fixture_id": 1603095,
-   "match_date": "2026-11-20T17:00:00Z",
-   "country": "Saudi-Arabia",
-   "league": "Pro League",
-   "home_team": "Al Shabab",
-   "away_team": "Al-Ettifaq",
-   "calibrated": true,
-   "locked": true
-  },
-  {
-   "fixture_id": 1603096,
-   "match_date": "2026-11-20T17:00:00Z",
-   "country": "Saudi-Arabia",
-   "league": "Pro League",
-   "home_team": "Al Taawon",
-   "away_team": "Abha",
    "calibrated": true,
    "locked": true
   },
@@ -4333,16 +3103,6 @@
    "locked": true
   },
   {
-   "fixture_id": 1552533,
-   "match_date": "2026-11-20T19:00:00Z",
-   "country": "France",
-   "league": "Ligue 2",
-   "home_team": "Laval",
-   "away_team": "Montpellier",
-   "calibrated": true,
-   "locked": true
-  },
-  {
    "fixture_id": 1552534,
    "match_date": "2026-11-20T19:00:00Z",
    "country": "France",
@@ -4379,16 +3139,6 @@
    "league": "Ligue 2",
    "home_team": "RED Star FC 93",
    "away_team": "PAU",
-   "calibrated": true,
-   "locked": true
-  },
-  {
-   "fixture_id": 1552538,
-   "match_date": "2026-11-20T19:00:00Z",
-   "country": "France",
-   "league": "Ligue 2",
-   "home_team": "Reims",
-   "away_team": "Saint Etienne",
    "calibrated": true,
    "locked": true
   },
@@ -5203,22 +3953,22 @@
    "locked": true
   },
   {
-   "fixture_id": 1551038,
-   "match_date": "2026-11-21T03:00:00Z",
-   "country": "Mexico",
-   "league": "Liga MX",
-   "home_team": "Club Tijuana",
-   "away_team": "Atlante FC",
-   "calibrated": true,
-   "locked": true
-  },
-  {
    "fixture_id": 1551040,
    "match_date": "2026-11-21T03:00:00Z",
    "country": "Mexico",
    "league": "Liga MX",
    "home_team": "FC Juarez",
    "away_team": "Atlas",
+   "calibrated": true,
+   "locked": true
+  },
+  {
+   "fixture_id": 1551038,
+   "match_date": "2026-11-21T03:10:00Z",
+   "country": "Mexico",
+   "league": "Liga MX",
+   "home_team": "Club Tijuana",
+   "away_team": "Atlante FC",
    "calibrated": true,
    "locked": true
   },
@@ -5403,6 +4153,16 @@
    "locked": true
   },
   {
+   "fixture_id": 1577589,
+   "match_date": "2026-11-21T05:00:00Z",
+   "country": "Russia",
+   "league": "First League",
+   "home_team": "Ska-khabarovsk",
+   "away_team": "Rotor Volgograd",
+   "calibrated": false,
+   "locked": true
+  },
+  {
    "fixture_id": 1606766,
    "match_date": "2026-11-21T05:00:00Z",
    "country": "Japan",
@@ -5543,6 +4303,16 @@
    "locked": true
   },
   {
+   "fixture_id": 1560990,
+   "match_date": "2026-11-21T06:00:00Z",
+   "country": "Japan",
+   "league": "WE League",
+   "home_team": "Elfen Saitama W",
+   "away_team": "JEF United W",
+   "calibrated": false,
+   "locked": true
+  },
+  {
    "fixture_id": 1593706,
    "match_date": "2026-11-21T06:00:00Z",
    "country": "Australia",
@@ -5559,6 +4329,16 @@
    "league": "A-League Women",
    "home_team": "Sydney FC W",
    "away_team": "Canberra United W",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1577593,
+   "match_date": "2026-11-21T06:30:00Z",
+   "country": "Russia",
+   "league": "First League",
+   "home_team": "Enisey",
+   "away_team": "Volga Ulyanovsk",
    "calibrated": false,
    "locked": true
   },
@@ -5639,16 +4419,6 @@
    "league": "Diski Challenge",
    "home_team": "Chippa United U23",
    "away_team": "Richards Bay U23",
-   "calibrated": true,
-   "locked": true
-  },
-  {
-   "fixture_id": 1640884,
-   "match_date": "2026-11-21T08:00:00Z",
-   "country": "South-Africa",
-   "league": "Diski Challenge",
-   "home_team": "Orlando Pirates U23",
-   "away_team": "Maritzburg United U23",
    "calibrated": true,
    "locked": true
   },
@@ -5853,16 +4623,6 @@
    "locked": true
   },
   {
-   "fixture_id": 1560990,
-   "match_date": "2026-11-21T10:00:00Z",
-   "country": "Japan",
-   "league": "WE League",
-   "home_team": "Elfen Saitama W",
-   "away_team": "JEF United W",
-   "calibrated": false,
-   "locked": true
-  },
-  {
    "fixture_id": 1561448,
    "match_date": "2026-11-21T10:00:00Z",
    "country": "Russia",
@@ -6023,6 +4783,16 @@
    "locked": true
   },
   {
+   "fixture_id": 1623675,
+   "match_date": "2026-11-21T10:00:00Z",
+   "country": "Italy",
+   "league": "Campionato Primavera - 2",
+   "home_team": "Udinese U19",
+   "away_team": "Sudtirol U19",
+   "calibrated": true,
+   "locked": true
+  },
+  {
    "fixture_id": 1629485,
    "match_date": "2026-11-21T10:00:00Z",
    "country": "Turkey",
@@ -6043,6 +4813,16 @@
    "locked": true
   },
   {
+   "fixture_id": 1640884,
+   "match_date": "2026-11-21T10:00:00Z",
+   "country": "South-Africa",
+   "league": "Diski Challenge",
+   "home_team": "Orlando Pirates U23",
+   "away_team": "Maritzburg United U23",
+   "calibrated": true,
+   "locked": true
+  },
+  {
    "fixture_id": 1571628,
    "match_date": "2026-11-21T10:15:00Z",
    "country": "Bulgaria",
@@ -6059,6 +4839,16 @@
    "league": "Druha Liga - Group A",
    "home_team": "Nyva Vinnytsya",
    "away_team": "Dinaz Vyshhorod",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1577587,
+   "match_date": "2026-11-21T10:30:00Z",
+   "country": "Russia",
+   "league": "First League",
+   "home_team": "Nizhny Novgorod",
+   "away_team": "Torpedo Moskva",
    "calibrated": false,
    "locked": true
   },
@@ -6130,6 +4920,36 @@
    "home_team": "Podillya Khmelnytskyi",
    "away_team": "Rukh Vynnyky",
    "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1526032,
+   "match_date": "2026-11-21T11:00:00Z",
+   "country": "Belarus",
+   "league": "Premier League",
+   "home_team": "Baranovichi",
+   "away_team": "Belshina",
+   "calibrated": true,
+   "locked": true
+  },
+  {
+   "fixture_id": 1526034,
+   "match_date": "2026-11-21T11:00:00Z",
+   "country": "Belarus",
+   "league": "Premier League",
+   "home_team": "FC Dnepr Mogilev",
+   "away_team": "FC Vitebsk",
+   "calibrated": true,
+   "locked": true
+  },
+  {
+   "fixture_id": 1526036,
+   "match_date": "2026-11-21T11:00:00Z",
+   "country": "Belarus",
+   "league": "Premier League",
+   "home_team": "FC Gomel",
+   "away_team": "Bate Borisov",
+   "calibrated": true,
    "locked": true
   },
   {
@@ -6463,6 +5283,16 @@
    "locked": true
   },
   {
+   "fixture_id": 1615556,
+   "match_date": "2026-11-21T11:00:00Z",
+   "country": "Spain",
+   "league": "Tercera División RFEF - Group 10",
+   "home_team": "Betis C",
+   "away_team": "Utrera",
+   "calibrated": false,
+   "locked": true
+  },
+  {
    "fixture_id": 1616169,
    "match_date": "2026-11-21T11:00:00Z",
    "country": "Spain",
@@ -6740,6 +5570,16 @@
    "home_team": "Shkupi 1927",
    "away_team": "Osogovo",
    "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1553919,
+   "match_date": "2026-11-21T12:00:00Z",
+   "country": "Serbia",
+   "league": "Super Liga",
+   "home_team": "Radnicki NIS",
+   "away_team": "Zemun",
+   "calibrated": true,
    "locked": true
   },
   {
@@ -7089,16 +5929,6 @@
    "league": "NB III - Northeast",
    "home_team": "Tarpa",
    "away_team": "DEAC",
-   "calibrated": true,
-   "locked": true
-  },
-  {
-   "fixture_id": 1593966,
-   "match_date": "2026-11-21T12:00:00Z",
-   "country": "Hungary",
-   "league": "NB III - Northeast",
-   "home_team": "Tiszafuredi VSE",
-   "away_team": "Eger",
    "calibrated": true,
    "locked": true
   },
@@ -7740,6 +6570,16 @@
    "home_team": "Ostersunds FK",
    "away_team": "Varbergs BoIS FC",
    "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1649507,
+   "match_date": "2026-11-21T12:00:00Z",
+   "country": "Sweden",
+   "league": "Superettan",
+   "home_team": "Enköping",
+   "away_team": "Orebro SK",
+   "calibrated": true,
    "locked": true
   },
   {
@@ -8543,16 +7383,6 @@
    "locked": true
   },
   {
-   "fixture_id": 1638917,
-   "match_date": "2026-11-21T12:30:00Z",
-   "country": "Bulgaria",
-   "league": "Third League - Northwest",
-   "home_team": "Lokomotiv Mezdra",
-   "away_team": "Etar VT II",
-   "calibrated": false,
-   "locked": true
-  },
-  {
    "fixture_id": 1638918,
    "match_date": "2026-11-21T12:30:00Z",
    "country": "Bulgaria",
@@ -8620,6 +7450,16 @@
    "home_team": "Slavia Sofia",
    "away_team": "Arda Kardzhali",
    "calibrated": true,
+   "locked": true
+  },
+  {
+   "fixture_id": 1607737,
+   "match_date": "2026-11-21T12:45:00Z",
+   "country": "England",
+   "league": "FA WSL",
+   "home_team": "Liverpool W",
+   "away_team": "Chelsea W",
+   "calibrated": false,
    "locked": true
   },
   {
@@ -8759,6 +7599,26 @@
    "league": "1. Division",
    "home_team": "Vendsyssel FF",
    "away_team": "Hvidovre",
+   "calibrated": true,
+   "locked": true
+  },
+  {
+   "fixture_id": 1552533,
+   "match_date": "2026-11-21T13:00:00Z",
+   "country": "France",
+   "league": "Ligue 2",
+   "home_team": "Laval",
+   "away_team": "Montpellier",
+   "calibrated": true,
+   "locked": true
+  },
+  {
+   "fixture_id": 1553913,
+   "match_date": "2026-11-21T13:00:00Z",
+   "country": "Serbia",
+   "league": "Super Liga",
+   "home_team": "FK Crvena Zvezda",
+   "away_team": "Radnik Surdulica",
    "calibrated": true,
    "locked": true
   },
@@ -8969,6 +7829,26 @@
    "league": "Oberliga - Nordost-Süd",
    "home_team": "Union Sandersdorf",
    "away_team": "Einheit Rudolstadt",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1577586,
+   "match_date": "2026-11-21T13:00:00Z",
+   "country": "Russia",
+   "league": "First League",
+   "home_team": "KAMAZ",
+   "away_team": "Spartak Kostroma",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1577591,
+   "match_date": "2026-11-21T13:00:00Z",
+   "country": "Russia",
+   "league": "First League",
+   "home_team": "Tekstilshchik",
+   "away_team": "Arsenal Tula",
    "calibrated": false,
    "locked": true
   },
@@ -9493,16 +8373,6 @@
    "locked": true
   },
   {
-   "fixture_id": 1619629,
-   "match_date": "2026-11-21T13:00:00Z",
-   "country": "Burundi",
-   "league": "Ligue A",
-   "home_team": "Panthere Noir",
-   "away_team": "Kayanza United",
-   "calibrated": false,
-   "locked": true
-  },
-  {
    "fixture_id": 1619948,
    "match_date": "2026-11-21T13:00:00Z",
    "country": "Greece",
@@ -9533,13 +8403,13 @@
    "locked": true
   },
   {
-   "fixture_id": 1628047,
+   "fixture_id": 1623664,
    "match_date": "2026-11-21T13:00:00Z",
-   "country": "Iraq",
-   "league": "Iraqi League",
-   "home_team": "Newroz",
-   "away_team": "Al-Karma",
-   "calibrated": false,
+   "country": "Italy",
+   "league": "Campionato Primavera - 2",
+   "home_team": "Virtus Entella U19",
+   "away_team": "Reggiana U19",
+   "calibrated": true,
    "locked": true
   },
   {
@@ -9650,26 +8520,6 @@
    "home_team": "Rethymniakos",
    "away_team": "Kissamikos",
    "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1649507,
-   "match_date": "2026-11-21T13:00:00Z",
-   "country": "Sweden",
-   "league": "Superettan",
-   "home_team": "Enköping",
-   "away_team": "Orebro SK",
-   "calibrated": true,
-   "locked": true
-  },
-  {
-   "fixture_id": 1649508,
-   "match_date": "2026-11-21T13:00:00Z",
-   "country": "Sweden",
-   "league": "Superettan",
-   "home_team": "Lund",
-   "away_team": "Norrby IF",
-   "calibrated": true,
    "locked": true
   },
   {
@@ -9953,16 +8803,6 @@
    "locked": true
   },
   {
-   "fixture_id": 1623664,
-   "match_date": "2026-11-21T13:30:00Z",
-   "country": "Italy",
-   "league": "Campionato Primavera - 2",
-   "home_team": "Virtus Entella U19",
-   "away_team": "Reggiana U19",
-   "calibrated": true,
-   "locked": true
-  },
-  {
    "fixture_id": 1623665,
    "match_date": "2026-11-21T13:30:00Z",
    "country": "Italy",
@@ -9999,16 +8839,6 @@
    "league": "Campionato Primavera - 2",
    "home_team": "Sampdoria U19",
    "away_team": "Pro Vercelli U19",
-   "calibrated": true,
-   "locked": true
-  },
-  {
-   "fixture_id": 1623675,
-   "match_date": "2026-11-21T13:30:00Z",
-   "country": "Italy",
-   "league": "Campionato Primavera - 2",
-   "home_team": "Udinese U19",
-   "away_team": "Sudtirol U19",
    "calibrated": true,
    "locked": true
   },
@@ -10163,6 +8993,16 @@
    "locked": true
   },
   {
+   "fixture_id": 1619629,
+   "match_date": "2026-11-21T13:45:00Z",
+   "country": "Burundi",
+   "league": "Ligue A",
+   "home_team": "Panthere Noir",
+   "away_team": "Kayanza United",
+   "calibrated": false,
+   "locked": true
+  },
+  {
    "fixture_id": 1494337,
    "match_date": "2026-11-21T14:00:00Z",
    "country": "Sweden",
@@ -10243,32 +9083,22 @@
    "locked": true
   },
   {
+   "fixture_id": 1553916,
+   "match_date": "2026-11-21T14:00:00Z",
+   "country": "Serbia",
+   "league": "Super Liga",
+   "home_team": "Mladost Lucani",
+   "away_team": "Železničar Pančevo",
+   "calibrated": true,
+   "locked": true
+  },
+  {
    "fixture_id": 1558048,
    "match_date": "2026-11-21T14:00:00Z",
    "country": "Slovenia",
    "league": "1. SNL",
    "home_team": "Olimpija Ljubljana",
    "away_team": "Radomlje",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1559425,
-   "match_date": "2026-11-21T14:00:00Z",
-   "country": "Montenegro",
-   "league": "Second League",
-   "home_team": "Kom",
-   "away_team": "Zeta",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1559426,
-   "match_date": "2026-11-21T14:00:00Z",
-   "country": "Montenegro",
-   "league": "Second League",
-   "home_team": "Lovćen",
-   "away_team": "Mogren",
    "calibrated": false,
    "locked": true
   },
@@ -10389,6 +9219,26 @@
    "league": "1. Liga Promotion",
    "home_team": "Amical Saint-Prex",
    "away_team": "Kreuzlingen",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1577588,
+   "match_date": "2026-11-21T14:00:00Z",
+   "country": "Russia",
+   "league": "First League",
+   "home_team": "Shinnik Yaroslavl",
+   "away_team": "FK Neftekhimik",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1577590,
+   "match_date": "2026-11-21T14:00:00Z",
+   "country": "Russia",
+   "league": "First League",
+   "home_team": "PFC Sochi",
+   "away_team": "Veles",
    "calibrated": false,
    "locked": true
   },
@@ -10623,26 +9473,6 @@
    "locked": true
   },
   {
-   "fixture_id": 1601607,
-   "match_date": "2026-11-21T14:00:00Z",
-   "country": "Italy",
-   "league": "Serie B",
-   "home_team": "Catanzaro",
-   "away_team": "Palermo",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1601608,
-   "match_date": "2026-11-21T14:00:00Z",
-   "country": "Italy",
-   "league": "Serie B",
-   "home_team": "Empoli",
-   "away_team": "Pisa",
-   "calibrated": false,
-   "locked": true
-  },
-  {
    "fixture_id": 1601609,
    "match_date": "2026-11-21T14:00:00Z",
    "country": "Italy",
@@ -10819,6 +9649,16 @@
    "league": "Premier League",
    "home_team": "Valletta FC",
    "away_team": "Floriana",
+   "calibrated": true,
+   "locked": true
+  },
+  {
+   "fixture_id": 1649508,
+   "match_date": "2026-11-21T14:00:00Z",
+   "country": "Sweden",
+   "league": "Superettan",
+   "home_team": "Lund",
+   "away_team": "Norrby IF",
    "calibrated": true,
    "locked": true
   },
@@ -11089,6 +9929,16 @@
    "league": "Eliteserien",
    "home_team": "Ham-Kam",
    "away_team": "Fredrikstad",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1505565,
+   "match_date": "2026-11-21T15:00:00Z",
+   "country": "Chile",
+   "league": "Primera División",
+   "home_team": "Coquimbo Unido",
+   "away_team": "Everton de Vina",
    "calibrated": false,
    "locked": true
   },
@@ -11943,6 +10793,16 @@
    "locked": true
   },
   {
+   "fixture_id": 1585118,
+   "match_date": "2026-11-21T15:00:00Z",
+   "country": "France",
+   "league": "Feminine Division 1",
+   "home_team": "Lens W",
+   "away_team": "Montpellier W",
+   "calibrated": false,
+   "locked": true
+  },
+  {
    "fixture_id": 1585344,
    "match_date": "2026-11-21T15:00:00Z",
    "country": "England",
@@ -12753,6 +11613,16 @@
    "locked": true
   },
   {
+   "fixture_id": 1605606,
+   "match_date": "2026-11-21T15:00:00Z",
+   "country": "Portugal",
+   "league": "Campeonato de Portugal Prio - Group B",
+   "home_team": "Camacha",
+   "away_team": "Cinfães",
+   "calibrated": false,
+   "locked": true
+  },
+  {
    "fixture_id": 1609730,
    "match_date": "2026-11-21T15:00:00Z",
    "country": "Switzerland",
@@ -13063,13 +11933,13 @@
    "locked": true
   },
   {
-   "fixture_id": 1546154,
+   "fixture_id": 1526035,
    "match_date": "2026-11-21T15:30:00Z",
-   "country": "World",
-   "league": "World Cup - U17",
-   "home_team": "Mexico U17",
-   "away_team": "Romania U17",
-   "calibrated": false,
+   "country": "Belarus",
+   "league": "Premier League",
+   "home_team": "Dinamo Brest",
+   "away_team": "Naftan",
+   "calibrated": true,
    "locked": true
   },
   {
@@ -13173,6 +12043,16 @@
    "locked": true
   },
   {
+   "fixture_id": 1614645,
+   "match_date": "2026-11-21T15:30:00Z",
+   "country": "Spain",
+   "league": "Tercera División RFEF - Group 7",
+   "home_team": "Real Aranjuez",
+   "away_team": "Parla Escuela",
+   "calibrated": false,
+   "locked": true
+  },
+  {
    "fixture_id": 1615870,
    "match_date": "2026-11-21T15:30:00Z",
    "country": "Spain",
@@ -13253,52 +12133,12 @@
    "locked": true
   },
   {
-   "fixture_id": 1526032,
-   "match_date": "2026-11-21T16:00:00Z",
-   "country": "Belarus",
-   "league": "Premier League",
-   "home_team": "Baranovichi",
-   "away_team": "Belshina",
-   "calibrated": true,
-   "locked": true
-  },
-  {
    "fixture_id": 1526033,
    "match_date": "2026-11-21T16:00:00Z",
    "country": "Belarus",
    "league": "Premier League",
    "home_team": "Dinamo Minsk",
    "away_team": "FC Minsk",
-   "calibrated": true,
-   "locked": true
-  },
-  {
-   "fixture_id": 1526034,
-   "match_date": "2026-11-21T16:00:00Z",
-   "country": "Belarus",
-   "league": "Premier League",
-   "home_team": "FC Dnepr Mogilev",
-   "away_team": "FC Vitebsk",
-   "calibrated": true,
-   "locked": true
-  },
-  {
-   "fixture_id": 1526035,
-   "match_date": "2026-11-21T16:00:00Z",
-   "country": "Belarus",
-   "league": "Premier League",
-   "home_team": "Dinamo Brest",
-   "away_team": "Naftan",
-   "calibrated": true,
-   "locked": true
-  },
-  {
-   "fixture_id": 1526036,
-   "match_date": "2026-11-21T16:00:00Z",
-   "country": "Belarus",
-   "league": "Premier League",
-   "home_team": "FC Gomel",
-   "away_team": "Bate Borisov",
    "calibrated": true,
    "locked": true
   },
@@ -13319,6 +12159,16 @@
    "league": "Premier League",
    "home_team": "ML Vitebsk",
    "away_team": "Slavia Mozyr",
+   "calibrated": true,
+   "locked": true
+  },
+  {
+   "fixture_id": 1553917,
+   "match_date": "2026-11-21T16:00:00Z",
+   "country": "Serbia",
+   "league": "Super Liga",
+   "home_team": "OFK Beograd",
+   "away_team": "Novi Pazar",
    "calibrated": true,
    "locked": true
   },
@@ -13443,92 +12293,12 @@
    "locked": true
   },
   {
-   "fixture_id": 1577586,
-   "match_date": "2026-11-21T16:00:00Z",
-   "country": "Russia",
-   "league": "First League",
-   "home_team": "KAMAZ",
-   "away_team": "Spartak Kostroma",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1577587,
-   "match_date": "2026-11-21T16:00:00Z",
-   "country": "Russia",
-   "league": "First League",
-   "home_team": "Nizhny Novgorod",
-   "away_team": "Torpedo Moskva",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1577588,
-   "match_date": "2026-11-21T16:00:00Z",
-   "country": "Russia",
-   "league": "First League",
-   "home_team": "Shinnik Yaroslavl",
-   "away_team": "FK Neftekhimik",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1577589,
-   "match_date": "2026-11-21T16:00:00Z",
-   "country": "Russia",
-   "league": "First League",
-   "home_team": "Ska-khabarovsk",
-   "away_team": "Rotor Volgograd",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1577590,
-   "match_date": "2026-11-21T16:00:00Z",
-   "country": "Russia",
-   "league": "First League",
-   "home_team": "PFC Sochi",
-   "away_team": "Veles",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1577591,
-   "match_date": "2026-11-21T16:00:00Z",
-   "country": "Russia",
-   "league": "First League",
-   "home_team": "Tekstilshchik",
-   "away_team": "Arsenal Tula",
-   "calibrated": false,
-   "locked": true
-  },
-  {
    "fixture_id": 1577592,
    "match_date": "2026-11-21T16:00:00Z",
    "country": "Russia",
    "league": "First League",
    "home_team": "FC UFA",
    "away_team": "Ural",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1577593,
-   "match_date": "2026-11-21T16:00:00Z",
-   "country": "Russia",
-   "league": "First League",
-   "home_team": "Enisey",
-   "away_team": "Volga Ulyanovsk",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1580956,
-   "match_date": "2026-11-21T16:00:00Z",
-   "country": "France",
-   "league": "Feminine Division 1",
-   "home_team": "Le Havre W",
-   "away_team": "Nantes W",
    "calibrated": false,
    "locked": true
   },
@@ -13560,16 +12330,6 @@
    "home_team": "Kocaelispor",
    "away_team": "Fenerbahçe",
    "calibrated": true,
-   "locked": true
-  },
-  {
-   "fixture_id": 1585118,
-   "match_date": "2026-11-21T16:00:00Z",
-   "country": "France",
-   "league": "Feminine Division 1",
-   "home_team": "Lens W",
-   "away_team": "Montpellier W",
-   "calibrated": false,
    "locked": true
   },
   {
@@ -13649,6 +12409,16 @@
    "league": "Tercera División RFEF - Group 3",
    "home_team": "Bezana",
    "away_team": "Laredo",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1615558,
+   "match_date": "2026-11-21T16:00:00Z",
+   "country": "Spain",
+   "league": "Tercera División RFEF - Group 10",
+   "home_team": "Ceuta II",
+   "away_team": "Atlético Onubense",
    "calibrated": false,
    "locked": true
   },
@@ -13740,6 +12510,16 @@
    "home_team": "Nice",
    "away_team": "Paris Saint Germain",
    "calibrated": true,
+   "locked": true
+  },
+  {
+   "fixture_id": 1601607,
+   "match_date": "2026-11-21T16:15:00Z",
+   "country": "Italy",
+   "league": "Serie B",
+   "home_team": "Catanzaro",
+   "away_team": "Palermo",
+   "calibrated": false,
    "locked": true
   },
   {
@@ -13843,6 +12623,16 @@
    "locked": true
   },
   {
+   "fixture_id": 1628047,
+   "match_date": "2026-11-21T16:30:00Z",
+   "country": "Iraq",
+   "league": "Iraqi League",
+   "home_team": "Newroz",
+   "away_team": "Al-Karma",
+   "calibrated": false,
+   "locked": true
+  },
+  {
    "fixture_id": 1648808,
    "match_date": "2026-11-21T16:30:00Z",
    "country": "Malta",
@@ -13913,16 +12703,6 @@
    "locked": true
   },
   {
-   "fixture_id": 1553913,
-   "match_date": "2026-11-21T17:00:00Z",
-   "country": "Serbia",
-   "league": "Super Liga",
-   "home_team": "FK Crvena Zvezda",
-   "away_team": "Radnik Surdulica",
-   "calibrated": true,
-   "locked": true
-  },
-  {
    "fixture_id": 1553914,
    "match_date": "2026-11-21T17:00:00Z",
    "country": "Serbia",
@@ -13943,42 +12723,12 @@
    "locked": true
   },
   {
-   "fixture_id": 1553916,
-   "match_date": "2026-11-21T17:00:00Z",
-   "country": "Serbia",
-   "league": "Super Liga",
-   "home_team": "Mladost Lucani",
-   "away_team": "Železničar Pančevo",
-   "calibrated": true,
-   "locked": true
-  },
-  {
-   "fixture_id": 1553917,
-   "match_date": "2026-11-21T17:00:00Z",
-   "country": "Serbia",
-   "league": "Super Liga",
-   "home_team": "OFK Beograd",
-   "away_team": "Novi Pazar",
-   "calibrated": true,
-   "locked": true
-  },
-  {
    "fixture_id": 1553918,
    "match_date": "2026-11-21T17:00:00Z",
    "country": "Serbia",
    "league": "Super Liga",
    "home_team": "Radnicki 1923",
    "away_team": "Cukaricki",
-   "calibrated": true,
-   "locked": true
-  },
-  {
-   "fixture_id": 1553919,
-   "match_date": "2026-11-21T17:00:00Z",
-   "country": "Serbia",
-   "league": "Super Liga",
-   "home_team": "Radnicki NIS",
-   "away_team": "Zemun",
    "calibrated": true,
    "locked": true
   },
@@ -14039,6 +12789,16 @@
    "league": "Tweede Divisie",
    "home_team": "De Treffers",
    "away_team": "Kozakken Boys",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1580956,
+   "match_date": "2026-11-21T17:00:00Z",
+   "country": "France",
+   "league": "Feminine Division 1",
+   "home_team": "Le Havre W",
+   "away_team": "Nantes W",
    "calibrated": false,
    "locked": true
   },
@@ -14453,6 +13213,16 @@
    "locked": true
   },
   {
+   "fixture_id": 1607738,
+   "match_date": "2026-11-21T17:15:00Z",
+   "country": "England",
+   "league": "FA WSL",
+   "home_team": "London City Lionesses",
+   "away_team": "Crystal Palace W",
+   "calibrated": false,
+   "locked": true
+  },
+  {
    "fixture_id": 1615862,
    "match_date": "2026-11-21T17:15:00Z",
    "country": "Spain",
@@ -14813,6 +13583,16 @@
    "locked": true
   },
   {
+   "fixture_id": 1649566,
+   "match_date": "2026-11-21T18:00:00Z",
+   "country": "Argentina",
+   "league": "Liga Profesional Argentina",
+   "home_team": "Defensa Y Justicia",
+   "away_team": "Barracas Central",
+   "calibrated": false,
+   "locked": true
+  },
+  {
    "fixture_id": 1649967,
    "match_date": "2026-11-21T18:00:00Z",
    "country": "Brazil",
@@ -14983,6 +13763,16 @@
    "locked": true
   },
   {
+   "fixture_id": 1601608,
+   "match_date": "2026-11-21T18:30:00Z",
+   "country": "Italy",
+   "league": "Serie B",
+   "home_team": "Empoli",
+   "away_team": "Pisa",
+   "calibrated": false,
+   "locked": true
+  },
+  {
    "fixture_id": 1618481,
    "match_date": "2026-11-21T18:30:00Z",
    "country": "Netherlands",
@@ -15033,26 +13823,6 @@
    "locked": true
   },
   {
-   "fixture_id": 1650567,
-   "match_date": "2026-11-21T18:30:00Z",
-   "country": "Argentina",
-   "league": "Primera C",
-   "home_team": "Estrella Del Sur",
-   "away_team": "Canuelas",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1650568,
-   "match_date": "2026-11-21T18:30:00Z",
-   "country": "Argentina",
-   "league": "Primera C",
-   "home_team": "Sportivo Barracas",
-   "away_team": "Berazategui",
-   "calibrated": false,
-   "locked": true
-  },
-  {
    "fixture_id": 1622669,
    "match_date": "2026-11-21T18:45:00Z",
    "country": "Kuwait",
@@ -15070,6 +13840,16 @@
    "home_team": "Al Sulaibikhat",
    "away_team": "Al Qadsia",
    "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1552538,
+   "match_date": "2026-11-21T19:00:00Z",
+   "country": "France",
+   "league": "Ligue 2",
+   "home_team": "Reims",
+   "away_team": "Saint Etienne",
+   "calibrated": true,
    "locked": true
   },
   {
@@ -15219,6 +13999,16 @@
    "league": "1a Divisió",
    "home_team": "Ordino",
    "away_team": "Penya Encarnada",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1639838,
+   "match_date": "2026-11-21T19:00:00Z",
+   "country": "Ecuador",
+   "league": "Liga Pro",
+   "home_team": "Tecnico Universitario",
+   "away_team": "Deportivo Cuenca",
    "calibrated": false,
    "locked": true
   },
@@ -15473,6 +14263,16 @@
    "locked": true
   },
   {
+   "fixture_id": 1649564,
+   "match_date": "2026-11-21T20:00:00Z",
+   "country": "Argentina",
+   "league": "Liga Profesional Argentina",
+   "home_team": "Argentinos JRS",
+   "away_team": "Independiente",
+   "calibrated": false,
+   "locked": true
+  },
+  {
    "fixture_id": 1650572,
    "match_date": "2026-11-21T20:00:00Z",
    "country": "Brazil",
@@ -15489,6 +14289,16 @@
    "league": "Serie A",
    "home_team": "Bahia",
    "away_team": "Coritiba",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1549555,
+   "match_date": "2026-11-21T20:30:00Z",
+   "country": "Peru",
+   "league": "Primera División",
+   "home_team": "Alianza Lima",
+   "away_team": "FC Cajamarca",
    "calibrated": false,
    "locked": true
   },
@@ -15513,12 +14323,72 @@
    "locked": true
   },
   {
+   "fixture_id": 1505568,
+   "match_date": "2026-11-21T21:00:00Z",
+   "country": "Chile",
+   "league": "Primera División",
+   "home_team": "O'Higgins",
+   "away_team": "Universidad de Chile",
+   "calibrated": false,
+   "locked": true
+  },
+  {
    "fixture_id": 1559710,
    "match_date": "2026-11-21T21:00:00Z",
    "country": "Guatemala",
    "league": "Liga Nacional",
    "home_team": "Mixco",
    "away_team": "Malacateco",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1600666,
+   "match_date": "2026-11-21T21:00:00Z",
+   "country": "El-Salvador",
+   "league": "Primera Division",
+   "home_team": "Águila",
+   "away_team": "Platense",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1600667,
+   "match_date": "2026-11-21T21:00:00Z",
+   "country": "El-Salvador",
+   "league": "Primera Division",
+   "home_team": "Atletico Balboa",
+   "away_team": "Firpo",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1600668,
+   "match_date": "2026-11-21T21:00:00Z",
+   "country": "El-Salvador",
+   "league": "Primera Division",
+   "home_team": "FAS",
+   "away_team": "Cacahuatique",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1600670,
+   "match_date": "2026-11-21T21:00:00Z",
+   "country": "El-Salvador",
+   "league": "Primera Division",
+   "home_team": "Isidro Metapán",
+   "away_team": "Inter",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1600671,
+   "match_date": "2026-11-21T21:00:00Z",
+   "country": "El-Salvador",
+   "league": "Primera Division",
+   "home_team": "Municipal Limeño",
+   "away_team": "Alianza",
    "calibrated": false,
    "locked": true
   },
@@ -15553,22 +14423,22 @@
    "locked": true
   },
   {
+   "fixture_id": 1637984,
+   "match_date": "2026-11-21T21:00:00Z",
+   "country": "Brazil",
+   "league": "Goiano - 3",
+   "home_team": "America GO",
+   "away_team": "Rioverdense",
+   "calibrated": false,
+   "locked": true
+  },
+  {
    "fixture_id": 1642319,
    "match_date": "2026-11-21T21:00:00Z",
    "country": "Honduras",
    "league": "Liga Nacional",
    "home_team": "Génesis",
    "away_team": "Atletico Independiente",
-   "calibrated": true,
-   "locked": true
-  },
-  {
-   "fixture_id": 1647047,
-   "match_date": "2026-11-21T21:00:00Z",
-   "country": "World",
-   "league": "CONMEBOL Sudamericana",
-   "home_team": "Atletico-MG",
-   "away_team": "Boca Juniors",
    "calibrated": true,
    "locked": true
   },
@@ -15589,26 +14459,6 @@
    "league": "Premier Division",
    "home_team": "Green City",
    "away_team": "Pigotts Bullets",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1650214,
-   "match_date": "2026-11-21T21:00:00Z",
-   "country": "Venezuela",
-   "league": "Segunda División",
-   "home_team": "Fundación Lara Deportiva",
-   "away_team": "Urena SC",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1650215,
-   "match_date": "2026-11-21T21:00:00Z",
-   "country": "Venezuela",
-   "league": "Segunda División",
-   "home_team": "Deportivo Lara",
-   "away_team": "Aragua FC",
    "calibrated": false,
    "locked": true
   },
@@ -15673,36 +14523,6 @@
    "locked": true
   },
   {
-   "fixture_id": 1600666,
-   "match_date": "2026-11-21T21:30:00Z",
-   "country": "El-Salvador",
-   "league": "Primera Division",
-   "home_team": "Águila",
-   "away_team": "Platense",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1600667,
-   "match_date": "2026-11-21T21:30:00Z",
-   "country": "El-Salvador",
-   "league": "Primera Division",
-   "home_team": "Atletico Balboa",
-   "away_team": "Firpo",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1600668,
-   "match_date": "2026-11-21T21:30:00Z",
-   "country": "El-Salvador",
-   "league": "Primera Division",
-   "home_team": "FAS",
-   "away_team": "Cacahuatique",
-   "calibrated": false,
-   "locked": true
-  },
-  {
    "fixture_id": 1600669,
    "match_date": "2026-11-21T21:30:00Z",
    "country": "El-Salvador",
@@ -15713,22 +14533,12 @@
    "locked": true
   },
   {
-   "fixture_id": 1600670,
+   "fixture_id": 1639808,
    "match_date": "2026-11-21T21:30:00Z",
-   "country": "El-Salvador",
-   "league": "Primera Division",
-   "home_team": "Isidro Metapán",
-   "away_team": "Inter",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1600671,
-   "match_date": "2026-11-21T21:30:00Z",
-   "country": "El-Salvador",
-   "league": "Primera Division",
-   "home_team": "Municipal Limeño",
-   "away_team": "Alianza",
+   "country": "Ecuador",
+   "league": "Liga Pro",
+   "home_team": "Universidad Catolica",
+   "away_team": "Barcelona SC",
    "calibrated": false,
    "locked": true
   },
@@ -15739,6 +14549,16 @@
    "league": "Primera División",
    "home_team": "Deportivo Tachira FC",
    "away_team": "Caracas FC",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1650861,
+   "match_date": "2026-11-21T21:30:00Z",
+   "country": "Chile",
+   "league": "Primera B",
+   "home_team": "Cobreloa",
+   "away_team": "San Luis",
    "calibrated": false,
    "locked": true
   },
@@ -15783,6 +14603,26 @@
    "locked": true
   },
   {
+   "fixture_id": 1650214,
+   "match_date": "2026-11-21T22:00:00Z",
+   "country": "Venezuela",
+   "league": "Segunda División",
+   "home_team": "Fundación Lara Deportiva",
+   "away_team": "Urena SC",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1647047,
+   "match_date": "2026-11-21T22:30:00Z",
+   "country": "World",
+   "league": "CONMEBOL Sudamericana",
+   "home_team": "Atletico-MG",
+   "away_team": "Boca Juniors",
+   "calibrated": true,
+   "locked": true
+  },
+  {
    "fixture_id": 1647129,
    "match_date": "2026-11-21T22:30:00Z",
    "country": "Aruba",
@@ -15794,7 +14634,7 @@
   },
   {
    "fixture_id": 1551041,
-   "match_date": "2026-11-21T23:00:00Z",
+   "match_date": "2026-11-21T22:50:00Z",
    "country": "Mexico",
    "league": "Liga MX",
    "home_team": "Pachuca",
@@ -15870,6 +14710,16 @@
    "home_team": "UNAN Managua",
    "away_team": "Matagalpa",
    "calibrated": true,
+   "locked": true
+  },
+  {
+   "fixture_id": 1505570,
+   "match_date": "2026-11-21T23:30:00Z",
+   "country": "Chile",
+   "league": "Primera División",
+   "home_team": "Universidad de Concepcion",
+   "away_team": "Nublense",
+   "calibrated": false,
    "locked": true
   },
   {
@@ -16273,16 +15123,6 @@
    "locked": true
   },
   {
-   "fixture_id": 1640888,
-   "match_date": "2026-11-22T08:00:00Z",
-   "country": "South-Africa",
-   "league": "Diski Challenge",
-   "home_team": "Stellenbosch U23",
-   "away_team": "Kaizer Chiefs U23",
-   "calibrated": true,
-   "locked": true
-  },
-  {
    "fixture_id": 1641940,
    "match_date": "2026-11-22T08:00:00Z",
    "country": "Laos",
@@ -16623,16 +15463,6 @@
    "locked": true
   },
   {
-   "fixture_id": 1591692,
-   "match_date": "2026-11-22T10:00:00Z",
-   "country": "Turkey",
-   "league": "2. Lig",
-   "home_team": "Erzin Spor",
-   "away_team": "Ankaragücü",
-   "calibrated": true,
-   "locked": true
-  },
-  {
    "fixture_id": 1591694,
    "match_date": "2026-11-22T10:00:00Z",
    "country": "Turkey",
@@ -16760,6 +15590,16 @@
    "home_team": "Văn Hiến",
    "away_team": "Binh Dinh",
    "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1640888,
+   "match_date": "2026-11-22T10:00:00Z",
+   "country": "South-Africa",
+   "league": "Diski Challenge",
+   "home_team": "Stellenbosch U23",
+   "away_team": "Kaizer Chiefs U23",
+   "calibrated": true,
    "locked": true
   },
   {
@@ -17110,6 +15950,16 @@
    "home_team": "Oleksandria",
    "away_team": "UCSA",
    "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1591692,
+   "match_date": "2026-11-22T11:00:00Z",
+   "country": "Turkey",
+   "league": "2. Lig",
+   "home_team": "Erzin Spor",
+   "away_team": "Ankaragücü",
+   "calibrated": true,
    "locked": true
   },
   {
@@ -17729,6 +16579,16 @@
    "league": "Prva Liga",
    "home_team": "Semendrija 1924",
    "away_team": "Metalac GM",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1559426,
+   "match_date": "2026-11-22T12:00:00Z",
+   "country": "Montenegro",
+   "league": "Second League",
+   "home_team": "Lovćen",
+   "away_team": "Mogren",
    "calibrated": false,
    "locked": true
   },
@@ -20253,26 +19113,6 @@
    "locked": true
   },
   {
-   "fixture_id": 1607737,
-   "match_date": "2026-11-22T14:00:00Z",
-   "country": "England",
-   "league": "FA WSL",
-   "home_team": "Liverpool W",
-   "away_team": "Chelsea W",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1607738,
-   "match_date": "2026-11-22T14:00:00Z",
-   "country": "England",
-   "league": "FA WSL",
-   "home_team": "London City Lionesses",
-   "away_team": "Crystal Palace W",
-   "calibrated": false,
-   "locked": true
-  },
-  {
    "fixture_id": 1607739,
    "match_date": "2026-11-22T14:00:00Z",
    "country": "England",
@@ -20789,16 +19629,6 @@
    "league": "1. Division",
    "home_team": "Karmiotissa",
    "away_team": "AEL",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1605606,
-   "match_date": "2026-11-22T15:00:00Z",
-   "country": "Portugal",
-   "league": "Campeonato de Portugal Prio - Group B",
-   "home_team": "Camacha",
-   "away_team": "Cinfães",
    "calibrated": false,
    "locked": true
   },
@@ -21353,32 +20183,12 @@
    "locked": true
   },
   {
-   "fixture_id": 1615556,
-   "match_date": "2026-11-22T16:00:00Z",
-   "country": "Spain",
-   "league": "Tercera División RFEF - Group 10",
-   "home_team": "Betis C",
-   "away_team": "Utrera",
-   "calibrated": false,
-   "locked": true
-  },
-  {
    "fixture_id": 1615557,
    "match_date": "2026-11-22T16:00:00Z",
    "country": "Spain",
    "league": "Tercera División RFEF - Group 10",
    "home_team": "Bollullos",
    "away_team": "Cádiz II",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1615558,
-   "match_date": "2026-11-22T16:00:00Z",
-   "country": "Spain",
-   "league": "Tercera División RFEF - Group 10",
-   "home_team": "Ceuta II",
-   "away_team": "Atlético Onubense",
    "calibrated": false,
    "locked": true
   },
@@ -21793,16 +20603,6 @@
    "locked": true
   },
   {
-   "fixture_id": 1614645,
-   "match_date": "2026-11-22T17:00:00Z",
-   "country": "Spain",
-   "league": "Tercera División RFEF - Group 7",
-   "home_team": "Real Aranjuez",
-   "away_team": "Parla Escuela",
-   "calibrated": false,
-   "locked": true
-  },
-  {
    "fixture_id": 1634123,
    "match_date": "2026-11-22T17:00:00Z",
    "country": "Botswana",
@@ -21829,6 +20629,16 @@
    "league": "Premier League",
    "home_team": "Al-Magd",
    "away_team": "Olympic Azzaweya",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1650862,
+   "match_date": "2026-11-22T17:00:00Z",
+   "country": "Costa-Rica",
+   "league": "Liga de Ascenso",
+   "home_team": "AD Sarchí",
+   "away_team": "Municipal Grecia",
    "calibrated": false,
    "locked": true
   },
@@ -22033,12 +20843,12 @@
    "locked": true
   },
   {
-   "fixture_id": 1637984,
+   "fixture_id": 1650567,
    "match_date": "2026-11-22T18:30:00Z",
-   "country": "Brazil",
-   "league": "Goiano - 3",
-   "home_team": "America GO",
-   "away_team": "Rioverdense",
+   "country": "Argentina",
+   "league": "Primera C",
+   "home_team": "Estrella Del Sur",
+   "away_team": "Canuelas",
    "calibrated": false,
    "locked": true
   },
@@ -22263,16 +21073,6 @@
    "locked": true
   },
   {
-   "fixture_id": 1505565,
-   "match_date": "2026-11-22T21:00:00Z",
-   "country": "Chile",
-   "league": "Primera División",
-   "home_team": "Coquimbo Unido",
-   "away_team": "Everton de Vina",
-   "calibrated": false,
-   "locked": true
-  },
-  {
    "fixture_id": 1505566,
    "match_date": "2026-11-22T21:00:00Z",
    "country": "Chile",
@@ -22289,26 +21089,6 @@
    "league": "Primera División",
    "home_team": "Deportes Limache",
    "away_team": "D. La Serena",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1505568,
-   "match_date": "2026-11-22T21:00:00Z",
-   "country": "Chile",
-   "league": "Primera División",
-   "home_team": "O'Higgins",
-   "away_team": "Universidad de Chile",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1505570,
-   "match_date": "2026-11-22T21:00:00Z",
-   "country": "Chile",
-   "league": "Primera División",
-   "home_team": "Universidad de Concepcion",
-   "away_team": "Nublense",
    "calibrated": false,
    "locked": true
   },
@@ -22373,16 +21153,6 @@
    "locked": true
   },
   {
-   "fixture_id": 1639808,
-   "match_date": "2026-11-22T21:00:00Z",
-   "country": "Ecuador",
-   "league": "Liga Pro",
-   "home_team": "Universidad Catolica",
-   "away_team": "Barcelona SC",
-   "calibrated": false,
-   "locked": true
-  },
-  {
    "fixture_id": 1639836,
    "match_date": "2026-11-22T21:00:00Z",
    "country": "Ecuador",
@@ -22399,16 +21169,6 @@
    "league": "Liga Pro",
    "home_team": "Orense SC",
    "away_team": "Mushuc Runa SC",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1639838,
-   "match_date": "2026-11-22T21:00:00Z",
-   "country": "Ecuador",
-   "league": "Liga Pro",
-   "home_team": "Tecnico Universitario",
-   "away_team": "Deportivo Cuenca",
    "calibrated": false,
    "locked": true
   },
@@ -22433,32 +21193,12 @@
    "locked": true
   },
   {
-   "fixture_id": 1649564,
-   "match_date": "2026-11-22T21:00:00Z",
-   "country": "Argentina",
-   "league": "Liga Profesional Argentina",
-   "home_team": "Argentinos JRS",
-   "away_team": "Independiente",
-   "calibrated": false,
-   "locked": true
-  },
-  {
    "fixture_id": 1649565,
    "match_date": "2026-11-22T21:00:00Z",
    "country": "Argentina",
    "league": "Liga Profesional Argentina",
    "home_team": "Boca Juniors",
    "away_team": "Independ. Rivadavia",
-   "calibrated": false,
-   "locked": true
-  },
-  {
-   "fixture_id": 1649566,
-   "match_date": "2026-11-22T21:00:00Z",
-   "country": "Argentina",
-   "league": "Liga Profesional Argentina",
-   "home_team": "Defensa Y Justicia",
-   "away_team": "Barracas Central",
    "calibrated": false,
    "locked": true
   },
@@ -22589,6 +21329,16 @@
    "league": "Liga Mayor",
    "home_team": "Vega Real",
    "away_team": "Cibao",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1650215,
+   "match_date": "2026-11-22T22:00:00Z",
+   "country": "Venezuela",
+   "league": "Segunda División",
+   "home_team": "Deportivo Lara",
+   "away_team": "Aragua FC",
    "calibrated": false,
    "locked": true
   },
@@ -22899,6 +21649,16 @@
    "league": "1st Division",
    "home_team": "Kastrioti Krujë",
    "away_team": "Besa Kavajë",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1638917,
+   "match_date": "2026-11-23T12:30:00Z",
+   "country": "Bulgaria",
+   "league": "Third League - Northwest",
+   "home_team": "Lokomotiv Mezdra",
+   "away_team": "Etar VT II",
    "calibrated": false,
    "locked": true
   },
@@ -23323,6 +22083,16 @@
    "locked": true
   },
   {
+   "fixture_id": 1650568,
+   "match_date": "2026-11-23T18:30:00Z",
+   "country": "Argentina",
+   "league": "Primera C",
+   "home_team": "Sportivo Barracas",
+   "away_team": "Berazategui",
+   "calibrated": false,
+   "locked": true
+  },
+  {
    "fixture_id": 1551885,
    "match_date": "2026-11-23T19:00:00Z",
    "country": "Netherlands",
@@ -23633,6 +22403,16 @@
    "locked": true
   },
   {
+   "fixture_id": 1650863,
+   "match_date": "2026-11-24T00:00:00Z",
+   "country": "Costa-Rica",
+   "league": "Liga de Ascenso",
+   "home_team": "Pitbulls Santa Barbara FC",
+   "away_team": "ADR Jicaral",
+   "calibrated": false,
+   "locked": true
+  },
+  {
    "fixture_id": 1647132,
    "match_date": "2026-11-24T00:30:00Z",
    "country": "Aruba",
@@ -23689,6 +22469,16 @@
    "league": "Federation Cup",
    "home_team": "Abahani",
    "away_team": "Fakirerpool",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1581945,
+   "match_date": "2026-11-24T09:00:00Z",
+   "country": "Ukraine",
+   "league": "Persha Liga",
+   "home_team": "Ahrobiznes Volochysk",
+   "away_team": "Chernihiv",
    "calibrated": false,
    "locked": true
   },
@@ -24573,6 +23363,26 @@
    "locked": true
   },
   {
+   "fixture_id": 1564333,
+   "match_date": "2026-11-24T19:45:00Z",
+   "country": "England",
+   "league": "League One",
+   "home_team": "Blackpool",
+   "away_team": "Leicester",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1564334,
+   "match_date": "2026-11-24T19:45:00Z",
+   "country": "England",
+   "league": "League One",
+   "home_team": "Bromley",
+   "away_team": "Wycombe",
+   "calibrated": false,
+   "locked": true
+  },
+  {
    "fixture_id": 1575993,
    "match_date": "2026-11-24T19:45:00Z",
    "country": "Wales",
@@ -25193,16 +24003,6 @@
    "locked": true
   },
   {
-   "fixture_id": 1564333,
-   "match_date": "2026-11-24T19:45:00Z",
-   "country": "England",
-   "league": "League One",
-   "home_team": "Blackpool",
-   "away_team": "Leicester",
-   "calibrated": false,
-   "locked": true
-  },
-  {
    "fixture_id": 1563282,
    "match_date": "2026-11-24T20:00:00Z",
    "country": "England",
@@ -25331,11 +24131,1591 @@
    "away_team": "Bucaramanga",
    "calibrated": false,
    "locked": true
+  },
+  {
+   "fixture_id": 1649153,
+   "match_date": "2026-11-25T00:30:00Z",
+   "country": "Brazil",
+   "league": "Copa do Brasil U20",
+   "home_team": "São Paulo U20",
+   "away_team": "Atlético Mineiro U20",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1650514,
+   "match_date": "2026-11-25T01:30:00Z",
+   "country": "Colombia",
+   "league": "Primera A",
+   "home_team": "America de Cali",
+   "away_team": "Deportivo Cali",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1631762,
+   "match_date": "2026-11-25T02:00:00Z",
+   "country": "Mexico",
+   "league": "Liga Premier Serie A",
+   "home_team": "Guerreros",
+   "away_team": "Héroes de Zaci",
+   "calibrated": true,
+   "locked": true
+  },
+  {
+   "fixture_id": 1555829,
+   "match_date": "2026-11-25T03:00:00Z",
+   "country": "Japan",
+   "league": "J3 League",
+   "home_team": "FC Ryukyu",
+   "away_team": "Roasso Kumamoto",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1649497,
+   "match_date": "2026-11-25T03:00:00Z",
+   "country": "USA",
+   "league": "Major League Soccer",
+   "home_team": "San Jose Earthquakes",
+   "away_team": "Houston Dynamo",
+   "calibrated": true,
+   "locked": true
+  },
+  {
+   "fixture_id": 1555822,
+   "match_date": "2026-11-25T05:00:00Z",
+   "country": "Japan",
+   "league": "J3 League",
+   "home_team": "Kitakyushu",
+   "away_team": "Kanazawa",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1630407,
+   "match_date": "2026-11-25T07:45:00Z",
+   "country": "World",
+   "league": "AFC Cup",
+   "home_team": "Melbourne Victory",
+   "away_team": "Viettel",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1650705,
+   "match_date": "2026-11-25T08:30:00Z",
+   "country": "Indonesia",
+   "league": "Liga Nusantara",
+   "home_team": "Persekat",
+   "away_team": "Nusantara United",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1555827,
+   "match_date": "2026-11-25T09:00:00Z",
+   "country": "Japan",
+   "league": "J3 League",
+   "home_team": "Biwako Shiga",
+   "away_team": "Kochi United",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1634864,
+   "match_date": "2026-11-25T09:00:00Z",
+   "country": "Myanmar",
+   "league": "National League",
+   "home_team": "Shan United",
+   "away_team": "Thitsar Arman",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1648382,
+   "match_date": "2026-11-25T09:00:00Z",
+   "country": "Indonesia",
+   "league": "League Cup Indonesia",
+   "home_team": "Persiku Kudus",
+   "away_team": "PSIM Yogyakarta",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1509231,
+   "match_date": "2026-11-25T09:30:00Z",
+   "country": "Georgia",
+   "league": "Erovnuli Liga",
+   "home_team": "Samgurali",
+   "away_team": "Torpedo Kutaisi",
+   "calibrated": true,
+   "locked": true
+  },
+  {
+   "fixture_id": 1555830,
+   "match_date": "2026-11-25T09:30:00Z",
+   "country": "Japan",
+   "league": "J3 League",
+   "home_team": "Sagamihara",
+   "away_team": "Ehime FC",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1606776,
+   "match_date": "2026-11-25T09:30:00Z",
+   "country": "Japan",
+   "league": "J2 League",
+   "home_team": "Vanraure Hachinohe",
+   "away_team": "Albirex Niigata",
+   "calibrated": true,
+   "locked": true
+  },
+  {
+   "fixture_id": 1606777,
+   "match_date": "2026-11-25T09:30:00Z",
+   "country": "Japan",
+   "league": "J2 League",
+   "home_team": "Imabari",
+   "away_team": "Tegevajaro Miyazaki",
+   "calibrated": true,
+   "locked": true
+  },
+  {
+   "fixture_id": 1555821,
+   "match_date": "2026-11-25T10:00:00Z",
+   "country": "Japan",
+   "league": "J3 League",
+   "home_team": "FC Gifu",
+   "away_team": "Thespakusatsu Gunma",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1555823,
+   "match_date": "2026-11-25T10:00:00Z",
+   "country": "Japan",
+   "league": "J3 League",
+   "home_team": "Kamatamare Sanuki",
+   "away_team": "Gainare Tottori",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1555824,
+   "match_date": "2026-11-25T10:00:00Z",
+   "country": "Japan",
+   "league": "J3 League",
+   "home_team": "Parceiro Nagano",
+   "away_team": "Kagoshima United",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1555825,
+   "match_date": "2026-11-25T10:00:00Z",
+   "country": "Japan",
+   "league": "J3 League",
+   "home_team": "Nara Club",
+   "away_team": "Matsumoto Yamaga",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1555826,
+   "match_date": "2026-11-25T10:00:00Z",
+   "country": "Japan",
+   "league": "J3 League",
+   "home_team": "Osaka",
+   "away_team": "Tochigi SC",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1555828,
+   "match_date": "2026-11-25T10:00:00Z",
+   "country": "Japan",
+   "league": "J3 League",
+   "home_team": "Renofa Yamaguchi",
+   "away_team": "Fukushima United",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1556151,
+   "match_date": "2026-11-25T10:00:00Z",
+   "country": "Japan",
+   "league": "J1 League",
+   "home_team": "Avispa Fukuoka",
+   "away_team": "Yokohama F. Marinos",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1556152,
+   "match_date": "2026-11-25T10:00:00Z",
+   "country": "Japan",
+   "league": "J1 League",
+   "home_team": "JEF United Chiba",
+   "away_team": "Nagoya Grampus",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1556153,
+   "match_date": "2026-11-25T10:00:00Z",
+   "country": "Japan",
+   "league": "J1 League",
+   "home_team": "FC Tokyo",
+   "away_team": "Sanfrecce Hiroshima",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1556154,
+   "match_date": "2026-11-25T10:00:00Z",
+   "country": "Japan",
+   "league": "J1 League",
+   "home_team": "Mito Hollyhock",
+   "away_team": "Tokyo Verdy",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1556155,
+   "match_date": "2026-11-25T10:00:00Z",
+   "country": "Japan",
+   "league": "J1 League",
+   "home_team": "Fagiano Okayama",
+   "away_team": "Shimizu S-pulse",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1556157,
+   "match_date": "2026-11-25T10:00:00Z",
+   "country": "Japan",
+   "league": "J1 League",
+   "home_team": "V-varen Nagasaki",
+   "away_team": "Kawasaki Frontale",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1605129,
+   "match_date": "2026-11-25T10:00:00Z",
+   "country": "Armenia",
+   "league": "First League",
+   "home_team": "Ararat-Armenia II",
+   "away_team": "Noah II",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1605132,
+   "match_date": "2026-11-25T10:00:00Z",
+   "country": "Armenia",
+   "league": "First League",
+   "home_team": "Mika",
+   "away_team": "Olympia Yerevan",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1606778,
+   "match_date": "2026-11-25T10:00:00Z",
+   "country": "Japan",
+   "league": "J2 League",
+   "home_team": "Montedio Yamagata",
+   "away_team": "Jubilo Iwata",
+   "calibrated": true,
+   "locked": true
+  },
+  {
+   "fixture_id": 1606779,
+   "match_date": "2026-11-25T10:00:00Z",
+   "country": "Japan",
+   "league": "J2 League",
+   "home_team": "Tochigi City",
+   "away_team": "Blaublitz Akita",
+   "calibrated": true,
+   "locked": true
+  },
+  {
+   "fixture_id": 1606780,
+   "match_date": "2026-11-25T10:00:00Z",
+   "country": "Japan",
+   "league": "J2 League",
+   "home_team": "Yokohama FC",
+   "away_team": "Vegalta Sendai",
+   "calibrated": true,
+   "locked": true
+  },
+  {
+   "fixture_id": 1606781,
+   "match_date": "2026-11-25T10:00:00Z",
+   "country": "Japan",
+   "league": "J2 League",
+   "home_team": "Iwaki",
+   "away_team": "Kataller Toyama",
+   "calibrated": true,
+   "locked": true
+  },
+  {
+   "fixture_id": 1606782,
+   "match_date": "2026-11-25T10:00:00Z",
+   "country": "Japan",
+   "league": "J2 League",
+   "home_team": "Omiya Ardija",
+   "away_team": "Tokushima Vortis",
+   "calibrated": true,
+   "locked": true
+  },
+  {
+   "fixture_id": 1606783,
+   "match_date": "2026-11-25T10:00:00Z",
+   "country": "Japan",
+   "league": "J2 League",
+   "home_team": "Sagan Tosu",
+   "away_team": "Oita Trinita",
+   "calibrated": true,
+   "locked": true
+  },
+  {
+   "fixture_id": 1606784,
+   "match_date": "2026-11-25T10:00:00Z",
+   "country": "Japan",
+   "league": "J2 League",
+   "home_team": "Shonan Bellmare",
+   "away_team": "Ventforet Kofu",
+   "calibrated": true,
+   "locked": true
+  },
+  {
+   "fixture_id": 1606785,
+   "match_date": "2026-11-25T10:00:00Z",
+   "country": "Japan",
+   "league": "J2 League",
+   "home_team": "Consadole Sapporo",
+   "away_team": "Fujieda MYFC",
+   "calibrated": true,
+   "locked": true
+  },
+  {
+   "fixture_id": 1629989,
+   "match_date": "2026-11-25T10:00:00Z",
+   "country": "World",
+   "league": "AFC Champions League",
+   "home_team": "Gamba Osaka",
+   "away_team": "Port FC",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1629990,
+   "match_date": "2026-11-25T10:00:00Z",
+   "country": "World",
+   "league": "AFC Champions League",
+   "home_team": "Kashima",
+   "away_team": "Jeonbuk Motors",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1649631,
+   "match_date": "2026-11-25T10:00:00Z",
+   "country": "Uzbekistan",
+   "league": "Pro League A",
+   "home_team": "Metalourg",
+   "away_team": "FarDu",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1556156,
+   "match_date": "2026-11-25T10:30:00Z",
+   "country": "Japan",
+   "league": "J1 League",
+   "home_team": "Urawa",
+   "away_team": "Cerezo Osaka",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1639380,
+   "match_date": "2026-11-25T10:30:00Z",
+   "country": "Chinese-Taipei",
+   "league": "Taiwan Football Premier League",
+   "home_team": "Tainan City",
+   "away_team": "Taichung Rock FC",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1646636,
+   "match_date": "2026-11-25T10:30:00Z",
+   "country": "India",
+   "league": "I-League",
+   "home_team": "Mohammedan",
+   "away_team": "Rajasthan United",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1565476,
+   "match_date": "2026-11-25T11:00:00Z",
+   "country": "Ukraine",
+   "league": "Premier League",
+   "home_team": "Hirnyk",
+   "away_team": "Metalist 1925 Kharkiv",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1602747,
+   "match_date": "2026-11-25T11:00:00Z",
+   "country": "Thailand",
+   "league": "Thai League 2",
+   "home_team": "Chiangmai United",
+   "away_team": "Mahasarakham United",
+   "calibrated": true,
+   "locked": true
+  },
+  {
+   "fixture_id": 1602748,
+   "match_date": "2026-11-25T11:00:00Z",
+   "country": "Thailand",
+   "league": "Thai League 2",
+   "home_team": "Kasetsart FC",
+   "away_team": "Phrae United",
+   "calibrated": true,
+   "locked": true
+  },
+  {
+   "fixture_id": 1648207,
+   "match_date": "2026-11-25T11:00:00Z",
+   "country": "Poland",
+   "league": "Cup",
+   "home_team": "Polonia Środa",
+   "away_team": "Sokół Kleczew",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1602749,
+   "match_date": "2026-11-25T11:30:00Z",
+   "country": "Thailand",
+   "league": "Thai League 2",
+   "home_team": "Muangthong United",
+   "away_team": "Nakhon Ratchasima FC",
+   "calibrated": true,
+   "locked": true
+  },
+  {
+   "fixture_id": 1602750,
+   "match_date": "2026-11-25T11:30:00Z",
+   "country": "Thailand",
+   "league": "Thai League 2",
+   "home_team": "Satun",
+   "away_team": "Police Tero",
+   "calibrated": true,
+   "locked": true
+  },
+  {
+   "fixture_id": 1558531,
+   "match_date": "2026-11-25T12:00:00Z",
+   "country": "Montenegro",
+   "league": "First League",
+   "home_team": "Arsenal Tivat",
+   "away_team": "Dečić",
+   "calibrated": true,
+   "locked": true
+  },
+  {
+   "fixture_id": 1558532,
+   "match_date": "2026-11-25T12:00:00Z",
+   "country": "Montenegro",
+   "league": "First League",
+   "home_team": "Bokelj",
+   "away_team": "Petrovac",
+   "calibrated": true,
+   "locked": true
+  },
+  {
+   "fixture_id": 1568868,
+   "match_date": "2026-11-25T12:00:00Z",
+   "country": "Poland",
+   "league": "III Liga - Group 2",
+   "home_team": "Lech Poznań II",
+   "away_team": "Bałtyk Koszalin",
+   "calibrated": true,
+   "locked": true
+  },
+  {
+   "fixture_id": 1569171,
+   "match_date": "2026-11-25T12:00:00Z",
+   "country": "Poland",
+   "league": "III Liga - Group 1",
+   "home_team": "Jagiellonia II",
+   "away_team": "Widzew II",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1602751,
+   "match_date": "2026-11-25T12:00:00Z",
+   "country": "Thailand",
+   "league": "Thai League 2",
+   "home_team": "Khon Kaen United",
+   "away_team": "Kanchanaburi",
+   "calibrated": true,
+   "locked": true
+  },
+  {
+   "fixture_id": 1603857,
+   "match_date": "2026-11-25T12:00:00Z",
+   "country": "Bulgaria",
+   "league": "Third League - Southwest",
+   "home_team": "Septemvri Sofia II",
+   "away_team": "Strumska Slava",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1629467,
+   "match_date": "2026-11-25T12:00:00Z",
+   "country": "Turkey",
+   "league": "U19 league",
+   "home_team": "Fenerbahce U19",
+   "away_team": "Goztepe U19",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1637394,
+   "match_date": "2026-11-25T12:00:00Z",
+   "country": "World",
+   "league": "UEFA Youth League",
+   "home_team": "Shakhtar Donetsk U19",
+   "away_team": "Fenerbahce U19",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1637395,
+   "match_date": "2026-11-25T12:00:00Z",
+   "country": "World",
+   "league": "UEFA Youth League",
+   "home_team": "Slavia U19",
+   "away_team": "Villarreal U19",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1646385,
+   "match_date": "2026-11-25T12:00:00Z",
+   "country": "Macedonia",
+   "league": "Cup",
+   "home_team": "Akademija Pandev",
+   "away_team": "Aresimi",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1648383,
+   "match_date": "2026-11-25T12:00:00Z",
+   "country": "Indonesia",
+   "league": "League Cup Indonesia",
+   "home_team": "Bekasi City",
+   "away_team": "PSIS Semarang",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1648384,
+   "match_date": "2026-11-25T12:00:00Z",
+   "country": "Indonesia",
+   "league": "League Cup Indonesia",
+   "home_team": "Deltras",
+   "away_team": "Persik Kediri",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1648385,
+   "match_date": "2026-11-25T12:00:00Z",
+   "country": "Indonesia",
+   "league": "League Cup Indonesia",
+   "home_team": "Bali United",
+   "away_team": "Barito Putera",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1648386,
+   "match_date": "2026-11-25T12:00:00Z",
+   "country": "Indonesia",
+   "league": "League Cup Indonesia",
+   "home_team": "PSM Makassar",
+   "away_team": "Persipura Jayapura",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1648387,
+   "match_date": "2026-11-25T12:00:00Z",
+   "country": "Indonesia",
+   "league": "League Cup Indonesia",
+   "home_team": "Arema FC",
+   "away_team": "Adhyaksa",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1637495,
+   "match_date": "2026-11-25T12:15:00Z",
+   "country": "World",
+   "league": "AFC Cup",
+   "home_team": "Persib Bandung",
+   "away_team": "FC Seoul",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1642048,
+   "match_date": "2026-11-25T12:15:00Z",
+   "country": "Lebanon",
+   "league": "Premier League",
+   "home_team": "Shabab Al Sahel",
+   "away_team": "Al Ansar",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1546191,
+   "match_date": "2026-11-25T12:30:00Z",
+   "country": "World",
+   "league": "World Cup - U17",
+   "home_team": "Ecuador U17",
+   "away_team": "Korea Republic U17",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1619197,
+   "match_date": "2026-11-25T13:00:00Z",
+   "country": "England",
+   "league": "Professional Development League",
+   "home_team": "Peterborough United U21",
+   "away_team": "Hull City U21",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1635336,
+   "match_date": "2026-11-25T13:00:00Z",
+   "country": "Uganda",
+   "league": "Premier League",
+   "home_team": "NEC",
+   "away_team": "Kataka",
+   "calibrated": true,
+   "locked": true
+  },
+  {
+   "fixture_id": 1635339,
+   "match_date": "2026-11-25T13:00:00Z",
+   "country": "Uganda",
+   "league": "Premier League",
+   "home_team": "Maroons",
+   "away_team": "SC Villa",
+   "calibrated": true,
+   "locked": true
+  },
+  {
+   "fixture_id": 1648830,
+   "match_date": "2026-11-25T13:00:00Z",
+   "country": "Montenegro",
+   "league": "Cup",
+   "home_team": "Grbalj",
+   "away_team": "Mladost DG",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1648831,
+   "match_date": "2026-11-25T13:00:00Z",
+   "country": "Montenegro",
+   "league": "Cup",
+   "home_team": "Jedinstvo",
+   "away_team": "Sutjeska",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1648832,
+   "match_date": "2026-11-25T13:00:00Z",
+   "country": "Montenegro",
+   "league": "Cup",
+   "home_team": "Mornar",
+   "away_team": "Jezero",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1649071,
+   "match_date": "2026-11-25T13:00:00Z",
+   "country": "World",
+   "league": "UEFA Youth League",
+   "home_team": "Salzburg U19",
+   "away_team": "Crvena Zvezda U18",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1546203,
+   "match_date": "2026-11-25T13:30:00Z",
+   "country": "World",
+   "league": "World Cup - U17",
+   "home_team": "Uruguay U17",
+   "away_team": "France U17",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1609121,
+   "match_date": "2026-11-25T13:30:00Z",
+   "country": "Italy",
+   "league": "Serie C - Girone C",
+   "home_team": "Audace Cerignola",
+   "away_team": "Inter U23",
+   "calibrated": true,
+   "locked": true
+  },
+  {
+   "fixture_id": 1642049,
+   "match_date": "2026-11-25T13:30:00Z",
+   "country": "Lebanon",
+   "league": "Premier League",
+   "home_team": "Safa",
+   "away_team": "Al Nejmeh",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1630408,
+   "match_date": "2026-11-25T13:45:00Z",
+   "country": "World",
+   "league": "AFC Cup",
+   "home_team": "Nasaf",
+   "away_team": "Khalidiya",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1634128,
+   "match_date": "2026-11-25T14:00:00Z",
+   "country": "Botswana",
+   "league": "Premier League",
+   "home_team": "Sua Flamingoes",
+   "away_team": "Galaxy",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1637389,
+   "match_date": "2026-11-25T14:00:00Z",
+   "country": "World",
+   "league": "UEFA Youth League",
+   "home_team": "Club Brugge U19",
+   "away_team": "Liverpool U19",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1637390,
+   "match_date": "2026-11-25T14:00:00Z",
+   "country": "World",
+   "league": "UEFA Youth League",
+   "home_team": "Internazionale U19",
+   "away_team": "Stuttgart U19",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1637391,
+   "match_date": "2026-11-25T14:00:00Z",
+   "country": "World",
+   "league": "UEFA Youth League",
+   "home_team": "Lille U19",
+   "away_team": "Bayern München U19",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1644123,
+   "match_date": "2026-11-25T14:00:00Z",
+   "country": "Turkmenistan",
+   "league": "Ýokary Liga",
+   "home_team": "Köpetdag Aşgabat",
+   "away_team": "Ahal",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1645617,
+   "match_date": "2026-11-25T14:00:00Z",
+   "country": "World",
+   "league": "AGCFF Gulf Champions League",
+   "home_team": "Kazma",
+   "away_team": "Erbil",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1546192,
+   "match_date": "2026-11-25T14:30:00Z",
+   "country": "World",
+   "league": "World Cup - U17",
+   "home_team": "Greece U17",
+   "away_team": "Qatar U17",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1559418,
+   "match_date": "2026-11-25T14:30:00Z",
+   "country": "Montenegro",
+   "league": "Second League",
+   "home_team": "Iskra",
+   "away_team": "Kom",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1509230,
+   "match_date": "2026-11-25T15:00:00Z",
+   "country": "Georgia",
+   "league": "Erovnuli Liga",
+   "home_team": "Rustavi",
+   "away_team": "Meshakhte",
+   "calibrated": true,
+   "locked": true
+  },
+  {
+   "fixture_id": 1563675,
+   "match_date": "2026-11-25T15:00:00Z",
+   "country": "Russia",
+   "league": "Cup",
+   "home_team": "Akhmat Grozny",
+   "away_team": "Krasnodar",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1563677,
+   "match_date": "2026-11-25T15:00:00Z",
+   "country": "Russia",
+   "league": "Cup",
+   "home_team": "Dinamo Makhachkala",
+   "away_team": "Baltika",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1571580,
+   "match_date": "2026-11-25T15:00:00Z",
+   "country": "Bulgaria",
+   "league": "Second League",
+   "home_team": "Ludogorets II",
+   "away_team": "Etar Veliko Tarnovo",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1637388,
+   "match_date": "2026-11-25T15:00:00Z",
+   "country": "World",
+   "league": "UEFA Youth League",
+   "home_team": "Atlético Madrid U19",
+   "away_team": "Viking U19",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1650137,
+   "match_date": "2026-11-25T15:00:00Z",
+   "country": "Italy",
+   "league": "Coppa Italia Serie D",
+   "home_team": "Pro Patria",
+   "away_team": "Sanremese",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1546190,
+   "match_date": "2026-11-25T15:30:00Z",
+   "country": "World",
+   "league": "World Cup - U17",
+   "home_team": "Denmark U17",
+   "away_team": "Argentina U17",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1577595,
+   "match_date": "2026-11-25T16:00:00Z",
+   "country": "Russia",
+   "league": "First League",
+   "home_team": "KAMAZ",
+   "away_team": "Enisey",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1577597,
+   "match_date": "2026-11-25T16:00:00Z",
+   "country": "Russia",
+   "league": "First League",
+   "home_team": "FK Neftekhimik",
+   "away_team": "Rotor Volgograd",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1577598,
+   "match_date": "2026-11-25T16:00:00Z",
+   "country": "Russia",
+   "league": "First League",
+   "home_team": "Nizhny Novgorod",
+   "away_team": "Tekstilshchik",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1577602,
+   "match_date": "2026-11-25T16:00:00Z",
+   "country": "Russia",
+   "league": "First League",
+   "home_team": "Ural",
+   "away_team": "Arsenal Tula",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1630409,
+   "match_date": "2026-11-25T16:00:00Z",
+   "country": "World",
+   "league": "AFC Cup",
+   "home_team": "Al Faisaly",
+   "away_team": "Al-Rayyan SC",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1630410,
+   "match_date": "2026-11-25T16:00:00Z",
+   "country": "World",
+   "league": "AFC Cup",
+   "home_team": "Al-Jazira",
+   "away_team": "Gol Gohar",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1630411,
+   "match_date": "2026-11-25T16:00:00Z",
+   "country": "World",
+   "league": "AFC Cup",
+   "home_team": "Muharraq",
+   "away_team": "Arkadag",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1630412,
+   "match_date": "2026-11-25T16:00:00Z",
+   "country": "World",
+   "league": "AFC Cup",
+   "home_team": "Al Kuwait",
+   "away_team": "Al Wahda FC",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1647532,
+   "match_date": "2026-11-25T16:00:00Z",
+   "country": "Kuwait",
+   "league": "Emir Cup",
+   "home_team": "Al Qadsia",
+   "away_team": "Al Fahaheel",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1649067,
+   "match_date": "2026-11-25T16:00:00Z",
+   "country": "World",
+   "league": "UEFA Youth League",
+   "home_team": "HJK U19",
+   "away_team": "Stabæk U19",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1649069,
+   "match_date": "2026-11-25T16:00:00Z",
+   "country": "World",
+   "league": "UEFA Youth League",
+   "home_team": "Hradec Králové U19",
+   "away_team": "Kairat U19",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1650179,
+   "match_date": "2026-11-25T16:00:00Z",
+   "country": "Cyprus",
+   "league": "Cup",
+   "home_team": "AEK Larnaca",
+   "away_team": "Anorthosis",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1650180,
+   "match_date": "2026-11-25T16:00:00Z",
+   "country": "Cyprus",
+   "league": "Cup",
+   "home_team": "AEL",
+   "away_team": "Enosis",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1650181,
+   "match_date": "2026-11-25T16:00:00Z",
+   "country": "Cyprus",
+   "league": "Cup",
+   "home_team": "Apoel Nicosia",
+   "away_team": "Aris",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1650182,
+   "match_date": "2026-11-25T16:00:00Z",
+   "country": "Cyprus",
+   "league": "Cup",
+   "home_team": "Karmiotissa",
+   "away_team": "Apollon Limassol",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1650183,
+   "match_date": "2026-11-25T16:00:00Z",
+   "country": "Cyprus",
+   "league": "Cup",
+   "home_team": "Krasava Ypsonas",
+   "away_team": "ASIL Lysi",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1650184,
+   "match_date": "2026-11-25T16:00:00Z",
+   "country": "Cyprus",
+   "league": "Cup",
+   "home_team": "Nea Salamis",
+   "away_team": "Pafos",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1650185,
+   "match_date": "2026-11-25T16:00:00Z",
+   "country": "Cyprus",
+   "league": "Cup",
+   "home_team": "Omonia Nicosia",
+   "away_team": "Olympiakos",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1650186,
+   "match_date": "2026-11-25T16:00:00Z",
+   "country": "Cyprus",
+   "league": "Cup",
+   "home_team": "Omonia Aradippou",
+   "away_team": "Omonia 29is Maiou",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1561728,
+   "match_date": "2026-11-25T16:30:00Z",
+   "country": "Poland",
+   "league": "II Liga - East",
+   "home_team": "Resovia Rzeszów",
+   "away_team": "Świt Skolwin",
+   "calibrated": true,
+   "locked": true
+  },
+  {
+   "fixture_id": 1606561,
+   "match_date": "2026-11-25T16:30:00Z",
+   "country": "Qatar",
+   "league": "Second Division",
+   "home_team": "Al Bidda SC",
+   "away_team": "Al-Markhiya",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1608741,
+   "match_date": "2026-11-25T17:00:00Z",
+   "country": "Italy",
+   "league": "Serie C - Girone B",
+   "home_team": "Atalanta II",
+   "away_team": "Pineto",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1634129,
+   "match_date": "2026-11-25T17:00:00Z",
+   "country": "Botswana",
+   "league": "Premier League",
+   "home_team": "Matebele",
+   "away_team": "Gaborone United",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1645619,
+   "match_date": "2026-11-25T17:00:00Z",
+   "country": "World",
+   "league": "AGCFF Gulf Champions League",
+   "home_team": "Qatar SC",
+   "away_team": "Al Nasr",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1647525,
+   "match_date": "2026-11-25T17:00:00Z",
+   "country": "Slovenia",
+   "league": "Cup",
+   "home_team": "Bravo",
+   "away_team": "Odranci",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1563679,
+   "match_date": "2026-11-25T17:30:00Z",
+   "country": "Russia",
+   "league": "Cup",
+   "home_team": "Lokomotiv Moscow",
+   "away_team": "FC Rostov",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1563681,
+   "match_date": "2026-11-25T17:30:00Z",
+   "country": "Russia",
+   "league": "Cup",
+   "home_team": "Rubin",
+   "away_team": "Rodina Moskva",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1635718,
+   "match_date": "2026-11-25T17:45:00Z",
+   "country": "World",
+   "league": "UEFA Champions League",
+   "home_team": "Sabah FA",
+   "away_team": "Barcelona",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1635728,
+   "match_date": "2026-11-25T17:45:00Z",
+   "country": "World",
+   "league": "UEFA Champions League",
+   "home_team": "Slavia Praha",
+   "away_team": "Villarreal",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1587228,
+   "match_date": "2026-11-25T18:00:00Z",
+   "country": "Germany",
+   "league": "Regionalliga - SudWest",
+   "home_team": "Eintracht Frankfurt II",
+   "away_team": "FSV Mainz 05 II",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1630413,
+   "match_date": "2026-11-25T18:15:00Z",
+   "country": "World",
+   "league": "AFC Cup",
+   "home_team": "Al Taawon",
+   "away_team": "Al-Nahda",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1574391,
+   "match_date": "2026-11-25T18:30:00Z",
+   "country": "Switzerland",
+   "league": "1. Liga Promotion",
+   "home_team": "Bavois",
+   "away_team": "FC Schaffhausen",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1572698,
+   "match_date": "2026-11-25T19:00:00Z",
+   "country": "Spain",
+   "league": "Segunda División RFEF - Group 3",
+   "home_team": "Intercity",
+   "away_team": "Real Murcia II",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1585362,
+   "match_date": "2026-11-25T19:00:00Z",
+   "country": "England",
+   "league": "National League",
+   "home_team": "Boreham Wood",
+   "away_team": "Aldershot Town",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1618433,
+   "match_date": "2026-11-25T19:00:00Z",
+   "country": "Netherlands",
+   "league": "Derde Divisie - Saturday",
+   "home_team": "Roosendaal",
+   "away_team": "Gemert",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1650573,
+   "match_date": "2026-11-25T19:00:00Z",
+   "country": "Brazil",
+   "league": "Pernambucano - 1",
+   "home_team": "América PE",
+   "away_team": "Central SC",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1650574,
+   "match_date": "2026-11-25T19:00:00Z",
+   "country": "Brazil",
+   "league": "Pernambucano - 1",
+   "home_team": "Petrolina",
+   "away_team": "Íbis",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1563283,
+   "match_date": "2026-11-25T19:45:00Z",
+   "country": "England",
+   "league": "Championship",
+   "home_team": "Bolton",
+   "away_team": "West Brom",
+   "calibrated": true,
+   "locked": true
+  },
+  {
+   "fixture_id": 1563284,
+   "match_date": "2026-11-25T19:45:00Z",
+   "country": "England",
+   "league": "Championship",
+   "home_team": "Burnley",
+   "away_team": "Birmingham",
+   "calibrated": true,
+   "locked": true
+  },
+  {
+   "fixture_id": 1563286,
+   "match_date": "2026-11-25T19:45:00Z",
+   "country": "England",
+   "league": "Championship",
+   "home_team": "Watford",
+   "away_team": "Blackburn",
+   "calibrated": true,
+   "locked": true
+  },
+  {
+   "fixture_id": 1585363,
+   "match_date": "2026-11-25T19:45:00Z",
+   "country": "England",
+   "league": "National League",
+   "home_team": "Harrogate Town",
+   "away_team": "Kidderminster Harriers",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1585364,
+   "match_date": "2026-11-25T19:45:00Z",
+   "country": "England",
+   "league": "National League",
+   "home_team": "Hartlepool",
+   "away_team": "Solihull Moors",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1648100,
+   "match_date": "2026-11-25T19:45:00Z",
+   "country": "San-Marino",
+   "league": "Coppa Titano",
+   "home_team": "Domagnano",
+   "away_team": "Tre Fiori",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1648101,
+   "match_date": "2026-11-25T19:45:00Z",
+   "country": "San-Marino",
+   "league": "Coppa Titano",
+   "home_team": "Folgore",
+   "away_team": "Virtus",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1648102,
+   "match_date": "2026-11-25T19:45:00Z",
+   "country": "San-Marino",
+   "league": "Coppa Titano",
+   "home_team": "La Fiorita",
+   "away_team": "Cosmos",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1648103,
+   "match_date": "2026-11-25T19:45:00Z",
+   "country": "San-Marino",
+   "league": "Coppa Titano",
+   "home_team": "Tre Penne",
+   "away_team": "Pennarossa",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1563285,
+   "match_date": "2026-11-25T20:00:00Z",
+   "country": "England",
+   "league": "Championship",
+   "home_team": "Stoke City",
+   "away_team": "Millwall",
+   "calibrated": true,
+   "locked": true
+  },
+  {
+   "fixture_id": 1635625,
+   "match_date": "2026-11-25T20:00:00Z",
+   "country": "World",
+   "league": "UEFA Champions League",
+   "home_team": "Atletico Madrid",
+   "away_team": "Viking",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1635642,
+   "match_date": "2026-11-25T20:00:00Z",
+   "country": "World",
+   "league": "UEFA Champions League",
+   "home_team": "Club Brugge KV",
+   "away_team": "Liverpool",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1635673,
+   "match_date": "2026-11-25T20:00:00Z",
+   "country": "World",
+   "league": "UEFA Champions League",
+   "home_team": "Inter",
+   "away_team": "VfB Stuttgart",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1635682,
+   "match_date": "2026-11-25T20:00:00Z",
+   "country": "World",
+   "league": "UEFA Champions League",
+   "home_team": "Lille",
+   "away_team": "Bayern Munich",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1635703,
+   "match_date": "2026-11-25T20:00:00Z",
+   "country": "World",
+   "league": "UEFA Champions League",
+   "home_team": "Paris Saint Germain",
+   "away_team": "AS Roma",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1635724,
+   "match_date": "2026-11-25T20:00:00Z",
+   "country": "World",
+   "league": "UEFA Champions League",
+   "home_team": "Shakhtar Donetsk",
+   "away_team": "Fenerbahçe",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1635735,
+   "match_date": "2026-11-25T20:00:00Z",
+   "country": "World",
+   "league": "UEFA Champions League",
+   "home_team": "Sporting CP",
+   "away_team": "Manchester United",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1632068,
+   "match_date": "2026-11-25T21:00:00Z",
+   "country": "Paraguay",
+   "league": "Division Profesional - Clausura",
+   "home_team": "Cerro Porteno",
+   "away_team": "Club Guarani",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1632069,
+   "match_date": "2026-11-25T21:00:00Z",
+   "country": "Paraguay",
+   "league": "Division Profesional - Clausura",
+   "home_team": "Libertad Asuncion",
+   "away_team": "2 de Mayo",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1632070,
+   "match_date": "2026-11-25T21:00:00Z",
+   "country": "Paraguay",
+   "league": "Division Profesional - Clausura",
+   "home_team": "Nacional Asuncion",
+   "away_team": "Rubio NU",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1632071,
+   "match_date": "2026-11-25T21:00:00Z",
+   "country": "Paraguay",
+   "league": "Division Profesional - Clausura",
+   "home_team": "Club Sp. San Lorenzo",
+   "away_team": "Sportivo Ameliano",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1632072,
+   "match_date": "2026-11-25T21:00:00Z",
+   "country": "Paraguay",
+   "league": "Division Profesional - Clausura",
+   "home_team": "Sportivo Luqueno",
+   "away_team": "Olimpia",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1632073,
+   "match_date": "2026-11-25T21:00:00Z",
+   "country": "Paraguay",
+   "league": "Division Profesional - Clausura",
+   "home_team": "Sportivo Trinidense",
+   "away_team": "Deportivo Recoleta",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1639789,
+   "match_date": "2026-11-25T21:00:00Z",
+   "country": "Ecuador",
+   "league": "Liga Pro",
+   "home_team": "Barcelona SC",
+   "away_team": "Independiente del Valle",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1492461,
+   "match_date": "2026-11-25T23:00:00Z",
+   "country": "Brazil",
+   "league": "Serie A",
+   "home_team": "Atletico-MG",
+   "away_team": "Corinthians",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1649152,
+   "match_date": "2026-11-25T23:00:00Z",
+   "country": "Brazil",
+   "league": "Copa do Brasil U20",
+   "home_team": "Palmeiras U20",
+   "away_team": "Operário PR U20",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1650231,
+   "match_date": "2026-11-25T23:00:00Z",
+   "country": "Bolivia",
+   "league": "Copa de la División Profesional",
+   "home_team": "Real Potosí",
+   "away_team": "Always Ready",
+   "calibrated": false,
+   "locked": true
+  },
+  {
+   "fixture_id": 1650515,
+   "match_date": "2026-11-25T23:20:00Z",
+   "country": "Colombia",
+   "league": "Primera A",
+   "home_team": "Santa Fe",
+   "away_team": "Once Caldas",
+   "calibrated": false,
+   "locked": true
   }
  ],
  "freemium": {
   "free": 5,
-  "locked": 2512,
+  "locked": 2550,
   "policy": "5 meciuri gratuite pe zi; restul pe abonament (Patreon)."
  }
 }
