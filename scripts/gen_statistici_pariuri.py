@@ -155,7 +155,7 @@ def _shell(*, lang: str, title: str, description: str, canonical: str, body: str
       <a href="{up}metodologie.html" data-i18n="nav.metodologie">{nav[5]}</a>
       <a class="patreon" href="{up}index.html#abonament" data-i18n="nav.abonamente">{nav[6]}</a>
     </nav>
-    <script src="{up}assets/i18n-lite.js?v=20261119-functions" data-sus="{up}"></script>
+    <script src="{up}assets/i18n-lite.js?release=20261120-seo-language" data-sus="{up}"></script>
   </div>
 </header>
 

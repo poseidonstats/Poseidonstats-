@@ -1,5 +1,5 @@
 """1 oct 2026 — paginile de ligă în ENGLEZĂ (întrebările 4-5 ChatGPT: clientul care plătește caută în engleză): /en/predictions/<slug>.html,
-titlu pe intenția de căutare („Premier League Predictions 2026 | Match Probabilities”), hreflang în ambele sensuri, zero română în pagină."""
+titlu pe intenția de căutare („Premier League Predictions 2026 | Match Probabilities”), hreflang în ambele sensuri, conținut editorial în engleză."""
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -39,3 +39,34 @@ def test_pagina_ro_trimite_la_en():
 def test_hub_en():
     html = E.pagina_hub_en([{"slug": "anglia-premier-league", "nume": "Premier League (Anglia)", "n": 3, "cal_ok": True}])
     assert "<title>Football Predictions by League" in html and 'href="england-premier-league.html"' in html and "Predicții" not in html
+
+
+def _assert_hero_language_anchor(html, link):
+    hero = html.split('class="hero-sub"', 1)[1].split('class="hero-free"', 1)[0]
+    assert link in hero
+    assert html.count(link) == 1
+
+
+def test_paginile_ligii_au_link_de_limba_in_hero():
+    liga = ("England", "Premier League", "anglia-premier-league", "Premier League (Anglia)")
+    ro = G.pagina_liga(*liga, meciuri=[], cal=None, zile=[])
+    en = E.pagina_liga_en(*liga, meciuri=[], cal=None, zile=[])
+    _assert_hero_language_anchor(ro, '<a lang="en" hreflang="en" href="../en/predictions/england-premier-league.html">Read in English</a>')
+    _assert_hero_language_anchor(en, '<a lang="ro" hreflang="ro" href="../../predictii/anglia-premier-league.html">Română</a>')
+    assert 'Other leagues: <a href="index.html">all league pages</a>.' in en
+    assert 'Această pagină există și în' not in en
+
+
+def test_huburile_au_link_de_limba_in_hero():
+    _assert_hero_language_anchor(G.pagina_hub([]), '<a lang="en" hreflang="en" href="../en/predictions/index.html">Read in English</a>')
+    _assert_hero_language_anchor(E.pagina_hub_en([]), '<a lang="ro" hreflang="ro" href="../../predictii/index.html">Română</a>')
+
+
+def test_scriptul_de_limba_este_versionat_pentru_pagini_pereche():
+    liga = ("England", "Premier League", "anglia-premier-league", "Premier League (Anglia)")
+    pagini_ro = [G.pagina_liga(*liga, meciuri=[], cal=None, zile=[]), G.pagina_hub([])]
+    pagini_en = [E.pagina_liga_en(*liga, meciuri=[], cal=None, zile=[]), E.pagina_hub_en([])]
+    for html in pagini_ro:
+        assert '<script src="../assets/i18n-lite.js?release=20261120-seo-language" data-sus="../"></script>' in html
+    for html in pagini_en:
+        assert '<script src="../../assets/i18n-lite.js?release=20261120-seo-language" data-sus="../../"></script>' in html

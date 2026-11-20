@@ -63,6 +63,7 @@ def hreflang(ro: str, en: str) -> str:
 def shell_en(*, title: str, description: str, canonical: str, body: str, jsonld: str = "", alternate_ro: str | None = None) -> str:
     up = "../../"
     alt = hreflang(alternate_ro, canonical) if alternate_ro else ""
+    i18n_release = G.I18N_PAIRED_RELEASE if alternate_ro else "v=20261119-functions"
     return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -105,7 +106,7 @@ def shell_en(*, title: str, description: str, canonical: str, body: str, jsonld:
       <a href="{up}metodologie.html">Methodology</a>
       <a href="{up}index.html#abonament">💎 Membership</a>
     </nav>
-    <script src="{up}assets/i18n-lite.js?v=20261119-functions" data-sus="{up}"></script>
+    <script src="{up}assets/i18n-lite.js?{i18n_release}" data-sus="{up}"></script>
   </div>
 </header>
 
@@ -229,6 +230,7 @@ def pagina_liga_en(country: str, league: str, slug: str, nume: str, *, meciuri: 
     <div class="hero">
       <h1 class="hero-title">{e(name)} Predictions</h1>
       <p class="hero-sub">Probabilities for {e(nume_long(nume))} matches, computed by a Poisson + Dixon-Coles model and calibrated on real results — published and frozen before kick-off, verifiable after.</p>
+      <p><a lang="ro" hreflang="ro" href="../../predictii/{e(slug)}.html">Română</a></p>
       <p class="hero-free">5 complete predictions free every day · no account · no ads · zero bookmaker links</p>
     </div>
     <p>{summary}</p>
@@ -253,7 +255,7 @@ def pagina_liga_en(country: str, league: str, slug: str, nume: str, *, meciuri: 
   <section class="plans-free" style="margin-top:26px">
     Every day we publish 5 complete predictions for free, plus the entire track record — misses included. The rest of the day's
     predictions, the Discord delivery and the written analyses are part of the <a href="../../index.html#abonament">membership</a>.
-    Other leagues: <a href="index.html">all league pages</a>. Această pagină există și în <a href="{e(url_ro(slug))}">română</a>.
+    Other leagues: <a href="index.html">all league pages</a>.
   </section>
 
   <p class="pro-disclaimer">Empirically calibrated probabilities · informational · not betting advice · 18+</p>
@@ -278,6 +280,7 @@ def pagina_hub_en(rows: list[dict]) -> str:
     <div class="hero">
       <h1 class="hero-title">Football predictions by league</h1>
       <p class="hero-sub">One page per closely tracked competition: upcoming fixtures with calibrated probabilities, the league's calibration profile and what came true from the resolved predictions.</p>
+      <p><a lang="ro" hreflang="ro" href="../../predictii/index.html">Română</a></p>
       <p class="hero-free">5 complete predictions free every day · no account · no ads · zero bookmaker links</p>
     </div>
     <p>Right now there are <strong>{total}</strong> fixtures scheduled in the next {FEREASTRA_ZILE} days across the <strong>{len(with_m)}</strong> leagues with an active schedule, out of {len(rows)} tracked. The model analyses many more competitions every day — the full list, with filters, is on the <a href="../../index.html">home page</a>.</p>

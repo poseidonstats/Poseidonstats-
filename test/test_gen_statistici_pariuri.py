@@ -38,3 +38,9 @@ def test_html_ro_en_fara_nume_de_case_cu_hreflang():
     assert '<a lang="en" hreflang="en" href="en/betting-odds-statistics.html">English</a>' in ro
     assert '<a lang="ro" hreflang="ro" href="../statistici-pariuri.html">Română</a>' in en
     assert "location.replace(" not in ro and "location.replace(" not in en
+
+
+def test_scriptul_de_limba_pentru_paginile_de_statistici():
+    st = S.statistici(_rows())
+    assert '<script src="assets/i18n-lite.js?release=20261120-seo-language" data-sus=""></script>' in S.html_ro(st)
+    assert '<script src="../assets/i18n-lite.js?release=20261120-seo-language" data-sus="../"></script>' in S.html_en(st)

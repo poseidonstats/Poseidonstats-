@@ -45,6 +45,13 @@ def test_pagina_zi_are_titlu_pe_rezultate_si_echipele_in_descriere():
     assert "4 predicții rezolvate" in html or "4 predicții" in html
 
 
+def test_arhiva_fara_pereche_pastreaza_scriptul_de_limba():
+    script = '<script src="../../assets/i18n-lite.js?v=20261119-functions" data-sus="../../"></script>'
+    zi = {"date": "2026-09-29", "matches": [{"home": "Arsenal", "away": "Chelsea"}]}
+    assert script in G.pagina_zi(zi)
+    assert script in G.pagina_arhiva(["2026-09-29"])
+
+
 def test_rularea_zilnica_indexeaza_zilele_pastrate_si_analizele_noi(tmp_path, monkeypatch):
     site = tmp_path
     out = site / "predictii"

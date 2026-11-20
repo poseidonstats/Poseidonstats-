@@ -56,6 +56,9 @@ body.secondary-modern.home-modern.is-member .intro { display: block; }
 .secondary-modern .nav-more > summary { border: 0; padding: 9px 10px; font-size: 12px; line-height: inherit; overflow-wrap: normal; }
 .secondary-modern .nav-more > div { right: 0; max-width: 100%; margin: 0; z-index: 21; }
 .secondary-modern .nav-more > div > a { display: flex; align-items: center; min-height: 44px; padding: 0 10px; white-space: normal; overflow-wrap: anywhere; }
+@media (max-width: 760px) {
+  .prediction-modern > header > .container > nav { grid-column: 1 / -1; }
+}
 @media (max-width: 600px) {
   .secondary-modern header nav > a { padding-inline: 8px; font-size: 12px; white-space: normal; }
 }

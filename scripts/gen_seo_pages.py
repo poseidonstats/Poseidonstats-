@@ -66,6 +66,7 @@ try:
 except Exception:
     N_CAL = "65.436"
 BASE = "https://poseidonstats.com"
+I18N_PAIRED_RELEASE = "release=20261120-seo-language"
 
 LINKS_START = "<!-- LEAGUES_LINKS_START -->"
 LINKS_END = "<!-- LEAGUES_LINKS_END -->"
@@ -237,6 +238,7 @@ def shell(*, titlu: str, descriere: str, canonical: str, corp: str,
     100% statice (nimic de randat din JS) — mai rapide și indexabile integral."""
     sus = "../" * adancime
     script_tari = f'    <script src="{sus}assets/country-label.js?v=20261118e"></script>\n' if etichete_tari else ""
+    i18n_release = I18N_PAIRED_RELEASE if alternate_en else "v=20261119-functions"
     if len(titlu) > 62 or len(descriere) > 160:
         print(f"[gen_seo_pages] ATENȚIE trunchiere Google: titlu={len(titlu)} "
               f"descriere={len(descriere)} → {canonical}", file=sys.stderr)
@@ -282,7 +284,7 @@ def shell(*, titlu: str, descriere: str, canonical: str, corp: str,
       <a href="{sus}metodologie.html" data-i18n="nav.metodologie">Metodologie</a>
       <a class="patreon" href="{sus}index.html#abonament" data-i18n="nav.abonamente">Abonamente</a>
     </nav>
-{script_tari}    <script src="{sus}assets/i18n-lite.js?v=20261119-functions" data-sus="{sus}"></script>
+{script_tari}    <script src="{sus}assets/i18n-lite.js?{i18n_release}" data-sus="{sus}"></script>
   </div>
 </header>
 
@@ -548,6 +550,7 @@ def pagina_liga(tara: str, liga: str, slug: str, nume: str, *,
     <div class="hero">
       <h1 class="hero-title" data-i18n="ligi.h1" data-i18n-vars='{_v({"liga": nume_scurt_i18n})}'{vars_scurt_en}>Predicții {e(nume_scurt(nume))}</h1>
       <p class="hero-sub" data-i18n="ligi.sub" data-i18n-vars='{vars_liga}'{vars_en}>Probabilități pentru meciurile din {e(nume)}, calculate de un model Poisson + Dixon-Coles și calibrate pe rezultate reale, publicate înainte de meci și verificabile după.</p>
+      <p><a lang="en" hreflang="en" href="../en/predictions/{e(EN.slug_en(slug))}.html">Read in English</a></p>
       <p class="hero-free" data-i18n="ligi.hero.free">5 predicții complete gratuit în fiecare zi · fără cont · fără reclame · zero link-uri către case de pariuri</p>
     </div>
     <p>{rezumat}</p>
@@ -604,6 +607,7 @@ def pagina_hub(randuri: list[dict]) -> str:
     <div class="hero">
       <h1 class="hero-title" data-i18n="ligi.index.h1">Predicții fotbal pe ligi</h1>
       <p class="hero-sub" data-i18n="ligi.index.sub">Câte o pagină pentru fiecare campionat urmărit îndeaproape: meciurile următoare cu probabilități calibrate, profilul de calibrare al ligii și ce a ieșit din predicțiile deja rezolvate.</p>
+      <p><a lang="en" hreflang="en" href="../en/predictions/index.html">Read in English</a></p>
       <p class="hero-free" data-i18n="ligi.hero.free">5 predicții complete gratuit în fiecare zi · fără cont · fără reclame · zero link-uri către case de pariuri</p>
     </div>
     <p data-i18n="ligi.index.rez" data-i18n-vars='{{"t":"{total}","z":"{FEREASTRA_ZILE}","a":"{len(cu_meci)}","u":"{len(randuri)}"}}'>În acest moment sunt <strong>{total}</strong> meciuri programate în următoarele {FEREASTRA_ZILE} zile pe cele <strong>{len(cu_meci)}</strong> ligi cu program activ, din {len(randuri)} urmărite. Modelul analizează zilnic mult mai multe competiții — lista completă, cu filtre, e pe <a href="../index.html">pagina principală</a>.</p>

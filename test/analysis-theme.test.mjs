@@ -32,7 +32,7 @@ class Element {
   closest(selector) { return this.matches(selector) ? this : this.parentElement?.closest(selector) || null; }
 }
 
-async function run({canonical = 'https://poseidonstats.com/analize/index.html', pathname = '/analize/index.html', language = 'ro', preloaded = false, fallback = false, prefix = '../', entries = [], loading = false, alternates = []} = {}) {
+async function run({canonical = 'https://poseidonstats.com/analize/index.html', pathname = '/analize/index.html', language = 'ro', saved = language, search = '', preloaded = false, fallback = false, prefix = '../', entries = [], loading = false, alternates = []} = {}) {
   const head = new Element('head'), body = new Element('body'), header = body.appendChild(new Element('header'));
   const container = header.appendChild(new Element('div', {class:'container'}));
   const brand = container.appendChild(new Element('a', {class:'brand', href:'../index.html'})); brand.innerHTML = '<img>POSEIDON';
@@ -42,8 +42,8 @@ async function run({canonical = 'https://poseidonstats.com/analize/index.html', 
   if (canonical) head.appendChild(new Element('link', {rel:'canonical', href:canonical}));
   alternates.forEach(([lang, href]) => head.appendChild(new Element('link', {rel:'alternate', hreflang:lang, href})));
   if (preloaded) for (const name of ['home-modern', 'pages-modern']) head.appendChild(new Element('link', {rel:'stylesheet', href:`https://poseidonstats.com/assets/${name}.css`}));
-  const requests = [], storage = [], location = {href:`https://poseidonstats.com${pathname}`, pathname, reload() { this.reloaded = true; }, assign(url) { this.assigned = new URL(url, this.href).pathname; }};
-  const root = new Element('html'); root.appendChild(head); root.appendChild(body);
+  const requests = [], storage = [], location = {href:`https://poseidonstats.com${pathname}${search}`, pathname, reload() { this.reloaded = true; }, assign(url) { this.assigned = new URL(url, this.href).href; }};
+  const root = new Element('html'); root.lang = pathname.startsWith('/en/') ? 'en' : 'ro'; root.appendChild(head); root.appendChild(body);
   const mainQueries = [], listeners = {}, contentElements = [];
   const document = {head, body, documentElement:root, currentScript:script, baseURI:location.href, readyState: loading ? "loading" : "complete",
     addEventListener:(name,handler) => { listeners[name] = handler; },
@@ -52,7 +52,7 @@ async function run({canonical = 'https://poseidonstats.com/analize/index.html', 
     querySelectorAll:selector => root.querySelectorAll(selector)};
   // Content becomes available only after synchronous bootstrap and selector setup.
   let article, group, english, romanian;
-  const context = vm.createContext({document, window:{}, navigator:{language}, localStorage:{getItem:() => language, setItem:(...args) => storage.push(args)}, location, URL, Intl, Date,
+  const context = vm.createContext({document, window:{}, navigator:{language}, localStorage:{getItem:() => saved, setItem:(...args) => storage.push(args)}, location, URL, Intl, Date,
     fetch:async path => {
       requests.push(path);
       const main = body.appendChild(new Element('main'));
@@ -72,16 +72,71 @@ async function run({canonical = 'https://poseidonstats.com/analize/index.html', 
   return {document, body, head, brand, nav, tagline, script, container, requests, storage, location, context, mainQueries, article, group, english, romanian, contentElements, finishParsing() { document.readyState = "interactive"; listeners.DOMContentLoaded?.(); }};
 }
 
-test('the English league edition honours a saved French preference and the selector routes to the equivalent English league', async () => {
-  const englishPath = '/en/predictions/england-premier-league.html';
-  const multiPath = '/predictii/anglia-premier-league.html';
-  const url = path => 'https://poseidonstats.com' + path;
-  const alternates = [['ro', url(multiPath)], ['en', url(englishPath)]];
-  const french = await run({pathname:englishPath, canonical:url(englishPath), language:'fr', prefix:'../../', alternates});
-  assert.equal(french.location.assigned, multiPath);
-  const multilingual = await run({pathname:multiPath, canonical:url(multiPath), language:'fr', alternates});
-  multilingual.nav.querySelector('.lang-switcher').querySelector('select').events.change({target:{value:'en'}});
-  assert.equal(multilingual.location.assigned, englishPath);
+const publicPairs = [
+  ['/predictii/index.html', '/en/predictions/index.html'],
+  ['/predictii/anglia-premier-league.html', '/en/predictions/england-premier-league.html'],
+  ['/statistici-pariuri.html', '/en/betting-odds-statistics.html'],
+];
+const siteUrl = path => 'https://poseidonstats.com' + path;
+const alternatesFor = ([ro, en]) => [['ro', siteUrl(ro)], ['en', siteUrl(en)]];
+const selectLanguage = (state, value) =>
+  state.nav.querySelector('.lang-switcher').querySelector('select').events.change({target:{value}});
+
+test('paired pages open on their native edition for all saved languages and a clean browser', async () => {
+  for (const pair of publicPairs) for (const [index, pathname] of pair.entries()) {
+    const native = index === 0 ? 'ro' : 'en';
+    for (const saved of [null, 'ro', 'en', 'fr', 'es', 'it', 'id']) {
+      const state = await run({
+        pathname, canonical:siteUrl(pathname), alternates:alternatesFor(pair),
+        language:native === 'ro' ? 'en-GB' : 'ro-RO', saved,
+      });
+      assert.equal(state.location.assigned, undefined, `${pathname}, saved ${saved}`);
+      assert.equal(state.document.documentElement.lang, native);
+      assert.match(state.nav.querySelector('.lang-switcher').innerHTML, new RegExp(`value="${native}" selected`));
+    }
+  }
+});
+
+test('explicit Romanian and English selections open only the clean equivalent URL', async () => {
+  for (const pair of publicPairs) for (const [index, pathname] of pair.entries()) {
+    const state = await run({
+      pathname, canonical:siteUrl(pathname), alternates:alternatesFor(pair),
+      search:'?members_token=synthetic&source=example#unshared-section',
+    });
+    const selected = index === 0 ? 'en' : 'ro';
+    selectLanguage(state, selected);
+    assert.equal(state.location.assigned, siteUrl(pair[1 - index]));
+    assert.deepEqual(state.storage, [['poseidon_lang', selected]]);
+  }
+});
+
+test('extensionless public aliases keep their edition and switch to the paired canonical', async () => {
+  for (const pair of publicPairs.slice(1)) for (const [index, canonical] of pair.entries()) {
+    const native = index === 0 ? 'ro' : 'en';
+    const selected = index === 0 ? 'en' : 'ro';
+    const state = await run({
+      pathname:canonical.slice(0, -'.html'.length), canonical:siteUrl(canonical),
+      alternates:alternatesFor(pair), saved:selected,
+    });
+    assert.equal(state.document.documentElement.lang, native);
+    selectLanguage(state, selected);
+    assert.equal(state.location.assigned, siteUrl(pair[1 - index]));
+  }
+});
+
+test('explicit interface languages remain available without navigating away from the edition', async () => {
+  const pair = publicPairs[1], pathname = pair[1];
+  const state = await run({pathname, canonical:siteUrl(pathname), alternates:alternatesFor(pair),
+    entries:[{attrs:{'data-i18n':'nav.ligi'}}]});
+  for (const selected of ['fr', 'es', 'it', 'id', 'en']) {
+    selectLanguage(state, selected);
+    await new Promise(resolve => setImmediate(resolve));
+    assert.equal(state.location.assigned, undefined);
+    assert.equal(state.location.reloaded, undefined);
+    assert.equal(state.document.documentElement.lang, 'en');
+    assert.equal(state.contentElements[0].innerHTML, dictionary[selected]['nav.ligi']);
+    assert.equal(state.contentElements[0].getAttribute('lang'), selected);
+  }
 });
 
 test('calibration sample counts and bias are formatted at render time', async () => {
@@ -202,7 +257,7 @@ test('every existing public HTML using lite is accepted with its actual canonica
   function htmlFiles(folder) {
     return readdirSync(folder,{withFileTypes:true}).flatMap(item => item.isDirectory() && ['analize','predictii','arhiva','en','predictions'].includes(item.name) ? htmlFiles(new URL(`${item.name}/`,folder)) : item.isFile() && item.name.endsWith('.html') ? [new URL(item.name,folder)] : []);
   }
-  const liteScript = /<script[^>]*src="[^"]*assets\/i18n-lite\.js(?:\?v=[^"]+)?"[^>]*data-sus="([^"]*)"/;
+  const liteScript = /<script[^>]*src="[^"]*assets\/i18n-lite\.js(?:\?[^"]+)?"[^>]*data-sus="([^"]*)"/;
   const files = htmlFiles(new URL('../',import.meta.url)).filter(path => liteScript.test(readFileSync(path,'utf8')));
   assert(files.length > 100, 'inventory contains the actual generated helper pages');
   for (const file of files) {

@@ -9,6 +9,15 @@ const dashboard=require('../assets/home-dashboard.js');
 const source=readFileSync(new URL('../assets/app.js',import.meta.url),'utf8');
 const dictionary=JSON.parse(readFileSync(new URL('../assets/i18n.json',import.meta.url),'utf8'));
 const languages=['ro','en','es','it','fr','id'];
+
+test('the hero links to the English hub in HTML outside translating and generated content', () => {
+  const homepage = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
+  const hero = homepage.slice(homepage.indexOf('<section class="dashboard-opening">'), homepage.indexOf('id="dashboard"'));
+  assert.match(hero, /class="dashboard-hero-actions">[\s\S]*?<\/div>\s*<p class="dashboard-language-entry">\s*<a href="\/en\/predictions\/index\.html" lang="en">Football predictions in English<\/a>/);
+  const generated = homepage.match(/<!-- LEAGUES_LINKS_START -->[\s\S]*?<!-- LEAGUES_LINKS_END -->/)?.[0];
+  assert(generated && !generated.includes('dashboard-language-entry'));
+});
+
 function actual(start,end) {
   const first=source.indexOf(start),last=source.indexOf(end,first+start.length);
   assert(first>=0 && last>first,`actual source boundaries: ${start}`);
@@ -147,7 +156,7 @@ test('homepage market filters use translated labels and homepage assets use thei
     const digest=createHash('sha256').update(bytes).digest('hex');
     assert(releaseHashes.includes(`"assets/${asset}": "${digest}"`), `Update the service worker release for ${asset}`);
   }
-  assert(html.includes('assets/home-modern.css?v=20261119-approved-design'));
+  assert(html.includes('assets/home-modern.css?release=20261120-seo-language'));
   assert(html.includes('assets/members.js?v=20261119-functions'));
   assert(html.includes('assets/conversion.js?v=20261119-app-outbound'));
   // The per-metric TEST-N honesty contract superseded reading-frozen1. Check the current asset and cache key together.

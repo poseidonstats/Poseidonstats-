@@ -4,24 +4,35 @@
   var LANGS = ["ro", "en", "es", "it", "fr", "id"], NUME = { ro: "🇷🇴 Română", en: "🇬🇧 English", es: "🇪🇸 Español", it: "🇮🇹 Italiano", fr: "🇫🇷 Français", id: "🇮🇩 Bahasa Indonesia" };  // 14 oct 2026: + fr, + id
   var englishLeague = /^\/en\/predictions\//.test(location.pathname);
   function lang() { try { var s = localStorage.getItem("poseidon_lang"); if (LANGS.indexOf(s) >= 0) return s; } catch (e) {} if (englishLeague) return "en"; var b = (navigator.language || "ro").slice(0, 2).toLowerCase(); return LANGS.indexOf(b) >= 0 ? b : "en"; }
-  var L = lang(); var sus = (document.currentScript && document.currentScript.getAttribute("data-sus")) || "";
   var pageLanguage = document.documentElement.lang || "ro";
-  var editionPath = location.pathname;
-  var hasEditions = /^\/(?:statistici-pariuri\.html|en\/betting-odds-statistics\.html)$/.test(editionPath);
-  function openLeagueEdition(selected) {
-    if (!/^\/(?:predictii|en\/predictions)\//.test(editionPath)) return false;
-    var language = selected === "en" ? "en" : "ro";
-    var link = document.querySelector('link[hreflang="' + language + '"]');
-    if (!link) return false;
-    var current = new URL(location.href);
-    var destination = new URL(link.getAttribute("href"), current);
-    var expected = language === "en" ? /^\/en\/predictions\// : /^\/predictii\//;
-    if (!expected.test(destination.pathname) || destination.pathname === current.pathname) return false;
-    current.pathname = destination.pathname;
-    location.assign(current.href);
-    return true;
+
+  function metadataUrl(selector, rel) {
+    var link = document.querySelector(selector);
+    if (!link || link.getAttribute("rel") !== rel || !link.getAttribute("href")) return null;
+    try { return new URL(link.getAttribute("href"), document.baseURI); } catch (e) { return null; }
   }
-  if (englishLeague && L !== "en" && openLeagueEdition(L)) return;
+
+  function publicEditionPair() {
+    if (pageLanguage !== "ro" && pageLanguage !== "en") return null;
+    var ro = metadataUrl('link[hreflang="ro"]', "alternate");
+    var en = metadataUrl('link[hreflang="en"]', "alternate");
+    var canonical = metadataUrl('link[rel="canonical"]', "canonical");
+    if (!ro || !en || !canonical || ro.origin !== canonical.origin || en.origin !== canonical.origin) return null;
+    var current = pageLanguage === "ro" ? ro : en;
+    var leagues = /^\/predictii\/[^/]+\.html$/.test(ro.pathname) &&
+      /^\/en\/predictions\/[^/]+\.html$/.test(en.pathname);
+    var statistics = ro.pathname === "/statistici-pariuri.html" && en.pathname === "/en/betting-odds-statistics.html";
+    if ((!leagues && !statistics) || current.href !== canonical.href) return null;
+    var path = location.pathname;
+    var alias = path.endsWith("/") ? path + "index.html" : path + ".html";
+    if (current.pathname !== path && current.pathname !== alias) return null;
+    // Canonicals are absolute, including in a local preview. Navigation stays on the current origin.
+    return { ro: ro.pathname, en: en.pathname };
+  }
+
+  var editionPair = publicEditionPair();
+  var L = editionPair ? pageLanguage : lang();
+  var sus = (document.currentScript && document.currentScript.getAttribute("data-sus")) || "";
   // Generated public pages keep their content; theme their shared shell here so regeneration stays safe.
   function temaPublica() {
     var canonical = document.querySelector('link[rel="canonical"]');
@@ -128,15 +139,19 @@
     else reda();
   }
   function aplica(I) {
-    document.documentElement.lang = L;
+    document.documentElement.lang = editionPair ? pageLanguage : L;
     for (var trecere = 0; trecere < 2; trecere++) document.querySelectorAll("[data-i18n]").forEach(function (el) { if (trecere === 1 && !(el.parentElement && el.parentElement.closest("[data-i18n]"))) return;
-      var k = el.getAttribute("data-i18n"); var v = (I[L] && I[L][k]) || (I.ro && I.ro[k]); if (!v) return;
+      var k = el.getAttribute("data-i18n");
+      var translated = I[L] && I[L][k];
+      var v = translated || (I.ro && I.ro[k]);
+      if (!v) return;
       var o = {};
       ["data-i18n-vars", "data-i18n-vars-" + L].forEach(function (attr) {
         var vars = el.getAttribute(attr);
         if (vars) { try { Object.assign(o, JSON.parse(vars)); } catch (e) {} }
       });
       Object.keys(o).forEach(function (n) { v = v.split("{" + n + "}").join(o[n]); });
+      if (editionPair) el.setAttribute("lang", translated ? L : "ro");
       el.innerHTML = v;
     });
     var locale = { ro: "ro-RO", en: "en-GB", es: "es-ES", it: "it-IT", fr: "fr-FR", id: "id-ID" }[L];
@@ -169,7 +184,7 @@
       var month = el.getAttribute("data-month");
       if (/^\d{4}-(?:0[1-9]|1[0-2])$/.test(month)) el.textContent = monthFmt.format(new Date(month + "-15T12:00:00Z"));
     });
-    if (!hasEditions && L !== pageLanguage) {
+    if (!editionPair && L !== pageLanguage) {
       var heading = document.querySelector("h1[data-i18n]");
       if (heading && heading.textContent.trim()) document.title = heading.textContent.replace(/\s+/g, " ").trim() + " | POSEIDON";
     }
@@ -209,19 +224,21 @@
     nav.appendChild(w);
     w.querySelector("select").addEventListener("change", function (e) {
       var selected = e.target.value;
+      if (LANGS.indexOf(selected) < 0) return;
       try { localStorage.setItem("poseidon_lang", selected); } catch (x) {}
-      if (openLeagueEdition(selected)) return;
-      if (hasEditions) {
-        var edition = selected === "ro" ? "ro" : "en";
-        var link = document.querySelector('a[hreflang="' + edition + '"]');
-        if (link && edition !== pageLanguage) {
-          location.assign(link.href);
-          return;
-        }
+      if (!editionPair) {
+        location.reload();
+        return;
       }
-      location.reload();
+      if ((selected === "ro" || selected === "en") && selected !== pageLanguage) {
+        location.assign(editionPair[selected]);
+        return;
+      }
+      L = selected;
+      dictionaryReady.then(traduceCandGata).catch(function () {});
     });
   }
   selector();
-  fetch(sus + "assets/i18n.json?v=20261119-functions", { cache: "no-cache" }).then(function (r) { return r.json(); }).then(traduceCandGata).catch(function () {});
+  var dictionaryReady = fetch(sus + "assets/i18n.json?v=20261119-functions", { cache: "no-cache" }).then(function (r) { return r.json(); });
+  dictionaryReady.then(traduceCandGata).catch(function () {});
 })();

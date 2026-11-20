@@ -1062,6 +1062,15 @@ body.home-modern .salt-meciuri { display: none; }
 .home-modern .dashboard-hero-copy > p { max-width: 56ch; line-height: 1.5; color: var(--dash-muted); }
 .home-modern .dashboard-hero-actions { align-items: center; }
 .home-modern .dashboard-hero-actions .outline-button { border: 0; background: transparent; color: var(--dash-text); text-decoration: underline; }
+.home-modern .dashboard-hero-copy > .dashboard-language-entry { margin-block: 0; }
+.home-modern .dashboard-language-entry a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--dash-text);
+  text-decoration: underline;
+}
+.home-modern .dashboard-language-entry a:focus-visible { outline: 2px solid var(--dash-gold); outline-offset: 2px; }
 .home-modern .simplify-demo { display: grid; grid-template-columns: minmax(0, 1fr); gap: 30px; background: transparent; border: 0; }
 .home-modern .simplify-demo .dashboard-column { padding-inline: 0; border: 0; }
 @media (max-width: 1050px) {
