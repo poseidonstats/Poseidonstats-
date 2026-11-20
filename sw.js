@@ -1,23 +1,23 @@
 /* Public responses only. Keep the homepage and its versioned assets together. */
-const CACHE = "poseidon-v115";
-const RELEASE = "20261119-pro-indicators";
-const PREVIOUS_CACHE = "poseidon-v114";
-const PREVIOUS_RELEASE = "20261119-pro-mobile";
+const CACHE = "poseidon-v116";
+const RELEASE = "20261121-pro-contextual";
+const PREVIOUS_CACHE = "poseidon-v115";
+const PREVIOUS_RELEASE = "20261119-pro-indicators";
 // Update with RELEASE when these static files change. The daily dictionary is validated separately.
 const RELEASE_ASSET_SHA256 = {
+  "assets/app.js": "c1770af4b1b9d135b6291264bf5defdf30b647dde96d81fc5479453689241886",
+  "assets/home-dashboard.js": "235fe52dfdb54950a48a90206da201a711ad89a88bddf9a11050dde0450fa91f",
+  "assets/member-dossier.css": "ad2846535906b2ac472b41f9368675d3e2dd3a5f5acd4f9ab883fe841f463881",
+  "assets/member-dossier.js": "5b579c82f4c389581ea520905adb78f4e87b008c5570677a39f97c7ca4c36442",
+  "assets/pro-report.js": "7aa98e931ac6974fc1f3c8791833df02a4789a2df7a80ca3417498c70826fde3",
+  "assets/pro-context.js": "85883d7956fd08c68addc2966880103308b678f902c92eb4a3c68d719c3c987c",
+};
+const PREVIOUS_ASSET_SHA256 = {
   "assets/app.js": "ad5ed443d549d7019dd3196e596f7ea47e639ad6a44368fdb60e2164aa55e43a",
   "assets/home-dashboard.js": "235fe52dfdb54950a48a90206da201a711ad89a88bddf9a11050dde0450fa91f",
   "assets/member-dossier.css": "ad2846535906b2ac472b41f9368675d3e2dd3a5f5acd4f9ab883fe841f463881",
   "assets/member-dossier.js": "643e9f8a9fc2af5529f0e8a31fe902aa163456109de9a500660155cca01c6c75",
   "assets/pro-report.js": "6c324b3ff88a4539eef242981a8d35a37f7e8e3f96833e509d156e3b6835a44f",
-};
-const PREVIOUS_ASSET_SHA256 = {
-  "assets/app.js": "2aa585eaab7725a8ce3519b7cb6a0f612beb6cd90c17bccf37ca9304479d3a24",
-  "assets/home-dashboard.js": "f191ffc190eb384a092d96693fcca1a58e99b994ef7d05fd405be44cfcea135c",
-  "assets/i18n.json": "ba6939b8ad75ded353022dc221908afb3dd8f2253f40aa1f0228d74f694703c5",
-  "assets/member-dossier.css": "e2beee6ef1dbdefae383d7386e69cfe158d8d3645d0e886629a084e3f6e6ce3e",
-  "assets/member-dossier.js": "494ec7148e84af592b0485267090d8fe1d25c48bcd0359e65358e99c19ce0388",
-  "assets/pro-report.js": "2a39b657e8b4e5a0cd739907d6c8701023dc223b55cc56c75707eb35b092d679",
 };
 const HOME_PATHS = ["", "index.html"];
 const HOME_ASSETS = [
@@ -75,8 +75,7 @@ function relativePath(url) {
 
 function releaseUrl(path, version) {
   const url = new URL(path, SCOPE);
-  // v114 falls back from ?v= to bare URLs on a network error.
-  url.searchParams.set(version === PREVIOUS_RELEASE ? "v" : "release", version);
+  url.searchParams.set("release", version);
   return url.href;
 }
 
@@ -195,7 +194,7 @@ self.addEventListener("activate", event => {
     const keys = await caches.keys();
     if (keys.includes(PREVIOUS_CACHE)) {
       const [old, current] = await Promise.all([caches.open(PREVIOUS_CACHE), caches.open(CACHE)]);
-      // v114 could cache current bytes under its old URL during rollout. Verify the body.
+      // An old URL may contain current bytes during rollout. Verify the body.
       await Promise.allSettled(Object.entries(PREVIOUS_ASSET_SHA256).map(async ([path, expected]) => {
         const url = releaseUrl(path, PREVIOUS_RELEASE);
         for (const key of [url, new URL(path, SCOPE).href]) {
@@ -205,6 +204,9 @@ self.addEventListener("activate", event => {
           break;
         }
       }));
+      const dictionaryUrl = releaseUrl(I18N_PATH, PREVIOUS_RELEASE);
+      const dictionary = await old.match(dictionaryUrl);
+      if (dictionary && await matchesRelease(I18N_PATH, dictionary)) await current.put(dictionaryUrl, dictionary);
     }
     if (keys.includes(LEGACY_CACHE)) {
       const [old, current] = await Promise.all([caches.open(LEGACY_CACHE), caches.open(CACHE)]);
@@ -233,7 +235,7 @@ self.addEventListener("fetch", event => {
   }
   const singleVersion = url.searchParams.size === 1;
   const currentRelease = singleVersion && url.searchParams.get("release") === RELEASE;
-  const previousRelease = singleVersion && url.searchParams.get("v") === PREVIOUS_RELEASE;
+  const previousRelease = singleVersion && url.searchParams.get("release") === PREVIOUS_RELEASE;
   if (RELEASE_PATHS.has(path) && (currentRelease || previousRelease)) {
     event.respondWith((async () => {
       const cache = await caches.open(CACHE);

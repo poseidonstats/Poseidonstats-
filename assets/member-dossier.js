@@ -748,6 +748,11 @@
         const link = text("a",labels.open);
         link.href = path + "#" + id;
         panel.replaceChildren(line,link);
+        const inputs = state.item?.provenance?.inputs;
+        if (inputs?.selection_mode === "contextual") {
+          const picks = report.contextualSelections(inputs.picks,lang,state.item.match);
+          appendContextualResults(panel,contextualSettlements(selected,picks));
+        }
         if (state.publicSample || target.classList.contains("edition-member")) {
           review.querySelector("summary").textContent = line.textContent;
         }
@@ -773,16 +778,47 @@
     const row = rows.length===1 && rows[0];
     const normalize = value => value?.trim().replace(/\s+/g," ").replace(/(\d),(\d)/g,"$1.$2");
     const selection = state.selection;
+    const sameMarket = state.contextual
+      ? row?.dataset?.proMarketKey === selection?.key
+      : normalize(row?.cells?.[1]?.textContent) === normalize(selection?.market);
     let outcome;
     if (row && selection && archiveLanguage(card)===state.sourceLang
-      && normalize(row.cells[1]?.textContent)===normalize(selection.market)
-      && normalize(row.cells[2]?.textContent)===normalize(selection.probability)) {
+      && sameMarket
+      && reviewProbability(row.cells[2]?.textContent)===reviewProbability(selection.probability)) {
       const markers = row.cells[3]?.querySelectorAll("[data-i18n^='arhiva.semn.']");
       const marker = markers?.length===1 && markers[0].dataset.i18n;
       if (marker==="arhiva.semn.da") outcome = "selectionConfirmed";
       if (marker==="arhiva.semn.nu") outcome = "selectionMissed";
     }
-    return {score:score.replace(/\s*[-–]\s*/,"–"),outcome};
+    const alternatives = state.contextual ? contextualSettlements(card,state.contextualPicks).slice(1) : [];
+    return {score:score.replace(/\s*[-–]\s*/,"–"),outcome,alternatives};
+  }
+
+  function reviewProbability(value) {
+    return value?.trim().replace(/\s+/g,"").replace(",",".")
+      .replace(/(\.\d*?[1-9])0+%$/, "$1%").replace(/\.0+%$/, "%");
+  }
+
+  function contextualSettlements(card,picks) {
+    const rows = [...card.querySelectorAll(".pro-verificare .audit-table tbody tr[data-pro-market-key]")];
+    return picks.map((pick,index)=>{
+      const role = index===0 ? "principal" : "alternative";
+      const candidates = rows.filter(row=>row.dataset.proMarketKey===pick.key &&
+        row.cells[0]?.querySelector(`[data-archive-role="${role}"]`) &&
+        reviewProbability(row.cells[2]?.textContent)===reviewProbability(pick.probability));
+      const markers = candidates.length===1 ? candidates[0].cells[3]?.querySelectorAll("[data-i18n^='arhiva.semn.']") : null;
+      const marker = markers?.length===1 && markers[0].dataset.i18n;
+      const outcome = marker==="arhiva.semn.da" ? "selectionConfirmed"
+        : marker==="arhiva.semn.nu" ? "selectionMissed" : "resultUnavailable";
+      return {market:pick.market,outcome};
+    });
+  }
+
+  function appendContextualResults(panel,results) {
+    if (!results.length) return;
+    const list = text("ul",undefined,"edition-market-results");
+    for (const result of results) list.append(text("li",result.market+" · "+label(result.outcome)));
+    panel.append(list);
   }
 
   async function watchSampleResult(surfaces,state,history,report) {
@@ -807,7 +843,7 @@
       status = "resultError";
     }
     if (state.controller.signal.aborted) return;
-    for (const panel of panels) {
+    for (const [index,panel] of panels.entries()) {
       if (!panel?.isConnected) continue;
       panel.dataset.resultState = status;
       panel.textContent = label(status) + (result ? " · " + result.score : "");
@@ -816,6 +852,11 @@
       const link = text("a",report.archiveReviewLabels(state.lang).open,"edition-result-link");
       link.href = path + "#m" + state.fixture;
       panel.after(link);
+      if (index>0 && result.alternatives.length) {
+        const review = text("div");
+        appendContextualResults(review,result.alternatives);
+        panel.after(review);
+      }
     }
   }
 
@@ -999,7 +1040,12 @@
       full.addEventListener("close",()=>show.focus({preventScroll:true}));
       const html = _md(analysis.text);
       state.sourceLang = analysis.lang;
-      state.selection = report.sections(html).selection;
+      const inputs = item.provenance?.inputs;
+      state.contextual = inputs?.selection_mode === "contextual";
+      state.contextualPicks = state.contextual ? report.contextualSelections(inputs.picks,lang,item.match) : [];
+      state.selection = state.contextual
+        ? state.contextualPicks[0]
+        : report.sections(html).selection;
       const meta = matchMetadata(item,lang);
       for (const surface of [card,full]) {
         const compact = surface === card;

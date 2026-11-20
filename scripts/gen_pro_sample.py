@@ -32,8 +32,6 @@ DB = "file:" + str(Path.home() / "football_predictor" / "football.db") + "?mode=
 RO = ZoneInfo("Europe/Bucharest")
 START, END = "<!-- PRO_SAMPLE_CARD_START -->", "<!-- PRO_SAMPLE_CARD_END -->"
 LISTA_START, LISTA_END = "<!-- PRO_TODAY_LIST_START -->", "<!-- PRO_TODAY_LIST_END -->"
-POSEIDON_SCRIPTS = Path.home() / "football_predictor" / "scripts" / "poseidon"
-PRED_FULL = Path.home() / "football_predictor" / "data" / "predictions_full.json"
 PUBLIC_EXAMPLE = "https://poseidon-members.poseidonstats.workers.dev/api/exemplu"
 TOTAL_MARKET = {
     "ro": "Peste {n} goluri în meci",
@@ -43,6 +41,88 @@ TOTAL_MARKET = {
     "fr": "Plus de {n} buts dans le match",
     "id": "Di atas {n} gol total",
 }
+SOURCE_TOTAL_MARKET = {
+    "ro": ("Peste {n} goluri", "Sub {n} goluri"),
+    "en": ("Over {n} goals", "Under {n} goals"),
+    "es": ("Más de {n} goles", "Menos de {n} goles"),
+    "it": ("Over {n} gol", "Under {n} gol"),
+    "fr": ("Plus de {n} buts", "Moins de {n} buts"),
+    "id": ("Di atas {n} gol", "Di bawah {n} gol"),
+}
+PRO_MARKETS = {
+    "ht_over_0_5": (
+        "Peste 0,5 goluri în prima repriză",
+        "Over 0.5 first-half goals",
+        "Más de 0,5 goles en la primera parte",
+        "Over 0,5 gol nel primo tempo",
+        "Plus de 0,5 but en première mi-temps",
+        "Di atas 0,5 gol babak pertama",
+    ),
+    "btts": (
+        "Ambele marchează",
+        "Both teams to score",
+        "Ambos marcan",
+        "Entrambe segnano",
+        "Les deux équipes marquent",
+        "Kedua tim mencetak gol",
+    ),
+    "ng": (
+        "Cel puțin o echipă nu marchează",
+        "At least one team fails to score",
+        "Al menos un equipo no marca",
+        "Almeno una squadra non segna",
+        "Au moins une équipe ne marque pas",
+        "Setidaknya satu tim tidak mencetak gol",
+    ),
+    **{
+        f"{key}_{goals}_5": tuple(
+            labels[index].format(n=f"{goals}{'.' if lang == 'en' else ','}5")
+            for lang, labels in SOURCE_TOTAL_MARKET.items()
+        )
+        for key, index, lines in (("over", 0, (1, 2, 3)), ("under", 1, (2, 3)))
+        for goals in lines
+    },
+}
+TEAM_GOALS = {
+    "team_goals_home_2_plus": "home",
+    "team_goals_away_2_plus": "away",
+}
+TOTAL_RANGES = {
+    "total_goals_2_3": "2–3",
+    "total_goals_2_4": "2–4",
+    "total_goals_3_5": "3–5",
+}
+TEAM_GOALS_LABELS = (
+    "{team} marchează cel puțin 2 goluri în 90 de minute",
+    "{team} to score at least 2 goals in 90 minutes",
+    "{team} marca al menos 2 goles en 90 minutos",
+    "{team} segna almeno 2 gol in 90 minuti",
+    "{team} marque au moins 2 buts en 90 minutes",
+    "{team} mencetak minimal 2 gol dalam 90 menit",
+)
+TOTAL_RANGE_LABELS = (
+    "{bounds} goluri în total după 90 de minute, inclusiv",
+    "{bounds} total goals after 90 minutes, inclusive",
+    "{bounds} goles totales tras 90 minutos, ambos incluidos",
+    "{bounds} gol totali dopo 90 minuti, estremi inclusi",
+    "{bounds} buts au total après 90 minutes, bornes incluses",
+    "{bounds} gol total setelah 90 menit, batas termasuk",
+)
+ALTERNATIVE = dict(zip(TOTAL_MARKET, ("Alternativă", "Alternative", "Alternativa", "Alternativa", "Alternative", "Alternatif"), strict=True))
+NO_SELECTION = dict(
+    zip(
+        TOTAL_MARKET,
+        (
+            "Fără selecție",
+            "No selection",
+            "Sin selección",
+            "Nessuna selezione",
+            "Aucune sélection",
+            "Tidak ada pilihan",
+        ),
+        strict=True,
+    )
+)
 LUNI = [
     "ianuarie",
     "februarie",
@@ -102,7 +182,7 @@ def parseaza(text: str) -> dict:
     p["picks"] = [
         linie.strip()
         for linie in bloc.splitlines()[1:]
-        if linie.strip() and linie.strip()[0] in "🔒🎯💎"
+        if linie.strip() and linie.strip()[0] in "🔒🎯💎↪"
     ]
     return p
 
@@ -146,7 +226,7 @@ def evalueaza(piata: str, gh: int, ga: int, hth=None, hta=None, *, home="", away
     p = piata_fara_perioada(piata)
     simple = bool(
         re.match(
-            r"(?i)^(peste\s+\d[.,]5|sub\s+\d[.,]5|ambele inscriu|ambele marcheaza|btts|gg|1x\b|x2\b|12\b|egal\b|x\b|1\b|2\b)",
+            r"(?i)^(peste\s+\d[.,]5|sub\s+\d[.,]5|ambele inscriu|ambele marcheaza|btts|gg|cel putin o echipa nu marcheaza|1x\b|x2\b|12\b|egal\b|x\b|1\b|2\b)",
             p,
         )
     )
@@ -169,6 +249,8 @@ def evalueaza(piata: str, gh: int, ga: int, hth=None, hta=None, *, home="", away
     simple = simple or bool(
         re.match(r"^scor(?:ul)?\b", p)
         or re.fullmatch(r"[^()]+\((?:1x|x2|12|1|2|x)\)", p)
+        or re.fullmatch(r"(?:2[–-][34]|3[–-]5) goluri in total dupa 90 de minute, inclusiv", p)
+        or re.fullmatch(r".+ marcheaza cel putin 2 goluri in 90 de minute", p)
     )
     if not simple:
         return None
@@ -247,23 +329,98 @@ def _principal_row(picks: list[str]) -> str:
     return rows[0] if len(rows) == 1 else ""
 
 
-def _principal(item: dict, picks: list[str]) -> tuple[str, int | float, str] | None:
+def contextual_reason(item: dict, picks: list[str], lang: str, selection=None) -> str:
+    if selection is None:
+        selection = next((p for p in contextual_picks(item) if p["tip"] == "Principal"), None)
+    is_alternative = selection and selection["tip"] == "Alternativă"
+    rows = [row for row in picks if row.startswith("↪")] if is_alternative else [_principal_row(picks)]
+    if not selection:
+        labels = (NO_SELECTION[lang], NO_SELECTION["ro"])
+    else:
+        labels = (pro_market_label(selection["key"], lang, item["match"]), selection["source_market"])
+    for row in rows:
+        content = re.sub(r"^(?:🎯|↪️?)\s*\*\*[^*]+:\*\*\s*", "", row).replace("**", "")
+        for label in labels:
+            if not isinstance(label, str) or not label:
+                continue
+            prefix = rf"^{re.escape(label)}(?:\s+[—–-]\s+\d+(?:[.,]\d+)?\s*%)?[.·]\s*"
+            match = re.match(prefix, content, re.I)
+            if match:
+                return content[match.end() :].strip()
+    return ""
+
+
+def contextual_pro(item: dict) -> bool:
+    return (item.get("provenance") or {}).get("inputs", {}).get(
+        "selection_mode"
+    ) == "contextual"
+
+
+def pro_market_label(key: str, lang: str, match: dict | None = None) -> str:
+    index = tuple(TOTAL_MARKET).index(lang)
+    if key in TEAM_GOALS:
+        side = TEAM_GOALS[key]
+        fallback = {"home": "Gazda", "away": "Oaspetele"}[side]
+        return TEAM_GOALS_LABELS[index].format(team=(match or {}).get(side) or fallback)
+    if key in TOTAL_RANGES:
+        return TOTAL_RANGE_LABELS[index].format(bounds=TOTAL_RANGES[key])
+    return PRO_MARKETS[key][index]
+
+
+def pro_market_for_settlement(key: str, label: str) -> str:
+    if key in PRO_MARKETS or key in TEAM_GOALS or key in TOTAL_RANGES:
+        return pro_market_label(key, "ro").removesuffix(" în meci")
+    return label
+
+
+def contextual_picks(item: dict) -> list[dict]:
+    structured = (item.get("provenance") or {}).get("inputs", {}).get("picks")
+    if not isinstance(structured, list) or not 1 <= len(structured) <= 3:
+        return []
+    picked = []
+    keys = set()
+    for pick in structured:
+        if not isinstance(pick, dict):
+            return []
+        key, role, probability = pick.get("key"), pick.get("rol"), pick.get("p")
+        if not isinstance(key, str) or key in keys or role not in ("Principal", "Alternativă"):
+            return []
+        if key not in PRO_MARKETS and key not in TEAM_GOALS and key not in TOTAL_RANGES:
+            return []
+        if probability is not None and (type(probability) not in (int, float) or not 0 <= probability <= 100):
+            return []
+        keys.add(key)
+        picked.append({"tip": role, "key": key, "piata": pro_market_label(key, "ro", item["match"]), "prob": probability, "source_market": pick.get("piata")})
+    primary = [pick for pick in picked if pick["tip"] == "Principal"]
+    return primary + [pick for pick in picked if pick["tip"] == "Alternativă"] if len(primary) == 1 else []
+
+
+def _principal(
+    item: dict, picks: list[str]
+) -> tuple[str, int | float | None, str] | None:
     """Preferă pronosticul structurat al dosarului. Pentru fișele vechi, citește doar rândul principal."""
+    if contextual_pro(item):
+        primary = contextual_picks(item)
+        return (primary[0]["piata"], primary[0]["prob"], primary[0]["key"]) if primary else None
     structured = (item.get("provenance") or {}).get("inputs", {}).get("picks") or []
+    if not isinstance(structured, list):
+        return None
     primary = [
         p for p in structured if isinstance(p, dict) and p.get("rol") == "Principal"
     ]
     if len(primary) == 1:
         pick = primary[0]
-        market, probability = pick.get("piata"), pick.get("p")
+        key, market, probability = pick.get("key"), pick.get("piata"), pick.get("p")
+        valid_probability = (
+            type(probability) in (int, float) and 0 <= probability <= 100
+        )
         if (
             isinstance(market, str)
             and market
-            and isinstance(pick.get("key"), str)
-            and type(probability) in (int, float)
-            and 0 <= probability <= 100
+            and isinstance(key, str)
+            and valid_probability
         ):
-            return market, probability, pick["key"]
+            return market, probability, key
     row = _principal_row(picks)
     match = re.search(r"\s+[—–-]\s+(\d+(?:[.,]\d+)?)\s*%", row.replace("**", ""))
     if not match:
@@ -283,6 +440,7 @@ def html_card(
     m = item["match"]
     p = parseaza(item["analysis"])
     principal = _principal(item, p["picks"])
+    contextual = contextual_pro(item)
     published = bool(item.get("_public_site_delivery"))
     liga = m.get("league", "")
     tara = m.get("country", "")
@@ -305,13 +463,21 @@ def html_card(
 
     def _titlu_principal(sectiuni: dict, lang: str) -> str:
         if not principal:
+            if contextual:
+                return f'<div class="dossier-published">{status} · <strong>{NO_SELECTION[lang]}</strong></div>'
             return f'<div class="dossier-published">{status}</div>'
         market, probability, key = principal
-        pct = f"{probability:.2f}".rstrip("0").rstrip(".")
+        pct = (
+            f"{probability:.2f}".rstrip("0").rstrip(".")
+            if probability is not None
+            else ""
+        )
         total = re.fullmatch(r"over_([12])_5", key)
-        if total:
+        if total and not contextual:
             n = total[1] + (".5" if lang == "en" else ",5")
             market = TOTAL_MARKET[lang].format(n=n)
+        elif contextual or key in PRO_MARKETS:
+            market = pro_market_label(key, lang, m)
         elif key in ("dc_1x", "dc_x2", "dc_12"):
             market = key.removeprefix("dc_").upper()
         elif lang != "ro":
@@ -319,7 +485,8 @@ def html_card(
             market = piata_din_linie(row) or market
         if lang != "en":
             pct = pct.replace(".", ",")
-        return f'<div class="dossier-published">{status} · <strong>{H.escape(market)} · {pct}%</strong></div>'
+        estimate = f" · {pct}%" if pct else ""
+        return f'<div class="dossier-published">{status} · <strong>{H.escape(market)}{estimate}</strong></div>'
 
     def _corp(p: dict, lang: str) -> str:
         verdict = f'<p><strong data-i18n="arhiva.sect.verdict">Verdict:</strong> {_inline(p["verdict"])}</p>'
@@ -327,7 +494,17 @@ def html_card(
             r"\s+[—–-]\s+(\d+(?:[.,]\d+)?)\s*%[.·]\s*(.+)",
             _principal_row(p["picks"]).replace("**", ""),
         )
-        matching_reason = principal and reason and float(reason[1].replace(",", ".")) == principal[1]
+        argument = (
+            contextual_reason(item, p["picks"], lang)
+            if contextual
+            else (
+                reason[2]
+                if principal
+                and reason
+                and float(reason[1].replace(",", ".")) == principal[1]
+                else ""
+            )
+        )
         if scor:
             result_key, result_text = {
                 True: ("da", "✅ a ieșit"),
@@ -345,16 +522,29 @@ def html_card(
             )
         else:
             verif = '<p data-i18n="arhiva.fararez">Fără rezultat final în bază.</p>'
+        alternatives = []
+        if contextual:
+            for pick in contextual_picks(item)[1:]:
+                market = H.escape(pro_market_label(pick["key"], lang, m))
+                reason = contextual_reason(item, p["picks"], lang, pick)
+                alternatives.append(
+                    f'<li>{ALTERNATIVE[lang]} · <strong>{market}</strong>'
+                    + (f"<p>{_inline(reason)}</p>" if reason else "")
+                    + "</li>"
+                )
         return "\n".join(
             [
                 '      <div class="pro-visible">',
                 f"        {_titlu_principal(p, lang)}",
-                f'        <p>{_inline(reason[2])}</p>' if matching_reason else f"        {verdict}",
+                f"        <p>{_inline(argument)}</p>"
+                if argument
+                else f"        {verdict}",
                 '        <details class="dossier-context"><summary data-i18n="dashboard.analysis.read">Citește analiza</summary>',
-                f"        {verdict}" if matching_reason else "",
+                f"        {verdict}" if argument else "",
                 f'        <p><strong data-i18n="arhiva.sect.context">Context:</strong> {_inline(p["context"])}</p>',
                 f'        <p><strong data-i18n="arhiva.sect.model">Modelul vs realitate:</strong> {_inline(p["model"])}</p>',
                 f'        <p><strong data-i18n="arhiva.sect.urmarit">De urmărit:</strong> {_inline(p["urmarit"])}</p>',
+                f'        <ul>{"".join(alternatives)}</ul>' if alternatives else "",
                 "        </details>",
                 '        <details class="dossier-review"><summary data-i18n="arhiva.th.rezultat">Rezultat</summary>',
                 f"        {verif}",
@@ -374,7 +564,7 @@ def html_card(
     ):  # 14 oct 2026: + fr, + id (traduce_analize.py)
         text = item.get(f"analysis_{cod}") or ""
         pt = parseaza(text)
-        if pt["verdict"] and pt["picks"]:
+        if pt["verdict"] and (contextual or pt["picks"]):
             variante.append(f'<div data-lang="{cod}" hidden>\n{_corp(pt, cod)}\n</div>')
     corp = (
         f"<div data-lang-grup>{''.join(variante)}</div>"
@@ -523,24 +713,41 @@ def injecteaza_lista(html: str, lista: str) -> str:
     return html[:i] + "\n    " + bloc + html[i:]
 
 
-def lista_pro_azi(zi: str, limit: int = 12) -> list[dict]:
-    """Aceeași selecție pe care o analizează cronul Pro la 07:20 (emit_matches), cu ora din predictions_full."""
-    sys.path.insert(0, str(POSEIDON_SCRIPTS))
+def lista_pro_azi(zi: str) -> list[dict]:
+    """Arată toate analizele zilei, după ce arhiva a fost scrisă."""
     try:
-        from discord_premium_daily import emit_matches
-    except Exception as e:
-        print(f"[gen_pro_sample] nu pot importa emit_matches: {e}")
+        day = json.loads((ARHIVA / f"{zi}.json").read_bytes())
+    except (OSError, ValueError):
         return []
-    rows = emit_matches(limit=limit, target_date=zi)
-    try:
-        ore = {
-            m.get("fixture_id"): m.get("match_date")
-            for m in json.loads(PRED_FULL.read_text()).get("matches", [])
-        }
-    except Exception:
-        ore = {}
-    for r in rows:
-        r["match_date"] = ore.get(r.get("fixture_id"), "") or ""
+    if (
+        not isinstance(day, dict)
+        or day.get("date", zi) != zi
+        or day.get("dry_run")
+        or day.get("dryrun")
+    ):
+        return []
+    rows = []
+    for item in day.get("items") or []:
+        match = item.get("match") or {}
+        if not (
+            match.get("fixture_id")
+            and match.get("home")
+            and match.get("away")
+            and (item.get("analysis") or "").strip()
+        ):
+            continue
+        rows.append(
+            {
+                "fixture_id": match["fixture_id"],
+                "home": match["home"],
+                "away": match["away"],
+                "league": match.get("league") or "",
+                "country": match.get("country") or "",
+                "match_date": (item.get("provenance") or {}).get("original_kickoff_utc")
+                or match.get("match_date")
+                or "",
+            }
+        )
     return rows
 
 
@@ -648,16 +855,20 @@ def _verdict(item: dict, result) -> tuple[tuple[int, int] | None, bool | None]:
     principal = _principal(item, parseaza(item["analysis"])["picks"])
     principal_ok = None
     if scor and principal:
-        principal_ok = evalueaza_pick(principal[0], *scor, m["home"], m["away"], *half)
+        market = pro_market_for_settlement(principal[2], principal[0])
+        principal_ok = evalueaza_pick(market, *scor, m["home"], m["away"], *half)
     return scor, principal_ok
 
 
-def _are_deja_exemplul_azi(zi: str) -> bool:
-    """O întrerupere a confirmării publice nu înlocuiește cardul de azi deja pe site."""
+def _exemplul_deja_pe_site(zi: str) -> int | None:
+    """Identifică exemplul zilei și păstrează-l dacă verificarea externă cade."""
     html = INDEX.read_text(encoding="utf-8")
     _, _, sample = html.partition(START)
     sample, end, _ = sample.partition(END)
-    return bool(end and f'data-date="{zi}"' in sample)
+    if not end or f'data-sample-day="{zi}"' not in sample:
+        return None
+    fixture = re.search(r'\bdata-sample-fixture="(\d+)"', sample)
+    return int(fixture[1]) if fixture else None
 
 
 def main() -> None:
@@ -670,14 +881,11 @@ def main() -> None:
     azi = a.date
     ieri = (datetime.strptime(azi, "%Y-%m-%d") - timedelta(days=1)).strftime("%Y-%m-%d")
     it_azi, gen_azi = _incarca(azi)
-    if not it_azi and _are_deja_exemplul_azi(azi):
-        print(
-            f"[gen_pro_sample] confirmarea publică pentru {azi} indisponibilă; cardul zilei rămâne"
-        )
-        return
-    it_ieri, _ = _incarca(ieri)
+    fid_card = None if it_azi else _exemplul_deja_pe_site(azi)
+    it_ieri, _ = _incarca(ieri) if fid_card is None else (None, "")
     fids = [i["match"]["fixture_id"] for i in (it_azi, it_ieri) if i]
     rez = rezultate(fids) if fids else {}
+    card, linie = None, ""
     if it_azi:
         zi_card = azi
         fid_card = it_azi["match"]["fixture_id"]
@@ -705,24 +913,26 @@ def main() -> None:
             f"[gen_pro_sample] fără exemplu public confirmat pentru {azi} — rămâne exemplul de ieri ({ieri}: {it_ieri['match']['home']} – {it_ieri['match']['away']})"
         )
     else:
-        print(
-            f"[gen_pro_sample] niciun exemplu public confirmat pentru {azi} sau {ieri} — cardul rămâne"
-        )
-        return
+        print(f"[gen_pro_sample] nicio confirmare publică nouă pentru exemplul din {azi}")
     rows = lista_pro_azi(azi)
+    if card is None and not rows:
+        return
     print(
         f"[gen_pro_sample] lista Pro de azi ({azi}): {len(rows)} meciuri"
         + (", fără cel publicat" if fid_card else "")
     )
     if a.dry_run:
-        print(card)
-        print(linie)
+        if card is not None:
+            print(card)
+            print(linie)
         print(html_lista_pro(rows, fid_card, stat_30_zile(azi)))
         return
-    html = injecteaza(INDEX.read_text(encoding="utf-8"), card, linie)
+    html = INDEX.read_text(encoding="utf-8")
+    if card is not None:
+        html = injecteaza(html, card, linie)
     html = injecteaza_lista(html, html_lista_pro(rows, fid_card, stat_30_zile(azi)))
     INDEX.write_text(html, encoding="utf-8")
-    print(f"[gen_pro_sample] scris {INDEX} (card {zi_card})")
+    print(f"[gen_pro_sample] scris {INDEX}" + (f" (card {zi_card})" if card else " (lista Pro)"))
 
 
 if __name__ == "__main__":

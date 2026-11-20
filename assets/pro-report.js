@@ -75,7 +75,8 @@
   }
   function verifiedRecord(record,{fixture,day,key,kickoff,publication},kind) {
     const league=kind==='league';
-    const criteria=league?'verified_league_ft90_v1':'verified_pro_primary_ft90_v1';
+    const period=key==='ht_over_0_5'?'ht':'ft90';
+    const criteria=(league?'verified_league_':'verified_pro_primary_')+period+'_v1';
     if (!record || !isoDate(day) || !key || record.criteria!==criteria || record.fixture_id!==fixture
       || record.date!==day || record.key!==key || !validCounts(record)) return null;
     const cutoff=instant(record.as_of),start=instant(kickoff),published=instant(publication);
@@ -120,8 +121,9 @@
         const detail = record?.settled ? [identity.market, description, range(record)].join(' · ') : '';
         return edition.metric(title,value,detail);
       };
-      return metric(edition.label('league'),league,'FT90') +
-        metric(edition.label('history'),pro,pro ? edition.label('outcomes').replace('{hits}',num.format(pro.hits)).replace('{misses}',num.format(pro.settled-pro.hits)) + ' · FT90' : '');
+      const period=identity.key==='ht_over_0_5'?'HT':'FT90';
+      return metric(edition.label('league'),league,period) +
+        metric(edition.label('history'),pro,pro ? edition.label('outcomes').replace('{hits}',num.format(pro.hits)).replace('{misses}',num.format(pro.settled-pro.hits)) + ' · '+period : '');
     }
     const band=pro?.band;
     const bandCovered=band && validCounts(band) && band.settled>0 && band.settled<=pro.settled
@@ -180,15 +182,19 @@
   }
   function dossierReport(html,item,dossier,day,lang,sourceLang=lang,publicSample=false,edition=null) {
     const data=presentationSections(sections(html),sourceLang);
-    const structured=structuredSelection(item.provenance?.inputs?.picks,lang);
-    const selection=structured || data.selection;
+    const inputs=item.provenance?.inputs;
+    const contextual=inputs?.selection_mode==='contextual';
+    const contextualPicks=contextual?contextualSelections(inputs?.picks,lang,item.match):[];
+    const structured=contextual?contextualPicks[0]:structuredSelection(inputs?.picks,lang);
+    const selection=structured || (!contextual ? data.selection : null);
+    const emptySelection=(noSelection[lang] || noSelection.en);
     const dossierApi=root.PoseidonProContext;
     const fixture=Number(item.match?.fixture_id);
     const key=selection?.key || (selection?.goals ? `over_${selection.goals-1}_5` : null);
     const identity={fixture,day,key,kickoff:item.provenance?.original_kickoff_utc,
       publication:item.provenance?.generated_at_utc,captured:instant(item.provenance?.inputs_captured_at_utc),goals:selection?.goals,market:selection?.market || '',estimate:Number(selection?.probability?.replace('%','').replace(',','.'))};
     const evidence=key?marketSummary(item,dossier,identity,lang,publicSample,edition):'';
-    const goals=structured?.goals;
+    const goals=contextual?null:structured?.goals;
     const facts=goals?dossierApi?.goalEvidence(dossier,fixture,goals):null;
     const snapshot=instant(dossier?.as_of),published=instant(identity.publication);
     const reading=snapshot<=published?preMatchReading(item,fixture,day,facts,lang):'';
@@ -206,10 +212,10 @@
       const hasPublicationTime = publicSample ? Number.isFinite(receipt) && receipt <= Date.now() : publishedOnTime;
       const publicationTime=hasPublicationTime ? new Intl.DateTimeFormat(lang==='en'?'en-GB':lang,
         {hour:'2-digit',minute:'2-digit',timeZone:'Europe/Bucharest',timeZoneName:'short'}).format(receipt) : '';
-      const note=[pickLabel,publicationTime].filter(Boolean).join(' · ');
-      const metrics=edition.metric(label('pick'),selection?.market || '—',note)
-        + edition.metric(label('probability'),selection?.probability || '—',selection?.market || '',
-          publicSample && selection?.probability ? label('matchEstimate') : '') + evidence;
+      const note=[(selection || !contextual) && pickLabel,publicationTime].filter(Boolean).join(' · ');
+      const metrics=edition.metric(label('pick'),selection?.market || (contextual ? emptySelection : '—'),note)
+        + ((selection?.probability || !contextual) ? edition.metric(label('probability'),selection?.probability || '—',selection?.market || '',
+          publicSample && selection?.probability ? label('matchEstimate') : '') : '') + evidence;
       const writing=(key,blocks)=>blocks.length ? `<section class="edition-paragraph" lang="${escapeText(sourceLang)}"><h4 lang="${escapeText(lang)}">${escapeText(label(key))}</h4>${blocks.map(contentOnly).join('')}</section>` : '';
       const counts=item.provenance?.inputs?.cifre;
       const home=counts?.gazda_acasa?.n, away=counts?.oaspeti_depl?.n;
@@ -220,14 +226,26 @@
         ? `<section class="edition-paragraph">${edition.compact ? '' : verificationHeading}<p role="status" data-sample-result>${escapeText(Date.now() < kickoff ? awaiting : label('resultLoading'))}</p></section>`
         : `<section class="edition-paragraph">${verificationHeading}<details class="dossier-review"${review?' open':' data-review-lookup'}><summary>${w[2]}${reviewStatus}</summary><div data-dossier-review-content aria-live="polite">${review || `<p>${w[8]}</p>`}</div></details></section>`;
       // The preview quotes the published reasoning. Keep the complete article in its own view.
-      const excerpts = [data.selectionArgument && `<p>${escapeText(data.selectionArgument)}</p>`,
+      const sourcePicks=contextual?contextualSelections(inputs?.picks,sourceLang,item.match):[];
+      const sourcePick=sourcePicks[0];
+      const argument=contextual ? contextualArgument(data.primaryText,
+        sourcePick ? [sourcePick.market,sourcePick.sourceMarket] : [noSelection[sourceLang],noSelection.ro]) : data.selectionArgument;
+      const recordedArgument = argument ? `<p>${escapeText(argument)}</p>` : '';
+      const alternatives=contextualPicks.slice(1).map((pick,i)=>({
+        ...pick,argument:data.alternativeText.map(line=>contextualArgument(line,[sourcePicks[i+1]?.market,sourcePicks[i+1]?.sourceMarket])).find(Boolean)
+      }));
+      const excerpts = [recordedArgument,
         ...data.evidence,...data.context].filter(Boolean).slice(0,2);
       return `<div class="edition-metrics">${metrics}</div>` +
         writing('verdict',data.thesis.length ? data.thesis : data.other.slice(0,1)) +
         (edition.compact ? writing('arguments',excerpts)
-          : writing('arguments',[...data.evidence,...data.context]) + writing('limitations',limitation)) + reviewBlock;
+          : writing('arguments',[...(contextual && recordedArgument ? [recordedArgument] : []),...data.evidence,...data.context])
+            + alternativeMarkup(alternatives,lang) + writing('limitations',limitation)) + reviewBlock;
     }
-    return `${selection?`<p class="dossier-published"><span>${pickLabel}</span> · <strong>${escapeText(selection.market)} · ${escapeText(selection.probability)}</strong></p>`:''}${(!publicSample && reading) || `<div lang="${escapeText(sourceLang)}">${conclusion}</div>`}${evidence}<details class="dossier-review"${review?'':' data-review-lookup'}><summary>${w[2]}${reviewStatus}</summary><div data-dossier-review-content aria-live="polite">${review || `<p>${w[8]}</p>`}</div></details>`;
+    const estimate=selection?.probability ? ' · '+escapeText(selection.probability) : '';
+    const heading=selection ? `<span>${pickLabel}</span> · <strong>${escapeText(selection.market)}${estimate}</strong>`
+      : contextual ? `<strong>${escapeText(emptySelection)}</strong>` : '';
+    return `${heading ? `<p class="dossier-published">${heading}</p>` : ''}${(!publicSample && reading) || `<div lang="${escapeText(sourceLang)}">${conclusion}</div>`}${evidence}<details class="dossier-review"${review?'':' data-review-lookup'}><summary>${w[2]}${reviewStatus}</summary><div data-dossier-review-content aria-live="polite">${review || `<p>${w[8]}</p>`}</div></details>`;
   }
   // Observed historical tier labels; anchored to the start, never narrative words.
   const tierNames = 'Base|Main pick|Main|Bold pick|Bold|Curajos|Arriesgado|Atrevido|Coraggioso|Bază|Baza|Principal|Principale|Principali|Audaz|Audace|Audacieux|Utama|Berani|Dasar|Siguranță|Safe pick|Safe|Safety|Seguridad|Sicurezza|Sécurité|Aman|Keamanan|Banker|Core|Foundation|Value pick|Risky pick|Audacios';
@@ -258,23 +276,94 @@
     if (directional) result.key='dc_'+directional[1].toLowerCase();
     return result;
   }
-  function structuredSelection(picks,lang) {
+  const noSelection={ro:'Fără selecție',en:'No selection',es:'Sin selección',it:'Nessuna selezione',fr:'Aucune sélection',id:'Tidak ada pilihan'};
+  const alternativeCopy={
+    ro:['Alternative pentru același meci','Alternativă'], en:['Alternatives for this match','Alternative'],
+    es:['Alternativas para este partido','Alternativa'], it:['Alternative per questa partita','Alternativa'],
+    fr:['Alternatives pour ce match','Alternative'], id:['Alternatif untuk laga ini','Alternatif'],
+  };
+  function alternativeMarkup(picks,lang) {
+    if (!picks.length) return '';
+    const [heading,role]=alternativeCopy[lang] || alternativeCopy.en;
+    return `<section class="edition-paragraph" data-pro-alternatives><h4>${heading}</h4><ul>${picks.map(pick=>
+      `<li data-pro-alternative-key="${escapeText(pick.key)}"><strong>${role} · ${escapeText(pick.market)}${pick.probability?' · '+escapeText(pick.probability):''}</strong>${pick.argument?`<p>${escapeText(pick.argument)}</p>`:''}</li>`
+    ).join('')}</ul></section>`;
+  }
+  function contextualArgument(text, labels) {
+    text=text.replace(/&amp;|&lt;|&gt;|&quot;|&#39;/g,value=>({'&amp;':'&','&lt;':'<','&gt;':'>','&quot;':'"','&#39;':"'"}[value]));
+    for (const label of labels) {
+      if (typeof label!=='string' || !label || !text.startsWith(label)) continue;
+      const tail=text.slice(label.length).match(/^(?:\s+[—–-]\s+\d+(?:[.,]\d+)?\s*%)?[.·]\s*(.+)$/u);
+      if (tail) return tail[1];
+    }
+    return '';
+  }
+  const contextualMarkets={
+    ht_over_0_5:{ro:'Peste 0,5 goluri în prima repriză',en:'Over 0.5 first-half goals',es:'Más de 0,5 goles en la primera parte',it:'Over 0,5 gol nel primo tempo',fr:'Plus de 0,5 but en première mi-temps',id:'Di atas 0,5 gol babak pertama'},
+    btts:{ro:'Ambele marchează',en:'Both teams to score',es:'Ambos marcan',it:'Entrambe segnano',fr:'Les deux équipes marquent',id:'Kedua tim mencetak gol'},
+    ng:{ro:'Cel puțin o echipă nu marchează',en:'At least one team fails to score',es:'Al menos un equipo no marca',it:'Almeno una squadra non segna',fr:'Au moins une équipe ne marque pas',id:'Setidaknya satu tim tidak mencetak gol'},
+  };
+  const teamGoalsCopy={
+    ro:['{team} marchează cel puțin 2 goluri în 90 de minute','Gazda','Oaspetele'],
+    en:['{team} to score at least 2 goals in 90 minutes','Home team','Away team'],
+    es:['{team} marca al menos 2 goles en 90 minutos','Equipo local','Equipo visitante'],
+    it:['{team} segna almeno 2 gol in 90 minuti','Squadra di casa','Squadra ospite'],
+    fr:['{team} marque au moins 2 buts en 90 minutes','Équipe à domicile','Équipe à l’extérieur'],
+    id:['{team} mencetak minimal 2 gol dalam 90 menit','Tim tuan rumah','Tim tamu'],
+  };
+  const totalRangesCopy={
+    ro:'{bounds} goluri în total după 90 de minute, inclusiv',en:'{bounds} total goals after 90 minutes, inclusive',
+    es:'{bounds} goles totales tras 90 minutos, ambos incluidos',it:'{bounds} gol totali dopo 90 minuti, estremi inclusi',
+    fr:'{bounds} buts au total après 90 minutes, bornes incluses',id:'{bounds} gol total setelah 90 menit, batas termasuk',
+  };
+  function contextualSelections(picks,lang,match) {
+    if (!Array.isArray(picks) || picks.length<1 || picks.length>3) return [];
+    if (new Set(picks.map(pick=>pick?.key)).size!==picks.length) return [];
+    const primary=picks.filter(pick=>pick?.rol==='Principal');
+    const alternatives=picks.filter(pick=>pick?.rol==='Alternativă');
+    if (primary.length!==1 || alternatives.length!==picks.length-1) return [];
+    const normalized=[...primary,...alternatives].map(pick=>{
+      const selection=structuredSelection([{...pick,rol:'Principal'}],lang,true,match);
+      return selection && {...selection,sourceMarket:pick.piata};
+    });
+    return normalized.every(Boolean)?normalized:[];
+  }
+  function structuredSelection(picks,lang,contextual=false,match) {
     if (!Array.isArray(picks)) return null;
     const primary=picks.filter(pick=>pick?.rol==='Principal');
     if (primary.length!==1) return null;
     const {key,p,piata}=primary[0];
-    if (!Number.isFinite(p) || p<0 || p>100 || typeof key!=='string') return null;
-    const total=key.match(/^over_([123])_5$/);
-    const format={ro:'Peste {n} goluri în meci',en:'Over {n} total goals',es:'Más de {n} goles en el partido',
-      it:'Over {n} gol totali',fr:'Plus de {n} buts dans le match',id:'Di atas {n} gol total'}[lang] || 'Over {n} total goals';
+    const validProbability=Number.isFinite(p) && p>=0 && p<=100;
+    if (typeof key!=='string' || (!validProbability && (!contextual || p!=null))) return null;
+    const labels=Object.hasOwn(contextualMarkets,key) ? contextualMarkets[key] : null;
+    const over=key.match(/^over_([123])_5$/);
+    const under=key.match(/^under_([23])_5$/);
+    const team=key.match(/^team_goals_(home|away)_2_plus$/);
+    const bounds=key.match(/^total_goals_(2)_(3|4)$|^total_goals_(3)_(5)$/);
+    if (contextual && !labels && !over && !under && !team && !bounds) return null;
+    const contextualTotalCopy={
+      ro:['Peste {n} goluri','Sub {n} goluri'], en:['Over {n} goals','Under {n} goals'],
+      es:['Más de {n} goles','Menos de {n} goles'], it:['Over {n} gol','Under {n} gol'],
+      fr:['Plus de {n} buts','Moins de {n} buts'], id:['Di atas {n} gol','Di bawah {n} gol'],
+    };
+    const format=contextual ? (contextualTotalCopy[lang] || contextualTotalCopy.en)[under ? 1 : 0] : under ? {ro:'Sub {n} goluri în meci',en:'Under {n} total goals',es:'Menos de {n} goles en el partido',
+      it:'Under {n} gol totali',fr:'Moins de {n} buts dans le match',id:'Di bawah {n} gol total'}[lang] || 'Under {n} total goals'
+      : {ro:'Peste {n} goluri în meci',en:'Over {n} total goals',es:'Más de {n} goles en el partido',
+        it:'Over {n} gol totali',fr:'Plus de {n} buts dans le match',id:'Di atas {n} gol total'}[lang] || 'Over {n} total goals';
+    const total=over || under;
     const number=new Intl.NumberFormat(lang,{maximumFractionDigits:2});
+    const [teamFormat,homeLabel,awayLabel]=teamGoalsCopy[lang] || teamGoalsCopy.en;
+    const teamMarket=team && teamFormat.replace('{team}',()=>match?.[team[1]] || (team[1]==='home'?homeLabel:awayLabel));
+    const rangeMarket=bounds && (totalRangesCopy[lang] || totalRangesCopy.en).replace('{bounds}',`${bounds[1] || bounds[3]}–${bounds[2] || bounds[4]}`);
     const market=total ? format.replace('{n}',number.format(Number(total[1])+.5))
-      : {dc_1x:'1X',dc_x2:'X2',dc_12:'12'}[key] || (typeof piata==='string' ? piata : '');
-    return market ? {market,probability:number.format(p)+'%',goals:total?Number(total[1])+1:null, key} : null;
+      : teamMarket || rangeMarket || (labels && (labels[lang] || labels.en)) || {dc_1x:'1X',dc_x2:'X2',dc_12:'12'}[key] || (typeof piata==='string' ? piata : '');
+    return market ? {market,probability:validProbability?number.format(p)+'%':'',goals:over?Number(over[1])+1:null, key} : null;
   }
   function sections(html) {
-    const out = {thesis:[],context:[],evidence:[],watch:[],markets:[],review:[],other:[],original:html,selection:null,selectionArgument:''};
+    const out = {thesis:[],context:[],evidence:[],watch:[],markets:[],review:[],other:[],original:html,selection:null,selectionArgument:'',primaryText:'',alternativeText:[],contextual:null,contextualAlternatives:[]};
     const selections=[];
+    const primaryText=[];
+    let contextualEntry;
     const ri = html.search(/<div\s+class=["']pro-verificare["']/);
     let body = ri < 0 ? html : html.slice(0,ri);
     if (ri >= 0) out.review.push(html.slice(ri));
@@ -297,6 +386,22 @@
         const items=block.match(/<li\b[^>]*>([\s\S]*?)<\/li>/gi) || [block];
         for (const item of items) {
           const inner=item.replace(/^<(?:li|p)\b[^>]*>/i,'').replace(/<\/(?:li|p)>$/i,'');
+          const contextual=item.match(/^<li\b[^>]*\bdata-pro-contextual-key="([a-z0-9_]*)"(?:\s+data-pro-contextual-p="([^"]*)")?(?:\s+data-pro-contextual-role="(principal|alternative)")?/);
+          if (contextual) {
+            const market=inner.match(/<strong\s+data-pro-contextual-market>([\s\S]*?)<\/strong>/)?.[1];
+            contextualEntry={key:contextual[1],p:contextual[2] ? Number(contextual[2]) : undefined,market:market && plain(market)};
+            if (contextual[3]==='alternative') out.contextualAlternatives.push(contextualEntry);
+            else out.contextual=contextualEntry;
+            continue;
+          }
+          if (/^<li\b[^>]*\bdata-pro-contextual-reason(?:[ >])/i.test(item)) {
+            if (contextualEntry===out.contextual) out.selectionArgument=plain(inner);
+            else if (contextualEntry) contextualEntry.argument=plain(inner);
+            continue;
+          }
+          const alternate=plain(inner).match(/^\s*↪️?\s*[^:]+:\s*(.+)$/u);
+          if (alternate) out.alternativeText.push(alternate[1]);
+          if (primaryPrefix.test(plain(inner))) primaryText.push(plain(stripTier(inner)));
           // A declined selection is not a historical prediction. Retain it in the original report only.
           const alternative = inner.match(taggedTierPrefix)?.[2] === 'curajos'
             || /^(?:-?\s*💎\s*)?(?:<strong>)?(?:Bold|Curajos|Arriesgado|Audaz|Audace|Audacieux|Berani)[^:]*:/i.test(inner);
@@ -314,6 +419,7 @@
       out.selection=selections[0].selection;
       out.selectionArgument=selections[0].argument;
     }
+    if (primaryText.length===1) out.primaryText=primaryText[0];
     return out;
   }
   function isMarketsHeading(block,text) {
@@ -492,7 +598,17 @@
     const {selection}=data;
     const evidence=(type,title,body)=>`<div class="report-argument report-argument-${type}"><h4>${title}</h4>${body}</div>`;
     const originalThesis=data.thesis.map(contentOnly).join('');
-    const estimate=selection?`<p class="report-estimate"><span>${c.selection}</span> <strong>${stripTags(selection.market)} · ${escapeText(selection.probability)}</strong></p>`:'';
+    const probability=selection?.probability ? ' · '+escapeText(selection.probability) : '';
+    const estimate=selection?`<p class="report-estimate"><span>${c.selection}</span> <strong>${stripTags(selection.market)}${probability}</strong></p>`
+      : data.contextual ? `<p class="report-estimate"><strong>${escapeText(noSelection[lang] || noSelection.en)}</strong></p>` : '';
+    if (data.contextual) {
+      const argument=data.selectionArgument ? `<p class="report-recorded-reason">${escapeText(data.selectionArgument)}</p>` : '';
+      const alternatives=data.contextualAlternatives.map(entry=>{
+        const selection=structuredSelection([{rol:'Principal',...entry}],lang,true);
+        return selection && {...selection,market:entry.market || selection.market,argument:entry.argument};
+      }).filter(Boolean);
+      return `<section class="pro-editorial">${estimate}<div class="report-thesis">${originalThesis}</div>${argument}${alternativeMarkup(alternatives,lang)}</section>`;
+    }
     const panel=(type,title,body)=>evidence(type,title,`<p>${escapeText(body)}</p>`);
     const reading=(headline,body)=>`<section class="pro-editorial">${estimate}<p class="report-premise">${retrospective?c.retrospective:c.premise}</p><div class="report-thesis"><p>${escapeText(headline)}</p></div>${body}</section>`;
     const fill=(template,team,k,g)=>template.replace(/\{([a-z]+)\}/g,(_,key)=>({
@@ -560,7 +676,7 @@
     return value.replace(/[<>"']/g,char=>({'<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[char]);
   }
   function recordMarkup(data,lang) {
-    if (data.selection) return '';
+    if (data.selection || data.contextual) return '';
     const c=editorialCopy[lang]||editorialCopy.en;
     const items=data.markets.map(market=>plain(market).replace(/^(?:\s|[-–🔒🎯💎]|\*\*)+/u,'').replace(/\*\*/g,'')
       .match(/^.+?\s+[—–-]\s+\d+(?:[.,]\d+)?\s*%/u)?.[0])
@@ -618,7 +734,10 @@
     const id='pro-report-'+(++serial);
     function block(title,items,css) {return items.length?`<section class="report-section ${css||''}"><h3>${title}</h3>${items.join('')}</section>`:'';}
     const published=structuredSelection(container.poseidonProSelection,lang);
-    if (published) {
+    if (data.contextual) {
+      data.selection=structuredSelection([{rol:'Principal',...data.contextual}],lang,true);
+      if (data.selection && data.contextual.market) data.selection.market=data.contextual.market;
+    } else if (published) {
       if (data.selection && (data.selection.goals !== published.goals || data.selection.key && data.selection.key !== published.key)) data.selectionArgument='';
       data.selection=published;
     }
@@ -655,7 +774,7 @@
   }
   function scan() {document.querySelectorAll('.pro-card .pro-visible').forEach(container=>enhance(container));}
   function sourceMarkup(container) {return sourceStates.get(container) ?? container?.innerHTML;}
-  const api={sections,stripTier,cleanReview,editorialMarkup,recordMarkup,structuredSelection,reviewMarkup,words,enhance,scan,sourceMarkup,dossierReport,archiveReviewLabels,fullReading};
+  const api={sections,stripTier,cleanReview,editorialMarkup,recordMarkup,structuredSelection,contextualSelections,reviewMarkup,words,enhance,scan,sourceMarkup,dossierReport,archiveReviewLabels,fullReading};
   if (typeof module!=='undefined'&&module.exports) module.exports=api;
   if (typeof document==='undefined') return;
   root.PoseidonProReport=api;

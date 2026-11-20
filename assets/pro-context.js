@@ -96,12 +96,15 @@
     const halfTime=key.startsWith('ht_');
     const market=halfTime?key.slice(3):key;
     const total=market.match(/^(over|under)_([0-9]+)_5$/);
+    const range=/^(?:total_goals_)(2_[34]|3_5)$/.exec(market)?.[1].split('_').map(Number);
     const results={home:(h,a)=>h>a, draw:(h,a)=>h===a, away:(h,a)=>a>h,
       '1x2_home':(h,a)=>h>a, '1x2_draw':(h,a)=>h===a, '1x2_away':(h,a)=>a>h,
       dc_1x:(h,a)=>h>=a, dc_x2:(h,a)=>h<=a, dc_12:(h,a)=>h!==a,
-      btts:(h,a)=>h>0&&a>0, btts_no:(h,a)=>h===0||a===0};
+      btts:(h,a)=>h>0&&a>0, ng:(h,a)=>h===0||a===0, btts_no:(h,a)=>h===0||a===0,
+      team_goals_home_2_plus:(h,a)=>h>=2,team_goals_away_2_plus:(h,a)=>a>=2};
     const threshold=total?Number(total[2])+.5:null;
     const qualifies=total?(h,a)=>total[1]==='over'?h+a>threshold:h+a<threshold
+      : range?(h,a)=>h+a>=range[0]&&h+a<=range[1]
       : Object.hasOwn(results,market)?results[market]:null;
     if (!qualifies) return null;
     return sizes.map(({name,home,matches})=>{

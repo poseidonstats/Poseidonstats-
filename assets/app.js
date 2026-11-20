@@ -5,7 +5,7 @@ const CALIB_URL = "data/calibration.json";
 const FORWARD_URL = "data/forward.json";
 const HISTORY_URL = "data/history.json";
 const SCORECARD_URL = "data/scorecard.json";
-const I18N_URL = "assets/i18n.json?release=20261119-pro-indicators";
+const I18N_URL = "assets/i18n.json?release=20261121-pro-contextual";
 
 // Scorecard skill per piață (din backtest OOS), folosit pentru contextul piețelor.
 let SCORECARD = {};                       // key -> card (label, tier, threshold, skill_stars, lift_pp, hit)
@@ -1582,9 +1582,9 @@ function loadProReport() {
   if (PRO_REPORT_LOAD) return PRO_REPORT_LOAD;
   const css = document.createElement("link"); css.rel = "stylesheet"; css.href = "assets/pro-report.css?v=20261118e"; document.head.appendChild(css);
   PRO_REPORT_LOAD = new Promise((resolve,reject) => {
-    const script = document.createElement("script"); script.id = "pro-report-script"; script.src = "assets/pro-context.js?v=20261118e";
+    const script = document.createElement("script"); script.id = "pro-report-script"; script.src = "assets/pro-context.js?release=20261121-pro-contextual";
     script.onload = script.onerror = () => {
-      const report = document.createElement("script"); report.src = "assets/pro-report.js?release=20261119-pro-indicators";
+      const report = document.createElement("script"); report.src = "assets/pro-report.js?release=20261121-pro-contextual";
       report.onload = () => resolve(window.PoseidonProReport);
       report.onerror = () => { PRO_REPORT_LOAD = null; css.remove(); script.remove(); report.remove(); reject(new Error("Pro report unavailable")); };
       document.head.appendChild(report);

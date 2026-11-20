@@ -160,3 +160,66 @@ def test_exemplul_public_pastreaza_selectia_cand_apare_chitanta(monkeypatch, tmp
     assert G._incarca(day) == (None, "")
     monkeypatch.setattr(G, "_public_sample", lambda _: None)
     assert G._incarca(day) == (None, "")
+
+
+def test_daily_pro_list_projects_the_complete_canonical_archive(tmp_path, monkeypatch):
+    import json
+
+    day = "2026-11-21"
+    monkeypatch.setattr(G, "ARHIVA", tmp_path)
+    assert G.lista_pro_azi(day) == []
+    archive = tmp_path / f"{day}.json"
+    archive.write_text(
+        json.dumps(
+            {
+                "date": day,
+                "items": [
+                    {
+                        "match": {
+                            "fixture_id": number,
+                            "home": f"Team {number}",
+                            "away": "Opp",
+                            "_context_secret": 999,
+                        },
+                        "analysis": "Text editorial confidențial",
+                        "provenance": {"original_kickoff_utc": f"{day}T13:00:00Z"},
+                    }
+                    for number in range(1, 17)
+                ],
+            }
+        )
+    )
+    rows = G.lista_pro_azi(day)
+    assert [row["fixture_id"] for row in rows] == list(range(1, 17))
+    assert set(rows[0]) == {
+        "fixture_id",
+        "home",
+        "away",
+        "league",
+        "country",
+        "match_date",
+    }
+    assert rows[-1]["match_date"] == f"{day}T13:00:00Z"
+    assert "Text editorial confidențial" not in G.html_lista_pro(rows, fara_fid=1)
+    assert "Team 16" in G.html_lista_pro(rows, fara_fid=1)
+    assert "Team 1 –" not in G.html_lista_pro(rows, fara_fid=1)
+
+
+def test_daily_archive_can_refresh_the_locked_list_during_sample_confirmation_outage(tmp_path, monkeypatch):
+    day = "2026-11-21"
+    sample = f'<div data-sample-fixture="1" data-sample-day="{day}">Exemplul confirmat</div>'
+    index = tmp_path / "index.html"
+    index.write_text(f"{G.START}\n{sample}\n{G.END}")
+    monkeypatch.setattr(G, "INDEX", index)
+    monkeypatch.setattr(G, "_incarca", lambda day: (None, ""))
+    monkeypatch.setattr(G, "lista_pro_azi", lambda day: [
+        {"fixture_id": 1, "home": "Mostra", "away": "Publică"},
+        {"fixture_id": 2, "home": "Analiza", "away": "Membrilor"},
+    ])
+    monkeypatch.setattr(G, "stat_30_zile", lambda day: None)
+    monkeypatch.setattr("sys.argv", ["gen_pro_sample.py", "--date", day])
+    G.main()
+    updated = index.read_text()
+    assert sample in updated
+    assert "Analiza – Membrilor" in updated
+    assert "Mostra – Publică" not in updated

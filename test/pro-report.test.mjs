@@ -353,3 +353,78 @@ test('public Pro preview displays published arguments and handles a missing seco
  assert.match(render(verdict+evidence),/<h4 lang="ro">arguments<\/h4><p>Cinci meciuri acasă analizate\.<\/p><\/section>/);
  assert.doesNotMatch(render(verdict),/>arguments<\/h4>/);
 });
+
+test('Pro HT history requires HT criteria and uses the first-half market label',()=>{
+ const day='2026-11-19', as_of=day+'T05:00:00Z', key='ht_over_0_5';
+ const record={key,fixture_id:701,date:day,from:'2026-10-31',to:'2026-11-18',as_of,hits:3,settled:5};
+ const item={match:{fixture_id:701},provenance:{
+  original_kickoff_utc:day+'T13:00:00Z',generated_at_utc:as_of,inputs_captured_at_utc:as_of,
+  inputs:{picks:[{rol:'Principal',key,p:76,piata:'Peste 0,5 goluri în prima repriză'}]}},
+  league_record:{...record,criteria:'verified_league_ht_v1',league_id:9,season:2026},
+  pro_market_record:{...record,criteria:'verified_pro_primary_ht_v1'}};
+ const edition={compact:true,label:key=>key,metric:(...values)=>values.filter(Boolean).join(' · ')};
+ const render=(candidate)=>report.dossierReport('',candidate,null,day,'en','en',true,edition);
+ const html=render(item);
+ assert.match(html,/Over 0\.5 first-half goals/);
+ assert.equal((html.match(/3 of 5/g)||[]).length,2);
+ assert.doesNotMatch(html,/FT90/);
+ const incorrect={...item,league_record:{...item.league_record,criteria:'verified_league_ft90_v1'},
+   pro_market_record:{...item.pro_market_record,criteria:'verified_pro_primary_ft90_v1'}};
+ assert.doesNotMatch(render(incorrect),/3 of 5/);
+ assert.equal(report.structuredSelection([{rol:'Principal',key:'btts',p:70}],'en').market,'Both teams to score');
+});
+
+test('contextual report honours an empty pick list and renders a sole pick without an estimate',()=>{
+ const source='<p>⚡ Verdict contextual.</p><p>🎯 <strong>Model selections</strong></p><ul><li>🎯 Principal: Over 2.5 — 76%.</li></ul>';
+ const day='2026-11-19';
+ const render=(picks)=>report.dossierReport(source,{match:{fixture_id:701},
+  provenance:{inputs:{selection_mode:'contextual',picks}}},null,day,'en','en',true);
+ assert.match(render([]),/No selection/);
+ assert.doesNotMatch(render([]),/76%|Over 2\.5/);
+ const picked=render([{rol:'Principal',key:'under_3_5',piata:'Sub 3,5 goluri'}]);
+ assert.match(picked,/Under 3.5 goals/);
+ assert.doesNotMatch(picked,/76%|undefined|NaN|Over 2\.5/);
+});
+
+test('contextual archive markup preserves its reason and optional percentage',()=>{
+ const prefix='<p>⚡ Verdict contextual.</p><p><strong data-i18n="arhiva.sect.piete">Piețele alese:</strong></p>';
+ const reason='<li data-pro-contextual-reason>Argumentul publicat.</li>';
+ const source=prefix+'<ul><li data-pro-contextual-key="ng" data-pro-contextual-p="">Cel puțin o echipă nu marchează</li>'+reason+'</ul>';
+ const parsed=report.sections(source);
+ parsed.selection=report.structuredSelection([{rol:'Principal',...parsed.contextual}],'en',true);
+ assert.match(report.editorialMarkup(parsed,'en'),/At least one team fails to score[\s\S]*Argumentul publicat/);
+ assert.doesNotMatch(report.editorialMarkup(parsed,'en'),/%|NaN|undefined/);
+ const abstain=report.sections(prefix+'<ul><li data-pro-contextual-key="">Fără selecție</li>'+reason+'</ul>');
+ assert.match(report.editorialMarkup(abstain,'en'),/No selection[\s\S]*Argumentul publicat/);
+});
+
+test('contextual full dossier keeps both alternatives independent of the public primary preview',()=>{
+ const picks=[
+  {rol:'Principal',key:'total_goals_2_3',piata:'2–3 total goals after 90 minutes, inclusive'},
+  {rol:'Alternativă',key:'team_goals_home_2_plus',piata:'A & B to score at least 2 goals in 90 minutes'},
+  {rol:'Alternativă',key:'team_goals_away_2_plus',piata:'The visitors to score twice'},
+ ];
+ const source='<p>⚡ Verdict contextual.</p><p>🎯 <strong>Model selections</strong></p><ul>'+
+  '<li>🎯 <strong>Main:</strong> 2–3 total goals after 90 minutes, inclusive. Main reason.</li>'+
+  '<li>↪️ <strong>Alternative:</strong> A &amp; B to score at least 2 goals in 90 minutes. Home reason.</li>'+
+  '<li>↪️ <strong>Alternative:</strong> The visitors to score twice. Away reason.</li></ul>';
+ const day='2026-11-19';
+ const item={match:{fixture_id:701,home:'A & B',away:'C'},provenance:{inputs:{selection_mode:'contextual',picks}}};
+ const edition={label:key=>key,metric:(...args)=>args.join(' ')};
+ const preview=report.dossierReport(source,item,null,day,'en','en',true,{...edition,compact:true});
+ assert.match(preview,/2–3 total goals after 90 minutes, inclusive/);
+ assert.doesNotMatch(preview,/Home reason|Away reason|data-pro-alternatives/);
+ const full=report.dossierReport(source,item,null,day,'en','en',true,{...edition,compact:false});
+ assert.match(full,/A &amp; B to score at least 2 goals in 90 minutes[\s\S]*Home reason/);
+ assert.match(full,/C to score at least 2 goals in 90 minutes[\s\S]*Away reason/);
+ const localized=['ro','en','es','it','fr','id'].map(lang=>report.contextualSelections(picks,lang,item.match));
+ for (const markets of localized) {
+  assert.deepEqual(markets.map(market=>market.key),picks.map(pick=>pick.key));
+  assert(markets[0].market.includes('2–3'));
+  assert(markets[1].market.includes('A & B'));
+  assert(markets[2].market.includes('C'));
+ }
+ assert.equal(new Set(localized.map(markets=>markets[0].market)).size,6);
+ assert.deepEqual(report.contextualSelections([picks[0],picks[0]],'en',item.match),[]);
+ assert.deepEqual(report.contextualSelections(picks.slice(1),'en',item.match),[]);
+});

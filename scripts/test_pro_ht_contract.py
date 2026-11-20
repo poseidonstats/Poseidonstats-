@@ -369,3 +369,173 @@ def test_unknown_empty_annotation_is_not_deleted_by_period_normalization(market)
 def test_parenthesized_known_period_remains_an_explicit_form():
     assert G.evalueaza_pick("Peste 2.5 (HT)", 2, 1, "ESMTK", "Dabas", 2, 1) is True
     assert S.evalueaza("Peste 2.5 (HT)", 2, 1, 2, 1, home="ESMTK", away="Dabas") is True
+
+
+@pytest.mark.parametrize(
+    "key,label,english,expected",
+    [
+        (
+            "ht_over_0_5",
+            "Peste 0,5 goluri în prima repriză",
+            "Over 0.5 first-half goals",
+            False,
+        ),
+        ("btts", "Ambele marchează", "Both teams to score", True),
+    ],
+)
+def test_new_pro_markets_keep_the_published_selection_in_sample_and_archive(
+    key, label, english, expected
+):
+    analysis = (
+        "⚡ **Verdict:** Text.\n"
+        "🎯 **Picks:**\n"
+        f"🎯 **Principal:** **{label} — 76%.** Text.\n"
+        "👁️ **De urmărit:** Text."
+    )
+    item = {
+        "match": {"fixture_id": 1, "home": "A", "away": "B"},
+        "analysis": analysis,
+        "analysis_en": analysis,
+        "provenance": {
+            "inputs": {
+                "picks": [{"rol": "Principal", "key": key, "piata": label, "p": 76}]
+            }
+        },
+    }
+    result = dict(gh=2, ga=1, hth=0, hta=0)
+    assert S.evalueaza(label, 2, 1, 0, 0) is expected
+    assert S._verdict(item, result) == ((2, 1), expected)
+    assert G.verifica(item, result)["picks"][0]["ok"] is expected
+    assert english + " · 76%" in S.html_card(item, "2026-11-21", (2, 1), expected)
+    if key == "ht_over_0_5":
+        result.update(hth=None, hta=None)
+        assert S._verdict(item, result) == ((2, 1), None)
+        assert G.verifica(item, result)["picks"][0]["ok"] is None
+
+
+@pytest.mark.parametrize(
+    "picks,expected",
+    [
+        ([], None),
+        ([{"rol": "Principal", "key": "under_3_5", "piata": "Sub 3,5 goluri"}], True),
+    ],
+)
+def test_contextual_publication_uses_only_the_structured_selection(picks, expected):
+    analysis = (
+        "⚡ **Verdict:** Argument de context.\n"
+        "🎯 **Picks:**\n"
+        "🔒 **Bază:** **GG — 90%.** Alternativă.\n"
+        "🎯 **Principal:** **Peste 0,5 goluri în prima repriză — 76%.** Text.\n"
+        "👁️ **De urmărit:** Text."
+    )
+    item = {
+        "match": {"fixture_id": 1, "home": "A", "away": "B"},
+        "analysis": analysis,
+        "analysis_en": analysis,
+        "provenance": {"inputs": {"selection_mode": "contextual", "picks": picks}},
+    }
+    result = dict(gh=2, ga=1, hth=0, hta=0)
+    assert S._verdict(item, result) == ((2, 1), expected)
+    archive_picks = G.verifica(item, result)["picks"]
+    if picks:
+        assert len(archive_picks) == 1
+        assert archive_picks[0]["ok"] is True
+        assert archive_picks[0]["prob"] is None
+        assert "Under 3.5 goals" in S.html_card(
+            item, "2026-11-21", (2, 1), expected
+        )
+    else:
+        assert archive_picks == []
+        html = S.html_card(item, "2026-11-21", (2, 1), expected)
+        assert "No selection" in html
+        assert "76%" not in html and "90%" not in html
+
+
+@pytest.mark.parametrize(
+    "key,label,expected",
+    [
+        ("ht_over_0_5", "Peste 0,5 goluri în prima repriză", False),
+        ("btts", "Ambele marchează", True),
+        ("ng", "Cel puțin o echipă nu marchează", False),
+        ("over_1_5", "Peste 1,5 goluri", True),
+        ("over_2_5", "Peste 2,5 goluri", True),
+        ("over_3_5", "Peste 3,5 goluri", False),
+        ("under_2_5", "Sub 2,5 goluri", False),
+        ("under_3_5", "Sub 3,5 goluri", True),
+    ],
+)
+def test_all_contextual_goal_markets_use_the_correct_score(key, label, expected):
+    analysis = (
+        "⚡ **Verdict:** Argument de context.\n"
+        "🎯 **Picks:**\n"
+        f"🎯 **Principal:** {label}. Argumentul publicat.\n"
+        "👁️ **De urmărit:** Text."
+    )
+    item = {
+        "match": {"fixture_id": 1, "home": "A", "away": "B"},
+        "analysis": analysis,
+        "provenance": {
+            "inputs": {
+                "selection_mode": "contextual",
+                "picks": [{"rol": "Principal", "key": key, "piata": label}],
+            }
+        },
+    }
+    result = dict(gh=2, ga=1, hth=0, hta=0)
+    assert S.evalueaza(label, 2, 1, 0, 0) is expected
+    assert S._verdict(item, result) == ((2, 1), expected)
+    archive_result = G.verifica(item, result)
+    assert archive_result["picks"][0]["ok"] is expected
+    html = G.html_analiza(item, archive_result, "2026-11-21")
+    assert f'data-pro-market-key="{key}"' in html
+    assert "Argumentul publicat." in html
+    assert "Argumentul publicat." in S.html_card(item, "2026-11-21", (2, 1), expected)
+    if key == "ng":
+        assert S.evalueaza(label, 1, 0) is True
+        assert S.evalueaza(label + " cu 4 cornere", 1, 0) is None
+
+
+@pytest.mark.parametrize("goals,expected", [(1, False), (2, True), (3, True), (4, False)])
+def test_contextual_range_includes_both_endpoints(goals, expected):
+    label = "2–3 goluri în total după 90 de minute, inclusiv"
+    assert G.evalueaza_pick(label, 0, goals, "A", "B", 0, 0) is expected
+    assert S.evalueaza(label, 0, goals) is expected
+    assert G.evalueaza_pick(label + " la pauză", 0, goals, "A", "B", 0, 0) is None
+
+
+@pytest.mark.parametrize("lang", ["ro", "en", "es", "it", "fr", "id"])
+def test_contextual_dossier_can_settle_and_localize_each_market(lang):
+    selections = [
+        {"rol": "Principal", "key": "total_goals_2_3"},
+        {"rol": "Alternativă", "key": "team_goals_home_2_plus"},
+        {"rol": "Alternativă", "key": "team_goals_away_2_plus"},
+    ]
+    match = {"fixture_id": 1, "home": "A & B", "away": "C"}
+    analysis = "⚡ **Verdict:** Argument de context.\n🎯 **Picks:**\n"
+    for pick in selections:
+        label = S.pro_market_label(pick["key"], lang, match)
+        pick["piata"] = label
+        if pick["rol"] == "Principal":
+            analysis += f"🎯 **Principal:** {label}. Argument principal.\n"
+        else:
+            analysis += f"↪️ **{S.ALTERNATIVE[lang]}:** {label}. Argument {pick['key']}.\n"
+    analysis += "👁️ **De urmărit:** Text."
+    item = {
+        "match": match,
+        "analysis": analysis,
+        "provenance": {"inputs": {"selection_mode": "contextual", "picks": selections}},
+    }
+    result = dict(gh=1, ga=2, hth=0, hta=0)
+    archive_result = G.verifica(item, result)
+    assert [(p["tip"], p["ok"]) for p in archive_result["picks"]] == [
+        ("Principal", True), ("Alternativă", False), ("Alternativă", True)
+    ]
+    assert S._verdict(item, result) == ((1, 2), True)
+    html = G.html_analiza(item, archive_result, "2026-11-21", lang)
+    assert html.count('data-archive-role="alternative"') == 4
+    for pick in selections[1:]:
+        assert f'data-pro-market-key="{pick["key"]}"' in html
+        assert f"Argument {pick['key']}." in html
+    assert "A &amp; B" in html
+    assert G.evalueaza_pick("C marchează cel puțin 2 goluri în 90 de minute", 1, 2, "A & B", "C") is True
+    assert G.evalueaza_pick("Unknown marchează cel puțin 2 goluri în 90 de minute", 1, 2, "A & B", "C") is None

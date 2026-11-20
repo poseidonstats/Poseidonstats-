@@ -31,6 +31,15 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from scor90 import _gol, scor_90  # noqa: E402
 import provenienta_pro as PP  # noqa: E402
 from gen_pro_sample import _data_ro, _inline, parseaza, piata_din_linie  # noqa: E402  (aceeași parsare ca exemplul de pe prima pagină)
+from gen_pro_sample import (  # noqa: E402
+    ALTERNATIVE,
+    NO_SELECTION,
+    contextual_picks,
+    contextual_pro,
+    contextual_reason,
+    pro_market_for_settlement,
+    pro_market_label,
+)
 from archive_copy import NO_PICKS_LOCALIZED, display_pick, lesson_copy, role_badge  # noqa: E402
 
 SITE = Path(__file__).resolve().parent.parent
@@ -278,6 +287,16 @@ def evalueaza_pick(
     trebuie recunoscute integral și trebuie să iasă toate.
     """
     baza = piata_fara_perioada(piata)
+    pauza = este_piata_pauza(piata)
+    bounds = re.fullmatch(r"(2[–-][34]|3[–-]5) goluri in total dupa 90 de minute, inclusiv", baza)
+    if bounds:
+        lo, hi = map(int, re.split("[–-]", bounds[1]))
+        return None if pauza else lo <= gh + ga <= hi
+    team = re.fullmatch(r"(.+) marcheaza cel putin 2 goluri in 90 de minute", baza)
+    if team:
+        hosts = team[1] in ("gazda", _text_piata(home))
+        visitors = team[1] in ("oaspetele", _text_piata(away))
+        return None if pauza or hosts == visitors else (gh if hosts else ga) >= 2
     parts = re.split(r"\s*(?:\+(?!\s*$)|\bsi\b|\band\b|(?<=\s)&(?=\s))\s*", baza)
     components = []
     for part in parts:
@@ -295,12 +314,13 @@ def evalueaza_pick(
             components.append(("total", (total[1], int(total[2]))))
         elif btts:
             components.append(("btts", btts[1] in ("nu", "no")))
+        elif part == "cel putin o echipa nu marcheaza":
+            components.append(("btts", True))
         else:
             # Recunoașterea integrală a rezultatului/scorului are prioritate față
             # de euristici numerice: „1-5” nu este o linie de total „1.5”.
             # Parserul strict de mai jos refuză în continuare orice text necunoscut.
             components.append(("rezultat", (part, low)))
-    pauza = este_piata_pauza(piata)
     half = scor_pauza(gh, ga, hth, hta)
     if pauza and half is None:
         return None
@@ -442,7 +462,10 @@ def citeste_arhiva() -> list[dict]:
 def verifica(item: dict, rez: dict | None) -> dict:
     m = item["match"]
     p = parseaza(item["analysis"])
-    picks = [x for x in (pick_din_linie(linie) for linie in p["picks"]) if x]
+    if contextual_pro(item):
+        picks = contextual_picks(item)
+    else:
+        picks = [x for x in (pick_din_linie(linie) for linie in p["picks"]) if x]
     v = {
         "picks": picks,
         "rez": rez,
@@ -455,7 +478,13 @@ def verifica(item: dict, rez: dict | None) -> dict:
     gh, ga = rez["gh"], rez["ga"]
     for pk in picks:
         pk["ok"] = evalueaza_pick(
-            pk["piata"], gh, ga, m["home"], m["away"], rez.get("hth"), rez.get("hta")
+            pro_market_for_settlement(pk.get("key", ""), pk["piata"]),
+            gh,
+            ga,
+            m["home"],
+            m["away"],
+            rez.get("hth"),
+            rez.get("hta"),
         )
     xg = (m.get("xg_home") or 0) + (m.get("xg_away") or 0)
     v["model_goluri"] = (round(xg, 1), gh + ga) if xg else None
@@ -474,6 +503,8 @@ def verifica(item: dict, rez: dict | None) -> dict:
             (f"arhiva.lectie.{cheie}", {k: str(x) for k, x in variabile.items()}, text)
         )
 
+    if contextual_pro(item):
+        ev = [pk for pk in ev if pk["tip"] == "Principal"]
     if ev and all(pk["ok"] for pk in ev):
         fraza(
             "confirmat",
@@ -635,7 +666,34 @@ def html_analiza(item: dict, v: dict, generat: str, lang: str = "ro") -> str:
             if linie[:1] in TIP and linie[:1] not in traduse:
                 traduse[linie[:1]] = piata_din_linie(linie)
     emoji = {nume: e for e, nume in TIP.items()}
-    if traduse:
+    def pick_role(pick):
+        if pick["tip"] == "Alternativă":
+            return f'<span data-archive-role="alternative">{ALTERNATIVE[lang]}</span>'
+        return role_badge(pick["tip"], lang)
+
+    if contextual_pro(item):
+        rows = []
+        for pk in v["picks"]:
+            key = pk["key"]
+            probability = pk["prob"] if pk["prob"] is not None else ""
+            market = H.escape(pro_market_label(key, lang, m))
+            role = "alternative" if pk["tip"] == "Alternativă" else "principal"
+            rows.append(
+                f'<li data-pro-contextual-key="{key}" data-pro-contextual-p="{probability}" data-pro-contextual-role="{role}">'
+                f'{pick_role(pk)}: <strong data-pro-contextual-market>{market}</strong>'
+                + (f" — {probability}%" if probability != "" else "")
+                + "</li>"
+            )
+            argument = contextual_reason(item, p["picks"], lang, pk)
+            if argument:
+                rows.append(f"<li data-pro-contextual-reason>{_inline(argument)}</li>")
+        if not rows:
+            rows.append(f'<li class="muted" data-pro-contextual-key="">{NO_SELECTION[lang]}</li>')
+            argument = contextual_reason(item, p["picks"], lang)
+            if argument:
+                rows.append(f"<li data-pro-contextual-reason>{_inline(argument)}</li>")
+        picks_html = "".join(rows)
+    elif traduse:
         picks_html = "".join(
             f"<li>{display_pick(_inline(linie), lang)}</li>" for linie in p["picks"]
         )
@@ -653,6 +711,7 @@ def html_analiza(item: dict, v: dict, generat: str, lang: str = "ro") -> str:
     nota_selectii = (
         '<p class="muted" data-i18n="arhiva.selectii.ro">Unele selecții sunt afișate în limba română.</p>'
         if lang != "ro"
+        and not contextual_pro(item)
         and any(not traduse.get(emoji.get(pk["tip"], "")) for pk in v["picks"])
         else ""
     )
@@ -670,11 +729,19 @@ def html_analiza(item: dict, v: dict, generat: str, lang: str = "ro") -> str:
                     else '<span data-i18n="arhiva.semn.neev">– neevaluabil din scor</span>'
                 )
             )
-            piata = traduse.get(emoji.get(pk["tip"], ""), "") or pk["piata"]
-            tip_html = role_badge(pk["tip"], lang)
+            key = pk.get("key")
+            piata = (
+                pro_market_label(key, lang, m)
+                if key
+                else traduse.get(emoji.get(pk["tip"], ""), "") or pk["piata"]
+            )
+            row_attrs = (
+                f' data-pro-market-key="{H.escape(key, quote=True)}"' if key else ""
+            )
+            tip_html = pick_role(pk)
             piata_html = _inline(piata)
             rand.append(
-                f"<tr><td>{tip_html}</td><td>{piata_html}</td><td>{'' if pk.get('prob') is None else str(pk['prob']) + '%'}</td><td>{semn}</td></tr>"
+                f"<tr{row_attrs}><td>{tip_html}</td><td>{piata_html}</td><td>{'' if pk.get('prob') is None else str(pk['prob']) + '%'}</td><td>{semn}</td></tr>"
             )
         mg = v["model_goluri"]
         pr = v["p_rezultat"]
@@ -796,6 +863,8 @@ def bilant(zile: list[dict], rez: dict) -> tuple[dict, list[dict]]:
         r["eligibile"] += 1
         roles = set()
         for pk in v["picks"]:
+            if pk["tip"] not in tot:
+                continue
             if pk["tip"] in roles:
                 continue
             roles.add(pk["tip"])

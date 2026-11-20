@@ -140,7 +140,7 @@ test('homepage market filters use translated labels and homepage assets use thei
     assert.equal(key,`filters.market.${market}`);
     for (const language of languages) assert(dictionary[language][key]);
   }
-  const release='20261119-pro-indicators';
+  const release='20261121-pro-contextual';
   for (const asset of ['app.js','member-dossier.js','member-dossier.css','home-dashboard.js']) {
     assert(html.includes(`assets/${asset}?release=${release}`));
   }
@@ -151,7 +151,7 @@ test('homepage market filters use translated labels and homepage assets use thei
   const worker=readFileSync(new URL('../sw.js',import.meta.url),'utf8');
   assert(worker.includes(`const RELEASE = "${release}";`));
   const releaseHashes=worker.match(/const RELEASE_ASSET_SHA256 = \{([\s\S]*?)\n\};/)?.[1] ?? '';
-  for (const asset of ['app.js','member-dossier.js','member-dossier.css','home-dashboard.js','pro-report.js']) {
+  for (const asset of ['app.js','member-dossier.js','member-dossier.css','home-dashboard.js','pro-report.js','pro-context.js']) {
     const bytes=readFileSync(new URL(`../assets/${asset}`,import.meta.url));
     const digest=createHash('sha256').update(bytes).digest('hex');
     assert(releaseHashes.includes(`"assets/${asset}": "${digest}"`), `Update the service worker release for ${asset}`);

@@ -19,6 +19,8 @@ test('venue frequencies preserve market orientation and reject duplicates, futur
  assert.deepEqual(counts('over_1_5'),[[1,2],[2,2]]);
  assert.deepEqual(counts('under_1_5'),[[1,2],[0,2]]);
  assert.deepEqual(counts('ht_over_0_5'),[[1,1],[0,0]]);
+ assert.deepEqual(counts('ng'),[[1,2],[0,2]]);
+ assert.deepEqual(counts('btts'),[[1,2],[2,2]]);
  assert.equal(marketFrequency(dossier,11,'dc_1x'),null);
  assert.equal(marketFrequency(dossier,10,'constructor'),null);
 });
