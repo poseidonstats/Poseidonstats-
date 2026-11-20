@@ -1,10 +1,10 @@
 {
- "generated_at": "2026-11-19T03:48:27+00:00",
+ "generated_at": "2026-11-20T03:26:14+00:00",
  "meta": {
   "n_total": 68384,
   "n_whitelist_inter": 7588,
   "cert_threshold_pct": 70,
-  "methodology": "Backtest istoric: TRAIN 2024-2025 / TEST ian–iun 2026, ratings înghețate la 2025-12-31, μ per competiție cu shrinkage, probabilități recalibrate cu parametrii Platt CURENȚI (deci nu e jurnalul forward; pentru evaluarea predicțiilor publicate vezi forward/history/audit)",
+  "methodology": "Backtest istoric: TRAIN 2024-2025 / TEST ian–iun 2026, ratings înghețate la 2025-12-31, μ per competiție cu shrinkage, probabilități recalibrate cu parametrii Platt CURENȚI, la HT redistribuind masa după Peste 0,5 (pentru evaluarea predicțiilor publicate vezi forward/history/audit)",
   "probabilities": "post-platt"
  },
  "market_cert": {
@@ -34,7 +34,7 @@
    "eligible": true
   },
   "ht_over_1_5": {
-   "pct_leagues_good": 53.7,
+   "pct_leagues_good": 53.2,
    "n_leagues_eval": 365,
    "eligible": false
   }
@@ -506,26 +506,26 @@
    "buckets": [
     {
      "range": "50–60%",
-     "n": 4226,
-     "hit_pct": 52.39,
-     "wlo_pct": 50.88,
-     "diff_pp": -1.01,
+     "n": 3870,
+     "hit_pct": 52.09,
+     "wlo_pct": 50.52,
+     "diff_pp": -1.37,
      "low_sample": false
     },
     {
      "range": "60–70%",
-     "n": 419,
-     "hit_pct": 60.38,
-     "wlo_pct": 55.62,
-     "diff_pp": -2.66,
+     "n": 425,
+     "hit_pct": 61.18,
+     "wlo_pct": 56.46,
+     "diff_pp": -1.88,
      "low_sample": false
     },
     {
      "range": "70–80%",
-     "n": 37,
-     "hit_pct": 75.68,
-     "wlo_pct": 59.88,
-     "diff_pp": 1.75,
+     "n": 45,
+     "hit_pct": 68.89,
+     "wlo_pct": 54.33,
+     "diff_pp": -4.99,
      "low_sample": true
     },
     {
@@ -533,7 +533,7 @@
      "n": 4,
      "hit_pct": 100.0,
      "wlo_pct": 51.01,
-     "diff_pp": 17.39,
+     "diff_pp": 16.42,
      "low_sample": true
     },
     {
@@ -552,10 +552,10 @@
    "buckets": [
     {
      "range": "50–60%",
-     "n": 142,
-     "hit_pct": 52.82,
-     "wlo_pct": 44.64,
-     "diff_pp": 0.91,
+     "n": 118,
+     "hit_pct": 52.54,
+     "wlo_pct": 43.6,
+     "diff_pp": 0.55,
      "low_sample": false
     },
     {
@@ -563,7 +563,7 @@
      "n": 5,
      "hit_pct": 80.0,
      "wlo_pct": 37.55,
-     "diff_pp": 18.77,
+     "diff_pp": 18.62,
      "low_sample": true
     },
     {

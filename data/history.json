@@ -1,22 +1,22 @@
 {
- "generated_at": "2026-11-19T03:48:27+00:00",
+ "generated_at": "2026-11-20T03:26:14+00:00",
  "days": [
   {
-   "date": "2026-11-19",
+   "date": "2026-11-20",
    "status": "in_progress",
    "matches": [
     {
-     "fixture_id": 1648286,
-     "time": "12:00",
-     "country": "World",
-     "league": "Friendlies",
-     "home": "Switzerland U17",
-     "away": "Czech Republic U17",
+     "fixture_id": 1649492,
+     "time": "05:00",
+     "country": "USA",
+     "league": "Major League Soccer",
+     "home": "Seattle Sounders",
+     "away": "Real Salt Lake",
      "calibrated_lg": true,
      "picks": [
       {
        "market": "Over 1.5",
-       "prob": 82,
+       "prob": 79,
        "outcome": "PENDING"
       }
      ],
@@ -24,30 +24,25 @@
      "ft_a": null,
      "ht_h": null,
      "ht_a": null,
-     "snapshot": "dayof"
+     "snapshot": "prima"
     },
     {
-     "fixture_id": 1635326,
-     "time": "15:00",
-     "country": "Uganda",
-     "league": "Premier League",
-     "home": "Entebbe UPPC",
-     "away": "Kataka",
+     "fixture_id": 1576233,
+     "time": "19:30",
+     "country": "Germany",
+     "league": "2. Bundesliga",
+     "home": "Arminia Bielefeld",
+     "away": "FC Magdeburg",
      "calibrated_lg": true,
      "picks": [
       {
-       "market": "1X",
-       "prob": 89,
+       "market": "Over 1.5",
+       "prob": 86,
        "outcome": "PENDING"
       },
       {
-       "market": "Over 1.5",
-       "prob": 77,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "1 (Home)",
-       "prob": 71,
+       "market": "Over 2.5",
+       "prob": 68,
        "outcome": "PENDING"
       }
      ],
@@ -58,59 +53,43 @@
      "snapshot": "dayof"
     },
     {
-     "fixture_id": 1551379,
-     "time": "20:00",
-     "country": "Denmark",
-     "league": "1. Division",
-     "home": "FC Fredericia",
-     "away": "Hillerød",
-     "calibrated_lg": true,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 78,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null,
-     "snapshot": "dayof"
-    },
-    {
-     "fixture_id": 1609970,
-     "time": "14:00",
-     "country": "Bosnia",
-     "league": "1st League - RS",
-     "home": "Velež Nevesinje",
-     "away": "Rudar Prijedor",
-     "calibrated_lg": true,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 83,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null,
-     "snapshot": "dayof"
-    },
-    {
-     "fixture_id": 1650488,
-     "time": "18:00",
-     "country": "Liberia",
-     "league": "LFA First Division",
-     "home": "Downtown",
-     "away": "Shaita",
+     "fixture_id": 1576235,
+     "time": "19:30",
+     "country": "Germany",
+     "league": "2. Bundesliga",
+     "home": "SV Darmstadt 98",
+     "away": "FC Heidenheim",
      "calibrated_lg": true,
      "picks": [
       {
        "market": "Over 1.5",
        "prob": 84,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "Over 2.5",
+       "prob": 65,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null,
+     "snapshot": "dayof"
+    },
+    {
+     "fixture_id": 1553230,
+     "time": "21:30",
+     "country": "Poland",
+     "league": "Ekstraklasa",
+     "home": "Pogon Szczecin",
+     "away": "Slask Wroclaw",
+     "calibrated_lg": true,
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 80,
        "outcome": "PENDING"
       }
      ],
@@ -122,11 +101,11 @@
     }
    ],
    "totals": {
-    "picks": 7,
+    "picks": 6,
     "wins": 0,
     "losses": 0,
-    "pending": 7,
-    "locked_pending": 102
+    "pending": 6,
+    "locked_pending": 458
    }
   }
  ],
@@ -217,9 +196,9 @@
   }
  ],
  "integritate": {
-  "total": 62352,
+  "total": 62463,
   "pastrate": 39365,
-  "nerezolvate": 13504,
+  "nerezolvate": 13615,
   "inghetate_dupa_start": 344,
   "reprogramate_peste_prag": 3,
   "recalibrare_indisponibila": 8765,
