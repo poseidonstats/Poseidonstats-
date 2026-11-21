@@ -27,6 +27,23 @@ test('dossier uses only the official analysis for the requested fixture and pref
   assert.equal(select({date:day,items}, day, 14), null);
   assert.equal(select({date:day,items}, day, 15), null);
   assert.equal(select({date:'2026-11-17',items}, day, 13), null);
+  const paragraphs = {
+    ro: 'sezonul curent: 40 din 77',
+    en: 'current season: 40 of 77',
+    es: 'temporada actual: 40 de 77',
+    it: 'stagione in corso: 40 su 77',
+    fr: 'saison en cours : 40 sur 77',
+    id: 'musim berjalan: 40 dari 77',
+  };
+  for (const [lang, text] of Object.entries(paragraphs)) {
+    const field = lang === 'ro' ? 'analysis' : 'analysis_' + lang;
+    const expected = text[0].toUpperCase() + text.slice(1);
+    assert.equal(localized({ [field]: '🧮 **Model:** ' + text }, lang).text, '🧮 **Model:** ' + expected);
+    assert.equal(localized({ [field]: 'aPI-FOOTBALL, ' + text }, lang).text, expected);
+  }
+  assert.equal(localized({analysis:'Formă. sezonul curent: 33 din 77.'}, 'ro').text,
+    'Formă. Sezonul curent: 33 din 77.');
+
 });
 
 test('stats-only member rows keep their dossier without drawing empty forecast columns', () => {

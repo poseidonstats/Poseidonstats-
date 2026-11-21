@@ -618,8 +618,8 @@ def shell(
 """
 
 
-def _p(s: str) -> str:
-    return "<br>".join(_inline(x) for x in s.split("\n") if x.strip())
+def _p(s: str, lang: str) -> str:
+    return "<br>".join(_inline(x, lang) for x in s.split("\n") if x.strip())
 
 
 def _vars(d: dict) -> str:
@@ -686,23 +686,23 @@ def html_analiza(item: dict, v: dict, generat: str, lang: str = "ro") -> str:
             )
             argument = contextual_reason(item, p["picks"], lang, pk)
             if argument:
-                rows.append(f"<li data-pro-contextual-reason>{_inline(argument)}</li>")
+                rows.append(f"<li data-pro-contextual-reason>{_inline(argument, lang)}</li>")
         if not rows:
             rows.append(f'<li class="muted" data-pro-contextual-key="">{NO_SELECTION[lang]}</li>')
             argument = contextual_reason(item, p["picks"], lang)
             if argument:
-                rows.append(f"<li data-pro-contextual-reason>{_inline(argument)}</li>")
+                rows.append(f"<li data-pro-contextual-reason>{_inline(argument, lang)}</li>")
         picks_html = "".join(rows)
     elif traduse:
         picks_html = "".join(
-            f"<li>{display_pick(_inline(linie), lang)}</li>" for linie in p["picks"]
+            f"<li>{display_pick(_inline(linie, lang), lang)}</li>" for linie in p["picks"]
         )
     else:
         picks_html = "".join(
-            f"<li>{role_badge(pk['tip'], lang)}: <strong>{_inline(pk['piata'])}</strong>"
+            f"<li>{role_badge(pk['tip'], lang)}: <strong>{_inline(pk['piata'], lang)}</strong>"
             + display_pick(
                 (f" — {pk['prob']}%" if pk.get("prob") is not None else "")
-                + (f" — {_inline(pk['motiv'])}" if pk.get("motiv") else ""),
+                + (f" — {_inline(pk['motiv'], lang)}" if pk.get("motiv") else ""),
                 lang,
             )
             + "</li>"
@@ -739,7 +739,7 @@ def html_analiza(item: dict, v: dict, generat: str, lang: str = "ro") -> str:
                 f' data-pro-market-key="{H.escape(key, quote=True)}"' if key else ""
             )
             tip_html = pick_role(pk)
-            piata_html = _inline(piata)
+            piata_html = _inline(piata, lang)
             rand.append(
                 f"<tr{row_attrs}><td>{tip_html}</td><td>{piata_html}</td><td>{'' if pk.get('prob') is None else str(pk['prob']) + '%'}</td><td>{semn}</td></tr>"
             )
@@ -774,11 +774,11 @@ def html_analiza(item: dict, v: dict, generat: str, lang: str = "ro") -> str:
       <div class="pro-card-head">{H.escape(m["home"])} – {H.escape(m["away"])} · {liga} · <span data-date="{m.get("date", "")[:10]}">{_data_ro(m.get("date", ""))}</span> · {scor}</div>
       <div class="pro-visible">
         <p class="muted" data-i18n="arhiva.model.arhivat" data-i18n-vars='{_vars({"cifre": cifre, "ora": ora or "—"})}'>Cifre din fișa arhivată: {cifre}. Ora din arhivă: {ora or "—"}. Selecțiile și probabilitățile provin din fișa păstrată. Eligibilitatea prospectivă se verifică separat.</p>
-        <p><strong data-i18n="arhiva.sect.verdict">Verdict:</strong> {_p(p["verdict"])}</p>
-        <p><strong data-i18n="arhiva.sect.context">Context:</strong> {_p(p["context"])}</p>
-        <p><strong data-i18n="arhiva.sect.model">Modelul vs realitate:</strong> {_p(p["model"])}</p>
+        <p><strong data-i18n="arhiva.sect.verdict">Verdict:</strong> {_p(p["verdict"], lang)}</p>
+        <p><strong data-i18n="arhiva.sect.context">Context:</strong> {_p(p["context"], lang)}</p>
+        <p><strong data-i18n="arhiva.sect.model">Modelul vs realitate:</strong> {_p(p["model"], lang)}</p>
         <p><strong data-i18n="arhiva.sect.piete">Piețele alese:</strong></p><ul>{picks_html or '<li class="muted">—</li>'}</ul>{nota_selectii}
-        <p><strong data-i18n="arhiva.sect.urmarit">De urmărit:</strong> {_p(p["urmarit"])}</p>{ver}
+        <p><strong data-i18n="arhiva.sect.urmarit">De urmărit:</strong> {_p(p["urmarit"], lang)}</p>{ver}
       </div>
     </article>"""
 

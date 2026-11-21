@@ -29,9 +29,15 @@ export function proSample(html) {
    assert(paragraph,`${tag[1]} ${key} source exists`);return[key,paragraph];
   }));
   if(dailyExample) {
-   const selected=original.match(/class="dossier-published">[\s\S]*?<strong>([^<]+) · (\d+(?:[.,]\d+)?)%<\/strong>/);
-   assert(selected,'daily example identifies its principal selection');
-   return{language:tag[1],original,paragraphs,selection:{market:selected[1],probability:Number(selected[2].replace(',','.'))}};
+   const published=original.match(/class="dossier-published">([\s\S]*?)<\/div>/)?.[1];
+   assert(published,'daily example includes its editorial publication header');
+   const label=published.match(/<strong>([^<]+)<\/strong>/)?.[1];
+   const estimate=label?.match(/\s+·\s+(\d+(?:[.,]\d+)?)%$/);
+   const selection=label ? {
+    market:estimate ? label.slice(0,estimate.index) : label,
+    probability:estimate ? Number(estimate[1].replace(',','.')) : null,
+   } : null;
+   return{language:tag[1],original,paragraphs,selection};
   }
   const list=original.match(/data-i18n="arhiva\.sect\.piete"[^>]*>[\s\S]*?<\/p>\s*<ul>([\s\S]*?)<\/ul>/)?.[1];assert(list,'market list exists');
   // Supplied predictions put a probability immediately after the market dash.
@@ -40,7 +46,7 @@ export function proSample(html) {
   assert(markets.length>0,'at least one supplied prediction exists');
   return{language:tag[1],original,paragraphs,markets};
  });
- return{home:teams[0],away:teams[1],variants};
+ return{fixtureId:html.match(/data-sample-fixture="(\d+)"/)?.[1],home:teams[0],away:teams[1],variants};
 }
 
 export function pairedEvidence(sample,variant) {

@@ -94,9 +94,13 @@ function assertSampleConserved(sample) {
 }
 test('current public sample keeps one principal selection, context and the review in every language',()=>{
  const sample=proSample(readFileSync(new URL('../index.html',import.meta.url),'utf8'));
- const probability=sample.variants[0].selection.probability;
+ const probability=sample.variants[0].selection?.probability;
  for(const variant of sample.variants){
-  assert.equal(variant.selection.probability,probability,variant.language);
+  assert.equal(variant.selection?.probability,probability,variant.language);
+  if (sample.fixtureId==='1618012') {
+   assert.match(variant.selection.market,/^2–4 .+ 90 /);
+   assert.equal(variant.selection.probability,null,'no model estimate was archived for the interval');
+  }
   assert.match(variant.original,/<details class="dossier-context">/);
   assert.match(variant.original,/<details class="dossier-review">/);
   assert.doesNotMatch(variant.original,/arhiva\.sect\.piete|🔒|💎|dossier-market-evidence/);

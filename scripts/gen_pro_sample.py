@@ -23,6 +23,7 @@ from urllib.request import Request, urlopen
 from zoneinfo import ZoneInfo
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+from editorial_copy import editorial_text, public_analysis_text
 import provenienta_pro as PP  # noqa: E402
 
 SITE = Path(__file__).resolve().parent.parent
@@ -304,8 +305,8 @@ def alege(items: list[dict], rez: dict):
 
 
 # ----------------------------------------------------------------- HTML
-def _inline(s: str) -> str:
-    s = H.escape(s, quote=False)
+def _inline(s: str, lang: str = "ro") -> str:
+    s = H.escape(editorial_text(s, lang), quote=False)
     s = re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", s)
     s = re.sub(r"\*\((.+?)\)\*", r"<em>(\1)</em>", s)
     s = re.sub(r"\*(.+?)\*", r"<em>\1</em>", s)
@@ -489,7 +490,7 @@ def html_card(
         return f'<div class="dossier-published">{status} · <strong>{H.escape(market)}{estimate}</strong></div>'
 
     def _corp(p: dict, lang: str) -> str:
-        verdict = f'<p><strong data-i18n="arhiva.sect.verdict">Verdict:</strong> {_inline(p["verdict"])}</p>'
+        verdict = f'<p><strong data-i18n="arhiva.sect.verdict">Verdict:</strong> {_inline(p["verdict"], lang)}</p>'
         reason = re.search(
             r"\s+[—–-]\s+(\d+(?:[.,]\d+)?)\s*%[.·]\s*(.+)",
             _principal_row(p["picks"]).replace("**", ""),
@@ -529,21 +530,21 @@ def html_card(
                 reason = contextual_reason(item, p["picks"], lang, pick)
                 alternatives.append(
                     f'<li>{ALTERNATIVE[lang]} · <strong>{market}</strong>'
-                    + (f"<p>{_inline(reason)}</p>" if reason else "")
+                    + (f"<p>{_inline(reason, lang)}</p>" if reason else "")
                     + "</li>"
                 )
         return "\n".join(
             [
                 '      <div class="pro-visible">',
                 f"        {_titlu_principal(p, lang)}",
-                f"        <p>{_inline(argument)}</p>"
+                f"        <p>{_inline(argument, lang)}</p>"
                 if argument
                 else f"        {verdict}",
                 '        <details class="dossier-context"><summary data-i18n="dashboard.analysis.read">Citește analiza</summary>',
                 f"        {verdict}" if argument else "",
-                f'        <p><strong data-i18n="arhiva.sect.context">Context:</strong> {_inline(p["context"])}</p>',
-                f'        <p><strong data-i18n="arhiva.sect.model">Modelul vs realitate:</strong> {_inline(p["model"])}</p>',
-                f'        <p><strong data-i18n="arhiva.sect.urmarit">De urmărit:</strong> {_inline(p["urmarit"])}</p>',
+                f'        <p><strong data-i18n="arhiva.sect.context">Context:</strong> {_inline(p["context"], lang)}</p>',
+                f'        <p><strong data-i18n="arhiva.sect.model">Modelul vs realitate:</strong> {_inline(p["model"], lang)}</p>',
+                f'        <p><strong data-i18n="arhiva.sect.urmarit">De urmărit:</strong> {_inline(p["urmarit"], lang)}</p>',
                 f'        <ul>{"".join(alternatives)}</ul>' if alternatives else "",
                 "        </details>",
                 '        <details class="dossier-review"><summary data-i18n="arhiva.th.rezultat">Rezultat</summary>',
@@ -811,16 +812,18 @@ def _incarca(zi: str):
         return None, ""
     item = items[0]
     public = _public_sample(zi)
-    # Worker-ul poate serializa 2.0 ca 2. Comparăm textele publice și valorile,
-    # apoi folosim numai copia canonică locală pentru verificarea SHA.
-    fields = (
-        "match",
-        "provenance",
-        "analysis",
-        *(f"analysis_{lang}" for lang in TOTAL_MARKET if lang != "ro"),
-    )
-    matches_public = public and all(item.get(key) == public.get(key) for key in fields)
-    if not matches_public:
+    # Worker-ul poate serializa 2.0 ca 2 și poate publica proiecția editorială.
+    # Verificăm identitatea și proveniența exact, inclusiv pentru copia publică proiectată.
+    if not public or any(item.get(key) != public.get(key) for key in ("match", "provenance")):
+        return None, ""
+    text_keys = {lang: "analysis" if lang == "ro" else f"analysis_{lang}" for lang in TOTAL_MARKET}
+    canonical_text = {lang: item.get(key) for lang, key in text_keys.items()}
+    public_text = {lang: public.get(key) for lang, key in text_keys.items()}
+    projected_text = {
+        lang: public_analysis_text(text, lang) if isinstance(text, str) else text
+        for lang, text in canonical_text.items()
+    }
+    if public_text != canonical_text and public_text != projected_text:
         return None, ""
     try:
         receipt = PP.citeste_livrari(f)

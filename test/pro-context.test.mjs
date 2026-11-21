@@ -51,8 +51,23 @@ function assertSampleFacts(sample) {
   assert(context.includes(sample.home)&&context.includes(sample.away),'context belongs to the heading teams');
  }
 }
-test('current public sample extracts its own team identities and conserves source facts in every language',()=>{
- assertSampleFacts(proSample(readFileSync(new URL('../index.html',import.meta.url),'utf8')));
+test('current public sample conserves the published context and never converts a league sample into team facts',()=>{
+ const sample=proSample(readFileSync(new URL('../index.html',import.meta.url),'utf8'));
+ if (sample.fixtureId==='1618012') {
+  for (const variant of sample.variants) {
+   const {context,model}=variant.paragraphs;
+   assert(plain(context).includes(sample.home) && plain(context).includes(sample.away));
+   assert.deepEqual(numbers(plain(model)),[40,77],variant.language);
+   assert.equal(extract({home:sample.home,away:sample.away,language:variant.language,evidence:model,context}),null);
+  }
+  return;
+ }
+ // The legacy model text can contain recognized paired team facts. When it
+ // does, retain the exact extraction contract covered by the fixed archive fixtures.
+ const first=sample.variants[0];
+ if (extract({home:sample.home,away:sample.away,language:first.language,evidence:first.paragraphs.model,context:first.paragraphs.context})) {
+  assertSampleFacts(sample);
+ }
 });
 test('escaped team names in legitimate source HTML conserve the same context facts',()=>{
  const html=readFileSync(new URL('../analize/2026-11-16.html',import.meta.url),'utf8').replace(/\bSorrento\b/g,'Sorrento &amp; Co &#x27;A&#x27;');

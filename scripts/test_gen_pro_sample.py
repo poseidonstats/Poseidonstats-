@@ -162,6 +162,40 @@ def test_exemplul_public_pastreaza_selectia_cand_apare_chitanta(monkeypatch, tmp
     assert G._incarca(day) == (None, "")
 
 
+def test_incarca_accepta_proiectia_exacta_fara_sa_schimbe_arhiva(tmp_path, monkeypatch):
+    import json
+
+    day = "2026-11-21"
+    item = {
+        "match": {"fixture_id": 3},
+        "provenance": {"inputs": {"baseline": {"k": 40, "n": 77}}},
+        "analysis": TEXT + "\naPi-footBalL, sezonul curent: 40 din 77.",
+        "analysis_fr": TEXT + "\nSur 77 dans API Football.",
+    }
+    projected = {
+        **item,
+        "analysis": TEXT + "\nsezonul curent: 40 din 77.",
+        "analysis_fr": TEXT + "\nSur 77 dans données de la compétition.",
+    }
+    archive = tmp_path / f"{day}.json"
+    archive.write_text(json.dumps({"items": [item]}))
+    monkeypatch.setattr(G, "ARHIVA", tmp_path)
+    monkeypatch.setattr(G, "_public_sample", lambda _: projected)
+
+    public, _ = G._incarca(day)
+    assert public["analysis"] == item["analysis"]
+    assert public["analysis_fr"] == item["analysis_fr"]
+
+    for altered in (
+        {**projected, "analysis": projected["analysis"].replace("40 din 77", "41 din 77")},
+        {**projected, "match": {"fixture_id": 4}},
+        {**projected, "provenance": {"inputs": {"baseline": {"k": 41, "n": 77}}}},
+    ):
+        monkeypatch.setattr(G, "_public_sample", lambda _: altered)
+        assert G._incarca(day) == (None, "")
+    assert json.loads(archive.read_text()) == {"items": [item]}
+
+
 def test_daily_pro_list_projects_the_complete_canonical_archive(tmp_path, monkeypatch):
     import json
 

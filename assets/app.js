@@ -5,7 +5,7 @@ const CALIB_URL = "data/calibration.json";
 const FORWARD_URL = "data/forward.json";
 const HISTORY_URL = "data/history.json";
 const SCORECARD_URL = "data/scorecard.json";
-const I18N_URL = "assets/i18n.json?release=20261121-pro-contextual";
+const I18N_URL = "assets/i18n.json?release=20261121-pro-editorial";
 
 // Scorecard skill per piață (din backtest OOS), folosit pentru contextul piețelor.
 let SCORECARD = {};                       // key -> card (label, tier, threshold, skill_stars, lift_pp, hit)
@@ -1582,9 +1582,9 @@ function loadProReport() {
   if (PRO_REPORT_LOAD) return PRO_REPORT_LOAD;
   const css = document.createElement("link"); css.rel = "stylesheet"; css.href = "assets/pro-report.css?v=20261118e"; document.head.appendChild(css);
   PRO_REPORT_LOAD = new Promise((resolve,reject) => {
-    const script = document.createElement("script"); script.id = "pro-report-script"; script.src = "assets/pro-context.js?release=20261121-pro-contextual";
+    const script = document.createElement("script"); script.id = "pro-report-script"; script.src = "assets/pro-context.js?release=20261121-pro-editorial";
     script.onload = script.onerror = () => {
-      const report = document.createElement("script"); report.src = "assets/pro-report.js?release=20261121-pro-contextual";
+      const report = document.createElement("script"); report.src = "assets/pro-report.js?release=20261121-pro-editorial";
       report.onload = () => resolve(window.PoseidonProReport);
       report.onerror = () => { PRO_REPORT_LOAD = null; css.remove(); script.remove(); report.remove(); reject(new Error("Pro report unavailable")); };
       document.head.appendChild(report);
@@ -1615,10 +1615,43 @@ function proAnalysisForFixture(data, day, fixture) {
   return data.items.find(item => Number(item?.match?.fixture_id) === fixture
     && typeof item.analysis === "string" && item.analysis.trim()) || null;
 }
+// Keep legacy provider references out of displayed editorial copy. The source payload is unchanged.
+function editorialText(text, lang) {
+  const provider = /\bapi[-‐‑–—\s]*football\b/iu;
+  const period = 'sezonul curent|current season|temporada actual|stagione in corso|saison en cours|musim berjalan';
+  const upperFirst = value => value.charAt(0).toUpperCase() + value.slice(1);
+  // Already-projected editions can start new argument sentences with a lowercase season label.
+  const projectedSeason = new RegExp(
+    '(^[ \\t]*|[.!?][ \\t]+|(?:^|\\n)[🧮📊][ \\t]+\\*\\*[^\\n]*?:\\*\\*[ \\t]+)(' +
+    period + ')(?=[ \\t]*:)', 'gimu',
+  );
+  text = text.replace(projectedSeason, (_, lead, label) => lead + upperFirst(label));
+  if (!provider.test(text)) return text;
+
+  const data = {
+    ro: 'setul de date disponibil', en: 'the available dataset', es: 'el conjunto de datos disponible',
+    it: 'la base dati disponibile', fr: 'la base de données disponible', id: 'data yang tersedia',
+  };
+  const label = data[lang] || data.en;
+  const season = new RegExp(provider.source + '\\s*,\\s*(' + period + ')\\b', 'giu');
+  const attribution = new RegExp(
+    "(?:\\s+(?:primit(?:ă|ul)?|received|recibid[ao]|ricevut[ao]|reçu[e]?|yang diterima))?" +
+    "(?:\\s+(?:în|la|de la|din|in|at|from|en|de|da|di|su|dans|sur|chez|dari|nel|dalam)|\\s+d')\\s*" +
+    "(?:baza\\s+|the database\\s+|the\\s+|la base de\\s+|la base\\s+|il database\\s+|database\\s+|basis data\\s+)?" +
+    provider.source + "(?:\\s+database\\b)?", 'giu',
+  );
+  const official = new RegExp('(\\b(?:oficial|official|ufficiale|officiel|resmi))\\s*' + provider.source, 'giu');
+  return text.replace(season, (_, period) => upperFirst(period))
+    .replace(attribution, '').replace(official, '$1')
+    .replace(new RegExp(provider.source, 'giu'), (_, offset, content) => {
+      const leading = content.slice(0, offset).trimEnd();
+      return !leading || /[.!?(>—]$/.test(leading) ? upperFirst(label) : label;
+    });
+}
 function proAnalysisText(item, language) {
   for (const lang of [language, "en", "ro"]) {
     const text = lang === "ro" ? item.analysis : item["analysis_" + lang];
-    if (typeof text === "string" && text.trim()) return { text, lang };
+    if (typeof text === "string" && text.trim()) return { text: editorialText(text, lang), lang };
   }
   return { text: "", lang: "ro" };
 }

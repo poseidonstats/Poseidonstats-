@@ -1,11 +1,11 @@
 /* Public responses only. Keep the homepage and its versioned assets together. */
-const CACHE = "poseidon-v116";
-const RELEASE = "20261121-pro-contextual";
-const PREVIOUS_CACHE = "poseidon-v115";
-const PREVIOUS_RELEASE = "20261119-pro-indicators";
+const CACHE = "poseidon-v117";
+const RELEASE = "20261121-pro-editorial";
+const PREVIOUS_CACHE = "poseidon-v116";
+const PREVIOUS_RELEASE = "20261121-pro-contextual";
 // Update with RELEASE when these static files change. The daily dictionary is validated separately.
 const RELEASE_ASSET_SHA256 = {
-  "assets/app.js": "c1770af4b1b9d135b6291264bf5defdf30b647dde96d81fc5479453689241886",
+  "assets/app.js": "5fa2464cf722a1e101057046ac68d28b1e2496bc63c8b1b98b7183dea4267472",
   "assets/home-dashboard.js": "235fe52dfdb54950a48a90206da201a711ad89a88bddf9a11050dde0450fa91f",
   "assets/member-dossier.css": "ad2846535906b2ac472b41f9368675d3e2dd3a5f5acd4f9ab883fe841f463881",
   "assets/member-dossier.js": "5b579c82f4c389581ea520905adb78f4e87b008c5570677a39f97c7ca4c36442",
@@ -13,11 +13,12 @@ const RELEASE_ASSET_SHA256 = {
   "assets/pro-context.js": "85883d7956fd08c68addc2966880103308b678f902c92eb4a3c68d719c3c987c",
 };
 const PREVIOUS_ASSET_SHA256 = {
-  "assets/app.js": "ad5ed443d549d7019dd3196e596f7ea47e639ad6a44368fdb60e2164aa55e43a",
+  "assets/app.js": "c1770af4b1b9d135b6291264bf5defdf30b647dde96d81fc5479453689241886",
   "assets/home-dashboard.js": "235fe52dfdb54950a48a90206da201a711ad89a88bddf9a11050dde0450fa91f",
   "assets/member-dossier.css": "ad2846535906b2ac472b41f9368675d3e2dd3a5f5acd4f9ab883fe841f463881",
-  "assets/member-dossier.js": "643e9f8a9fc2af5529f0e8a31fe902aa163456109de9a500660155cca01c6c75",
-  "assets/pro-report.js": "6c324b3ff88a4539eef242981a8d35a37f7e8e3f96833e509d156e3b6835a44f",
+  "assets/member-dossier.js": "5b579c82f4c389581ea520905adb78f4e87b008c5570677a39f97c7ca4c36442",
+  "assets/pro-report.js": "7aa98e931ac6974fc1f3c8791833df02a4789a2df7a80ca3417498c70826fde3",
+  "assets/pro-context.js": "85883d7956fd08c68addc2966880103308b678f902c92eb4a3c68d719c3c987c",
 };
 const HOME_PATHS = ["", "index.html"];
 const HOME_ASSETS = [
@@ -243,8 +244,13 @@ self.addEventListener("fetch", event => {
       if (path === I18N_PATH && currentRelease) return fetchRelease(request, path, cache);
       const existing = await cache.match(request);
       if (existing) return existing;
-      // The host serves current bytes for all query strings. Do not request an old URL from it.
-      if (previousRelease) return offlineResponse(request);
+      // Older archived pages can reuse an asset when both releases expect identical bytes.
+      if (previousRelease) {
+        const expected = PREVIOUS_ASSET_SHA256[path];
+        if (!expected || expected !== RELEASE_ASSET_SHA256[path]) return offlineResponse(request);
+        const currentUrl = releaseUrl(path, RELEASE);
+        return (await cache.match(currentUrl)) || fetchRelease(currentUrl, path, cache);
+      }
       return fetchRelease(request, path, cache);
     })());
     return;
