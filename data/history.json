@@ -1,22 +1,27 @@
 {
- "generated_at": "2026-11-20T03:26:14+00:00",
+ "generated_at": "2026-11-21T03:26:04+00:00",
  "days": [
   {
-   "date": "2026-11-20",
+   "date": "2026-11-21",
    "status": "in_progress",
    "matches": [
     {
-     "fixture_id": 1649492,
-     "time": "05:00",
-     "country": "USA",
-     "league": "Major League Soccer",
-     "home": "Seattle Sounders",
-     "away": "Real Salt Lake",
+     "fixture_id": 1563268,
+     "time": "14:30",
+     "country": "England",
+     "league": "Championship",
+     "home": "Norwich",
+     "away": "Cardiff",
      "calibrated_lg": true,
      "picks": [
       {
        "market": "Over 1.5",
-       "prob": 79,
+       "prob": 85,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "Over 2.5",
+       "prob": 66,
        "outcome": "PENDING"
       }
      ],
@@ -24,15 +29,72 @@
      "ft_a": null,
      "ht_h": null,
      "ht_a": null,
-     "snapshot": "prima"
+     "snapshot": "dayof"
     },
     {
-     "fixture_id": 1576233,
-     "time": "19:30",
+     "fixture_id": 1584469,
+     "time": "15:00",
+     "country": "Turkey",
+     "league": "Süper Lig",
+     "home": "Galatasaray",
+     "away": "Samsunspor",
+     "calibrated_lg": true,
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 85,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "1X",
+       "prob": 83,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "Over 2.5",
+       "prob": 67,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null,
+     "snapshot": "dayof"
+    },
+    {
+     "fixture_id": 1575225,
+     "time": "16:30",
      "country": "Germany",
-     "league": "2. Bundesliga",
-     "home": "Arminia Bielefeld",
-     "away": "FC Magdeburg",
+     "league": "Bundesliga",
+     "home": "Union Berlin",
+     "away": "RB Leipzig",
+     "calibrated_lg": true,
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 87,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "Over 2.5",
+       "prob": 69,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null,
+     "snapshot": "dayof"
+    },
+    {
+     "fixture_id": 1575229,
+     "time": "16:30",
+     "country": "Germany",
+     "league": "Bundesliga",
+     "home": "SV Elversberg",
+     "away": "SC Freiburg",
      "calibrated_lg": true,
      "picks": [
       {
@@ -42,7 +104,7 @@
       },
       {
        "market": "Over 2.5",
-       "prob": 68,
+       "prob": 67,
        "outcome": "PENDING"
       }
      ],
@@ -53,43 +115,22 @@
      "snapshot": "dayof"
     },
     {
-     "fixture_id": 1576235,
-     "time": "19:30",
-     "country": "Germany",
-     "league": "2. Bundesliga",
-     "home": "SV Darmstadt 98",
-     "away": "FC Heidenheim",
+     "fixture_id": 1649494,
+     "time": "23:00",
+     "country": "USA",
+     "league": "Major League Soccer",
+     "home": "FC Dallas",
+     "away": "Portland Timbers",
      "calibrated_lg": true,
      "picks": [
       {
        "market": "Over 1.5",
-       "prob": 84,
+       "prob": 85,
        "outcome": "PENDING"
       },
       {
        "market": "Over 2.5",
-       "prob": 65,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null,
-     "snapshot": "dayof"
-    },
-    {
-     "fixture_id": 1553230,
-     "time": "21:30",
-     "country": "Poland",
-     "league": "Ekstraklasa",
-     "home": "Pogon Szczecin",
-     "away": "Slask Wroclaw",
-     "calibrated_lg": true,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 80,
+       "prob": 66,
        "outcome": "PENDING"
       }
      ],
@@ -101,11 +142,11 @@
     }
    ],
    "totals": {
-    "picks": 6,
+    "picks": 11,
     "wins": 0,
     "losses": 0,
-    "pending": 6,
-    "locked_pending": 458
+    "pending": 11,
+    "locked_pending": 1602
    }
   }
  ],
@@ -196,9 +237,9 @@
   }
  ],
  "integritate": {
-  "total": 62463,
+  "total": 62736,
   "pastrate": 39365,
-  "nerezolvate": 13615,
+  "nerezolvate": 13888,
   "inghetate_dupa_start": 344,
   "reprogramate_peste_prag": 3,
   "recalibrare_indisponibila": 8765,
