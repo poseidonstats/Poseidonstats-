@@ -99,3 +99,46 @@ test('homepage rows preserve eligibility and identify the free button as public 
   assert.match(html, /dashboard\.access\.free/);
   assert.doesNotMatch(html, />Member</);
 });
+
+test('Pro search stats opens the authenticated fixture route and rejects fixtures outside the verified feed', () => {
+  const match = {
+    fixture_id: 1575226, match_date: '2026-11-21T14:30:00Z',
+    home_team: 'Borussia Monchengladbach', away_team: 'Borussia Dortmund',
+  };
+  const makeNode = () => ({ setAttribute() {}, replaceChildren() {}, focus() {}, addEventListener() {} });
+  const title = makeNode(), close = makeNode(), body = makeNode();
+  const nativeDialog = {
+    classList: { remove() {} },
+    querySelector(selector) {
+      return { '[data-dossier-title]': title, '[data-dossier-close]': close, '[data-dossier-body]': body }[selector];
+    },
+    addEventListener() {},
+    showModal() { this.open = true; },
+  };
+  const calls = [];
+  let tier = 'pro';
+  const window = {
+    PoseidonMembers: { tier: () => tier, getProtected(path) {
+      calls.push(path);
+      return new Promise(() => {});
+    } },
+    history: {}, addEventListener() {}, dispatchEvent() {},
+  };
+  const document = {
+    documentElement: { lang: 'ro' }, readyState: 'complete',
+    getElementById: () => nativeDialog, createElement: makeNode, addEventListener() {},
+  };
+  runInNewContext(source('member-dossier.js'), { window, document, AbortController, Event });
+  const { openPredictionStats, setPredictions } = window.PoseidonDossier;
+  assert.equal(openPredictionStats({}, match, true), false);
+  setPredictions({ matches: [match] });
+  assert.equal(openPredictionStats({}, { ...match }, true), false);
+  tier = 'basic';
+  assert.equal(openPredictionStats({}, match, true), false);
+  assert.deepEqual(calls, []);
+  tier = 'pro';
+  assert.equal(openPredictionStats({}, match, true), true);
+  assert.deepEqual(calls, ['/api/dosar/2026-11-21/1575226']);
+  assert.equal(title.textContent, 'Borussia Monchengladbach – Borussia Dortmund');
+  assert.equal(nativeDialog.open, true);
+});

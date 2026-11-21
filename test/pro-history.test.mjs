@@ -19,7 +19,7 @@ function actual(start, end) {
   assert(first >= 0 && last > first, start);
   return source.slice(first, last);
 }
-function harness({ language = 'ro', tier = 'pro', now = '2026-10-30T04:00:00Z', fetchImpl = async () => reply(payload('2026-10-30')) } = {}) {
+function harness({ language = 'ro', tier = 'pro', now = '2026-10-30T04:00:00Z', fetchImpl = async () => reply(payload('2026-10-30')), predictions = [] } = {}) {
   // The real renderer owns markup, request URL/headers and event registration.
   // The small DOM boundary records HTML and exposes actual input change handlers.
   const controlIds = ['pro-date', 'pro-content', 'pro-match-choice', 'pro-match-search', 'pro-match-name', 'pro-match-clear', 'pro-match-status', 'pro-match-results', 'pro-active-report'];
@@ -56,7 +56,12 @@ function harness({ language = 'ro', tier = 'pro', now = '2026-10-30T04:00:00Z', 
     document: { getElementById: id => elements.get(id) || null, querySelector: () => null, createElement: node,
       addEventListener: (type,handler) => { documentEvents[type] = handler; } },
     window: { PoseidonDashboard: dashboard, PoseidonMembers: { MEMBERS_API: 'https://members.invalid', tier: () => context.memberTier },
-      PoseidonDossier: { copy: lang => ({ viewEditorial: 'VIEW-PRO-' + lang }), openPro: (trigger,item,day) => {
+      PoseidonDossier: { predictions: () => ({ matches: predictions }),
+        copy: lang => ({ viewEditorial: 'VIEW-PRO-' + lang, open: 'STATS-' + lang, editorialMissing: 'NO-REPORT-' + lang }),
+        openPredictionStats: (trigger, match, noEditorial) => {
+          dossierOpens.push({ trigger, match, noEditorial }); return true;
+        },
+        openPro: (trigger,item,day) => {
         dossierOpens.push({ trigger,item,day }); return true;
       } } }, memberTier: tier,
     localStorage: { getItem: key => key === 'poseidon_members_token' ? 'TEST-TOKEN' : null },
@@ -301,6 +306,69 @@ test('team deep link initializes the original fixture and changing the day clear
   assert.equal(h.element('pro-match-search').value,'');
   assert.equal(h.open().day,'2026-10-29');
   assert.equal(h.open().item.match.home,'Linked Team');
+});
+
+const dortmund = {
+  fixture_id: 1575226, match_date: '2026-11-21T14:30:00Z', home_team: 'Borussia Monchengladbach',
+  away_team: 'Borussia Dortmund', league: 'Bundesliga', country: 'Germany',
+};
+
+test('a predicted Dortmund fixture without editorial coverage appears and opens only the statistical dossier', async () => {
+  const date = '2026-11-21';
+  const official = { match: { fixture_id: 7, home: 'Other', away: 'Published' }, analysis: 'Official editorial' };
+  const duplicate = { ...dortmund, fixture_id: '7', home_team: 'Other', away_team: 'Published' };
+  const yesterday = { ...dortmund, fixture_id: 9, match_date: '2026-11-20T12:00:00Z' };
+  const h = harness({
+    now: date + 'T09:00:00Z', fetchImpl: async () => reply({ date, items: [official] }),
+    predictions: [dortmund, duplicate, yesterday],
+  });
+  await h.render();
+  h.search('DORTMUND');
+  assert.equal(h.results().length,1);
+  assert.equal(h.results()[0].textContent,'Borussia Monchengladbach – Borussia Dortmund');
+  assert.equal(h.results()[0].children.at(-1).textContent,'NO-REPORT-ro');
+  h.results()[0].listeners.click();
+  assert.equal(h.dossierOpens.length,1);
+  assert.equal(h.dossierOpens[0].match,dortmund);
+  assert.equal(h.dossierOpens[0].noEditorial,true);
+  assert.equal(h.dossierOpens[0].trigger.textContent,'STATS-ro');
+  h.search('Other');
+  assert.equal(h.results().length,1);
+  h.results()[0].listeners.click();
+  assert.equal(h.dossierOpens.at(-1).item,official);
+});
+
+test('legacy report names deduplicate an equivalent scheduled fixture without hiding an ambiguous counterpart', async () => {
+  const date = '2026-11-21';
+  const official = { match: { home: 'Borussia Mönchengladbach', away: 'Borussia Dortmund', league: 'Bundesliga' }, analysis: 'Official editorial' };
+  for (const ambiguous of [false, true]) {
+    const predictions = ambiguous ? [dortmund, { ...dortmund, fixture_id: 8 }] : [dortmund];
+    const h = harness({ now: date + 'T09:00:00Z', fetchImpl: async () => reply({ date, items: [official] }), predictions });
+    await h.render();
+    h.search('Dortmund');
+    assert.equal(h.results().length,ambiguous ? 3 : 1);
+    if (ambiguous) assert.equal(h.results()[1].children.at(-1).textContent,dictionary.ro['dashboard.table.statsOnly']);
+    h.results()[0].listeners.click();
+    assert.equal(h.dossierOpens.at(-1).item,official);
+  }
+});
+
+test('an empty editorial day preserves statistics search while an outage never claims an analysis was unpublished', async () => {
+  const date = '2026-11-21';
+  for (const status of [200, 404, 503, 401]) {
+    const h = harness({ now: date + 'T09:00:00Z', fetchImpl: async () => reply({ date, items: [] }, status), predictions: [dortmund] });
+    await h.render();
+    if (status === 401) {
+      assert.equal(h.element('pro-match-search'),undefined);
+      continue;
+    }
+    h.search('Dortmund');
+    assert.equal(h.results().length,1);
+    const statusText = h.results()[0].children.at(-1).textContent;
+    assert.equal(statusText,status === 503 ? dictionary.ro['dashboard.table.statsOnly'] : 'NO-REPORT-ro');
+    h.results()[0].listeners.click();
+    assert.equal(h.dossierOpens.at(-1).noEditorial,status !== 503);
+  }
 });
 
 test('sticky analyses link opens the daily feed only for a verified Pro member and preserves access to the archive', async () => {

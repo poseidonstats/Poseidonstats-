@@ -528,7 +528,7 @@
     const body = dialog.querySelector("[data-dossier-body]");
     state.status = status;
     const title = data?.teams.map(team=>team.name) || [item?.match?.home,item?.match?.away];
-    dialog.querySelector("[data-dossier-title]").textContent = title.filter(Boolean).join(" – ") || state.matchLabel || c.open;
+    dialog.querySelector("[data-dossier-title]").textContent = title.filter(Boolean).join(" – ") || state.matchLabel || state.predictionLabel || c.open;
     body.replaceChildren();
     const readingPro = state.readingPro ?? state.fromPro;
     if (readingPro && item?.match) {
@@ -560,7 +560,9 @@
         body.append(text("h4",label("oneXtwo")),values);
       }
     }
-    if (!state.publicAccess && !state.basicOnly && tier() === "pro" && (state.fixture || item)) {
+    if (state.editorialMissing && tier() === "pro") {
+      body.append(text("p",c.editorialMissing,"dossier-note"));
+    } else if (!state.publicAccess && !state.basicOnly && tier() === "pro" && (state.fixture || item)) {
       const anchor = document.createComment("Pro analysis");
       body.append(anchor);
       showEditorial(state, anchor);
@@ -924,7 +926,7 @@
     dialog.lang = labels[lang] ? lang : "en";
     const match = state.item?.match;
     const title = [match?.home,match?.away].filter(Boolean).join(" – ");
-    dialog.querySelector("[data-dossier-title]").textContent = title || state.matchLabel || state.copy.open;
+    dialog.querySelector("[data-dossier-title]").textContent = title || state.matchLabel || state.predictionLabel || state.copy.open;
     const close = dialog.querySelector("[data-dossier-close]");
     close.textContent = state.copy.close;
     const message = text("p",state.copy.loading);
@@ -974,6 +976,15 @@
     if (!publicAccess && !authorized()) return;
     const focusRoot = trigger.closest("#dashboard-predictions, #matches");
     return start({ fixture,kickoff,trigger,focusRoot,day,publicAccess,basicOnly:trigger.hasAttribute("data-dossier-basic") });
+  }
+
+  function openPredictionStats(trigger, match, editorialMissing) {
+    if (tier() !== "pro" || !authorized() || !verifiedPredictions.matches.includes(match) || match.locked) return false;
+    const fixture = Number(match.fixture_id), kickoff = timed(match.match_date);
+    if (!Number.isSafeInteger(fixture) || fixture < 1 || !Number.isFinite(kickoff)) return false;
+    const day = siteDay.format(kickoff);
+    const predictionLabel = [match.home_team,match.away_team].filter(Boolean).join(" – ");
+    return start({ trigger,fixture,kickoff,day,predictionLabel,editorialMissing });
   }
 
   function openPro(trigger, item, day) {
@@ -1105,7 +1116,7 @@
     if (state.expired || !state.status || state.status === "login") {
       const message = dialog.querySelector("[data-dossier-body] [role='status']");
       if (message) message.textContent = state.copy[state.expired ? "login" : state.status || "loading"];
-      if (!state.item && !state.matchLabel) dialog.querySelector("[data-dossier-title]").textContent = state.copy.open;
+      if (!state.item && !state.matchLabel && !state.predictionLabel) dialog.querySelector("[data-dossier-title]").textContent = state.copy.open;
       return;
     }
     const offset = dialog.scrollTop;
@@ -1155,7 +1166,7 @@
 
   root.PoseidonDossier = {
     setPredictions, predictions:()=>authorized() ? verifiedPredictions : null, publicFixtureIds, button, copy:words,
-    loadCatalog, catalog, openPro, openProForMatch, switchLanguage,
+    loadCatalog, catalog, openPro, openProForMatch, openPredictionStats, switchLanguage,
     mountPublicSample,
     recentDays:()=>[siteDay.format(new Date(Date.now()-86_400_000)),siteDay.format(new Date())],
   };

@@ -1,20 +1,20 @@
 /* Public responses only. Keep the homepage and its versioned assets together. */
-const CACHE = "poseidon-v119";
-const RELEASE = "20261121-pro-search-open";
-const PREVIOUS_CACHE = "poseidon-v118";
-const PREVIOUS_RELEASE = "20261121-pro-search";
+const CACHE = "poseidon-v120";
+const RELEASE = "20261121-pro-search-stats";
+const PREVIOUS_CACHE = "poseidon-v119";
+const PREVIOUS_RELEASE = "20261121-pro-search-open";
 // Update with RELEASE when these static files change. The daily dictionary is validated separately.
 const RELEASE_ASSET_SHA256 = {
-  "assets/app.js": "e1b5753facd6accdb84566e5dbdb83a1c6f5e178a8179338b8d8e0ec65ceb3ad",
+  "assets/app.js": "eda84c4797df76f38b682301e18373e2d093e6814c9b189ba6af06f3976c6c09",
   "assets/home-dashboard.js": "235fe52dfdb54950a48a90206da201a711ad89a88bddf9a11050dde0450fa91f",
   "assets/member-dossier.css": "ad2846535906b2ac472b41f9368675d3e2dd3a5f5acd4f9ab883fe841f463881",
-  "assets/member-dossier.js": "5b579c82f4c389581ea520905adb78f4e87b008c5570677a39f97c7ca4c36442",
+  "assets/member-dossier.js": "921febc0c9f4e068ea9c3c7e0e2c6ce8a939cff40a62e8c575fcbb7c5d1d6162",
   "assets/pro-report.js": "7aa98e931ac6974fc1f3c8791833df02a4789a2df7a80ca3417498c70826fde3",
   "assets/pro-context.js": "85883d7956fd08c68addc2966880103308b678f902c92eb4a3c68d719c3c987c",
   "assets/home-modern.css": "8bed71936da8617010797011033fad8eb1b6bc7eda84410182b2218fb3575e24",
 };
 const PREVIOUS_ASSET_SHA256 = {
-  "assets/app.js": "964be3e49c37bcf9ecfd5dd84dc9708611076fd5c29eab4598e51cf7b126990d",
+  "assets/app.js": "e1b5753facd6accdb84566e5dbdb83a1c6f5e178a8179338b8d8e0ec65ceb3ad",
   "assets/home-dashboard.js": "235fe52dfdb54950a48a90206da201a711ad89a88bddf9a11050dde0450fa91f",
   "assets/member-dossier.css": "ad2846535906b2ac472b41f9368675d3e2dd3a5f5acd4f9ab883fe841f463881",
   "assets/member-dossier.js": "5b579c82f4c389581ea520905adb78f4e87b008c5570677a39f97c7ca4c36442",
