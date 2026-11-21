@@ -144,8 +144,8 @@ test('homepage market filters use translated labels and homepage assets use thei
     assert.equal(key,`filters.market.${market}`);
     for (const language of languages) assert(dictionary[language][key]);
   }
-  const release='20261121-pro-editorial';
-  for (const asset of ['app.js','member-dossier.js','member-dossier.css','home-dashboard.js']) {
+  const release='20261121-pro-search';
+  for (const asset of ['app.js','member-dossier.js','member-dossier.css','home-dashboard.js','home-modern.css']) {
     assert(html.includes(`assets/${asset}?release=${release}`));
   }
   const app=readFileSync(new URL('../assets/app.js',import.meta.url),'utf8');
@@ -155,12 +155,11 @@ test('homepage market filters use translated labels and homepage assets use thei
   const worker=readFileSync(new URL('../sw.js',import.meta.url),'utf8');
   assert(worker.includes(`const RELEASE = "${release}";`));
   const releaseHashes=worker.match(/const RELEASE_ASSET_SHA256 = \{([\s\S]*?)\n\};/)?.[1] ?? '';
-  for (const asset of ['app.js','member-dossier.js','member-dossier.css','home-dashboard.js','pro-report.js','pro-context.js']) {
+  for (const asset of ['app.js','member-dossier.js','member-dossier.css','home-dashboard.js','home-modern.css','pro-report.js','pro-context.js']) {
     const bytes=readFileSync(new URL(`../assets/${asset}`,import.meta.url));
     const digest=createHash('sha256').update(bytes).digest('hex');
     assert(releaseHashes.includes(`"assets/${asset}": "${digest}"`), `Update the service worker release for ${asset}`);
   }
-  assert(html.includes('assets/home-modern.css?release=20261121-download-buttons'));
   assert(html.includes('assets/members.js?v=20261119-functions'));
   assert(html.includes('assets/conversion.js?v=20261119-app-outbound'));
   // The per-metric TEST-N honesty contract superseded reading-frozen1. Check the current asset and cache key together.

@@ -5,7 +5,7 @@ const CALIB_URL = "data/calibration.json";
 const FORWARD_URL = "data/forward.json";
 const HISTORY_URL = "data/history.json";
 const SCORECARD_URL = "data/scorecard.json";
-const I18N_URL = "assets/i18n.json?release=20261121-pro-editorial";
+const I18N_URL = "assets/i18n.json?release=20261121-pro-search";
 
 // Scorecard skill per piață (din backtest OOS), folosit pentru contextul piețelor.
 let SCORECARD = {};                       // key -> card (label, tier, threshold, skill_stars, lift_pp, hit)
@@ -1582,9 +1582,9 @@ function loadProReport() {
   if (PRO_REPORT_LOAD) return PRO_REPORT_LOAD;
   const css = document.createElement("link"); css.rel = "stylesheet"; css.href = "assets/pro-report.css?v=20261118e"; document.head.appendChild(css);
   PRO_REPORT_LOAD = new Promise((resolve,reject) => {
-    const script = document.createElement("script"); script.id = "pro-report-script"; script.src = "assets/pro-context.js?release=20261121-pro-editorial";
+    const script = document.createElement("script"); script.id = "pro-report-script"; script.src = "assets/pro-context.js?release=20261121-pro-search";
     script.onload = script.onerror = () => {
-      const report = document.createElement("script"); report.src = "assets/pro-report.js?release=20261121-pro-editorial";
+      const report = document.createElement("script"); report.src = "assets/pro-report.js?release=20261121-pro-search";
       report.onload = () => resolve(window.PoseidonProReport);
       report.onerror = () => { PRO_REPORT_LOAD = null; css.remove(); script.remove(); report.remove(); reject(new Error("Pro report unavailable")); };
       document.head.appendChild(report);
@@ -1732,15 +1732,23 @@ async function renderProAnalize(zi) {
     }).filter(({item}) => typeof item.analysis === "string" && item.analysis.trim());
     if (!meciuri.length) { continut.innerHTML = `<p class="muted">${tt("pro.zi.gol", "Nu sunt analize Pro publicate pentru această zi.")}</p>`; return; }
     const alegere = el.querySelector("#pro-match-choice");
-    alegere.innerHTML = `<label for="pro-match-select" data-i18n="dashboard.table.match">${esc(tt("dashboard.table.match", "Meci"))}</label>
+    const { escapeHTML, normalizeSearch } = window.PoseidonDashboard;
+    alegere.innerHTML = `<label for="pro-match-search">${escapeHTML(tt("simplify.search.label", "Caută o echipă"))}</label>
       <div class="pro-match-field">
-        <span id="pro-match-name" aria-hidden="true"></span>
-        <select id="pro-match-select">${meciuri.map(({ label }, index) => `<option value="${index}">${esc(label)}</option>`).join("")}</select>
-      </div>`;
+        <input id="pro-match-search" type="search" placeholder="${escapeHTML(tt("simplify.search.placeholder", "Numele echipei"))}"
+          autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="search" aria-controls="pro-match-results">
+        <button id="pro-match-clear" type="button" hidden>${escapeHTML(tt("simplify.search.clear", "Șterge"))}</button>
+      </div>
+      <p id="pro-match-name"></p>
+      <p id="pro-match-status" role="status"></p>
+      <ul id="pro-match-results" role="list" hidden></ul>`;
     alegere.hidden = false;
     continut.innerHTML = "";
-    const selector = alegere.querySelector("#pro-match-select");
+    const cautare = alegere.querySelector("#pro-match-search");
+    const sterge = alegere.querySelector("#pro-match-clear");
     const numeMeci = alegere.querySelector("#pro-match-name");
+    const stare = alegere.querySelector("#pro-match-status");
+    const rezultate = alegere.querySelector("#pro-match-results");
     const raport = el.querySelector("#pro-active-report");
     const dosar = window.PoseidonDossier;
     const deschide = document.createElement("button");
@@ -1749,22 +1757,99 @@ async function renderProAnalize(zi) {
     deschide.type = "button";
     deschide.setAttribute("aria-haspopup", "dialog");
     deschide.setAttribute("aria-controls", "member-dossier");
+    deschide.setAttribute("aria-describedby", "pro-match-name");
     deschide.textContent = dosar?.copy(limba).viewEditorial || "Pro analysis";
-    raport.openSelectedPro = trigger => {
-      const selected = meciuri[Number(selector.value)];
-      return activa() && selected && dosar?.openPro(trigger, selected.item, data);
-    };
+    const echipa = new URLSearchParams(window.location?.search).get("echipa");
+    let selectat = meciuri.find(({key,item}) => PRO_MECI != null ? key === PRO_MECI : echipa && item.match?.home === echipa) || meciuri[0];
+    const normalizare = text => normalizeSearch(text).replace(/ı/g, "i");
+    const cautabile = meciuri.map(meci => ({
+      meci,
+      echipe: [meci.item.match?.home, meci.item.match?.away].map(normalizare),
+    }));
+    const formatNumar = new Intl.NumberFormat(limba);
+    const mesaje = [
+      tt("simplify.search.empty", "Niciun meci pentru această căutare."),
+      tt("pro.search.one", "1 meci"),
+    ];
+    const plural = tt("n.meciuri", "{n} meciuri");
+    let filtru = "";
+    let optiuni = [];
+    raport.openSelectedPro = trigger => activa() && !filtru && dosar?.openPro(trigger, selectat.item, data);
     deschide.addEventListener("click", () => raport.openSelectedPro(deschide));
     raport.append(deschide);
-    raport.hidden = false;
-    const echipa = new URLSearchParams(window.location?.search).get("echipa");
-    const index = meciuri.findIndex(({key,item}) => PRO_MECI != null ? key === PRO_MECI : echipa && item.match?.home === echipa);
-    selector.value = String(Math.max(0, index));
-    numeMeci.textContent = meciuri[Number(selector.value)].label;
-    selector.addEventListener("change", () => {
-      const meci = meciuri[Number(selector.value)];
-      PRO_MECI = meci?.key;
-      numeMeci.textContent = meci?.label || "";
+
+    function actualizeazaRezultate(afiseaza) {
+      filtru = normalizare(cautare.value);
+      sterge.hidden = !cautare.value;
+      raport.hidden = numeMeci.hidden = Boolean(filtru);
+      numeMeci.textContent = selectat.label;
+      const gasite = afiseaza ? cautabile.filter(({ echipe }) => !filtru || echipe.some(nume => nume.includes(filtru))) : [];
+      stare.textContent = !afiseaza ? "" : mesaje[gasite.length]
+        ?? plural.replace("{n}", formatNumar.format(gasite.length));
+      optiuni = [];
+      const randuri = gasite.map(({ meci }, index) => {
+        const rand = document.createElement("li");
+        const buton = document.createElement("button");
+        buton.type = "button";
+        buton.textContent = meci.label;
+        if (meci.item.match?.league && meci.item.match.league !== meci.label) {
+          const liga = document.createElement("small");
+          liga.textContent = meci.item.match.league;
+          buton.append(liga);
+        }
+        if (meci === selectat) buton.setAttribute("aria-current", "true");
+        buton.addEventListener("click", () => alege(meci));
+        buton.addEventListener("keydown", event => {
+          if (event.key === "Escape") {
+            event.preventDefault();
+            reseteaza();
+          }
+          if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+            event.preventDefault();
+            const vecin = optiuni[index + (event.key === "ArrowDown" ? 1 : -1)];
+            if (vecin) vecin.buton.focus();
+            else if (index === 0 && event.key === "ArrowUp") cautare.focus();
+          }
+        });
+        optiuni.push({ buton, meci });
+        rand.append(buton);
+        return rand;
+      });
+      rezultate.replaceChildren(...randuri);
+      rezultate.hidden = !randuri.length;
+    }
+    function alege(meci) {
+      if (!activa()) return;
+      selectat = meci;
+      PRO_MECI = meci.key;
+      cautare.value = "";
+      actualizeazaRezultate(false);
+      deschide.focus();
+    }
+    function reseteaza() {
+      cautare.value = "";
+      cautare.focus();
+      actualizeazaRezultate(false);
+    }
+    cautare.addEventListener("focus", () => {
+      if (rezultate.hidden && !filtru) actualizeazaRezultate(true);
     });
+    cautare.addEventListener("input", () => actualizeazaRezultate(true));
+    cautare.addEventListener("keydown", event => {
+      if (event.isComposing) return;
+      if (event.key === "ArrowDown") {
+        event.preventDefault();
+        if (rezultate.hidden && !filtru) actualizeazaRezultate(true);
+        optiuni[0]?.buton.focus();
+      } else if (event.key === "Enter" && filtru && optiuni.length === 1) {
+        event.preventDefault();
+        alege(optiuni[0].meci);
+      } else if (event.key === "Escape") {
+        event.preventDefault();
+        reseteaza();
+      }
+    });
+    sterge.addEventListener("click", reseteaza);
+    actualizeazaRezultate(false);
   } catch (e) { if (!activa()) return; console.warn("[membri] analize", e); continut.innerHTML = `<p class="muted">${tt("pro.azi.retea", "Nu am putut contacta serverul membrilor. Reîncarcă pagina; analizele sunt și în #analize-pro pe Discord.")}</p>`; }
 }

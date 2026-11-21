@@ -954,24 +954,24 @@ body.home-modern .salt-meciuri { display: none; }
 .home-modern #pro-analize .pro-feed-controls {
   display: grid;
   grid-template-columns: max-content minmax(0, 28rem) max-content;
-  align-items: end;
+  align-items: start;
   justify-content: start;
   gap: 8px 16px;
 }
 .home-modern #pro-analize :is(.pro-day-choice, .pro-match-choice) {
   display: grid;
-  gap: 3px;
+  gap: 4px;
   max-width: 100%;
   min-width: 0;
 }
 .home-modern #pro-analize .pro-match-choice[hidden] { display: none; }
-.home-modern #pro-analize .pro-feed-action:not([hidden]) { display: flex; }
+.home-modern #pro-analize .pro-feed-action:not([hidden]) { display: flex; margin-top: 24px; }
 .home-modern #pro-analize .pro-feed-controls label {
   color: var(--dash-muted);
   font-size: 13px;
 }
 .home-modern #pro-analize #pro-date,
-.home-modern #pro-analize .pro-match-field {
+.home-modern #pro-analize :is(#pro-match-search, #pro-match-clear) {
   min-height: 44px;
   max-width: 100%;
   min-width: 0;
@@ -1001,49 +1001,65 @@ body.home-modern .salt-meciuri { display: none; }
   }
 }
 .home-modern #pro-analize .pro-match-field {
-  position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  align-items: center;
-  padding-inline-end: 34px;
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+.home-modern #pro-analize #pro-match-clear:not([hidden]) {
+  margin-inline-start: 6px;
+}
+.home-modern #pro-analize #pro-match-search {
+  width: 100%;
+  grid-column: 1;
+}
+.home-modern #pro-analize #pro-match-search::-webkit-search-cancel-button { display: none; }
+.home-modern #pro-analize #pro-match-search::placeholder { color: var(--dash-muted); }
+.home-modern #pro-analize #pro-match-clear { cursor: pointer; }
+.home-modern #pro-analize :is(#pro-match-name, #pro-match-status) {
+  margin: 0;
+  color: var(--dash-muted);
+  font-size: 13px;
   overflow-wrap: anywhere;
 }
-.home-modern #pro-analize .pro-match-field::after {
-  content: "";
-  position: absolute;
-  inset-inline-end: 14px;
-  top: calc(50% - 5px);
-  width: 8px;
-  height: 8px;
-  border: solid var(--dash-muted);
-  border-width: 0 1px 1px 0;
-  transform: rotate(45deg);
-  pointer-events: none;
-}
-.home-modern #pro-analize #pro-match-select {
-  -webkit-appearance: none;
-  appearance: none;
-  /* WebKit's native text can overflow even though the visible label is a sibling. */
-  contain: paint;
-  position: absolute;
-  inset: -1px;
-  width: calc(100% + 2px);
-  height: calc(100% + 2px);
-  border: 0;
-  padding: 0;
+.home-modern #pro-analize #pro-match-status:empty { position: absolute; }
+.home-modern #pro-analize #pro-match-results {
+  max-height: min(15rem, 38vh);
+  overflow-y: auto;
   margin: 0;
+  padding: 3px;
+  border: 1px solid #355064;
+  border-radius: 6px;
+  background: #0c2130;
+  list-style: none;
+}
+.home-modern #pro-analize #pro-match-results li + li { border-top: 1px solid #355064; }
+.home-modern #pro-analize #pro-match-results button {
+  display: grid;
+  gap: 2px;
+  align-content: center;
+  width: 100%;
+  min-height: 44px;
+  padding: 7px 9px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: #edf2f5;
   font: inherit;
-  opacity: 0;
+  text-align: start;
+  overflow-wrap: anywhere;
   cursor: pointer;
 }
-.home-modern #pro-analize :is(#pro-date:focus-visible, .pro-match-field:focus-within) {
+.home-modern #pro-analize #pro-match-results button small { color: var(--dash-muted); }
+.home-modern #pro-analize #pro-match-results button:is([aria-current="true"], :hover) { background: #163549; }
+.home-modern #pro-analize :is(#pro-date, #pro-match-search, #pro-match-clear, #pro-match-results button):focus-visible {
   outline: 2px solid #e7cb88;
   outline-offset: 2px;
 }
+.home-modern #pro-analize #pro-match-results button:focus-visible { outline-offset: -2px; }
 .home-modern #pro-analize #pro-content:not(:empty) { margin-top: 12px; }
 @media (max-width: 660px) {
   .home-modern #pro-analize .pro-feed-controls { grid-template-columns: minmax(0, 1fr); }
-  .home-modern #pro-analize :is(#pro-date, #pro-match-select, .pro-match-field) { font-size: 16px; }
+  .home-modern #pro-analize .pro-feed-action:not([hidden]) { margin-top: 0; }
+  .home-modern #pro-analize :is(#pro-date, #pro-match-search) { font-size: 16px; }
 }
 
 

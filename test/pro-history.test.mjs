@@ -2,8 +2,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
+import { createRequire } from 'node:module';
 import { createContext, runInContext } from 'node:vm';
 
+const dashboard = createRequire(import.meta.url)('../assets/home-dashboard.js');
 const source = readFileSync(new URL('../assets/app.js', import.meta.url), 'utf8');
 const dictionary = JSON.parse(readFileSync(new URL('../assets/i18n.json', import.meta.url), 'utf8'));
 const languages = ['ro', 'en', 'es', 'it', 'fr', 'id'];
@@ -20,21 +22,25 @@ function actual(start, end) {
 function harness({ language = 'ro', tier = 'pro', now = '2026-10-30T04:00:00Z', fetchImpl = async () => reply(payload('2026-10-30')) } = {}) {
   // The real renderer owns markup, request URL/headers and event registration.
   // The small DOM boundary records HTML and exposes actual input change handlers.
+  const controlIds = ['pro-date', 'pro-content', 'pro-match-choice', 'pro-match-search', 'pro-match-name', 'pro-match-clear', 'pro-match-status', 'pro-match-results', 'pro-active-report'];
   const elements = new Map(), requests = [], dossierOpens = [], warnings = [], documentEvents = {};
+  let documentFocus;
   function node(id) {
     let html = '', children = [];
-    const n = { value: '', listeners: {}, setAttribute() {}, removeAttribute() {}, addEventListener(type, fn) { this.listeners[type] = fn; },
+    const n = { value: '', attributes: {}, dataset: {}, listeners: {}, focus() { documentFocus = this; }, setAttribute(name, value) { this.attributes[name] = value; }, removeAttribute(name) { delete this.attributes[name]; }, addEventListener(type, fn) { this.listeners[type] = fn; },
       get children() { return children; }, replaceChildren(...nodes) { children = nodes; }, append(...nodes) { children.push(...nodes); },
       querySelector(selector) { return elements.get(selector.replace(/^#/, '')) || null; },
       get innerHTML() { return html; }, set innerHTML(value) {
         html = value;
         if (id === 'pro-analize') {
-          for (const child of ['pro-date','pro-content','pro-match-choice','pro-match-select','pro-match-name','pro-active-report']) elements.delete(child);
+          for (const child of controlIds) elements.delete(child);
         }
         if (['pro-analize','pro-content','pro-match-choice'].includes(id)) {
-          for (const match of value.matchAll(/<(?:input|div|select|span)\b[^>]*\bid="(pro-date|pro-content|pro-match-choice|pro-match-select|pro-match-name|pro-active-report)"[^>]*>/g)) {
+          for (const match of value.matchAll(/<(?:input|div|span|button|p|ul)\b[^>]*\bid="([^"]+)"[^>]*>/g)) {
+            if (!controlIds.includes(match[1])) continue;
             const child = node(match[1]);
             child.value = match[0].match(/\bvalue="([^"]*)"/)?.[1] || '';
+            child.hidden = /\shidden(?=[\s>])/.test(match[0]);
             child.max = match[0].match(/\bmax="([^"]*)"/)?.[1] || '';
             elements.set(match[1], child);
           }
@@ -49,7 +55,7 @@ function harness({ language = 'ro', tier = 'pro', now = '2026-10-30T04:00:00Z', 
   const context = createContext({ LANG: language, I18N: dictionary, Date: Clock, Intl,
     document: { getElementById: id => elements.get(id) || null, querySelector: () => null, createElement: node,
       addEventListener: (type,handler) => { documentEvents[type] = handler; } },
-    window: { PoseidonMembers: { MEMBERS_API: 'https://members.invalid', tier: () => context.memberTier },
+    window: { PoseidonDashboard: dashboard, PoseidonMembers: { MEMBERS_API: 'https://members.invalid', tier: () => context.memberTier },
       PoseidonDossier: { copy: lang => ({ viewEditorial: 'VIEW-PRO-' + lang }), openPro: (trigger,item,day) => {
         dossierOpens.push({ trigger,item,day }); return true;
       } } }, memberTier: tier,
@@ -71,7 +77,10 @@ function harness({ language = 'ro', tier = 'pro', now = '2026-10-30T04:00:00Z', 
     button.listeners.click();
     return dossierOpens.length > before ? dossierOpens.at(-1) : null;
   }
-  return { context, requests, dossierOpens, warnings, element: id => elements.get(id), open, documentEvents,
+  return { context, requests, dossierOpens, warnings, focused: () => documentFocus,
+    search: query => { const input = elements.get('pro-match-search'); assert(input, 'visible team search'); input.value = query; input.listeners.input(); },
+    results: () => elements.get('pro-match-results')?.children.map(row => row.children[0]) || [],
+    element: id => elements.get(id), open, documentEvents,
     selectedText: () => { const selection = open(); return selection && runInContext('proAnalysisText',context)(selection.item,context.LANG); },
     render: date => { context.selected = date; return runInContext('renderProAnalize(selected)', context); },
     body: () => [elements.get('pro-match-choice')?.innerHTML, elements.get('pro-content')?.innerHTML || elements.get('pro-analize').innerHTML,
@@ -158,7 +167,14 @@ test('all six languages translate calendar/title/date and render the matching an
     assert(dictionary[language]['pro.analize.h2']); assert(dictionary[language]['pro.zi.gol']); assert(dictionary[language]['pro.zi.lipsa']);
     assert(html.includes(dictionary[language]['pro.analize.h2'])); assert(html.includes(dictionary[language]['filters.day']));
     assert.match(html, /id="pro-date" type="date" value="2026-10-29"/);
-    assert(h.body().includes(dictionary[language]['dashboard.table.match']));
+    assert(h.body().includes(dictionary[language]['simplify.search.label']));
+    assert(h.body().includes(dictionary[language]['simplify.search.placeholder']));
+    assert(h.body().includes(dictionary[language]['simplify.search.clear']));
+    h.search('UNMATCHED TEAM');
+    assert.equal(h.element('pro-match-status').textContent, dictionary[language]['simplify.search.empty']);
+    h.search('Away');
+    assert.equal(h.element('pro-match-status').textContent, dictionary[language]['pro.search.one']);
+    h.element('pro-match-clear').listeners.click();
     assert.match(h.body(),new RegExp('VIEW-PRO-'+language));
     assert.equal(h.selectedText().lang,language);
     assert(!h.body().includes('<script>'));
@@ -185,18 +201,18 @@ test('Pro button and dashboard action open only the selected fixture and preserv
   const historic = { match: { home: 'Home & Sons', away: 'Visitors' }, analysis: 'LEGACY ANALYSIS' };
   const h = harness({ fetchImpl: async () => reply({ date, items: [first,second,historic] }) });
   await h.render();
-  assert.match(h.body(), /<label[^>]+for="pro-match-select"/);
-  assert.match(h.body(), /Elazığspor – Menemen Belediyespor/);
-  assert.match(h.body(), /Hatayspor – İnegöl Kafkas Gençlik/);
-  assert.match(h.body(), /Home &amp; Sons – Visitors/);
+  assert.match(h.body(), /<label[^>]+for="pro-match-search"/);
+  assert.doesNotMatch(h.body(), /<select\b/);
   assert.doesNotMatch(h.body(), /FIRST ANALYSIS|SECOND ANALYSIS|LEGACY ANALYSIS/);
   assert.equal(h.dossierOpens.length,0);
   assert.equal(h.element('pro-match-name').textContent,'Elazığspor – Menemen Belediyespor');
   assert.equal(h.open().item,first);
 
-  const select = h.element('pro-match-select');
-  select.value = '1';
-  select.listeners.change();
+  h.search(' INEGOL   KAFKAS ');
+  assert.equal(h.results().length,1);
+  assert.equal(h.results()[0].textContent,'Hatayspor – İnegöl Kafkas Gençlik');
+  assert.equal(h.open(),null);
+  h.results()[0].listeners.click();
   assert.equal(h.element('pro-match-name').textContent,'Hatayspor – İnegöl Kafkas Gençlik');
   const link = { dataset: {}, closest: () => link };
   let prevented = false;
@@ -205,17 +221,62 @@ test('Pro button and dashboard action open only the selected fixture and preserv
   assert.equal(h.dossierOpens.at(-1).trigger,link);
   assert.equal(h.dossierOpens.at(-1).item,second);
 
-  select.value = '2';
-  select.listeners.change();
+  h.search('HOME & SONS');
+  assert.equal(h.results()[0].textContent,'Home & Sons – Visitors');
+  h.results()[0].listeners.click();
   assert.equal(h.open().item,historic);
   h.context.LANG = 'fr';
   await h.render();
-  assert.equal(h.element('pro-match-select').value,'2');
+  assert.equal(h.element('pro-match-search').value,'');
   assert.equal(h.element('pro-match-name').textContent,'Home & Sons – Visitors');
   assert.equal(h.selectedText().lang,'ro');
   assert.equal(h.open().day,date);
   h.context.memberTier = null;
   assert.equal(h.open(),null);
+});
+
+test('large Pro day filters either team and blocks the old action until selection or clear', async () => {
+  const date = '2026-10-30';
+  const items = Array.from({ length: 593 }, (_, i) => ({
+    match: { fixture_id: 1000 + i, home: `Home ${i}`, away: `Away ${i}` }, analysis: `Report ${i}`,
+  }));
+  items.at(-1).match.away = 'Știința Elazığspor';
+  const h = harness({ fetchImpl: async () => reply({ date, items }) });
+  await h.render();
+  assert.equal(h.open().item,items[0]);
+  h.search('STIINTA ELAZIGSPOR');
+  assert.equal(h.results().length,1);
+  assert.equal(h.open(),null);
+  const input = h.element('pro-match-search');
+  input.listeners.keydown({ key: 'ArrowDown', preventDefault() {} });
+  assert.equal(h.focused(),h.results()[0]);
+  input.listeners.keydown({ key: 'Enter', preventDefault() {} });
+  assert.equal(h.open().item,items.at(-1));
+  h.search('no matching team');
+  assert.equal(h.results().length,0);
+  assert.equal(h.element('pro-match-status').textContent,dictionary.ro['simplify.search.empty']);
+  assert.equal(h.open(),null);
+  h.element('pro-match-clear').listeners.click();
+  assert.equal(h.focused(),input);
+  assert.equal(h.open().item,items.at(-1));
+  h.search('Home 592');
+  assert.equal(h.results().length,1);
+  assert.equal(h.requests.length,1);
+});
+
+test('team deep link initializes the original fixture and changing the day clears a pending filter', async () => {
+  const matches = day => ['Home', 'Linked Team'].map((home, i) => ({
+    match: { home, away: 'Away', fixture_id: i + 1 }, analysis: day,
+  }));
+  const h = harness({ fetchImpl: async url => reply({ date: url.slice(-10), items: matches(url.slice(-10)) }) });
+  h.context.window.location = { search: '?echipa=Linked+Team' };
+  await h.render();
+  assert.equal(h.open().item.match.home,'Linked Team');
+  h.search('pending query');
+  await h.change('2026-10-29');
+  assert.equal(h.element('pro-match-search').value,'');
+  assert.equal(h.open().day,'2026-10-29');
+  assert.equal(h.open().item.match.home,'Linked Team');
 });
 
 test('sticky analyses link opens the daily feed only for a verified Pro member and preserves access to the archive', async () => {

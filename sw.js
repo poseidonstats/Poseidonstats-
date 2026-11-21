@@ -1,19 +1,20 @@
 /* Public responses only. Keep the homepage and its versioned assets together. */
-const CACHE = "poseidon-v117";
-const RELEASE = "20261121-pro-editorial";
-const PREVIOUS_CACHE = "poseidon-v116";
-const PREVIOUS_RELEASE = "20261121-pro-contextual";
+const CACHE = "poseidon-v118";
+const RELEASE = "20261121-pro-search";
+const PREVIOUS_CACHE = "poseidon-v117";
+const PREVIOUS_RELEASE = "20261121-pro-editorial";
 // Update with RELEASE when these static files change. The daily dictionary is validated separately.
 const RELEASE_ASSET_SHA256 = {
-  "assets/app.js": "5fa2464cf722a1e101057046ac68d28b1e2496bc63c8b1b98b7183dea4267472",
+  "assets/app.js": "964be3e49c37bcf9ecfd5dd84dc9708611076fd5c29eab4598e51cf7b126990d",
   "assets/home-dashboard.js": "235fe52dfdb54950a48a90206da201a711ad89a88bddf9a11050dde0450fa91f",
   "assets/member-dossier.css": "ad2846535906b2ac472b41f9368675d3e2dd3a5f5acd4f9ab883fe841f463881",
   "assets/member-dossier.js": "5b579c82f4c389581ea520905adb78f4e87b008c5570677a39f97c7ca4c36442",
   "assets/pro-report.js": "7aa98e931ac6974fc1f3c8791833df02a4789a2df7a80ca3417498c70826fde3",
   "assets/pro-context.js": "85883d7956fd08c68addc2966880103308b678f902c92eb4a3c68d719c3c987c",
+  "assets/home-modern.css": "8bed71936da8617010797011033fad8eb1b6bc7eda84410182b2218fb3575e24",
 };
 const PREVIOUS_ASSET_SHA256 = {
-  "assets/app.js": "c1770af4b1b9d135b6291264bf5defdf30b647dde96d81fc5479453689241886",
+  "assets/app.js": "5fa2464cf722a1e101057046ac68d28b1e2496bc63c8b1b98b7183dea4267472",
   "assets/home-dashboard.js": "235fe52dfdb54950a48a90206da201a711ad89a88bddf9a11050dde0450fa91f",
   "assets/member-dossier.css": "ad2846535906b2ac472b41f9368675d3e2dd3a5f5acd4f9ab883fe841f463881",
   "assets/member-dossier.js": "5b579c82f4c389581ea520905adb78f4e87b008c5570677a39f97c7ca4c36442",
@@ -23,6 +24,7 @@ const PREVIOUS_ASSET_SHA256 = {
 const HOME_PATHS = ["", "index.html"];
 const HOME_ASSETS = [
   "assets/app.js",
+  "assets/home-modern.css",
   "assets/home-dashboard.js",
   "assets/member-dossier.css",
   "assets/member-dossier.js",
@@ -105,7 +107,7 @@ async function hasDigest(response, expected) {
   return hash === expected;
 }
 
-async function matchesRelease(path, response) {
+async function matchesRelease(path, response, version = RELEASE) {
   if (!cacheable(response)) return false;
   if (HOME_PATHS.includes(path)) {
     const html = await response.clone().text();
@@ -113,7 +115,9 @@ async function matchesRelease(path, response) {
   }
   if (path === I18N_PATH) {
     const dictionary = await response.clone().json().catch(() => null);
-    return ["ro", "en"].every(lang => Boolean(dictionary?.[lang]?.["redesign.edition.resultPending"]));
+    if (!["ro", "en"].every(lang => Boolean(dictionary?.[lang]?.["redesign.edition.resultPending"]))) return false;
+    return version === PREVIOUS_RELEASE || ["ro", "en", "es", "it", "fr", "id"]
+      .every(lang => Boolean(dictionary?.[lang]?.["pro.search.one"]));
   }
   return hasDigest(response, RELEASE_ASSET_SHA256[path]);
 }
@@ -207,7 +211,7 @@ self.addEventListener("activate", event => {
       }));
       const dictionaryUrl = releaseUrl(I18N_PATH, PREVIOUS_RELEASE);
       const dictionary = await old.match(dictionaryUrl);
-      if (dictionary && await matchesRelease(I18N_PATH, dictionary)) await current.put(dictionaryUrl, dictionary);
+      if (dictionary && await matchesRelease(I18N_PATH, dictionary, PREVIOUS_RELEASE)) await current.put(dictionaryUrl, dictionary);
     }
     if (keys.includes(LEGACY_CACHE)) {
       const [old, current] = await Promise.all([caches.open(LEGACY_CACHE), caches.open(CACHE)]);
