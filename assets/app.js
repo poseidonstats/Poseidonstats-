@@ -5,7 +5,7 @@ const CALIB_URL = "data/calibration.json";
 const FORWARD_URL = "data/forward.json";
 const HISTORY_URL = "data/history.json";
 const SCORECARD_URL = "data/scorecard.json";
-const I18N_URL = "assets/i18n.json?release=20261121-pro-search";
+const I18N_URL = "assets/i18n.json?release=20261121-pro-search-open";
 
 // Scorecard skill per piață (din backtest OOS), folosit pentru contextul piețelor.
 let SCORECARD = {};                       // key -> card (label, tier, threshold, skill_stars, lift_pp, hit)
@@ -1582,9 +1582,9 @@ function loadProReport() {
   if (PRO_REPORT_LOAD) return PRO_REPORT_LOAD;
   const css = document.createElement("link"); css.rel = "stylesheet"; css.href = "assets/pro-report.css?v=20261118e"; document.head.appendChild(css);
   PRO_REPORT_LOAD = new Promise((resolve,reject) => {
-    const script = document.createElement("script"); script.id = "pro-report-script"; script.src = "assets/pro-context.js?release=20261121-pro-search";
+    const script = document.createElement("script"); script.id = "pro-report-script"; script.src = "assets/pro-context.js?release=20261121-pro-search-open";
     script.onload = script.onerror = () => {
-      const report = document.createElement("script"); report.src = "assets/pro-report.js?release=20261121-pro-search";
+      const report = document.createElement("script"); report.src = "assets/pro-report.js?release=20261121-pro-search-open";
       report.onload = () => resolve(window.PoseidonProReport);
       report.onerror = () => { PRO_REPORT_LOAD = null; css.remove(); script.remove(); report.remove(); reject(new Error("Pro report unavailable")); };
       document.head.appendChild(report);
@@ -1791,6 +1791,8 @@ async function renderProAnalize(zi) {
         const rand = document.createElement("li");
         const buton = document.createElement("button");
         buton.type = "button";
+        buton.setAttribute("aria-haspopup", "dialog");
+        buton.setAttribute("aria-controls", "member-dossier");
         buton.textContent = meci.label;
         if (meci.item.match?.league && meci.item.match.league !== meci.label) {
           const liga = document.createElement("small");
@@ -1798,7 +1800,9 @@ async function renderProAnalize(zi) {
           buton.append(liga);
         }
         if (meci === selectat) buton.setAttribute("aria-current", "true");
-        buton.addEventListener("click", () => alege(meci));
+        buton.addEventListener("click", () => {
+          if (optiuni[index]?.buton === buton) deschideRezultatul(meci);
+        });
         buton.addEventListener("keydown", event => {
           if (event.key === "Escape") {
             event.preventDefault();
@@ -1818,13 +1822,14 @@ async function renderProAnalize(zi) {
       rezultate.replaceChildren(...randuri);
       rezultate.hidden = !randuri.length;
     }
-    function alege(meci) {
+    function deschideRezultatul(meci) {
       if (!activa()) return;
       selectat = meci;
       PRO_MECI = meci.key;
       cautare.value = "";
       actualizeazaRezultate(false);
-      deschide.focus();
+      // The result is removed when the filter resets. Return from the dossier to the stable report button.
+      raport.openSelectedPro(deschide);
     }
     function reseteaza() {
       cautare.value = "";
@@ -1843,7 +1848,7 @@ async function renderProAnalize(zi) {
         optiuni[0]?.buton.focus();
       } else if (event.key === "Enter" && filtru && optiuni.length === 1) {
         event.preventDefault();
-        alege(optiuni[0].meci);
+        deschideRezultatul(optiuni[0].meci);
       } else if (event.key === "Escape") {
         event.preventDefault();
         reseteaza();

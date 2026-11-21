@@ -144,7 +144,7 @@ test('homepage market filters use translated labels and homepage assets use thei
     assert.equal(key,`filters.market.${market}`);
     for (const language of languages) assert(dictionary[language][key]);
   }
-  const release='20261121-pro-search';
+  const release='20261121-pro-search-open';
   for (const asset of ['app.js','member-dossier.js','member-dossier.css','home-dashboard.js','home-modern.css']) {
     assert(html.includes(`assets/${asset}?release=${release}`));
   }
