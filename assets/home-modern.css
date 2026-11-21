@@ -100,7 +100,7 @@ body.home-modern:has(.home-nav-bar) { overflow-x: clip; }
 .home-modern .dashboard-hero h1 span { color: var(--dash-gold); }
 .home-modern .dashboard-hero-copy > p { font-size: 14px; color: #d9e3eb; max-width: 610px; line-height: 1.55; margin-bottom: 16px; }
 .home-modern .dashboard-hero-actions { display: flex; flex-wrap: wrap; gap: 13px; }
-.home-modern .app-store-download { margin-top: 20px; padding: 0 0 13px; }
+.home-modern .app-store-download { margin: 12px 0; }
 .home-modern :is(.app-store-download, .footer-app-downloads) {
   display: flex;
   flex-wrap: wrap;
@@ -125,6 +125,15 @@ body.home-modern:has(.home-nav-bar) { overflow-x: clip; }
 .home-modern .google-play-badge { display: inline-block; max-width: 100%; border-radius: 7px; }
 .home-modern .google-play-badge img { display: block; height: 52px; width: auto; max-width: 100%; }
 .home-modern .google-play-badge:focus-visible { outline: 2px solid var(--dash-gold); outline-offset: 6px; }
+@media (max-width: 380px) {
+  .home-modern .app-store-download { gap: 8px; }
+  .home-modern .app-store-download :is(.app-store-badge, .google-play-badge) {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+  .home-modern .app-store-download img { height: 40px; }
+}
 .home-modern .footer-app-downloads { justify-content: center; }
 .home-modern .footer-app-downloads .google-play-pending { min-height: 30px; padding-block: 3px; }
 .home-modern .footer-app-downloads .app-store-badge img,
@@ -1214,7 +1223,6 @@ body.home-modern { font-size: 16px; }
 .home-modern .approved-access-grid > div { min-width: 0; }
 .home-modern .approved-access-grid h3 { margin: 0 0 6px; }
 .home-modern .approved-access-grid p { font-size: 1rem; }
-.home-modern .approved-access-grid .app-store-download { flex-wrap: wrap; }
 .home-modern .approved-faq details { margin-top: 6px; padding: 0 14px; }
 .home-modern .approved-faq summary { min-height: 44px; padding-block: 10px; cursor: pointer; font-weight: 650; }
 .home-modern .approved-faq p { margin: 0 0 12px; }
