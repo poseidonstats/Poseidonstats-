@@ -1,74 +1,17 @@
 {
- "generated_at": "2026-11-21T03:26:04+00:00",
+ "generated_at": "2026-11-22T03:25:33+00:00",
  "days": [
   {
-   "date": "2026-11-21",
+   "date": "2026-11-22",
    "status": "in_progress",
    "matches": [
     {
-     "fixture_id": 1563268,
-     "time": "14:30",
-     "country": "England",
-     "league": "Championship",
-     "home": "Norwich",
-     "away": "Cardiff",
-     "calibrated_lg": true,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 85,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "Over 2.5",
-       "prob": 66,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null,
-     "snapshot": "dayof"
-    },
-    {
-     "fixture_id": 1584469,
+     "fixture_id": 1555430,
      "time": "15:00",
-     "country": "Turkey",
-     "league": "Süper Lig",
-     "home": "Galatasaray",
-     "away": "Samsunspor",
-     "calibrated_lg": true,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 85,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "1X",
-       "prob": 83,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "Over 2.5",
-       "prob": 67,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null,
-     "snapshot": "dayof"
-    },
-    {
-     "fixture_id": 1575225,
-     "time": "16:30",
-     "country": "Germany",
-     "league": "Bundesliga",
-     "home": "Union Berlin",
-     "away": "RB Leipzig",
+     "country": "Switzerland",
+     "league": "Super League",
+     "home": "FC Zurich",
+     "away": "FC ST. Gallen",
      "calibrated_lg": true,
      "picks": [
       {
@@ -89,22 +32,27 @@
      "snapshot": "dayof"
     },
     {
-     "fixture_id": 1575229,
-     "time": "16:30",
-     "country": "Germany",
-     "league": "Bundesliga",
-     "home": "SV Elversberg",
-     "away": "SC Freiburg",
+     "fixture_id": 1548562,
+     "time": "16:00",
+     "country": "Croatia",
+     "league": "HNL",
+     "home": "Dinamo Zagreb",
+     "away": "Istra 1961",
      "calibrated_lg": true,
      "picks": [
       {
        "market": "Over 1.5",
-       "prob": 86,
+       "prob": 84,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "1X",
+       "prob": 82,
        "outcome": "PENDING"
       },
       {
        "market": "Over 2.5",
-       "prob": 67,
+       "prob": 65,
        "outcome": "PENDING"
       }
      ],
@@ -115,12 +63,38 @@
      "snapshot": "dayof"
     },
     {
-     "fixture_id": 1649494,
-     "time": "23:00",
-     "country": "USA",
-     "league": "Major League Soccer",
-     "home": "FC Dallas",
-     "away": "Portland Timbers",
+     "fixture_id": 1555426,
+     "time": "17:30",
+     "country": "Switzerland",
+     "league": "Super League",
+     "home": "Lausanne",
+     "away": "FC Vaduz",
+     "calibrated_lg": true,
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 88,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "Over 2.5",
+       "prob": 71,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null,
+     "snapshot": "dayof"
+    },
+    {
+     "fixture_id": 1557473,
+     "time": "18:30",
+     "country": "England",
+     "league": "Premier League",
+     "home": "Liverpool",
+     "away": "Manchester United",
      "calibrated_lg": true,
      "picks": [
       {
@@ -139,14 +113,45 @@
      "ht_h": null,
      "ht_a": null,
      "snapshot": "dayof"
+    },
+    {
+     "fixture_id": 1651119,
+     "time": "23:00",
+     "country": "USA",
+     "league": "Major League Soccer",
+     "home": "Nashville SC",
+     "away": "FC Cincinnati",
+     "calibrated_lg": true,
+     "picks": [
+      {
+       "market": "1X",
+       "prob": 84,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "Over 1.5",
+       "prob": 84,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "1 (Home)",
+       "prob": 65,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null,
+     "snapshot": "dayof"
     }
    ],
    "totals": {
-    "picks": 11,
+    "picks": 12,
     "wins": 0,
     "losses": 0,
-    "pending": 11,
-    "locked_pending": 1602
+    "pending": 12,
+    "locked_pending": 963
    }
   }
  ],
@@ -237,9 +242,9 @@
   }
  ],
  "integritate": {
-  "total": 62736,
+  "total": 63830,
   "pastrate": 39365,
-  "nerezolvate": 13888,
+  "nerezolvate": 14982,
   "inghetate_dupa_start": 344,
   "reprogramate_peste_prag": 3,
   "recalibrare_indisponibila": 8765,
