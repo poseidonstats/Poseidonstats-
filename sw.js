@@ -6,7 +6,7 @@ const PREVIOUS_RELEASE = "20261121-pro-search-stats";
 // Update with RELEASE when these static files change. The daily dictionary is validated separately.
 const RELEASE_ASSET_SHA256 = {
   "assets/app.js": "a2db295d4a01fbc8f73223aa3896c71863d2e953f64f0d24a2bace56f9c4cf4b",
-  "assets/home-dashboard.js": "9d5b097011f6698f5d40a5da1204fb344b9fb56965e469fe9c3d990d8c7ec253",
+  "assets/home-dashboard.js": "8ccb326c6379a4cff1cbf9e85cdd6c387145fb219e2782ec1b2b0475f25b6daa",
   "assets/member-dossier.css": "ad2846535906b2ac472b41f9368675d3e2dd3a5f5acd4f9ab883fe841f463881",
   "assets/member-dossier.js": "cfb97ebaa9d43f51c3317590207523a57ae3854e2acf3d738fb52773160f83bd",
   "assets/pro-report.js": "7aa98e931ac6974fc1f3c8791833df02a4789a2df7a80ca3417498c70826fde3",

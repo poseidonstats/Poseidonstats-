@@ -628,3 +628,16 @@ test('legacy example links prefer the native public sample and preserve the stat
   assert.equal(dashboard.openTargetDetails({getElementById:id=>id==='exemplu-pro'?legacy:null},'#exemplu-pro'),legacy);
   assert.equal(detail.open,true);
 });
+
+test('open prediction and dossier-only rows use the localized free badge on the promotion day', () => {
+  const match = {fixture_id:1,match_date:'2026-11-22T09:00:00Z',home:'Home',away:'Away',probabilities:[0.6,0.2,0.2]};
+  const dossiers = {button:()=>'<button>Open dossier</button>',copy:()=>({member:'MEMBER'})};
+  for (const [language, dictionary] of Object.entries(i18n)) {
+    const translate = key => dictionary[key] || key;
+    const rows = [match,{...match,fixture_id:2,dossierOnly:true}];
+    const html = dashboard.renderRows(rows,translate,language,dossiers,true,null,'2026-11-22');
+    const badges = [...html.matchAll(/class="dashboard-free">([^<]+)<\/span>/g)].map(([,label])=>label);
+    assert.deepEqual(badges,[dictionary['dashboard.access.free'],dictionary['dashboard.access.free']]);
+    assert.match(dashboard.renderRows(rows,translate,language,dossiers,true,null,'2026-11-23'),/dashboard-free">MEMBER/);
+  }
+});

@@ -114,7 +114,7 @@
       return Object.entries(vars).reduce((s, [k, v]) => s.split(`{${k}}`).join(String(v)), translated);
     };
   }
-  function renderRows(rows, tr, loc, dossiers = null, member = false, publicDossiers = null) {
+  function renderRows(rows, tr, loc, dossiers = null, member = false, publicDossiers = null, freeDay = null) {
     const pct = v => v == null ? '—' : `${new Intl.NumberFormat(loc, {maximumFractionDigits:1}).format(v * 100)}%`;
     return rows.map(row => {
       const date = new Date(row.match_date);
@@ -128,13 +128,16 @@
       const name = row.dossierOnly ? `<strong>${title}</strong>` : `<a href="#matches" data-dashboard-fixture="${escapeHTML(row.fixture_id)}" title="${escapeHTML(`${row.home} – ${row.away}`)}">${title}</a>`;
       const country = countries?.label(row.country, loc) || row.country;
       const competition = escapeHTML([country, row.league].filter(Boolean).join(' · '));
+      const promoted = freeDay && dayOf(row.match_date) === freeDay && dossier;
+      const accessLabel = dossier && member && !promoted ? dossiers.copy().member
+        : tr(row.locked ? 'dashboard.access.locked' : 'dashboard.access.free');
       const probabilityCells = row.dossierOnly
         ? `<td class="dashboard-stats-only" role="cell" colspan="3">${escapeHTML(tr('dashboard.table.statsOnly'))}</td>`
         : row.probabilities.map((value,i) =>
           `<td class="dashboard-prob" role="cell" headers="dashboard-th-${i}"><span class="dashboard-prob-key" aria-hidden="true">${['1','X','2'][i]}</span>${escapeHTML(pct(value))}</td>`).join('');
       return `<tr class="dashboard-match-row" role="row"${readingAttributes}><td class="dashboard-time-cell" role="cell" headers="dashboard-th-time"><time datetime="${escapeHTML(row.match_date)}">${escapeHTML(time)}</time><small class="dashboard-match-league" title="${competition}">${competition}</small></td>` +
         `<td class="dashboard-team" role="cell" headers="dashboard-th-match">${name}</td>` + probabilityCells +
-        `<td class="dashboard-access-cell" role="cell" headers="dashboard-th-access"><span class="${row.locked ? 'dashboard-lock' : 'dashboard-free'}">${row.locked ? '🔒 ' : ''}${escapeHTML(dossier && member ? dossiers.copy().member : tr(row.locked ? 'dashboard.access.locked' : 'dashboard.access.free'))}</span>${dossier}</td></tr>${reading}`;
+        `<td class="dashboard-access-cell" role="cell" headers="dashboard-th-access"><span class="${row.locked ? 'dashboard-lock' : 'dashboard-free'}">${row.locked ? '🔒 ' : ''}${escapeHTML(accessLabel)}</span>${dossier}</td></tr>${reading}`;
     }).join('');
   }
   function renderChart(points, tr, loc, id, layout = {}) {
@@ -526,7 +529,7 @@
         const publicDossiers = member ? null : dossiers?.publicFixtureIds?.(data);
         if (search) search.disabled = false;
         if (clearSearch) clearSearch.disabled = !normalizeSearch(query);
-        table.innerHTML = selection.rows.length ? renderRows(selection.rows,tr,locale(doc),dossiers,member,publicDossiers) : `<tr><td colspan="6">${escapeHTML(tr(normalizeSearch(query) ? 'simplify.search.empty' : 'dashboard.table.empty'))}</td></tr>`;
+        table.innerHTML = selection.rows.length ? renderRows(selection.rows,tr,locale(doc),dossiers,member,publicDossiers,freeDay) : `<tr><td colspan="6">${escapeHTML(tr(normalizeSearch(query) ? 'simplify.search.empty' : 'dashboard.table.empty'))}</td></tr>`;
         if (status) status.textContent = (member
           ? tr('match.count', {shown:selection.rows.length,total:selection.total})
           : tr('dashboard.table.count', {shown:selection.rows.length,total:selection.total,free:selection.free})) + ' · ' + tr('dashboard.table.timezone') + (member ? '' : ' · ' + tr('dashboard.table.rawnote'));
