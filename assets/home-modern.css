@@ -1247,3 +1247,23 @@ body.home-modern { font-size: 16px; }
   .home-modern .approved-access-grid, .home-modern .conversion-plan-grid { grid-template-columns: minmax(0, 1fr); }
   .home-modern :is(.simplify-evidence, .conversion-plans, .simplify-activation, .approved-faq) { margin-block: 28px; }
 }
+
+.home-modern #web-free-banner:not([hidden]) {
+  margin-block: 16px;
+  padding: 16px;
+  border: 1px solid #a78b41;
+  border-radius: 8px;
+  background: #142737;
+}
+.home-modern #web-free-banner p { margin: 0 0 10px; }
+.home-modern.web-free-offer .dashboard-hero-copy > p[data-i18n="redesign.hero.subtitle"],
+.home-modern.web-free-offer .dashboard-hero-copy .dashboard-hero-actions,
+.home-modern.web-free-offer .conversion-visitor-title,
+.home-modern.web-free-offer .pro-today,
+.home-modern.web-free-offer .members-hint { display: none; }
+.home-modern.web-free-offer .conversion-member-title { display: inline; }
+
+.home-modern.web-free-offer .dashboard-table-scroll {
+  max-height: min(60vh, 36rem);
+  overflow: auto;
+}

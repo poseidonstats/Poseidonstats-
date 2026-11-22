@@ -1,10 +1,20 @@
 /* Public responses only. Keep the homepage and its versioned assets together. */
-const CACHE = "poseidon-v120";
-const RELEASE = "20261121-pro-search-stats";
-const PREVIOUS_CACHE = "poseidon-v119";
-const PREVIOUS_RELEASE = "20261121-pro-search-open";
+const CACHE = "poseidon-v121";
+const RELEASE = "20261122-web-free";
+const PREVIOUS_CACHE = "poseidon-v120";
+const PREVIOUS_RELEASE = "20261121-pro-search-stats";
 // Update with RELEASE when these static files change. The daily dictionary is validated separately.
 const RELEASE_ASSET_SHA256 = {
+  "assets/app.js": "a2db295d4a01fbc8f73223aa3896c71863d2e953f64f0d24a2bace56f9c4cf4b",
+  "assets/home-dashboard.js": "9d5b097011f6698f5d40a5da1204fb344b9fb56965e469fe9c3d990d8c7ec253",
+  "assets/member-dossier.css": "ad2846535906b2ac472b41f9368675d3e2dd3a5f5acd4f9ab883fe841f463881",
+  "assets/member-dossier.js": "cfb97ebaa9d43f51c3317590207523a57ae3854e2acf3d738fb52773160f83bd",
+  "assets/pro-report.js": "7aa98e931ac6974fc1f3c8791833df02a4789a2df7a80ca3417498c70826fde3",
+  "assets/pro-context.js": "85883d7956fd08c68addc2966880103308b678f902c92eb4a3c68d719c3c987c",
+  "assets/home-modern.css": "ab8b6e83119846a87ad86a64f08d2749b62fdc3a985f93f9a4dea626f91b63a4",
+  "assets/members.js": "a25510651b61bda03af790d9f38aaa6e95027343ac57335437c305737eb029ed",
+};
+const PREVIOUS_ASSET_SHA256 = {
   "assets/app.js": "eda84c4797df76f38b682301e18373e2d093e6814c9b189ba6af06f3976c6c09",
   "assets/home-dashboard.js": "235fe52dfdb54950a48a90206da201a711ad89a88bddf9a11050dde0450fa91f",
   "assets/member-dossier.css": "ad2846535906b2ac472b41f9368675d3e2dd3a5f5acd4f9ab883fe841f463881",
@@ -13,17 +23,9 @@ const RELEASE_ASSET_SHA256 = {
   "assets/pro-context.js": "85883d7956fd08c68addc2966880103308b678f902c92eb4a3c68d719c3c987c",
   "assets/home-modern.css": "8bed71936da8617010797011033fad8eb1b6bc7eda84410182b2218fb3575e24",
 };
-const PREVIOUS_ASSET_SHA256 = {
-  "assets/app.js": "e1b5753facd6accdb84566e5dbdb83a1c6f5e178a8179338b8d8e0ec65ceb3ad",
-  "assets/home-dashboard.js": "235fe52dfdb54950a48a90206da201a711ad89a88bddf9a11050dde0450fa91f",
-  "assets/member-dossier.css": "ad2846535906b2ac472b41f9368675d3e2dd3a5f5acd4f9ab883fe841f463881",
-  "assets/member-dossier.js": "5b579c82f4c389581ea520905adb78f4e87b008c5570677a39f97c7ca4c36442",
-  "assets/pro-report.js": "7aa98e931ac6974fc1f3c8791833df02a4789a2df7a80ca3417498c70826fde3",
-  "assets/pro-context.js": "85883d7956fd08c68addc2966880103308b678f902c92eb4a3c68d719c3c987c",
-  "assets/home-modern.css": "8bed71936da8617010797011033fad8eb1b6bc7eda84410182b2218fb3575e24",
-};
 const HOME_PATHS = ["", "index.html"];
 const HOME_ASSETS = [
+  "assets/members.js",
   "assets/app.js",
   "assets/home-modern.css",
   "assets/home-dashboard.js",
@@ -118,7 +120,9 @@ async function matchesRelease(path, response, version = RELEASE) {
     const dictionary = await response.clone().json().catch(() => null);
     if (!["ro", "en"].every(lang => Boolean(dictionary?.[lang]?.["redesign.edition.resultPending"]))) return false;
     return version === PREVIOUS_RELEASE || ["ro", "en", "es", "it", "fr", "id"]
-      .every(lang => Boolean(dictionary?.[lang]?.["pro.search.one"]));
+      .every(lang => Boolean(dictionary?.[lang]?.["pro.search.one"] && dictionary?.[lang]?.["webfree.banner"]
+        && dictionary?.[lang]?.["webfree.dossiers"] && dictionary?.[lang]?.["webfree.pro"]
+        && dictionary?.[lang]?.["webfree.ended"]));
   }
   return hasDigest(response, RELEASE_ASSET_SHA256[path]);
 }

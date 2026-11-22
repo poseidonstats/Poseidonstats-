@@ -5,6 +5,26 @@
 (function (root) {
   const MEMBERS_API = "https://poseidon-members.poseidonstats.workers.dev";                       // se completează după `wrangler deploy`: https://poseidon-members.<cont>.workers.dev
   const CHEIE = "poseidon_members_token";
+  const WEB_FREE_DAY = "2026-11-22";
+  const WEB_FREE_START = Date.parse("2026-11-22T00:00:00+02:00");
+  const WEB_FREE_END = Date.parse("2026-11-23T00:00:00+02:00");
+
+  function webFreeDay() {
+    const now = Date.now();
+    return now >= WEB_FREE_START && now < WEB_FREE_END && tierDinToken(token()) !== "pro"
+      ? WEB_FREE_DAY : null;
+  }
+
+  function getWebFree(resource, signal) {
+    const day = webFreeDay();
+    if (!day || !/^(?:predictions|analize|dosare|dosar\/[1-9][0-9]*)$/.test(resource) ||
+        (resource === "predictions" && tierDinToken(token()))) {
+      throw new Error("Web offer unavailable");
+    }
+    return fetch(MEMBERS_API + "/api/web-free/" + day + "/" + resource, {
+      credentials: "omit", cache: "no-store", signal,
+    });
+  }
 
   function tokenDinUrl(search) {
     try { return new URLSearchParams(search || "").get("members_token") || null; } catch { return null; }
@@ -102,6 +122,7 @@
   const api = {
     MEMBERS_API, tokenDinUrl, captureaza, tierDinToken, incarcaPredictii, textBara, textNone, refreshBar,
     tier: () => tierDinToken(token()),
+    webFreeDay, getWebFree, webFreeEnd: WEB_FREE_END,
     getProtected: (path, signal) => fetch(MEMBERS_API + path, {
       headers: { authorization: "Bearer " + token() }, credentials: "omit", cache: "no-store", signal,
     }),

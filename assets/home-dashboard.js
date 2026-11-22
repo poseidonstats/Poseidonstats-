@@ -520,7 +520,9 @@
         if (member && dateSelect?.value) dossiers.loadCatalog(dateSelect.value);
         const data = dashboardPredictions();
         const competition = competitions.find(option => option.value === selectedLeague);
-        const selection = selectRows(data,dateSelect ? dateSelect.value : '',competition?.league,5,query,member,competition?.country);
+        const freeDay = doc.defaultView?.PoseidonMembers?.webFreeDay?.();
+        const limit = member && freeDay && dateSelect?.value === freeDay ? Infinity : 5;
+        const selection = selectRows(data,dateSelect ? dateSelect.value : '',competition?.league,limit,query,member,competition?.country);
         const publicDossiers = member ? null : dossiers?.publicFixtureIds?.(data);
         if (search) search.disabled = false;
         if (clearSearch) clearSearch.disabled = !normalizeSearch(query);
@@ -538,7 +540,8 @@
     function renderDates() {
       if (!dateSelect) return;
       try {
-        const days = [...new Set([...availableDays(dossiers?.predictions() || predictions), ...(dossiers?.predictions() ? dossiers.recentDays() : [])])].sort();
+        const guestDay = dossiers?.guestPredictionDay?.();
+        const days = guestDay ? [guestDay] : [...new Set([...availableDays(dossiers?.predictions() || predictions), ...(dossiers?.predictions() ? dossiers.recentDays() : [])])].sort();
         const previous = dateSelect.value;
         dateSelect.innerHTML = days.map(day => `<option value="${day}">${escapeHTML(new Intl.DateTimeFormat(locale(doc),{day:'numeric',month:'long',year:'numeric',timeZone:TIMEZONE}).format(new Date(day+'T12:00:00Z')))}</option>`).join('');
         dateSelect.value = days.includes(previous) ? previous : chooseDay(days);

@@ -404,7 +404,7 @@ test('new dashboard and header links avoid member-hidden intro targets', () => {
   const marketAnchor=Array.from(newUI.matchAll(/<a\b[^>]*>/g),m=>m[0]).find(tag=>/data-i18n="dashboard\.track\.market"/.test(tag));
   assert(marketAnchor);
   assert.match(marketAnchor,/href="track-record\.html"/);
-  const allowed=new Set(['dashboard','dashboard-analyses','abonament','abonament-detalii','matches','intrebari']);
+  const allowed=new Set(['dashboard','pro-analize','dashboard-analyses','abonament','abonament-detalii','matches','intrebari']);
   const introStart=html.indexOf('<section class="intro">');
   assert(introStart >= 0);
   let depth=0,introEnd=-1;

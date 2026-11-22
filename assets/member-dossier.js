@@ -108,6 +108,7 @@
   };
   const keys = ["teams", "goals", "halves", "corners"];
   let verifiedPredictions = null;
+  let guestPredictionDay = null;
   const publicGet = (path, signal) => fetch(root.PoseidonMembers.MEMBERS_API + path, {
     credentials: "omit", cache: "no-store", signal,
   });
@@ -134,9 +135,19 @@
   };
   const esc = value => String(value).replace(/[&<>"']/g, char => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[char]);
   const tier = () => root.PoseidonMembers?.tier();
-  const authorized = () => !!verifiedPredictions && ["basic", "pro"].includes(tier());
+  const guestDay = () => root.PoseidonMembers?.webFreeDay?.();
+  const authorized = () => !!verifiedPredictions && (guestPredictionDay
+    ? guestPredictionDay === guestDay() && !tier() : ["basic", "pro"].includes(tier()));
+  const canPro = state => state.guest ? guestDay() === state.day : tier() === "pro";
+  function request(state, resource, memberPath) {
+    const members = root.PoseidonMembers;
+    const signal = state.controller?.signal;
+    return state.guest ? members.getWebFree(resource, signal) : members.getProtected(memberPath, signal);
+  }
 
-  function setPredictions(data) {
+  function setPredictions(data, guestDay = null) {
+    if (guestPredictionDay !== guestDay) catalogDays.clear();
+    guestPredictionDay = guestDay;
     verifiedPredictions = Array.isArray(data?.matches) ? data : null;
     if (!verifiedPredictions) {
       catalogDays.clear();
@@ -223,12 +234,16 @@
     });
   }
 
+  function expiredCopy(state) {
+    return state.guest ? tt("webfree.ended","Accesul gratuit de azi s-a încheiat.") : state.copy.login;
+  }
+
   function expireReading(state) {
     if (!state || current !== state || state.expired || dialog !== readingPage?.surface) return;
     state.expired = true;
     state.controller.abort();
     state.item = state.dossier = state.statistics = state.editorialLookup = null;
-    const message = text("p",state.copy.login,"dossier-note");
+    const message = text("p",expiredCopy(state),"dossier-note");
     message.setAttribute("role","status");
     dialog.querySelector("[data-dossier-title]").textContent = label("heading");
     dialog.querySelector("[data-dossier-body]").replaceChildren(message);
@@ -237,17 +252,31 @@
   }
 
   function checkReadingAccess() {
-    if (current && dialog === readingPage?.surface && tier() !== "pro") expireReading(current);
+    if (current?.guest && guestDay() !== current.day) expireWebFree();
+    else if (current && dialog === readingPage?.surface && !canPro(current)) expireReading(current);
+  }
+
+  function expireWebFree() {
+    if (current?.guest && dossierIsOpen()) {
+      if (dialog === readingPage?.surface) expireReading(current);
+      else {
+        const state = current;
+        dialog.close();
+        finishMember(state)?.focus({preventScroll:true});
+      }
+    }
+    if (guestPredictionDay) setPredictions(null);
+    else root.dispatchEvent(new Event("poseidon:member-predictions"));
   }
 
   async function loadCatalog(day) {
-    if (!authorized() || !/^\d{4}-\d{2}-\d{2}$/.test(day)) return;
+    if (!authorized() || (guestPredictionDay && day !== guestPredictionDay) || !/^\d{4}-\d{2}-\d{2}$/.test(day)) return;
     const now = Date.now(), cached = catalogDays.get(day);
     if (cached && cached.expiry > now) return;
     const entry = { expiry: now + 60_000, matches: cached?.matches || [] };
     catalogDays.set(day,entry);
     try {
-      const response = await root.PoseidonMembers.getProtected("/api/dosare/" + day);
+      const response = await request({guest: Boolean(guestPredictionDay)}, "dosare", "/api/dosare/" + day);
       const data = response.ok ? await response.json() : null;
       if (catalogDays.get(day) !== entry || !authorized()) return;
       entry.matches = data?.date === day && Array.isArray(data.matches) ? data.matches : [];
@@ -258,7 +287,7 @@
   }
 
   function catalog(day) {
-    if (!authorized()) return [];
+    if (!authorized() || (guestPredictionDay && day !== guestPredictionDay)) return [];
     const fromIndex = catalogDays.get(day)?.matches || [];
     const known = new Set(fromIndex.map(m=>m.fixture_id));
     const now = Date.now();
@@ -295,7 +324,7 @@
     const kickoff = timed(match.match_date);
     const fid = Number(match.fixture_id);
     if (!Number.isSafeInteger(fid) || fid < 1 || !Number.isFinite(kickoff)) return "";
-    const member = authorized();
+    const member = authorized() && (!guestPredictionDay || siteDay.format(kickoff) === guestPredictionDay);
     const publicAccess = !member && offerPublic && match.free === true && !match.locked
       && siteDay.format(kickoff) === siteDay.format(Date.now());
     if (!member && !publicAccess) return "";
@@ -560,9 +589,9 @@
         body.append(text("h4",label("oneXtwo")),values);
       }
     }
-    if (state.editorialMissing && tier() === "pro") {
+    if (state.editorialMissing && canPro(state)) {
       body.append(text("p",c.editorialMissing,"dossier-note"));
-    } else if (!state.publicAccess && !state.basicOnly && tier() === "pro" && (state.fixture || item)) {
+    } else if (!state.publicAccess && !state.basicOnly && canPro(state) && (state.fixture || item)) {
       const anchor = document.createComment("Pro analysis");
       body.append(anchor);
       showEditorial(state, anchor);
@@ -600,11 +629,12 @@
   }
 
   const stillOpen = state => current === state && !state.expired && dossierIsOpen()
-    && (state.publicAccess || (state.fromPro ? tier() === "pro" : authorized()));
+    && (state.guest ? guestDay() === state.day
+      : state.publicAccess || (state.fromPro ? canPro(state) : authorized()));
 
   async function lookupEditorial(state) {
     try {
-      const response = await root.PoseidonMembers.getProtected("/api/analize/" + state.day,state.controller.signal);
+      const response = await request(state, "analize", "/api/analize/" + state.day);
       if (response.status === 401 || response.status === 403) return { status: "login" };
       if (response.status === 404) return {};
       if (!response.ok) return { status: "retry" };
@@ -646,7 +676,7 @@
     let target;
     try {
       const { item, status } = state.item ? { item: state.item } : await (state.editorialLookup ??= lookupEditorial(state));
-      if (!anchor.isConnected || !stillOpen(state) || tier() !== "pro") return;
+      if (!anchor.isConnected || !stillOpen(state) || !canPro(state)) return;
       if (status) {
         const message = text("p",c[status],"dossier-note dossier-editorial-status");
         message.setAttribute("role","status");
@@ -666,7 +696,7 @@
         const read = text("button",state.fromPro ? label("back") : c.viewEditorial,"edition-read-member");
         read.type = "button";
         read.addEventListener("click",()=>{
-          if (!stillOpen(state) || tier() !== "pro") return;
+          if (!stillOpen(state) || !canPro(state)) return;
           state.readingPro = true;
           state.focusReturn = "basic";
           if (dialog === nativeDialog) openMemberReading(state);
@@ -687,7 +717,7 @@
       editorial.append(summary,target);
       anchor.replaceWith(editorial);
       const report = await loadProReport();
-      if (!target.isConnected || !stillOpen(state) || tier() !== "pro") return;
+      if (!target.isConnected || !stillOpen(state) || !canPro(state)) return;
       const analysis = proAnalysisText(item,state.lang);
       const html = _md(analysis.text);
       target.classList.add("edition-member");
@@ -697,7 +727,7 @@
         const basic = text("button",label("basic"),"edition-basic");
         basic.type = "button";
         basic.addEventListener("click",()=>{
-          if (!stillOpen(state) || tier() !== "pro") return;
+          if (!stillOpen(state) || !canPro(state)) return;
           state.readingPro = false;
           state.focusReturn = "pro";
           show(state,state.status);
@@ -718,7 +748,7 @@
         target.prepend(text("p",notice,"dossier-note"));
       }
     } catch (_) {
-      if (target?.isConnected && stillOpen(state) && tier() === "pro") target.textContent = c.retry;
+      if (target?.isConnected && stillOpen(state) && canPro(state)) target.textContent = c.retry;
     }
   }
 
@@ -869,7 +899,7 @@
         ? fetch(root.PoseidonMembers.MEMBERS_API + path, {
             credentials: "omit", cache: "no-store", signal: state.controller.signal,
           })
-        : root.PoseidonMembers.getProtected(path,state.controller.signal));
+        : request(state, "dosar/" + state.fixture, path));
       if (!stillOpen(state)) return;
       if (state.publicAccess && (response.status === 401 || response.status === 403)) {
         show(state,"missing");
@@ -891,7 +921,7 @@
 
   async function fetchCardMatch(state,message) {
     try {
-      const response = await root.PoseidonMembers.getProtected("/api/analize/" + state.day,state.controller.signal);
+      const response = await request(state, "analize", "/api/analize/" + state.day);
       if (!stillOpen(state)) return;
       if (response.status === 401 || response.status === 403) {
         state.status = "login";
@@ -973,24 +1003,28 @@
     if (!Number.isSafeInteger(fixture) || fixture < 1 || !Number.isFinite(kickoff)) return;
     const day = siteDay.format(kickoff);
     const publicAccess = trigger.dataset.dossierPublic === "true" && day === siteDay.format(Date.now());
-    if (!publicAccess && !authorized()) return;
+    if (!publicAccess && (!authorized() || (guestPredictionDay && day !== guestPredictionDay))) return;
+    const guest = !publicAccess && guestPredictionDay === day;
     const focusRoot = trigger.closest("#dashboard-predictions, #matches");
-    return start({ fixture,kickoff,trigger,focusRoot,day,publicAccess,basicOnly:trigger.hasAttribute("data-dossier-basic") });
+    return start({ fixture,kickoff,trigger,focusRoot,day,publicAccess,guest,basicOnly:trigger.hasAttribute("data-dossier-basic") });
   }
 
   function openPredictionStats(trigger, match, editorialMissing) {
-    if (tier() !== "pro" || !authorized() || !verifiedPredictions.matches.includes(match) || match.locked) return false;
+    if (!authorized() || !verifiedPredictions.matches.includes(match) || match.locked) return false;
     const fixture = Number(match.fixture_id), kickoff = timed(match.match_date);
     if (!Number.isSafeInteger(fixture) || fixture < 1 || !Number.isFinite(kickoff)) return false;
     const day = siteDay.format(kickoff);
     const predictionLabel = [match.home_team,match.away_team].filter(Boolean).join(" – ");
-    return start({ trigger,fixture,kickoff,day,predictionLabel,editorialMissing });
+    const guest = guestDay() === day;
+    if (!guest && tier() !== "pro") return false;
+    return start({ trigger,fixture,kickoff,day,guest,predictionLabel,editorialMissing });
   }
 
   function openPro(trigger, item, day) {
-    if (tier() !== "pro" || !item?.analysis || !/^\d{4}-\d{2}-\d{2}$/.test(day)) return false;
+    const guest = guestDay() === day;
+    if ((!guest && tier() !== "pro") || !item?.analysis || !/^\d{4}-\d{2}-\d{2}$/.test(day)) return false;
     const fixture = Number(item.match?.fixture_id);
-    return start({ trigger,item,day,fromPro:true,fixture:Number.isSafeInteger(fixture) && fixture>0 ? fixture : null });
+    return start({ trigger,item,day,guest,fromPro:true,fixture:Number.isSafeInteger(fixture) && fixture>0 ? fixture : null });
   }
 
   function openProForMatch(trigger,day,matchLabel) {
@@ -1115,7 +1149,7 @@
     if (dialog === readingPage?.surface) readingPage.backLabel.textContent = label("backMatch");
     if (state.expired || !state.status || state.status === "login") {
       const message = dialog.querySelector("[data-dossier-body] [role='status']");
-      if (message) message.textContent = state.copy[state.expired ? "login" : state.status || "loading"];
+      if (message) message.textContent = state.expired ? expiredCopy(state) : state.copy[state.status || "loading"];
       if (!state.item && !state.matchLabel && !state.predictionLabel) dialog.querySelector("[data-dossier-title]").textContent = state.copy.open;
       return;
     }
@@ -1166,7 +1200,8 @@
 
   root.PoseidonDossier = {
     setPredictions, predictions:()=>authorized() ? verifiedPredictions : null, publicFixtureIds, button, copy:words,
-    loadCatalog, catalog, openPro, openProForMatch, openPredictionStats, switchLanguage,
+    loadCatalog, catalog, openPro, openProForMatch, openPredictionStats, switchLanguage, expireWebFree,
+    guestPredictionDay:()=>authorized() ? guestPredictionDay : null,
     mountPublicSample,
     recentDays:()=>[siteDay.format(new Date(Date.now()-86_400_000)),siteDay.format(new Date())],
   };

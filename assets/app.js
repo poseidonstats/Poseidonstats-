@@ -5,7 +5,7 @@ const CALIB_URL = "data/calibration.json";
 const FORWARD_URL = "data/forward.json";
 const HISTORY_URL = "data/history.json";
 const SCORECARD_URL = "data/scorecard.json";
-const I18N_URL = "assets/i18n.json?release=20261121-pro-search-stats";
+const I18N_URL = "assets/i18n.json?release=20261122-web-free";
 
 // Scorecard skill per piață (din backtest OOS), folosit pentru contextul piețelor.
 let SCORECARD = {};                       // key -> card (label, tier, threshold, skill_stars, lift_pp, hit)
@@ -150,6 +150,19 @@ async function loadPredictions(isCurrent) {
   const M = (typeof window !== "undefined") ? window.PoseidonMembers : null;
   if (M && M.MEMBERS_API) {
     PRED_CU_TOKEN = Boolean(M.tier());
+    const guestDay = !PRED_CU_TOKEN && M.webFreeDay?.();
+    if (guestDay) {
+      try {
+        const response = await M.getWebFree("predictions");
+        const data = response.ok ? await response.json() : null;
+        const sameSession = () => M.webFreeDay() === guestDay && !M.tier();
+        if (sameSession() && Array.isArray(data?.matches)) {
+          return { sursa: "web-free", data: {
+            ...data, matches: data.matches.filter(match => ziRO(match.match_date) === guestDay),
+          }, sameSession };
+        }
+      } catch (_) { /* Keep the regular homepage available. */ }
+    }
     return M.incarca(PRED_URL, isCurrent);
   }
   return { sursa: "public", data: await fetchJSON(PRED_URL) };
@@ -875,10 +888,11 @@ async function renderIndex() {
 
   showPredictionSource(prediction);
   const { data, sursa } = prediction;
-  const member = sursa === "membru";
+  const guest = sursa === "web-free";
+  const member = sursa === "membru" || guest;
   if (calib && calib.market_cert) MARKET_CERT = calib.market_cert;
   if (scData && scData.markets) scData.markets.forEach(c => { SCORECARD[c.key] = c; });
-  if (typeof window !== "undefined") window.PoseidonDossier?.setPredictions(member ? data : null);
+  if (typeof window !== "undefined") window.PoseidonDossier?.setPredictions(member ? data : null, guest ? aziRO : null);
   if (!data || !data.matches) {
     document.getElementById("matches").innerHTML =
       `<p class="muted">${tt("match.loading", "Datele se încarcă... Dacă persistă, predicțiile zilei nu sunt încă publicate.")}</p>`;
@@ -908,6 +922,12 @@ async function renderIndex() {
   const selSort = document.getElementById("filter-sort");
   const chkCalib = document.getElementById("filter-calibrated-only");
   const chkCalibMk = document.getElementById("filter-calibrated-markets");
+  if (guest) {
+    selMinProb.value = "0";
+    for (const option of Array.from(selDay.options)) {
+      if (option.value && !byDay.has(option.value)) option.remove();
+    }
+  }
   const setInitialDay = selDay.options.length === 1 && !selDay.value && byDay.has(aziRO);
   [[selDay, days], [selLeague, leagues], [selCountry, countries]].forEach(([select, values]) => {
     if (select === selLeague && competitions) {
@@ -954,6 +974,7 @@ async function renderIndex() {
     ? window.PoseidonDossier?.publicFixtureIds?.(data) : null;
 
   function update() {
+    if (guest && !prediction.sameSession()) { endWebOffer(); return; }
     const fd = selDay.value;
     const competition = leagueOptions.get(selLeague.value);
     const fl = competition?.league || selLeague.value;
@@ -1033,7 +1054,46 @@ async function renderIndex() {
   return true;
 }
 
+let webOfferTimer;
+function checkWebOffer() {
+  if (!window.PoseidonMembers?.webFreeDay?.()) endWebOffer();
+}
+
+function endWebOffer() {
+  const banner = document.getElementById("web-free-banner");
+  if (!banner || banner.hidden) return;
+  banner.hidden = true;
+  clearTimeout(webOfferTimer);
+  document.body.classList.remove("web-free-offer");
+  ++PRO_CERERE;
+  PRO_MECI = PRO_ZI = null;
+  document.getElementById("pro-analize").replaceChildren();
+  document.getElementById("home-nav-analyses").href = "analize/index.html";
+  document.getElementById("home-nav-analyses-archive").hidden = true;
+  window.PoseidonDossier?.expireWebFree?.();
+  if (PRED_SURSA === "web-free") {
+    document.getElementById("matches").replaceChildren();
+    document.getElementById("match-count").textContent = "";
+    document.getElementById("filter-minprob").value = "0.70";
+    const days = document.getElementById("filter-day");
+    for (const option of Array.from(days.options)) if (option.value) option.remove();
+  }
+  renderHome();
+}
+
 async function renderHome() {
+  const M = window.PoseidonMembers;
+  const banner = document.getElementById("web-free-banner");
+  if (banner && M?.webFreeDay?.()) {
+    banner.hidden = false;
+    document.body.classList.add("web-free-offer");
+    if (webOfferTimer === undefined) {
+      webOfferTimer = setTimeout(endWebOffer, Math.max(0, M.webFreeEnd - Date.now()));
+      window.addEventListener("pageshow", checkWebOffer);
+      document.addEventListener("visibilitychange", checkWebOffer);
+      window.addEventListener("storage", checkWebOffer);
+    }
+  }
   if (await renderIndex()) await renderProAnalize();
 }
 
@@ -1582,9 +1642,9 @@ function loadProReport() {
   if (PRO_REPORT_LOAD) return PRO_REPORT_LOAD;
   const css = document.createElement("link"); css.rel = "stylesheet"; css.href = "assets/pro-report.css?v=20261118e"; document.head.appendChild(css);
   PRO_REPORT_LOAD = new Promise((resolve,reject) => {
-    const script = document.createElement("script"); script.id = "pro-report-script"; script.src = "assets/pro-context.js?release=20261121-pro-search-stats";
+    const script = document.createElement("script"); script.id = "pro-report-script"; script.src = "assets/pro-context.js?release=20261122-web-free";
     script.onload = script.onerror = () => {
-      const report = document.createElement("script"); report.src = "assets/pro-report.js?release=20261121-pro-search-stats";
+      const report = document.createElement("script"); report.src = "assets/pro-report.js?release=20261122-web-free";
       report.onload = () => resolve(window.PoseidonProReport);
       report.onerror = () => { PRO_REPORT_LOAD = null; css.remove(); script.remove(); report.remove(); reject(new Error("Pro report unavailable")); };
       document.head.appendChild(report);
@@ -1670,51 +1730,55 @@ async function renderProAnalize(zi) {
     const arhiva = document.getElementById("home-nav-analyses-archive");
     if (arhiva) arhiva.hidden = !pro;
   };
-  if (!M || !M.MEMBERS_API || M.tier() !== "pro") { rutaAnalize(false); el.innerHTML = ""; return; }
+  const guestDay = M?.webFreeDay?.();
+  const canRead = () => guestDay ? M.webFreeDay() === guestDay : M?.tier() === "pro";
+  if (!M?.MEMBERS_API || !canRead()) { rutaAnalize(false); el.innerHTML = ""; return; }
   const azi = ziRO(new Date().toISOString());
   const valida = value => typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value)
     && value <= azi && Number.isFinite(new Date(value + "T12:00:00Z").getTime())
     && new Date(value + "T12:00:00Z").toISOString().slice(0, 10) === value;
-  const data = valida(zi) ? zi : valida(PRO_ZI) ? PRO_ZI : azi;
+  const data = guestDay || (valida(zi) ? zi : valida(PRO_ZI) ? PRO_ZI : azi);
   if (data !== PRO_ZI) PRO_MECI = null;
   PRO_ZI = data;
   await i18nGata();
-  if (cerere !== PRO_CERERE || M.tier() !== "pro") return;
+  if (cerere !== PRO_CERERE || !canRead()) return;
   const limba = LANG;
-  const activa = () => cerere === PRO_CERERE && LANG === limba && M.tier() === "pro";
+  const activa = () => cerere === PRO_CERERE && LANG === limba && canRead();
   const dateLabel = new Intl.DateTimeFormat(limba === "en" ? "en-GB" : limba, {
     day: "numeric", month: "short", year: "numeric", timeZone: "Europe/Bucharest",
   }).format(new Date(data + "T12:00:00Z"));
   // 7 oct 2026: pentru Pro, analizele stau EXACT unde se uită membrul — în secțiunea „Exemplu Pro”, în locul listei cu lacăt
   // „Încă N analize azi în Pro” (Andreea, logată Pro, nu le-a găsit: secțiunea era după lista de 164 de meciuri).
   // 7 oct 2026 (Andreea): pentru Pro, analizele sunt PRIMA secțiune a paginii — înaintea exemplului și a listei; lista cu lacăt dispare
-  const loc = document.querySelector(".pro-today"); if (loc) loc.remove();
+  const loc = document.querySelector(".pro-today"); if (loc && !guestDay) loc.remove();
   const prima = document.querySelector("main.container > section, main.container > *"); const main = document.querySelector("main.container");
-  if (main && prima && prima !== el) main.insertBefore(el, prima);
-  el.innerHTML = `<h2 data-i18n="pro.analize.h2">${tt("pro.analize.h2", "Analizele tale Pro")}</h2>
+  if (guestDay) document.getElementById("web-free-banner").after(el);
+  else if (main && prima && prima !== el) main.insertBefore(el, prima);
+  const titleKey = guestDay ? "webfree.pro" : "pro.analize.h2";
+  el.innerHTML = `<h2 data-i18n="${titleKey}">${tt(titleKey, guestDay ? "Analizele Pro ale zilei" : "Analizele tale Pro")}</h2>
     <div class="pro-feed-controls">
-      <div class="pro-day-choice">
+      ${guestDay ? `<div class="pro-day-choice"><span>${esc(dateLabel)}</span></div>` : `<div class="pro-day-choice">
         <label for="pro-date" data-i18n="filters.day">${tt("filters.day", "Zi:")}</label>
         <div class="pro-date-field">
           <input id="pro-date" type="date" value="${data}" max="${azi}" lang="${limba === "en" ? "en-GB" : limba}">
           <span class="pro-date-label" aria-hidden="true">${esc(dateLabel)}</span>
         </div>
-      </div>
+      </div>`}
       <div id="pro-match-choice" class="pro-match-choice" hidden></div>
       <div id="pro-active-report" class="pro-feed-action" hidden></div>
     </div><div id="pro-content" aria-live="polite"><p class="muted">${limba === "en" ? tt("pro.azi.loading", "Loading Pro reports…") : "…"}</p></div>`;
-  el.querySelector("#pro-date").addEventListener("change", e => renderProAnalize(e.target.value));
+  el.querySelector("#pro-date")?.addEventListener("change", e => renderProAnalize(e.target.value));
   const continut = el.querySelector("#pro-content");
   let articole = [];
   let stareEditorialaCunoscuta = false;
   let mesaj = "";
   try {
-    const r = await fetch(`${M.MEMBERS_API}/api/analize/${data}`, { headers: { authorization: "Bearer " + localStorage.getItem("poseidon_members_token") }, cache: "no-store" });
+    const r = guestDay ? await M.getWebFree("analize") : await fetch(`${M.MEMBERS_API}/api/analize/${data}`, { headers: { authorization: "Bearer " + localStorage.getItem("poseidon_members_token") }, cache: "no-store" });
     if (!activa()) return;
     if (r.ok || r.status === 404) rutaAnalize(true);
     if (!r.ok) {
       const accesExpirat = r.status === 401 || r.status === 403;
-      mesaj = (r.status === 404 && data === azi)
+      mesaj = ((guestDay || r.status === 404) && data === azi)
         ? tt("pro.azi.devreme", "Analizele Pro de azi nu sunt încă disponibile pe site.")
         : accesExpirat
           ? tt("pro.azi.sesiune", "Sesiunea a expirat — apasă „Intră cu Patreon” ca să vezi analizele.")
@@ -1735,7 +1799,8 @@ async function renderProAnalize(zi) {
   } catch (e) {
     if (!activa()) return;
     console.warn("[membri] analize", e);
-    mesaj = tt("pro.azi.retea", "Nu am putut contacta serverul membrilor. Reîncarcă pagina; analizele sunt și în #analize-pro pe Discord.");
+    mesaj = guestDay ? tt("pro.azi.devreme", "Analizele Pro de azi nu sunt încă disponibile pe site.")
+      : tt("pro.azi.retea", "Nu am putut contacta serverul membrilor. Reîncarcă pagina; analizele sunt și în #analize-pro pe Discord.");
   }
 
   const { escapeHTML, normalizeSearch, dayOf } = window.PoseidonDashboard;
@@ -1759,7 +1824,7 @@ async function renderProAnalize(zi) {
     else if (home && away) dupaNume.set(nume, meci);
   }
   if (!mesaj && !meciuri.length) mesaj = tt("pro.zi.gol", "Nu sunt analize Pro publicate pentru această zi.");
-  const programate = (dosar?.predictions?.()?.matches || []).filter(match =>
+  const programate = (guestDay ? [] : dosar?.predictions?.()?.matches || []).filter(match =>
     Number.isSafeInteger(Number(match?.fixture_id)) && Number(match.fixture_id) > 0 &&
     !match.locked && match.home_team && match.away_team && dayOf(match.match_date) === data);
   const iduriDupaNume = new Map();
