@@ -337,6 +337,10 @@
     return ids;
   }
 
+  function setPublicPredictions(data) {
+    publicPredictions = Array.isArray(data?.matches) ? data : null;
+  }
+
   function button(match, offerPublic = false, options = {}) {
     const kickoff = timed(match.match_date);
     const fid = Number(match.fixture_id);
@@ -1042,7 +1046,7 @@
     const publicAccess = trigger.dataset.dossierPublic === "true" && day === siteDay.format(Date.now());
     if (!publicAccess && (!authorized() || (guestPredictionDay && day !== guestPredictionDay))) return;
     const guest = !publicAccess && guestPredictionDay === day;
-    const focusRoot = trigger.closest("#dashboard-predictions, #matches");
+    const focusRoot = trigger.closest("#dashboard-predictions, #matches, [data-visitor-matches]");
     const fromMatchList = trigger.hasAttribute("data-dossier-list");
     return start({ fixture,kickoff,trigger,focusRoot,day,publicAccess,guest,fromMatchList,
       predictionLabel:fromMatchList ? trigger.textContent : null, basicOnly:trigger.hasAttribute("data-dossier-basic"),
@@ -1087,8 +1091,8 @@
     return sampleRequests.get(day);
   }
 
-  async function mountPublicSample(target, source, lang, predictions, history) {
-    publicPredictions = predictions;
+  async function mountPublicSample(target, source, lang, predictions, history, trigger = null) {
+    if (predictions) publicPredictions = predictions;
     sampleRenders.get(target)?.controller.abort();
     // The full, generated disclosure remains usable when the public API is unavailable.
     const fallback = target.querySelector('[data-dashboard-pro-fallback]');
@@ -1111,21 +1115,22 @@
       if (!analysis.text) return;
       const data = dossierMatches(payload.dossier,fixture,day,kickoff) ? payload.dossier : null;
       const copy = words(lang);
-      const card = text("article",undefined,"sample-dossier edition-preview");
+      const card = trigger ? null : text("article",undefined,"sample-dossier edition-preview");
       const full = text("dialog",undefined,"sample-dossier edition-dialog");
       const title = [item.match.home,item.match.away].join(" – ");
       full.setAttribute("aria-label",label("heading") + " · " + title);
       const close = text("button",copy.close,"edition-close");
       close.type = "button";
       close.addEventListener("click",()=>full.close());
-      const show = text("button",tt("dashboard.analysis.preview.read","Vezi analiza"),"edition-open");
+      const show = trigger || text("button",tt("dashboard.analysis.preview.read","Vezi analiza"),"edition-open");
       show.type = "button";
       if (!root.matchMedia("(max-width: 767px)").matches) show.setAttribute("aria-haspopup","dialog");
-      show.addEventListener("click",()=>{
+      else show.removeAttribute("aria-haspopup");
+      show.onclick = () => {
         if (!openReading(full,listPosition(),()=>show.isConnected ? show : target.querySelector(".edition-open"))) {
           full.showModal();
         }
-      });
+      };
       full.addEventListener("close",()=>show.focus({preventScroll:true}));
       const html = _md(analysis.text);
       state.sourceLang = analysis.lang;
@@ -1136,7 +1141,7 @@
         ? state.contextualPicks[0]
         : report.sections(html).selection;
       const meta = matchMetadata(item,lang);
-      for (const surface of [card,full]) {
+      for (const surface of card ? [card,full] : [full]) {
         const compact = surface === card;
         const header = text("header",undefined,"edition-heading");
         if (compact) header.append(text("h3",title));
@@ -1175,11 +1180,13 @@
       } else {
         full.append(text("p",copy.missing,"edition-unavailable"));
       }
-      card.append(show,full);
+      if (card) card.append(show,full);
       if (fallback?.querySelector('details[open]') || fallback?.contains(document.activeElement)) return;
-      target.append(card);
+      if (trigger) target.replaceChildren(full);
+      else target.append(card);
       if (fallback) fallback.hidden = true;
       watchSampleResult([full],state,history,report);
+      return state.selection;
     } catch (_) { /* The generator's selected public sample remains available. */ }
   }
 
@@ -1219,8 +1226,9 @@
       if (readingPage || !entry) return;
       const saved = matchListReadings.get(entry);
       if (saved && root.matchMedia("(max-width: 767px)").matches) {
-        const trigger = [...document.querySelectorAll('#dashboard-predictions [data-dossier-list]')]
-          .find(button => Number(button.dataset.dossierFixture) === saved.fixture && timed(button.dataset.dossierKickoff) === saved.kickoff);
+        const trigger = [...document.querySelectorAll('#dashboard-predictions [data-dossier-list], [data-visitor-matches] [data-dossier-list]')]
+          .find(button => Number(button.dataset.dossierFixture) === saved.fixture && timed(button.dataset.dossierKickoff) === saved.kickoff
+            && button.getClientRects().length);
         if (trigger && open(trigger,saved)) return;
       }
       clearReadingEntry();
@@ -1253,10 +1261,10 @@
   }
 
   root.PoseidonDossier = {
-    setPredictions, predictions:()=>authorized() ? verifiedPredictions : null, publicFixtureIds, button, copy:words,
+    setPredictions, setPublicPredictions, predictions:()=>authorized() ? verifiedPredictions : null, publicFixtureIds, button, copy:words,
     loadCatalog, catalog, openPro, openProForMatch, openPredictionStats, switchLanguage, expireWebFree,
     guestPredictionDay:()=>authorized() ? guestPredictionDay : null,
-    mountPublicSample,
+    mountPublicSample, samplePayload,
     recentDays:()=>[siteDay.format(new Date(Date.now()-86_400_000)),siteDay.format(new Date())],
   };
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded",mount);

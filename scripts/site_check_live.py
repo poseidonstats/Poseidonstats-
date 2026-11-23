@@ -4,7 +4,10 @@ Rulează din launchd la 08:15, 12:45, 20:15. Orice lipsă → mesaj pe Telegram 
 Uz: site_check_live.py [--fara-telegram]"""
 from __future__ import annotations
 import datetime as dt, json, re, subprocess, sys, time, urllib.error, urllib.request
+from html.parser import HTMLParser
 from zoneinfo import ZoneInfo
+
+from gate_html import este_compact
 
 SITE = "https://poseidonstats.com"
 API = "https://poseidon-members.poseidonstats.workers.dev"
@@ -36,18 +39,64 @@ def cod(st: int, corp: str) -> str:
     return f"HTTP {st}" if st else f"fără răspuns după {INCERCARI} încercări ({corp})"
 
 
+class CarduriPro(HTMLParser):
+    """Citește ediția și meciul din fiecare card generat."""
+    def __init__(self):
+        super().__init__()
+        self.zile = {"previzualizare": [], "card complet": []}
+        self.meciuri = {rol: [] for rol in self.zile}
+
+    def handle_starttag(self, tag, attrs):
+        atribute = dict(attrs)
+        if "data-public-pro-report" in atribute:
+            rol = "previzualizare" if "data-dashboard-pro-fallback" in atribute else "card complet"
+            self.zile[rol].append(atribute.get("data-sample-day") or "dată lipsă")
+            self.meciuri[rol].append(atribute.get("data-sample-fixture") or "meci lipsă")
+
+
+def verifica_exemplu(html: str, zi: str, compact: bool) -> list[str]:
+    meci = None
+    if compact:
+        endpoint = f"/api/exemplu/{zi}"
+        st, body = get(f"{API}{endpoint}")
+        if st == 404:
+            return []
+        if st != 200:
+            return [f"exemplu Pro: {endpoint} {cod(st, body)}"]
+        try:
+            d = json.loads(body)
+            meci = d["item"]["match"]["fixture_id"]
+            if d["date"] != zi or type(meci) is not int or meci < 1:
+                raise ValueError("ediție sau meci invalid")
+        except (ValueError, KeyError, TypeError):
+            return [f"exemplu Pro: {endpoint} răspuns invalid"]
+
+    carduri = CarduriPro()
+    carduri.feed(html)
+    carduri.close()
+    erori = []
+    for rol, zile in carduri.zile.items():
+        if zile != [zi]:
+            erori.append(f"ediția Pro ({rol}): așteptat {zi}, găsit {', '.join(zile) or 'card lipsă'}")
+        elif meci is not None and carduri.meciuri[rol] != [str(meci)]:
+            erori.append(f"ediția Pro ({rol}): așteptat meciul {meci}, găsit {', '.join(carduri.meciuri[rol])}")
+    return erori
+
+
 def verifica(acum: dt.datetime) -> list[str]:
     azi = acum.date(); ieri = azi - dt.timedelta(days=1); err: list[str] = []
     data_ro = f"{azi.day} {LUNI[azi.month - 1]} {azi.year}"
     st, html = get(f"{SITE}/index.html")
     if st != 200: return [f"index.html: {cod(st, html)}"]
-    for nume, semn in (("secțiunea Exemplul Pro", 'id="exemplu-pro"'), ("cardul Pro", 'class="pro-card"'), ("lista Pro de azi", 'class="pro-today"'),
+    compact = este_compact(html)
+    if not compact and 'class="pro-card"' not in html:
+        err.append("index.html: lipsește cardul Pro")
+    for nume, semn in (("secțiunea Exemplul Pro", 'id="exemplu-pro"'), ("lista Pro de azi", 'class="pro-today"'),
                        ("blocul «Ce primești pentru 20 $»", 'class="plans-pro-detail"'), ("secțiunea Dovada", 'id="dovada"'), ("Repere azi", 'id="repere-azi"'),
                        ("abonamentele", 'id="abonament"'), ("banner-ul legal", "legal-banner"), ("nota Pro de sub preț", "plans.pro.trial")):
         if semn not in html: err.append(f"index.html: lipsește {nume}")
-    m = re.search(r'class="pro-card-head">(.*?)</div>', html, re.S)
-    cap = re.sub(r"<[^>]+>", "", m.group(1)) if m else ""   # 8 oct 2026: capul are <span data-date> (i18n) — textul se citește fără taguri
-    if m and acum.hour >= 8 and data_ro not in cap: err.append(f"cardul Pro nu e cel de azi ({data_ro}): «{cap[:80]}»")
+    if acum.hour >= 8:
+        err.extend(verifica_exemplu(html, azi.isoformat(), compact))
     if 'id="repere-azi"' in html and data_ro not in html.split('id="repere-azi"')[1][:1500]: err.append(f"Repere azi nu are data de azi ({data_ro})")
     st, js = get(f"{SITE}/assets/app.js")
     if st != 200:
@@ -92,7 +141,7 @@ def main() -> None:
         print(msg)
         if "--fara-telegram" not in sys.argv: subprocess.run([TG, msg], check=False)
         sys.exit(1)
-    print(f"[site_check] OK {acum:%d.%m %H:%M}: exemplul Pro de azi, lista Pro, nota Pro, 5 gratuite, JSON de azi, arhiva de ieri, KV membri de azi, CSP permite Worker-ul pe paginile de membri")
+    print(f"[site_check] OK {acum:%d.%m %H:%M}: starea exemplului Pro, lista Pro, nota Pro, 5 gratuite, JSON de azi, arhiva de ieri, KV membri de azi, CSP permite Worker-ul pe paginile de membri")
 
 
 if __name__ == "__main__":

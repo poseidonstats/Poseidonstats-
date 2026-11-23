@@ -14,13 +14,15 @@
 <link rel="canonical" href="https://poseidonstats.com/">
 <meta property="og:type" content="website">
 <link rel="stylesheet" href="assets/style.css?v=20261119-native-pro-anchor">
-<link rel="stylesheet" href="assets/home-modern.css?release=20261123-grouped-matches-r2">
-<link rel="stylesheet" href="assets/member-dossier.css?release=20261123-grouped-matches-r2">
+<link rel="stylesheet" href="assets/home-modern.css?release=20261123-visitor-home">
+<link rel="stylesheet" href="assets/member-dossier.css?release=20261123-visitor-home">
+<link rel="stylesheet" href="assets/home-visitor.css?release=20261123-visitor-home">
+<script src="assets/home-visitor.js?release=20261123-visitor-home"></script>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#1e3a8a">
 <link rel="apple-touch-icon" href="assets/icon-192.png">
 <script>if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js");</script>
-<script src="assets/conversion.js?release=20261123-grouped-matches-r2"></script>
+<script src="assets/conversion.js?release=20261123-visitor-home"></script>
 <script data-goatcounter="https://poseidonstats.goatcounter.com/count" data-goatcounter-settings='{"no_onload":true,"no_events":true}' async src="//gc.zgo.at/count.js"></script>
 <script type="application/ld+json">
 {
@@ -143,6 +145,7 @@ Statistici informative. Modelul poate greși. Verifică sursa. 18+.
 <header>
   <div class="container">
     <a href="index.html" class="brand">
+      <img class="visitor-logo" src="assets/icon-192.png" width="32" height="32" alt="">
       <span class="brand-icon" aria-hidden="true"><svg viewBox="0 0 40 48" fill="none"><path d="M20 44V7M13 14l7-9 7 9M7 8v12c0 7 5 11 13 11s13-4 13-11V8M2 13l5-7 5 7M28 13l5-7 5 7M13 43h14" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
       <span class="brand-name">POSEIDON<span>STATS</span></span>
       <span class="brand-pulse"></span>
@@ -176,7 +179,50 @@ Statistici informative. Modelul poate greși. Verifică sursa. 18+.
 </header>
 
 
-<main class="container">
+<main class="visitor-home" data-compact-home>
+  <h1 data-i18n="visitor.home.title">Meciurile zilei</h1>
+  <section aria-labelledby="visitor-free-title">
+    <div class="visitor-caption"><h2 id="visitor-free-title" data-visitor-free-title data-i18n="visitor.home.freeTitle">Meciuri gratuite</h2><small><time data-visitor-today></time> · <span data-i18n="dashboard.table.timezone">Ora Bucureștiului</span></small></div>
+    <p data-visitor-status role="status" data-i18n="loading">Se încarcă…</p>
+    <ul class="visitor-fixtures" data-visitor-matches></ul>
+    <a class="visitor-link" href="?view=full#dashboard" data-visitor-language data-conversion="predictions" data-conversion-source="dashboard"><span data-i18n="dashboard.predictions.all">Vezi toate predicțiile</span> →</a>
+  </section>
+  <section class="visitor-sample" data-visitor-sample data-conversion-view="sample" data-conversion-source="dashboard" hidden>
+    <small data-i18n="redesign.edition.badge">Exemplu public · Pro</small>
+    <h2 data-visitor-sample-title></h2>
+    <p data-visitor-sample-meta></p>
+    <strong class="visitor-pick" data-visitor-sample-pick></strong>
+    <button class="visitor-sample-action" type="button" data-visitor-sample-action data-conversion="sample" data-conversion-source="dashboard"><span data-i18n="redesign.edition.read">Citește analiza completă</span> →</button>
+    <div data-visitor-sample-reader></div>
+  </section>
+  <section id="visitor-plans" aria-labelledby="visitor-plans-title" data-conversion-view="planstrip">
+    <h2 id="visitor-plans-title" data-i18n="nav.abonamente">Abonamente</h2>
+    <div class="visitor-plans">
+      <article><h3>Basic</h3><p data-i18n="visitor.home.basic">Dosare statistice pentru toate meciurile disponibile.</p>
+        <strong>5 USD <small data-i18n="plans.per">/ lună</small></strong>
+        <a href="https://www.patreon.com/checkout/PoseidonPredictions?rid=28975826" target="_blank" rel="noopener" class="plan-btn-basic" data-conversion="plan-outbound" data-conversion-tier="basic" data-conversion-source="planstrip"><span data-i18n="conversion.basic.cta">Alege Basic</span> →</a>
+      </article>
+      <article><h3>Pro</h3><p data-i18n="visitor.home.pro">Tot din Basic, plus pronosticul editorial și argumentele pentru meciurile analizate.</p>
+        <strong>20 USD <small data-i18n="plans.per">/ lună</small></strong>
+        <a href="https://www.patreon.com/checkout/PoseidonPredictions?rid=28975836" target="_blank" rel="noopener" class="plan-btn-pro" data-conversion="plan-outbound" data-conversion-tier="pro" data-conversion-source="planstrip"><span data-i18n="conversion.pro.cta">Alege Pro</span> →</a>
+      </article>
+    </div>
+    <p class="visitor-muted" data-i18n="conversion.note">Prețuri în USD · Plată prin Patreon · anulezi oricând.</p>
+    <a class="visitor-link" href="https://poseidon-members.poseidonstats.workers.dev/login" data-conversion="login" data-conversion-source="planstrip" data-i18n="simplify.activation.login">Intră cu Patreon</a>
+  </section>
+  <nav class="visitor-footer" aria-label="Informații" data-i18n-attr="aria-label:dashboard.nav.label">
+    <a href="track-record.html" data-visitor-language data-i18n="nav.trackrecord" data-conversion="track-record" data-conversion-source="legacy">Track record</a>
+    <a href="?view=full#dashboard-evidence-details" data-visitor-language data-i18n="redesign.nav.results">Rezultate</a>
+    <a href="metodologie.html" data-visitor-language data-i18n="nav.metodologie" data-conversion="methodology" data-conversion-source="legacy">Metodologie</a>
+    <a href="?view=full#intrebari" data-visitor-language data-i18n="faq.h2">Întrebări frecvente</a>
+    <a href="?view=full#discord-access-details" data-visitor-language>Discord</a>
+    <a href="terms.html" data-visitor-language data-i18n="footer.terms">Termeni și Condiții</a>
+    <a href="privacy.html" data-visitor-language data-i18n="footer.privacy">Confidențialitate</a>
+  </nav>
+  <small class="visitor-legal" data-i18n="banner.legal">Statistici informative. Modelul poate greși. Verifică sursa. 18+.</small>
+</main>
+
+<main class="container visitor-expanded">
 
   <section id="web-free-banner" hidden aria-labelledby="web-free-message">
     <p id="web-free-message" data-i18n="webfree.banner">Astăzi poți deschide gratuit toate dosarele și analizele Pro ale zilei.</p>
@@ -263,104 +309,104 @@ Statistici informative. Modelul poate greși. Verifică sursa. 18+.
       <div class="dashboard-panel-heading" id="public-pro-demo"><h2 data-i18n="redesign.edition.title">Ce adaugă analiza Pro</h2></div>
       <div data-dashboard-pro-summary>
     <!-- PRO_SAMPLE_PREVIEW_START -->
-    <article class="dashboard-pro-summary pro-card" data-public-pro-report data-dashboard-pro-fallback data-sample-fixture="1571896" data-sample-day="2026-11-23">
-      <div class="pro-card-head"><h3>Diosgyori VTK – Karcag SE</h3></div>
+    <article class="dashboard-pro-summary pro-card" data-public-pro-report data-dashboard-pro-fallback data-sample-fixture="1557469" data-sample-day="2026-11-23">
+      <div class="pro-card-head"><h3>Brentford – Everton</h3></div>
 <div data-lang-grup><div data-lang="ro">
       <div class="pro-visible">
-<div class="sample-preview-selection"><span data-i18n="redesign.edition.pick">Pronostic editorial</span><strong>Peste 1,5 goluri</strong></div>
+<div class="sample-preview-selection"><span data-i18n="redesign.edition.pick">Pronostic editorial</span><strong>2–4 goluri în total după 90 de minute, inclusiv</strong></div>
 <details class="dossier-context"><summary data-i18n="dashboard.analysis.preview.read">Vezi analiza</summary>
 <div class="dossier-published"><span data-i18n="pro.card.publicata0">publicată înainte de meci</span> · <time datetime="2026-11-23T05:34:24.887875+00:00">2026-11-23 05:34 UTC</time></div>
-<p><strong data-i18n="redesign.edition.probability">Probabilitatea modelului</strong> 84%</p>
-<p><strong data-i18n="arhiva.sect.verdict">Verdict:</strong> Peste 1,5 goluri. Piața aleasă apare mai des în ambele profiluri decât în restul competiției.</p>
-<p>Diosgyori VTK: 10 din 10 în competiție; Karcag SE: 10 din 10 în competiție.</p>
-<p><strong data-i18n="arhiva.sect.context">Context:</strong> Diosgyori VTK marchează 1,7 goluri pe meci și adversara primește 2,5; Karcag SE marchează 1,5 și adversara primește 1,6. Confruntarea acestor medii indică 3,6 goluri pe meci, față de 2,7 în restul competiției. Scoruri recente: Diosgyori VTK V 3-1, Î 1-3, V 4-1, E 2-2, E 1-1; Karcag SE Î 2-4, Î 0-3, Î 2-5, Î 1-2, Î 0-3.</p>
-<p><strong data-i18n="arhiva.sect.model">Modelul vs realitate:</strong> Sezonul curent: 60 din 85 în restul competiției, fără meciurile celor două echipe. Procentul afișat este estimarea modelului POSEIDON.</p>
-<p><strong data-i18n="redesign.edition.limitations">Ce poate contrazice analiza</strong><br>Contraexemple în profiluri: Diosgyori VTK 0 din 10; Karcag SE 0 din 10. Eșantioanele rămân limitate.</p>
-<p>ℹ️ <em>xG în analizele POSEIDON = golurile așteptate de modelul nostru pentru fiecare echipă, calibrat pe meciurile trecute, nu xG din șuturi.</em></p>
 
+<p><strong data-i18n="arhiva.sect.verdict">Verdict:</strong> 2–4 goluri în total după 90 de minute, inclusiv. Piața aleasă apare mai des în ambele profiluri decât în restul competiției.</p>
+<p>Brentford: 10 din 10 în competiție; Everton: 7 din 10 în competiție.</p>
+<p><strong data-i18n="arhiva.sect.context">Context:</strong> Brentford marchează 1,6 goluri pe meci și adversara primește 1,0; Everton marchează 1,2 și adversara primește 1,1. Confruntarea acestor medii indică 2,5 goluri pe meci, față de 2,8 în restul competiției. Scoruri recente: Brentford Î 0-2, V 2-0, E 1-1, Î 1-2, E 2-2; Everton V 3-1, V 1-0, Î 0-2, Î 0-2, E 2-2.</p>
+<p><strong data-i18n="arhiva.sect.model">Modelul vs realitate:</strong> Sezonul curent: 49 din 89 în restul competiției, fără meciurile celor două echipe. Procentul afișat este estimarea modelului POSEIDON.</p>
+<p><strong data-i18n="redesign.edition.limitations">Ce poate contrazice analiza</strong><br>Contraexemple în profiluri: Brentford 0 din 10; Everton 3 din 10. Eșantioanele rămân limitate.</p>
+
+<ul><li>Alternativă · <strong>Sub 3,5 goluri</strong><p>Brentford: 8 din 10 în competiție; Everton: 7 din 10 în competiție. Sezonul curent: 59 din 89 în restul competiției, fără meciurile celor două echipe. Brentford marchează 1,6 goluri pe meci și adversara primește 1,0; Everton marchează 1,2 și adversara primește 1,1. Confruntarea acestor medii indică 2,5 goluri pe meci, față de 2,8 în restul competiției.</p></li></ul>
 <details class="dossier-review"><summary data-i18n="arhiva.th.rezultat">Rezultat</summary><p data-i18n="arhiva.fararez">Fără rezultat final în bază.</p></details>
 </details>
 </div>
 </div><div data-lang="en" hidden>
       <div class="pro-visible">
-<div class="sample-preview-selection"><span data-i18n="redesign.edition.pick">Editorial selection</span><strong>Over 1.5 goals</strong></div>
+<div class="sample-preview-selection"><span data-i18n="redesign.edition.pick">Editorial selection</span><strong>2–4 total goals after 90 minutes, inclusive</strong></div>
 <details class="dossier-context"><summary data-i18n="dashboard.analysis.preview.read">View analysis</summary>
 <div class="dossier-published"><span data-i18n="pro.card.publicata0">publicată înainte de meci</span> · <time datetime="2026-11-23T05:34:24.887875+00:00">2026-11-23 05:34 UTC</time></div>
-<p><strong data-i18n="redesign.edition.probability">Probabilitatea modelului</strong> 84%</p>
-<p><strong data-i18n="arhiva.sect.verdict">Verdict:</strong> Over 1.5 goals. The selected outcome occurred more often in both team profiles than across the rest of the competition.</p>
-<p>Diosgyori VTK: 10 of 10 in the competition; Karcag SE: 10 of 10 in the competition.</p>
-<p><strong data-i18n="arhiva.sect.context">Context:</strong> Diosgyori VTK score 1.7 goals per game and their opponent concede 2.5; Karcag SE score 1.5 and their opponent concede 1.6. Matching these averages suggests 3.6 goals per game, versus 2.7 in the rest of the competition. Recent scores: Diosgyori VTK W 3-1, L 1-3, W 4-1, D 2-2, D 1-1; Karcag SE L 2-4, L 0-3, L 2-5, L 1-2, L 0-3.</p>
-<p><strong data-i18n="arhiva.sect.model">Modelul vs realitate:</strong> Current season: 60 of 85 across the competition, excluding both teams' matches. The percentage is the POSEIDON model estimate.</p>
-<p><strong data-i18n="redesign.edition.limitations">Ce poate contrazice analiza</strong><br>Counterexamples: Diosgyori VTK 0 of 10; Karcag SE 0 of 10. The samples are limited.</p>
-<p>ℹ️ <em>xG in POSEIDON analyses = the goals expected by our model for each team, calibrated on past matches, not xG from shots.</em>
+
+<p><strong data-i18n="arhiva.sect.verdict">Verdict:</strong> 2–4 total goals after 90 minutes, inclusive. The selected outcome occurred more often in both team profiles than across the rest of the competition.</p>
+<p>Brentford: 10 of 10 in the competition; Everton: 7 of 10 in the competition.</p>
+<p><strong data-i18n="arhiva.sect.context">Context:</strong> Brentford score 1.6 goals per game and their opponent concede 1.0; Everton score 1.2 and their opponent concede 1.1. Matching these averages suggests 2.5 goals per game, versus 2.8 in the rest of the competition. Recent scores: Brentford L 0-2, W 2-0, D 1-1, L 1-2, D 2-2; Everton W 3-1, W 1-0, L 0-2, L 0-2, D 2-2.</p>
+<p><strong data-i18n="arhiva.sect.model">Modelul vs realitate:</strong> Current season: 49 of 89 across the competition, excluding both teams' matches. The percentage is the POSEIDON model estimate.</p>
+<p><strong data-i18n="redesign.edition.limitations">Ce poate contrazice analiza</strong><br>Counterexamples: Brentford 0 of 10; Everton 3 of 10. The samples are limited.
 <em>informational · not betting advice · 18+</em></p>
 
+<ul><li>Alternative · <strong>Under 3.5 goals</strong><p>Brentford: 8 of 10 in the competition; Everton: 7 of 10 in the competition. Current season: 59 of 89 across the competition, excluding both teams' matches. Brentford score 1.6 goals per game and their opponent concede 1.0; Everton score 1.2 and their opponent concede 1.1. Matching these averages suggests 2.5 goals per game, versus 2.8 in the rest of the competition.</p></li></ul>
 <details class="dossier-review"><summary data-i18n="arhiva.th.rezultat">Rezultat</summary><p data-i18n="arhiva.fararez">Fără rezultat final în bază.</p></details>
 </details>
 </div>
 </div><div data-lang="es" hidden>
       <div class="pro-visible">
-<div class="sample-preview-selection"><span data-i18n="redesign.edition.pick">Selección editorial</span><strong>Más de 1,5 goles</strong></div>
+<div class="sample-preview-selection"><span data-i18n="redesign.edition.pick">Selección editorial</span><strong>2–4 goles totales tras 90 minutos, ambos incluidos</strong></div>
 <details class="dossier-context"><summary data-i18n="dashboard.analysis.preview.read">Ver análisis</summary>
 <div class="dossier-published"><span data-i18n="pro.card.publicata0">publicată înainte de meci</span> · <time datetime="2026-11-23T05:34:24.887875+00:00">2026-11-23 05:34 UTC</time></div>
-<p><strong data-i18n="redesign.edition.probability">Probabilitatea modelului</strong> 84%</p>
-<p><strong data-i18n="arhiva.sect.verdict">Verdict:</strong> Más de 1,5 goles. El resultado elegido apareció más en los dos perfiles que en el resto de la competición.</p>
-<p>Diosgyori VTK: 10 de 10 en la competición; Karcag SE: 10 de 10 en la competición.</p>
-<p><strong data-i18n="arhiva.sect.context">Context:</strong> Diosgyori VTK marca 1,7 goles por partido y su rival recibe 2,5; Karcag SE marca 1,5 y su rival recibe 1,6. Al cruzar esas medias se obtienen 3,6 goles por partido, frente a 2,7 en el resto de la competición. Marcadores recientes: Diosgyori VTK V 3-1, D 1-3, V 4-1, E 2-2, E 1-1; Karcag SE D 2-4, D 0-3, D 2-5, D 1-2, D 0-3.</p>
-<p><strong data-i18n="arhiva.sect.model">Modelul vs realitate:</strong> Temporada actual: 60 de 85 en el resto de la competición, sin partidos de estos equipos. El porcentaje es la estimación del modelo POSEIDON.</p>
-<p><strong data-i18n="redesign.edition.limitations">Ce poate contrazice analiza</strong><br>Contraejemplos: Diosgyori VTK 0 de 10; Karcag SE 0 de 10. Las muestras son limitadas.</p>
-<p>ℹ️ <em>xG en los análisis de POSEIDON = los goles esperados por nuestro modelo para cada equipo, calibrado con partidos pasados, no xG de tiros.</em></p>
 
+<p><strong data-i18n="arhiva.sect.verdict">Verdict:</strong> 2–4 goles totales tras 90 minutos, ambos incluidos. El resultado elegido apareció más en los dos perfiles que en el resto de la competición.</p>
+<p>Brentford: 10 de 10 en la competición; Everton: 7 de 10 en la competición.</p>
+<p><strong data-i18n="arhiva.sect.context">Context:</strong> Brentford marca 1,6 goles por partido y su rival recibe 1,0; Everton marca 1,2 y su rival recibe 1,1. Al cruzar esas medias se obtienen 2,5 goles por partido, frente a 2,8 en el resto de la competición. Marcadores recientes: Brentford D 0-2, V 2-0, E 1-1, D 1-2, E 2-2; Everton V 3-1, V 1-0, D 0-2, D 0-2, E 2-2.</p>
+<p><strong data-i18n="arhiva.sect.model">Modelul vs realitate:</strong> Temporada actual: 49 de 89 en el resto de la competición, sin partidos de estos equipos. El porcentaje es la estimación del modelo POSEIDON.</p>
+<p><strong data-i18n="redesign.edition.limitations">Ce poate contrazice analiza</strong><br>Contraejemplos: Brentford 0 de 10; Everton 3 de 10. Las muestras son limitadas.</p>
+
+<ul><li>Alternativa · <strong>Menos de 3,5 goles</strong><p>Brentford: 8 de 10 en la competición; Everton: 7 de 10 en la competición. Temporada actual: 59 de 89 en el resto de la competición, sin partidos de estos equipos. Brentford marca 1,6 goles por partido y su rival recibe 1,0; Everton marca 1,2 y su rival recibe 1,1. Al cruzar esas medias se obtienen 2,5 goles por partido, frente a 2,8 en el resto de la competición.</p></li></ul>
 <details class="dossier-review"><summary data-i18n="arhiva.th.rezultat">Rezultat</summary><p data-i18n="arhiva.fararez">Fără rezultat final în bază.</p></details>
 </details>
 </div>
 </div><div data-lang="it" hidden>
       <div class="pro-visible">
-<div class="sample-preview-selection"><span data-i18n="redesign.edition.pick">Selezione editoriale</span><strong>Over 1,5 gol</strong></div>
+<div class="sample-preview-selection"><span data-i18n="redesign.edition.pick">Selezione editoriale</span><strong>2–4 gol totali dopo 90 minuti, estremi inclusi</strong></div>
 <details class="dossier-context"><summary data-i18n="dashboard.analysis.preview.read">Vedi analisi</summary>
 <div class="dossier-published"><span data-i18n="pro.card.publicata0">publicată înainte de meci</span> · <time datetime="2026-11-23T05:34:24.887875+00:00">2026-11-23 05:34 UTC</time></div>
-<p><strong data-i18n="redesign.edition.probability">Probabilitatea modelului</strong> 84%</p>
-<p><strong data-i18n="arhiva.sect.verdict">Verdict:</strong> Over 1,5 gol. L'esito scelto è stato più frequente nei due profili che nel resto della competizione.</p>
-<p>Diosgyori VTK: 10 su 10 nella competizione; Karcag SE: 10 su 10 nella competizione.</p>
-<p><strong data-i18n="arhiva.sect.context">Context:</strong> Diosgyori VTK segna 1,7 gol a partita e l'avversaria ne subisce 2,5; Karcag SE segna 1,5 e l'avversaria ne subisce 1,6. L'incrocio delle medie indica 3,6 gol a partita, contro 2,7 nel resto della competizione. Risultati recenti: Diosgyori VTK V 3-1, S 1-3, V 4-1, P 2-2, P 1-1; Karcag SE S 2-4, S 0-3, S 2-5, S 1-2, S 0-3.</p>
-<p><strong data-i18n="arhiva.sect.model">Modelul vs realitate:</strong> Stagione in corso: 60 su 85 nel resto della competizione, escluse le partite delle due squadre. La percentuale è la stima del modello POSEIDON.</p>
-<p><strong data-i18n="redesign.edition.limitations">Ce poate contrazice analiza</strong><br>Controesempi: Diosgyori VTK 0 su 10; Karcag SE 0 su 10. I campioni sono limitati.</p>
-<p>ℹ️ <em>xG nelle analisi POSEIDON = i gol attesi dal nostro modello per ogni squadra, calibrato sulle partite passate, non xG dai tiri.</em></p>
 
+<p><strong data-i18n="arhiva.sect.verdict">Verdict:</strong> 2–4 gol totali dopo 90 minuti, estremi inclusi. L'esito scelto è stato più frequente nei due profili che nel resto della competizione.</p>
+<p>Brentford: 10 su 10 nella competizione; Everton: 7 su 10 nella competizione.</p>
+<p><strong data-i18n="arhiva.sect.context">Context:</strong> Brentford segna 1,6 gol a partita e l'avversaria ne subisce 1,0; Everton segna 1,2 e l'avversaria ne subisce 1,1. L'incrocio delle medie indica 2,5 gol a partita, contro 2,8 nel resto della competizione. Risultati recenti: Brentford S 0-2, V 2-0, P 1-1, S 1-2, P 2-2; Everton V 3-1, V 1-0, S 0-2, S 0-2, P 2-2.</p>
+<p><strong data-i18n="arhiva.sect.model">Modelul vs realitate:</strong> Stagione in corso: 49 su 89 nel resto della competizione, escluse le partite delle due squadre. La percentuale è la stima del modello POSEIDON.</p>
+<p><strong data-i18n="redesign.edition.limitations">Ce poate contrazice analiza</strong><br>Controesempi: Brentford 0 su 10; Everton 3 su 10. I campioni sono limitati.</p>
+
+<ul><li>Alternativa · <strong>Under 3,5 gol</strong><p>Brentford: 8 su 10 nella competizione; Everton: 7 su 10 nella competizione. Stagione in corso: 59 su 89 nel resto della competizione, escluse le partite delle due squadre. Brentford segna 1,6 gol a partita e l'avversaria ne subisce 1,0; Everton segna 1,2 e l'avversaria ne subisce 1,1. L'incrocio delle medie indica 2,5 gol a partita, contro 2,8 nel resto della competizione.</p></li></ul>
 <details class="dossier-review"><summary data-i18n="arhiva.th.rezultat">Rezultat</summary><p data-i18n="arhiva.fararez">Fără rezultat final în bază.</p></details>
 </details>
 </div>
 </div><div data-lang="fr" hidden>
       <div class="pro-visible">
-<div class="sample-preview-selection"><span data-i18n="redesign.edition.pick">Sélection éditoriale</span><strong>Plus de 1,5 buts</strong></div>
+<div class="sample-preview-selection"><span data-i18n="redesign.edition.pick">Sélection éditoriale</span><strong>2–4 buts au total après 90 minutes, bornes incluses</strong></div>
 <details class="dossier-context"><summary data-i18n="dashboard.analysis.preview.read">Voir l’analyse</summary>
 <div class="dossier-published"><span data-i18n="pro.card.publicata0">publicată înainte de meci</span> · <time datetime="2026-11-23T05:34:24.887875+00:00">2026-11-23 05:34 UTC</time></div>
-<p><strong data-i18n="redesign.edition.probability">Probabilitatea modelului</strong> 84%</p>
-<p><strong data-i18n="arhiva.sect.verdict">Verdict:</strong> Plus de 1,5 buts. L'issue retenue a été plus fréquente dans les deux profils que dans le reste de la compétition.</p>
-<p>Diosgyori VTK : 10 sur 10 dans la compétition ; Karcag SE : 10 sur 10 dans la compétition.</p>
-<p><strong data-i18n="arhiva.sect.context">Context:</strong> Diosgyori VTK marque 1,7 but par match et son adversaire en encaisse 2,5 ; Karcag SE en marque 1,5 et son adversaire en encaisse 1,6. Le rapprochement de ces moyennes indique 3,6 buts par match, contre 2,7 dans le reste de la compétition. Scores récents: Diosgyori VTK V 3-1, D 1-3, V 4-1, N 2-2, N 1-1; Karcag SE D 2-4, D 0-3, D 2-5, D 1-2, D 0-3.</p>
-<p><strong data-i18n="arhiva.sect.model">Modelul vs realitate:</strong> Saison en cours : 60 sur 85 dans le reste de la compétition, hors matches des deux équipes. Le pourcentage indique l'estimation du modèle POSEIDON.</p>
-<p><strong data-i18n="redesign.edition.limitations">Ce poate contrazice analiza</strong><br>Contre-exemples : Diosgyori VTK 0 sur 10 ; Karcag SE 0 sur 10. Les échantillons sont limités.</p>
-<p>ℹ️ <em>xG dans les analyses POSEIDON = les buts attendus par notre modèle pour chaque équipe, calibré sur les matchs passés, pas le xG des tirs.</em>
+
+<p><strong data-i18n="arhiva.sect.verdict">Verdict:</strong> 2–4 buts au total après 90 minutes, bornes incluses. L'issue retenue a été plus fréquente dans les deux profils que dans le reste de la compétition.</p>
+<p>Brentford : 10 sur 10 dans la compétition ; Everton : 7 sur 10 dans la compétition.</p>
+<p><strong data-i18n="arhiva.sect.context">Context:</strong> Brentford marque 1,6 but par match et son adversaire en encaisse 1,0 ; Everton en marque 1,2 et son adversaire en encaisse 1,1. Le rapprochement de ces moyennes indique 2,5 buts par match, contre 2,8 dans le reste de la compétition. Scores récents: Brentford D 0-2, V 2-0, N 1-1, D 1-2, N 2-2; Everton V 3-1, V 1-0, D 0-2, D 0-2, N 2-2.</p>
+<p><strong data-i18n="arhiva.sect.model">Modelul vs realitate:</strong> Saison en cours : 49 sur 89 dans le reste de la compétition, hors matches des deux équipes. Le pourcentage indique l'estimation du modèle POSEIDON.</p>
+<p><strong data-i18n="redesign.edition.limitations">Ce poate contrazice analiza</strong><br>Contre-exemples : Brentford 0 sur 10 ; Everton 3 sur 10. Les échantillons sont limités.
 <em>informatif · pas un conseil de pari · 18+</em></p>
 
+<ul><li>Alternative · <strong>Moins de 3,5 buts</strong><p>Brentford : 8 sur 10 dans la compétition ; Everton : 7 sur 10 dans la compétition. Saison en cours : 59 sur 89 dans le reste de la compétition, hors matches des deux équipes. Brentford marque 1,6 but par match et son adversaire en encaisse 1,0 ; Everton en marque 1,2 et son adversaire en encaisse 1,1. Le rapprochement de ces moyennes indique 2,5 buts par match, contre 2,8 dans le reste de la compétition.</p></li></ul>
 <details class="dossier-review"><summary data-i18n="arhiva.th.rezultat">Rezultat</summary><p data-i18n="arhiva.fararez">Fără rezultat final în bază.</p></details>
 </details>
 </div>
 </div><div data-lang="id" hidden>
       <div class="pro-visible">
-<div class="sample-preview-selection"><span data-i18n="redesign.edition.pick">Pilihan editorial</span><strong>Di atas 1,5 gol</strong></div>
+<div class="sample-preview-selection"><span data-i18n="redesign.edition.pick">Pilihan editorial</span><strong>2–4 gol total setelah 90 menit, batas termasuk</strong></div>
 <details class="dossier-context"><summary data-i18n="dashboard.analysis.preview.read">Lihat analisis</summary>
 <div class="dossier-published"><span data-i18n="pro.card.publicata0">publicată înainte de meci</span> · <time datetime="2026-11-23T05:34:24.887875+00:00">2026-11-23 05:34 UTC</time></div>
-<p><strong data-i18n="redesign.edition.probability">Probabilitatea modelului</strong> 84%</p>
-<p><strong data-i18n="arhiva.sect.verdict">Verdict:</strong> Di atas 1,5 gol. Hasil pilihan lebih sering terjadi pada profil kedua tim daripada di laga lain dalam kompetisi.</p>
-<p>Diosgyori VTK: 10 dari 10 di kompetisi; Karcag SE: 10 dari 10 di kompetisi.</p>
-<p><strong data-i18n="arhiva.sect.context">Context:</strong> Diosgyori VTK mencetak 1,7 gol per laga dan lawannya kebobolan 2,5; Karcag SE mencetak 1,5 dan lawannya kebobolan 1,6. Perbandingan rata-rata ini menunjukkan 3,6 gol per laga, dengan 2,7 pada laga lain dalam kompetisi. Skor terkini: Diosgyori VTK M 3-1, K 1-3, M 4-1, S 2-2, S 1-1; Karcag SE K 2-4, K 0-3, K 2-5, K 1-2, K 0-3.</p>
-<p><strong data-i18n="arhiva.sect.model">Modelul vs realitate:</strong> Musim berjalan: 60 dari 85 laga dalam kompetisi, di luar laga kedua tim. Persentase merupakan estimasi model POSEIDON.</p>
-<p><strong data-i18n="redesign.edition.limitations">Ce poate contrazice analiza</strong><br>Contoh sebaliknya: Diosgyori VTK 0 dari 10; Karcag SE 0 dari 10. Sampel masih terbatas.</p>
-<p>ℹ️ <em>xG dalam analisis POSEIDON = gol yang diharapkan model kami untuk tiap tim, dikalibrasi pada laga sebelumnya, bukan xG dari tembakan.</em>
+
+<p><strong data-i18n="arhiva.sect.verdict">Verdict:</strong> 2–4 gol total setelah 90 menit, batas termasuk. Hasil pilihan lebih sering terjadi pada profil kedua tim daripada di laga lain dalam kompetisi.</p>
+<p>Brentford: 10 dari 10 di kompetisi; Everton: 7 dari 10 di kompetisi.</p>
+<p><strong data-i18n="arhiva.sect.context">Context:</strong> Brentford mencetak 1,6 gol per laga dan lawannya kebobolan 1,0; Everton mencetak 1,2 dan lawannya kebobolan 1,1. Perbandingan rata-rata ini menunjukkan 2,5 gol per laga, dengan 2,8 pada laga lain dalam kompetisi. Skor terkini: Brentford K 0-2, M 2-0, S 1-1, K 1-2, S 2-2; Everton M 3-1, M 1-0, K 0-2, K 0-2, S 2-2.</p>
+<p><strong data-i18n="arhiva.sect.model">Modelul vs realitate:</strong> Musim berjalan: 49 dari 89 laga dalam kompetisi, di luar laga kedua tim. Persentase merupakan estimasi model POSEIDON.</p>
+<p><strong data-i18n="redesign.edition.limitations">Ce poate contrazice analiza</strong><br>Contoh sebaliknya: Brentford 0 dari 10; Everton 3 dari 10. Sampel masih terbatas.
 <em>informatif · bukan saran taruhan · 18+</em></p>
 
+<ul><li>Alternatif · <strong>Di bawah 3,5 gol</strong><p>Brentford: 8 dari 10 di kompetisi; Everton: 7 dari 10 di kompetisi. Musim berjalan: 59 dari 89 laga dalam kompetisi, di luar laga kedua tim. Brentford mencetak 1,6 gol per laga dan lawannya kebobolan 1,0; Everton mencetak 1,2 dan lawannya kebobolan 1,1. Perbandingan rata-rata ini menunjukkan 2,5 gol per laga, dengan 2,8 pada laga lain dalam kompetisi.</p></li></ul>
 <details class="dossier-review"><summary data-i18n="arhiva.th.rezultat">Rezultat</summary><p data-i18n="arhiva.fararez">Fără rezultat final în bază.</p></details>
 </details>
 </div>
@@ -384,14 +430,14 @@ Statistici informative. Modelul poate greși. Verifică sursa. 18+.
       <div class="simplify-disclosure-body"><div class="dashboard-track-summary" id="dashboard-track-summary"></div><div class="dashboard-hero-evidence simplify-duplicate-metrics">
         <div class="dashboard-kpis" data-dashboard-kpis aria-live="polite"></div>
         <div class="dashboard-chart-panel">
-          <div class="dashboard-chart-heading"><h2 data-i18n="dashboard.chart.title">Selecții rezolvate · jurnal recent</h2><span data-i18n="dashboard.chart.note">Jurnal public · date parțiale marcate</span></div>
+          <div class="dashboard-chart-heading"><h2 data-journal-chart-copy="title" data-i18n="dashboard.chart.title">Selecții rezolvate · jurnal recent</h2><span data-journal-chart-copy="note" data-i18n="dashboard.chart.note">Jurnal public · date parțiale marcate</span></div>
           <div class="dashboard-chart" data-dashboard-chart></div>
         </div>
       </div><div class="dashboard-column dashboard-record-panel">
       <div class="dashboard-panel-heading"><h2 data-i18n="dashboard.track.title">Track record</h2><a href="track-record.html" data-i18n="dashboard.track.all">Vezi detalii</a></div>
       <div class="dashboard-kpis" data-dashboard-kpis aria-live="polite"></div>
-      <div class="dashboard-record-tabs"><a class="active" href="track-record.html" data-i18n="dashboard.chart.title">Selecții rezolvate · jurnal recent</a><a href="track-record.html" data-i18n="dashboard.track.market">Piețe verificate</a></div>
-      <div class="dashboard-chart-panel"><div class="dashboard-chart-heading"><h3 data-i18n="dashboard.chart.title">Selecții rezolvate · jurnal recent</h3></div><div class="dashboard-chart" data-dashboard-chart></div></div>
+      <div class="dashboard-record-tabs"><a class="active" href="track-record.html" data-journal-chart-copy="title" data-i18n="dashboard.chart.title">Selecții rezolvate · jurnal recent</a><a href="track-record.html" data-i18n="dashboard.track.market">Piețe verificate</a></div>
+      <div class="dashboard-chart-panel"><div class="dashboard-chart-heading"><h3 data-journal-chart-copy="title" data-i18n="dashboard.chart.title">Selecții rezolvate · jurnal recent</h3></div><div class="dashboard-chart" data-dashboard-chart></div></div>
 
     </div></div>
     </details>
@@ -573,103 +619,97 @@ Statistici informative. Modelul poate greși. Verifică sursa. 18+.
     <details class="home-analysis-disclosure">
       <summary><span data-i18n="oferta.exemplu">Vezi exemplul de analiză ↓</span></summary>
 <!-- PRO_SAMPLE_CARD_START -->
-    <div class="pro-card" data-public-pro-report data-sample-fixture="1571896" data-sample-day="2026-11-23">
-      <div class="pro-card-head">Diosgyori VTK – Karcag SE · NB II (<span data-sample-country="Hungary">Hungary</span>) · <span data-date="2026-11-23">23 noiembrie 2026</span></div>
+    <div class="pro-card" data-public-pro-report data-sample-fixture="1557469" data-sample-day="2026-11-23">
+      <div class="pro-card-head">Brentford – Everton · Premier League (<span data-sample-country="England">England</span>) · <span data-date="2026-11-23">23 noiembrie 2026</span></div>
 <div data-lang-grup><div data-lang="ro">
       <div class="pro-visible">
-<div class="dossier-published"><span data-i18n="pro.card.publicata0">publicată înainte de meci</span> · <strong>Peste 1,5 goluri · 84%</strong></div>
-<p>Diosgyori VTK: 10 din 10 în competiție; Karcag SE: 10 din 10 în competiție.</p>
+<div class="dossier-published"><span data-i18n="pro.card.publicata0">publicată înainte de meci</span> · <strong>2–4 goluri în total după 90 de minute, inclusiv</strong></div>
+<p>Brentford: 10 din 10 în competiție; Everton: 7 din 10 în competiție.</p>
 <details class="dossier-context"><summary data-i18n="dashboard.analysis.read">Citește analiza</summary>
-<p><strong data-i18n="arhiva.sect.verdict">Verdict:</strong> Peste 1,5 goluri. Piața aleasă apare mai des în ambele profiluri decât în restul competiției.</p>
-<p><strong data-i18n="arhiva.sect.context">Context:</strong> Diosgyori VTK marchează 1,7 goluri pe meci și adversara primește 2,5; Karcag SE marchează 1,5 și adversara primește 1,6. Confruntarea acestor medii indică 3,6 goluri pe meci, față de 2,7 în restul competiției. Scoruri recente: Diosgyori VTK V 3-1, Î 1-3, V 4-1, E 2-2, E 1-1; Karcag SE Î 2-4, Î 0-3, Î 2-5, Î 1-2, Î 0-3.</p>
-<p><strong data-i18n="arhiva.sect.model">Modelul vs realitate:</strong> Sezonul curent: 60 din 85 în restul competiției, fără meciurile celor două echipe. Procentul afișat este estimarea modelului POSEIDON.</p>
-<p><strong data-i18n="arhiva.sect.urmarit">De urmărit:</strong> Contraexemple în profiluri: Diosgyori VTK 0 din 10; Karcag SE 0 din 10. Eșantioanele rămân limitate.
-ℹ️ <em>xG în analizele POSEIDON = golurile așteptate de modelul nostru pentru fiecare echipă, calibrat pe meciurile trecute, nu xG din șuturi.</em></p>
-
+<p><strong data-i18n="arhiva.sect.verdict">Verdict:</strong> 2–4 goluri în total după 90 de minute, inclusiv. Piața aleasă apare mai des în ambele profiluri decât în restul competiției.</p>
+<p><strong data-i18n="arhiva.sect.context">Context:</strong> Brentford marchează 1,6 goluri pe meci și adversara primește 1,0; Everton marchează 1,2 și adversara primește 1,1. Confruntarea acestor medii indică 2,5 goluri pe meci, față de 2,8 în restul competiției. Scoruri recente: Brentford Î 0-2, V 2-0, E 1-1, Î 1-2, E 2-2; Everton V 3-1, V 1-0, Î 0-2, Î 0-2, E 2-2.</p>
+<p><strong data-i18n="arhiva.sect.model">Modelul vs realitate:</strong> Sezonul curent: 49 din 89 în restul competiției, fără meciurile celor două echipe. Procentul afișat este estimarea modelului POSEIDON.</p>
+<p><strong data-i18n="arhiva.sect.urmarit">De urmărit:</strong> Contraexemple în profiluri: Brentford 0 din 10; Everton 3 din 10. Eșantioanele rămân limitate.</p>
+<ul><li>Alternativă · <strong>Sub 3,5 goluri</strong><p>Brentford: 8 din 10 în competiție; Everton: 7 din 10 în competiție. Sezonul curent: 59 din 89 în restul competiției, fără meciurile celor două echipe. Brentford marchează 1,6 goluri pe meci și adversara primește 1,0; Everton marchează 1,2 și adversara primește 1,1. Confruntarea acestor medii indică 2,5 goluri pe meci, față de 2,8 în restul competiției.</p></li></ul>
 </details>
 <details class="dossier-review"><summary data-i18n="arhiva.th.rezultat">Rezultat</summary><p data-i18n="arhiva.fararez">Fără rezultat final în bază.</p></details>
 </div>
 </div><div data-lang="en" hidden>
       <div class="pro-visible">
-<div class="dossier-published"><span data-i18n="pro.card.publicata0">publicată înainte de meci</span> · <strong>Over 1.5 goals · 84%</strong></div>
-<p>Diosgyori VTK: 10 of 10 in the competition; Karcag SE: 10 of 10 in the competition.</p>
+<div class="dossier-published"><span data-i18n="pro.card.publicata0">publicată înainte de meci</span> · <strong>2–4 total goals after 90 minutes, inclusive</strong></div>
+<p>Brentford: 10 of 10 in the competition; Everton: 7 of 10 in the competition.</p>
 <details class="dossier-context"><summary data-i18n="dashboard.analysis.read">Citește analiza</summary>
-<p><strong data-i18n="arhiva.sect.verdict">Verdict:</strong> Over 1.5 goals. The selected outcome occurred more often in both team profiles than across the rest of the competition.</p>
-<p><strong data-i18n="arhiva.sect.context">Context:</strong> Diosgyori VTK score 1.7 goals per game and their opponent concede 2.5; Karcag SE score 1.5 and their opponent concede 1.6. Matching these averages suggests 3.6 goals per game, versus 2.7 in the rest of the competition. Recent scores: Diosgyori VTK W 3-1, L 1-3, W 4-1, D 2-2, D 1-1; Karcag SE L 2-4, L 0-3, L 2-5, L 1-2, L 0-3.</p>
-<p><strong data-i18n="arhiva.sect.model">Modelul vs realitate:</strong> Current season: 60 of 85 across the competition, excluding both teams' matches. The percentage is the POSEIDON model estimate.</p>
-<p><strong data-i18n="arhiva.sect.urmarit">De urmărit:</strong> Counterexamples: Diosgyori VTK 0 of 10; Karcag SE 0 of 10. The samples are limited.
-ℹ️ <em>xG in POSEIDON analyses = the goals expected by our model for each team, calibrated on past matches, not xG from shots.</em>
+<p><strong data-i18n="arhiva.sect.verdict">Verdict:</strong> 2–4 total goals after 90 minutes, inclusive. The selected outcome occurred more often in both team profiles than across the rest of the competition.</p>
+<p><strong data-i18n="arhiva.sect.context">Context:</strong> Brentford score 1.6 goals per game and their opponent concede 1.0; Everton score 1.2 and their opponent concede 1.1. Matching these averages suggests 2.5 goals per game, versus 2.8 in the rest of the competition. Recent scores: Brentford L 0-2, W 2-0, D 1-1, L 1-2, D 2-2; Everton W 3-1, W 1-0, L 0-2, L 0-2, D 2-2.</p>
+<p><strong data-i18n="arhiva.sect.model">Modelul vs realitate:</strong> Current season: 49 of 89 across the competition, excluding both teams' matches. The percentage is the POSEIDON model estimate.</p>
+<p><strong data-i18n="arhiva.sect.urmarit">De urmărit:</strong> Counterexamples: Brentford 0 of 10; Everton 3 of 10. The samples are limited.
 <em>informational · not betting advice · 18+</em></p>
-
+<ul><li>Alternative · <strong>Under 3.5 goals</strong><p>Brentford: 8 of 10 in the competition; Everton: 7 of 10 in the competition. Current season: 59 of 89 across the competition, excluding both teams' matches. Brentford score 1.6 goals per game and their opponent concede 1.0; Everton score 1.2 and their opponent concede 1.1. Matching these averages suggests 2.5 goals per game, versus 2.8 in the rest of the competition.</p></li></ul>
 </details>
 <details class="dossier-review"><summary data-i18n="arhiva.th.rezultat">Rezultat</summary><p data-i18n="arhiva.fararez">Fără rezultat final în bază.</p></details>
 </div>
 </div><div data-lang="es" hidden>
       <div class="pro-visible">
-<div class="dossier-published"><span data-i18n="pro.card.publicata0">publicată înainte de meci</span> · <strong>Más de 1,5 goles · 84%</strong></div>
-<p>Diosgyori VTK: 10 de 10 en la competición; Karcag SE: 10 de 10 en la competición.</p>
+<div class="dossier-published"><span data-i18n="pro.card.publicata0">publicată înainte de meci</span> · <strong>2–4 goles totales tras 90 minutos, ambos incluidos</strong></div>
+<p>Brentford: 10 de 10 en la competición; Everton: 7 de 10 en la competición.</p>
 <details class="dossier-context"><summary data-i18n="dashboard.analysis.read">Citește analiza</summary>
-<p><strong data-i18n="arhiva.sect.verdict">Verdict:</strong> Más de 1,5 goles. El resultado elegido apareció más en los dos perfiles que en el resto de la competición.</p>
-<p><strong data-i18n="arhiva.sect.context">Context:</strong> Diosgyori VTK marca 1,7 goles por partido y su rival recibe 2,5; Karcag SE marca 1,5 y su rival recibe 1,6. Al cruzar esas medias se obtienen 3,6 goles por partido, frente a 2,7 en el resto de la competición. Marcadores recientes: Diosgyori VTK V 3-1, D 1-3, V 4-1, E 2-2, E 1-1; Karcag SE D 2-4, D 0-3, D 2-5, D 1-2, D 0-3.</p>
-<p><strong data-i18n="arhiva.sect.model">Modelul vs realitate:</strong> Temporada actual: 60 de 85 en el resto de la competición, sin partidos de estos equipos. El porcentaje es la estimación del modelo POSEIDON.</p>
-<p><strong data-i18n="arhiva.sect.urmarit">De urmărit:</strong> Contraejemplos: Diosgyori VTK 0 de 10; Karcag SE 0 de 10. Las muestras son limitadas.
-ℹ️ <em>xG en los análisis de POSEIDON = los goles esperados por nuestro modelo para cada equipo, calibrado con partidos pasados, no xG de tiros.</em></p>
-
+<p><strong data-i18n="arhiva.sect.verdict">Verdict:</strong> 2–4 goles totales tras 90 minutos, ambos incluidos. El resultado elegido apareció más en los dos perfiles que en el resto de la competición.</p>
+<p><strong data-i18n="arhiva.sect.context">Context:</strong> Brentford marca 1,6 goles por partido y su rival recibe 1,0; Everton marca 1,2 y su rival recibe 1,1. Al cruzar esas medias se obtienen 2,5 goles por partido, frente a 2,8 en el resto de la competición. Marcadores recientes: Brentford D 0-2, V 2-0, E 1-1, D 1-2, E 2-2; Everton V 3-1, V 1-0, D 0-2, D 0-2, E 2-2.</p>
+<p><strong data-i18n="arhiva.sect.model">Modelul vs realitate:</strong> Temporada actual: 49 de 89 en el resto de la competición, sin partidos de estos equipos. El porcentaje es la estimación del modelo POSEIDON.</p>
+<p><strong data-i18n="arhiva.sect.urmarit">De urmărit:</strong> Contraejemplos: Brentford 0 de 10; Everton 3 de 10. Las muestras son limitadas.</p>
+<ul><li>Alternativa · <strong>Menos de 3,5 goles</strong><p>Brentford: 8 de 10 en la competición; Everton: 7 de 10 en la competición. Temporada actual: 59 de 89 en el resto de la competición, sin partidos de estos equipos. Brentford marca 1,6 goles por partido y su rival recibe 1,0; Everton marca 1,2 y su rival recibe 1,1. Al cruzar esas medias se obtienen 2,5 goles por partido, frente a 2,8 en el resto de la competición.</p></li></ul>
 </details>
 <details class="dossier-review"><summary data-i18n="arhiva.th.rezultat">Rezultat</summary><p data-i18n="arhiva.fararez">Fără rezultat final în bază.</p></details>
 </div>
 </div><div data-lang="it" hidden>
       <div class="pro-visible">
-<div class="dossier-published"><span data-i18n="pro.card.publicata0">publicată înainte de meci</span> · <strong>Over 1,5 gol · 84%</strong></div>
-<p>Diosgyori VTK: 10 su 10 nella competizione; Karcag SE: 10 su 10 nella competizione.</p>
+<div class="dossier-published"><span data-i18n="pro.card.publicata0">publicată înainte de meci</span> · <strong>2–4 gol totali dopo 90 minuti, estremi inclusi</strong></div>
+<p>Brentford: 10 su 10 nella competizione; Everton: 7 su 10 nella competizione.</p>
 <details class="dossier-context"><summary data-i18n="dashboard.analysis.read">Citește analiza</summary>
-<p><strong data-i18n="arhiva.sect.verdict">Verdict:</strong> Over 1,5 gol. L'esito scelto è stato più frequente nei due profili che nel resto della competizione.</p>
-<p><strong data-i18n="arhiva.sect.context">Context:</strong> Diosgyori VTK segna 1,7 gol a partita e l'avversaria ne subisce 2,5; Karcag SE segna 1,5 e l'avversaria ne subisce 1,6. L'incrocio delle medie indica 3,6 gol a partita, contro 2,7 nel resto della competizione. Risultati recenti: Diosgyori VTK V 3-1, S 1-3, V 4-1, P 2-2, P 1-1; Karcag SE S 2-4, S 0-3, S 2-5, S 1-2, S 0-3.</p>
-<p><strong data-i18n="arhiva.sect.model">Modelul vs realitate:</strong> Stagione in corso: 60 su 85 nel resto della competizione, escluse le partite delle due squadre. La percentuale è la stima del modello POSEIDON.</p>
-<p><strong data-i18n="arhiva.sect.urmarit">De urmărit:</strong> Controesempi: Diosgyori VTK 0 su 10; Karcag SE 0 su 10. I campioni sono limitati.
-ℹ️ <em>xG nelle analisi POSEIDON = i gol attesi dal nostro modello per ogni squadra, calibrato sulle partite passate, non xG dai tiri.</em></p>
-
+<p><strong data-i18n="arhiva.sect.verdict">Verdict:</strong> 2–4 gol totali dopo 90 minuti, estremi inclusi. L'esito scelto è stato più frequente nei due profili che nel resto della competizione.</p>
+<p><strong data-i18n="arhiva.sect.context">Context:</strong> Brentford segna 1,6 gol a partita e l'avversaria ne subisce 1,0; Everton segna 1,2 e l'avversaria ne subisce 1,1. L'incrocio delle medie indica 2,5 gol a partita, contro 2,8 nel resto della competizione. Risultati recenti: Brentford S 0-2, V 2-0, P 1-1, S 1-2, P 2-2; Everton V 3-1, V 1-0, S 0-2, S 0-2, P 2-2.</p>
+<p><strong data-i18n="arhiva.sect.model">Modelul vs realitate:</strong> Stagione in corso: 49 su 89 nel resto della competizione, escluse le partite delle due squadre. La percentuale è la stima del modello POSEIDON.</p>
+<p><strong data-i18n="arhiva.sect.urmarit">De urmărit:</strong> Controesempi: Brentford 0 su 10; Everton 3 su 10. I campioni sono limitati.</p>
+<ul><li>Alternativa · <strong>Under 3,5 gol</strong><p>Brentford: 8 su 10 nella competizione; Everton: 7 su 10 nella competizione. Stagione in corso: 59 su 89 nel resto della competizione, escluse le partite delle due squadre. Brentford segna 1,6 gol a partita e l'avversaria ne subisce 1,0; Everton segna 1,2 e l'avversaria ne subisce 1,1. L'incrocio delle medie indica 2,5 gol a partita, contro 2,8 nel resto della competizione.</p></li></ul>
 </details>
 <details class="dossier-review"><summary data-i18n="arhiva.th.rezultat">Rezultat</summary><p data-i18n="arhiva.fararez">Fără rezultat final în bază.</p></details>
 </div>
 </div><div data-lang="fr" hidden>
       <div class="pro-visible">
-<div class="dossier-published"><span data-i18n="pro.card.publicata0">publicată înainte de meci</span> · <strong>Plus de 1,5 buts · 84%</strong></div>
-<p>Diosgyori VTK : 10 sur 10 dans la compétition ; Karcag SE : 10 sur 10 dans la compétition.</p>
+<div class="dossier-published"><span data-i18n="pro.card.publicata0">publicată înainte de meci</span> · <strong>2–4 buts au total après 90 minutes, bornes incluses</strong></div>
+<p>Brentford : 10 sur 10 dans la compétition ; Everton : 7 sur 10 dans la compétition.</p>
 <details class="dossier-context"><summary data-i18n="dashboard.analysis.read">Citește analiza</summary>
-<p><strong data-i18n="arhiva.sect.verdict">Verdict:</strong> Plus de 1,5 buts. L'issue retenue a été plus fréquente dans les deux profils que dans le reste de la compétition.</p>
-<p><strong data-i18n="arhiva.sect.context">Context:</strong> Diosgyori VTK marque 1,7 but par match et son adversaire en encaisse 2,5 ; Karcag SE en marque 1,5 et son adversaire en encaisse 1,6. Le rapprochement de ces moyennes indique 3,6 buts par match, contre 2,7 dans le reste de la compétition. Scores récents: Diosgyori VTK V 3-1, D 1-3, V 4-1, N 2-2, N 1-1; Karcag SE D 2-4, D 0-3, D 2-5, D 1-2, D 0-3.</p>
-<p><strong data-i18n="arhiva.sect.model">Modelul vs realitate:</strong> Saison en cours : 60 sur 85 dans le reste de la compétition, hors matches des deux équipes. Le pourcentage indique l'estimation du modèle POSEIDON.</p>
-<p><strong data-i18n="arhiva.sect.urmarit">De urmărit:</strong> Contre-exemples : Diosgyori VTK 0 sur 10 ; Karcag SE 0 sur 10. Les échantillons sont limités.
-ℹ️ <em>xG dans les analyses POSEIDON = les buts attendus par notre modèle pour chaque équipe, calibré sur les matchs passés, pas le xG des tirs.</em>
+<p><strong data-i18n="arhiva.sect.verdict">Verdict:</strong> 2–4 buts au total après 90 minutes, bornes incluses. L'issue retenue a été plus fréquente dans les deux profils que dans le reste de la compétition.</p>
+<p><strong data-i18n="arhiva.sect.context">Context:</strong> Brentford marque 1,6 but par match et son adversaire en encaisse 1,0 ; Everton en marque 1,2 et son adversaire en encaisse 1,1. Le rapprochement de ces moyennes indique 2,5 buts par match, contre 2,8 dans le reste de la compétition. Scores récents: Brentford D 0-2, V 2-0, N 1-1, D 1-2, N 2-2; Everton V 3-1, V 1-0, D 0-2, D 0-2, N 2-2.</p>
+<p><strong data-i18n="arhiva.sect.model">Modelul vs realitate:</strong> Saison en cours : 49 sur 89 dans le reste de la compétition, hors matches des deux équipes. Le pourcentage indique l'estimation du modèle POSEIDON.</p>
+<p><strong data-i18n="arhiva.sect.urmarit">De urmărit:</strong> Contre-exemples : Brentford 0 sur 10 ; Everton 3 sur 10. Les échantillons sont limités.
 <em>informatif · pas un conseil de pari · 18+</em></p>
-
+<ul><li>Alternative · <strong>Moins de 3,5 buts</strong><p>Brentford : 8 sur 10 dans la compétition ; Everton : 7 sur 10 dans la compétition. Saison en cours : 59 sur 89 dans le reste de la compétition, hors matches des deux équipes. Brentford marque 1,6 but par match et son adversaire en encaisse 1,0 ; Everton en marque 1,2 et son adversaire en encaisse 1,1. Le rapprochement de ces moyennes indique 2,5 buts par match, contre 2,8 dans le reste de la compétition.</p></li></ul>
 </details>
 <details class="dossier-review"><summary data-i18n="arhiva.th.rezultat">Rezultat</summary><p data-i18n="arhiva.fararez">Fără rezultat final în bază.</p></details>
 </div>
 </div><div data-lang="id" hidden>
       <div class="pro-visible">
-<div class="dossier-published"><span data-i18n="pro.card.publicata0">publicată înainte de meci</span> · <strong>Di atas 1,5 gol · 84%</strong></div>
-<p>Diosgyori VTK: 10 dari 10 di kompetisi; Karcag SE: 10 dari 10 di kompetisi.</p>
+<div class="dossier-published"><span data-i18n="pro.card.publicata0">publicată înainte de meci</span> · <strong>2–4 gol total setelah 90 menit, batas termasuk</strong></div>
+<p>Brentford: 10 dari 10 di kompetisi; Everton: 7 dari 10 di kompetisi.</p>
 <details class="dossier-context"><summary data-i18n="dashboard.analysis.read">Citește analiza</summary>
-<p><strong data-i18n="arhiva.sect.verdict">Verdict:</strong> Di atas 1,5 gol. Hasil pilihan lebih sering terjadi pada profil kedua tim daripada di laga lain dalam kompetisi.</p>
-<p><strong data-i18n="arhiva.sect.context">Context:</strong> Diosgyori VTK mencetak 1,7 gol per laga dan lawannya kebobolan 2,5; Karcag SE mencetak 1,5 dan lawannya kebobolan 1,6. Perbandingan rata-rata ini menunjukkan 3,6 gol per laga, dengan 2,7 pada laga lain dalam kompetisi. Skor terkini: Diosgyori VTK M 3-1, K 1-3, M 4-1, S 2-2, S 1-1; Karcag SE K 2-4, K 0-3, K 2-5, K 1-2, K 0-3.</p>
-<p><strong data-i18n="arhiva.sect.model">Modelul vs realitate:</strong> Musim berjalan: 60 dari 85 laga dalam kompetisi, di luar laga kedua tim. Persentase merupakan estimasi model POSEIDON.</p>
-<p><strong data-i18n="arhiva.sect.urmarit">De urmărit:</strong> Contoh sebaliknya: Diosgyori VTK 0 dari 10; Karcag SE 0 dari 10. Sampel masih terbatas.
-ℹ️ <em>xG dalam analisis POSEIDON = gol yang diharapkan model kami untuk tiap tim, dikalibrasi pada laga sebelumnya, bukan xG dari tembakan.</em>
+<p><strong data-i18n="arhiva.sect.verdict">Verdict:</strong> 2–4 gol total setelah 90 menit, batas termasuk. Hasil pilihan lebih sering terjadi pada profil kedua tim daripada di laga lain dalam kompetisi.</p>
+<p><strong data-i18n="arhiva.sect.context">Context:</strong> Brentford mencetak 1,6 gol per laga dan lawannya kebobolan 1,0; Everton mencetak 1,2 dan lawannya kebobolan 1,1. Perbandingan rata-rata ini menunjukkan 2,5 gol per laga, dengan 2,8 pada laga lain dalam kompetisi. Skor terkini: Brentford K 0-2, M 2-0, S 1-1, K 1-2, S 2-2; Everton M 3-1, M 1-0, K 0-2, K 0-2, S 2-2.</p>
+<p><strong data-i18n="arhiva.sect.model">Modelul vs realitate:</strong> Musim berjalan: 49 dari 89 laga dalam kompetisi, di luar laga kedua tim. Persentase merupakan estimasi model POSEIDON.</p>
+<p><strong data-i18n="arhiva.sect.urmarit">De urmărit:</strong> Contoh sebaliknya: Brentford 0 dari 10; Everton 3 dari 10. Sampel masih terbatas.
 <em>informatif · bukan saran taruhan · 18+</em></p>
-
+<ul><li>Alternatif · <strong>Di bawah 3,5 gol</strong><p>Brentford: 8 dari 10 di kompetisi; Everton: 7 dari 10 di kompetisi. Musim berjalan: 59 dari 89 laga dalam kompetisi, di luar laga kedua tim. Brentford mencetak 1,6 gol per laga dan lawannya kebobolan 1,0; Everton mencetak 1,2 dan lawannya kebobolan 1,1. Perbandingan rata-rata ini menunjukkan 2,5 gol per laga, dengan 2,8 pada laga lain dalam kompetisi.</p></li></ul>
 </details>
 <details class="dossier-review"><summary data-i18n="arhiva.th.rezultat">Rezultat</summary><p data-i18n="arhiva.fararez">Fără rezultat final în bază.</p></details>
 </div>
 </div></div>
     </div>
-    <p class="pro-ieri" data-i18n="pro.ieri.cu" data-i18n-vars="{&quot;meci&quot;: &quot;FK Vozdovac – OFK Bor 1919&quot;, &quot;zi&quot;: &quot;2026-11-22&quot;, &quot;fid&quot;: &quot;1554327&quot;, &quot;scor&quot;: &quot;1-0&quot;, &quot;baza&quot;: &quot;&quot;}">Ieri, aici: <strong>FK Vozdovac – OFK Bor 1919</strong>, 1-0. <a href="analize/2026-11-22.html#m1554327">Verificarea de a doua zi →</a></p>
     <!-- PRO_SAMPLE_CARD_END -->
 <!-- PRO_TODAY_LIST_START -->
     <div class="pro-today">
       <p class="pro-today-head" data-i18n="pro.today.head" data-i18n-vars='{"n":"43"}'>🔒 <strong>Încă 43 analize azi în Pro</strong>, cu context verificat (clasament, formă, H2H, absențe) — pe site și pe Discord, dimineața.</p>
       <ul class="pro-today-list">
+        <li>🔒 <strong>Diosgyori VTK – Karcag SE</strong> · NB II (Hungary) · 20:30</li>
         <li>🔒 <strong>Sochaux – Dunkerque</strong> · Ligue 2 (France) · 21:45</li>
         <li>🔒 <strong>Bistrica – Krka</strong> · 2. SNL (Slovenia) · 15:00</li>
         <li>🔒 <strong>Real San Joaquín – Colina</strong> · Segunda División (Chile) · 23:00</li>
@@ -678,7 +718,6 @@ Statistici informative. Modelul poate greși. Verifică sursa. 18+.
         <li>🔒 <strong>Novin Ahvaz – Mes Rafsanjan</strong> · Azadegan League (Iran) · 15:00</li>
         <li>🔒 <strong>Real Oruro – Guabirá</strong> · Primera División (Bolivia) · 21:00</li>
         <li>🔒 <strong>Hammarby FF – IFK Goteborg</strong> · Allsvenskan (Sweden) · 20:00</li>
-        <li>🔒 <strong>Brentford – Everton</strong> · Premier League (England) · 22:00</li>
         <li>🔒 <strong>LNZ Cherkasy – Polessya</strong> · Premier League (Ukraine) · 13:00</li>
         <li>🔒 <strong>Brondby – FC Midtjylland</strong> · Superliga (Denmark) · 20:00</li>
         <li>🔒 <strong>Kastrioti Krujë – Besa Kavajë</strong> · 1st Division (Albania) · 14:30</li>
@@ -999,12 +1038,12 @@ Statistici informative. Modelul poate greși. Verifică sursa. 18+.
   </div>
   <div class="dossier-body" data-dossier-body></div>
 </dialog>
-<script src="assets/members.js?release=20261123-grouped-matches-r2"></script>
-<script src="assets/member-dossier.js?release=20261123-grouped-matches-r2"></script>
-<script src="assets/country-label.js?release=20261123-grouped-matches-r2"></script>
-<script src="assets/home-watchlist.js?release=20261123-grouped-matches-r2"></script>
-<script src="assets/home-dashboard.js?release=20261123-grouped-matches-r2"></script>
-<script src="assets/app.js?release=20261123-grouped-matches-r2"></script>
+<script src="assets/members.js?release=20261123-visitor-home"></script>
+<script src="assets/member-dossier.js?release=20261123-visitor-home"></script>
+<script src="assets/country-label.js?release=20261123-visitor-home"></script>
+<script src="assets/home-watchlist.js?release=20261123-visitor-home"></script>
+<script src="assets/home-dashboard.js?release=20261123-visitor-home"></script>
+<script src="assets/app.js?release=20261123-visitor-home"></script>
 <script src="assets/citire.js?v=20261024-onestitate3"></script>
 </body>
 </html>

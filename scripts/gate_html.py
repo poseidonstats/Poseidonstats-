@@ -5,6 +5,7 @@ nimic n-a observat 3 zile — asta e plasa.
 Uz: gate_html.py [index.html] [--vs HEAD]"""
 from __future__ import annotations
 import re, subprocess, sys
+from html.parser import HTMLParser
 from pathlib import Path
 
 SITE = Path(__file__).resolve().parent.parent
@@ -15,9 +16,29 @@ OBLIGATORII = ['id="exemplu-pro"', "PRO_SAMPLE_CARD_START", "PRO_SAMPLE_CARD_END
 PERECHI = ["PRO_SAMPLE_CARD", "PRO_TODAY_LIST", "PROOF_STATIC", "DAILY_STATIC", "LEAGUES_LINKS"]
 
 
+def este_compact(html: str) -> bool:
+    class Pagina(HTMLParser):
+        compact = False
+
+        def handle_starttag(self, tag, attrs):
+            if any(name == "data-compact-home" for name, _ in attrs):
+                self.compact = True
+
+    pagina = Pagina()
+    pagina.feed(html)
+    pagina.close()
+    return pagina.compact
+
+
 def verifica(html: str, vechi: str | None) -> list[str]:
-    err = [f"lipsește: {o}" for o in OBLIGATORII if o not in html]
-    for p in PERECHI:
+    compact = este_compact(html)
+    fara_exemplu = compact and all(
+        re.search(rf"<!-- PRO_SAMPLE_{rol}_START -->\s*<!-- PRO_SAMPLE_{rol}_END -->", html)
+        for rol in ("CARD", "PREVIEW")
+    )
+    err = [f"lipsește: {o}" for o in OBLIGATORII if o not in html and not (fara_exemplu and o == 'class="pro-card"')]
+    perechi = [*PERECHI, "PRO_SAMPLE_PREVIEW"] if compact else PERECHI
+    for p in perechi:
         a, b = html.count(f"<!-- {p}_START -->"), html.count(f"<!-- {p}_END -->")
         if a != 1 or b != 1:
             err.append(f"markerii {p}: START×{a} END×{b} (trebuie exact 1/1)")
@@ -49,7 +70,8 @@ def main() -> None:
     err = verifica(html, vechi)
     if err:
         print("[gate_html] BLOCAT: " + " | ".join(err)); sys.exit(1)
-    print(f"[gate_html] OK: {cale.name}, {len(re.findall(r'<section[\s>]', html))} secțiuni, markeri 5/5")
+    n = len(PERECHI) + este_compact(html)
+    print(f"[gate_html] OK: {cale.name}, {len(re.findall(r'<section[\s>]', html))} secțiuni, markeri {n}/{n}")
 
 
 if __name__ == "__main__":

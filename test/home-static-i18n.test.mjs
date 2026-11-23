@@ -160,8 +160,8 @@ test('homepage market filters use translated labels and homepage assets use thei
     assert.equal(key,`filters.market.${market}`);
     for (const language of languages) assert(dictionary[language][key]);
   }
-  const release='20261123-grouped-matches-r2';
-  for (const asset of ['country-label.js','app.js','member-dossier.js','member-dossier.css','home-dashboard.js','home-watchlist.js','home-modern.css','conversion.js']) {
+  const release='20261123-visitor-home';
+  for (const asset of ['country-label.js','app.js','member-dossier.js','member-dossier.css','home-dashboard.js','home-watchlist.js','home-modern.css','home-visitor.css','home-visitor.js','conversion.js']) {
     assert(html.includes(`assets/${asset}?release=${release}`));
   }
   const app=readFileSync(new URL('../assets/app.js',import.meta.url),'utf8');
@@ -171,7 +171,7 @@ test('homepage market filters use translated labels and homepage assets use thei
   const worker=readFileSync(new URL('../sw.js',import.meta.url),'utf8');
   assert(worker.includes(`const RELEASE = "${release}";`));
   const releaseHashes=worker.match(/const RELEASE_ASSET_SHA256 = \{([\s\S]*?)\n\};/)?.[1] ?? '';
-  for (const asset of ['country-label.js','app.js','member-dossier.js','member-dossier.css','home-dashboard.js','home-watchlist.js','home-modern.css','conversion.js','pro-report.js','pro-report.css','pro-context.js','members.js','home-watchlist.js','conversion.js']) {
+  for (const asset of ['country-label.js','app.js','member-dossier.js','member-dossier.css','home-dashboard.js','home-watchlist.js','home-modern.css','home-visitor.css','home-visitor.js','conversion.js','pro-report.js','pro-report.css','pro-context.js','members.js','home-watchlist.js','conversion.js']) {
     const bytes=readFileSync(new URL(`../assets/${asset}`,import.meta.url));
     const digest=createHash('sha256').update(bytes).digest('hex');
     assert(releaseHashes.includes(`"assets/${asset}": "${digest}"`), `Update the service worker release for ${asset}`);

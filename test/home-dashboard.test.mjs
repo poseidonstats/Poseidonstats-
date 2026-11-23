@@ -85,6 +85,37 @@ test('real recent journal sums resolved selections chronologically, never pendin
   assert.doesNotMatch(chart,/profit/i);
 });
 
+test('recent chart falls back only to verified free fixtures and uses a separate label', () => {
+  const date = '2026-11-22', start = date + 'T12:00:00Z';
+  const match = id => ({ fixture_id:id, match_date:start, home_team:'Home', away_team:'Away', league:'League', country:'Country', free:true });
+  const final = row => ({...row, ft_h:1, ft_a:0, ht_h:0, ht_a:0});
+  const free = match(11), moved = match(12), locked = {...match(13), locked:true}, invalid = match(14);
+  const feed = {date:'2026-11-23', days:{[date]:{matches:[free, free, moved, locked, invalid], results:{
+    11:final(free), 12:{...final(moved), match_date:date+'T13:00:00Z'}, 13:final(locked), 14:{...final(invalid), ht_h:2}, 15:final(match(15))
+  }}}};
+  const points = dashboard.cumulativeVerifiedFreeMatches(feed);
+  assert.deepEqual(points,[{date, resolved:1, cumulative:1, partial:true}]);
+  const translate = (key, vars = {}) => tr(key).replace(/\{(\w+)\}/g, (_,name) => vars[name]);
+  const chart = dashboard.renderChart(points,translate,'en-GB','free-chart',{free:true});
+  assert.match(chart,/Verified results · free matches/);
+  assert.match(chart,/Verified matches: 1/);
+  assert.doesNotMatch(chart,/settled selections/i);
+  assert.deepEqual(dashboard.cumulativeVerifiedFreeMatches(null),[]);
+});
+
+test('service worker keeps the previous dictionary and requires new chart translations for the new release', async () => {
+  const context = createContext({ URL, self:{ registration:{ scope:'https://poseidonstats.com/' }, addEventListener() {} } });
+  runInContext(readFileSync(new URL('../sw.js',import.meta.url), 'utf8'),context);
+  const acceptsDictionary = runInContext('(response, previous) => matchesRelease(I18N_PATH, response, previous ? PREVIOUS_RELEASE : RELEASE)',context);
+  const old = structuredClone(i18n);
+  for (const language of Object.keys(old)) {
+    for (const name of ['freeTitle','freeNote','freeTotal']) delete old[language]['dashboard.chart.' + name];
+  }
+  assert.equal(await acceptsDictionary(Response.json(i18n),false),true);
+  assert.equal(await acceptsDictionary(Response.json(old),false),false);
+  assert.equal(await acceptsDictionary(Response.json(old),true),true);
+});
+
 test('five forecast slots take precedence over earlier stats-only matches, which stay searchable', () => {
   const day = '2026-11-23';
   const stats = {fixture_id: 1, home_team: 'Early Team', dossier_only: true, match_date: day + 'T02:00:00Z'};

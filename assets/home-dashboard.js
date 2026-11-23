@@ -115,6 +115,28 @@
       return [{ date: day.date, resolved, cumulative, partial: day.status === 'partial' || day.status === 'in_progress' }];
     });
   }
+  function cumulativeVerifiedFreeMatches(feed) {
+    let cumulative = 0;
+    const seen = new Set();
+    return Object.keys(feed?.days || {}).sort().flatMap(date => {
+      const candidates = new Set();
+      let resolved = 0;
+      for (const match of publicArchive(feed, date)) {
+        const entry = watchlist.entry(match, '1x2');
+        if (!entry) continue;
+        const id = entry.fixture_id;
+        candidates.add(id);
+        const result = feed.days[date].results?.[id];
+        if (seen.has(id) || !result || Date.parse(result.match_date) !== Date.parse(match.match_date)) continue;
+        if (!watchlist.settle(entry, feed).ft) continue;
+        seen.add(id);
+        resolved++;
+      }
+      if (!resolved) return [];
+      cumulative += resolved;
+      return [{date, resolved, cumulative, partial:resolved < candidates.size}];
+    });
+  }
   function locale(doc) { return ({ro:'ro-RO', en:'en-GB', es:'es-ES', it:'it-IT', fr:'fr-FR', id:'id-ID'})[doc.documentElement.lang] || 'ro-RO'; }
   function translator() {
     return (key, vars = {}) => {
@@ -334,7 +356,8 @@
     const num = n => new Intl.NumberFormat(loc, {maximumFractionDigits:0}).format(n);
     const date = d => new Intl.DateTimeFormat(loc, {day:'numeric', month:'short', timeZone:TIMEZONE}).format(new Date(d + 'T12:00:00Z'));
     const partial = points.filter(p => p.partial).map(p => date(p.date)).join(', ');
-    const description = `${tr('dashboard.chart.title')}. ${date(points[0].date)} – ${date(points[points.length - 1].date)}. ${num(max)}. ${partial ? tr('dashboard.chart.partial', {dates:partial}) : ''}`;
+    const total = tr(layout.free ? 'dashboard.chart.freeTotal' : 'dashboard.chart.total', {n:num(max)});
+    const description = `${tr(layout.free ? 'dashboard.chart.freeTitle' : 'dashboard.chart.title')}. ${date(points[0].date)} – ${date(points[points.length - 1].date)}. ${num(max)}. ${partial ? tr('dashboard.chart.partial', {dates:partial}) : ''}`;
     return `<svg class="dashboard-chart" viewBox="0 0 ${width} ${height}" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="${id}"><title id="${id}">${escapeHTML(description)}</title>` +
       `<defs><linearGradient id="${id}-fill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#d7b56d" stop-opacity=".28"/><stop offset="100%" stop-color="#d7b56d" stop-opacity="0"/></linearGradient></defs>` +
       [0, .5, 1].map(r => { const yy = height - bottom - r * (height - top - bottom); return `<line x1="${left}" y1="${yy}" x2="${width-right}" y2="${yy}" stroke="currentColor" opacity=".12"/><text x="${left-7}" y="${yy+4}" text-anchor="end" fill="currentColor" font-size="12">${escapeHTML(num(max*r))}</text>`; }).join('') +
@@ -342,7 +365,7 @@
       `<polyline points="${line}" fill="none" stroke="#d7b56d" stroke-width="2.5" stroke-linejoin="round"/>` +
       points.map(p => `<circle cx="${x(p)}" cy="${y(p)}" r="${p.partial?3:2}" fill="${p.partial?'#101c2c':'#d7b56d'}" stroke="#d7b56d" stroke-width="1.5"><title>${escapeHTML(`${date(p.date)}: ${num(p.cumulative)}${p.partial?' · '+tr('dashboard.chart.partialday'):''}`)}</title></circle>`).join('') +
       `<text x="${left}" y="${height-5}" fill="currentColor" font-size="12">${escapeHTML(date(points[0].date))}</text><text x="${width-right}" y="${height-5}" text-anchor="end" fill="currentColor" font-size="12">${escapeHTML(date(points[points.length-1].date))}</text></svg>` +
-      `<p class="dashboard-chart-caption">${escapeHTML(tr('dashboard.chart.total', {n:num(max)}))} · ${escapeHTML(tr('dashboard.chart.partialday'))}: ○</p>`;
+      `<p class="dashboard-chart-caption">${escapeHTML(total)} · ${escapeHTML(tr('dashboard.chart.partialday'))}: ○</p>`;
   }
   function openTargetDetails(doc, fragment, scroll = false) {
     let id;
@@ -671,6 +694,7 @@
     const required = Promise.allSettled([localJSON('data/predictions.json'), localJSON('data/history.json'), localJSON('data/audit.json')]);
     const supplemental = localJSON('data/dashboard-market-history.json').catch(() => null);
     [predictions, history, audit] = (await required).map(result => result.status === 'fulfilled' ? result.value : null);
+    view?.PoseidonVisitor?.setPublicData(predictions,history);
     function renderMetrics() {
       const tr = translator(), loc = locale(doc), num = n => n == null ? '—' : new Intl.NumberFormat(loc).format(n);
       const auditGrid = doc.getElementById('approved-audit-metrics');
@@ -712,11 +736,24 @@
       const tr = translator(), loc = locale(doc);
       let points = [];
       try { points = cumulativeResolved(history); } catch (_) { /* Unavailable stays explicit. */ }
+      const waiting = !points.length && marketHistoryPending;
+      let free = false;
+      if (!points.length && !waiting) {
+        points = cumulativeVerifiedFreeMatches(marketHistory);
+        free = points.length > 0;
+      }
+      const copyKeys = free ? {title:'freeTitle',note:'freeNote'} : {title:'title',note:'note'};
+      doc.querySelectorAll('[data-journal-chart-copy]').forEach(el => {
+        const key = 'dashboard.chart.' + copyKeys[el.getAttribute('data-journal-chart-copy')];
+        el.setAttribute('data-i18n',key);
+        el.textContent = tr(key);
+      });
       const viewport = doc.defaultView;
       const height = viewport && finite(viewport.innerWidth) && viewport.innerWidth <= 1180 ? 160 : 95;
       doc.querySelectorAll('[data-dashboard-chart]').forEach((el,i) => {
         const width = finite(el.clientWidth) && el.clientWidth > 0 ? el.clientWidth : i ? 340 : 560;
-        el.innerHTML = renderChart(points,tr,loc,`dashboard-chart-${i}`,{width,height});
+        el.innerHTML = waiting ? `<p class="muted">${escapeHTML(tr('loading'))}</p>`
+          : renderChart(points,tr,loc,`dashboard-chart-${i}`,{width,height,free});
       });
     }
     function memberForDay(day) {
@@ -1026,6 +1063,7 @@
       if (dateSelect?.value < relativeDays().today) renderLeagues();
       renderTable();
       renderWatchlist();
+      renderCharts();
     });
     try {
       const response = await fetch('analize/index.html',{credentials:'omit'});
@@ -1035,5 +1073,5 @@
     try { await view?.PoseidonHomeLayoutReady; } catch (_) { /* Still open reachable page sections. */ }
     finishNavigation();
   }
-  return {escapeHTML,dayOf,availableDays,chooseDay,isPublic,normalizeSearch,leagueChoices,competitionChoices,selectRows,publicArchive,archiveStat,renderMarketResult,groupedOutcome,groupMatchRows,renderGroupedRows,extractMetrics,cumulativeResolved,renderRows,renderChart,openTargetDetails,revealMatch,chooseAnalysisLanguage,analysisLanguageNotice,decorateLanguageSelector,watchLanguageSelector,decorateMemberLogin,watchMemberLogin,ensureProofNotice,analysisAction,membershipTier,observeMembership,mount};
+  return {escapeHTML,dayOf,availableDays,chooseDay,isPublic,normalizeSearch,leagueChoices,competitionChoices,selectRows,publicArchive,archiveStat,renderMarketResult,groupedOutcome,groupMatchRows,renderGroupedRows,extractMetrics,cumulativeResolved,cumulativeVerifiedFreeMatches,renderRows,renderChart,openTargetDetails,revealMatch,chooseAnalysisLanguage,analysisLanguageNotice,decorateLanguageSelector,watchLanguageSelector,decorateMemberLogin,watchMemberLogin,ensureProofNotice,analysisAction,membershipTier,observeMembership,mount};
 });
