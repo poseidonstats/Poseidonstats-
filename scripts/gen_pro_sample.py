@@ -24,7 +24,7 @@ from editorial_copy import editorial_text, public_analysis_text
 import provenienta_pro as PP  # noqa: E402
 
 SITE = Path(__file__).resolve().parent.parent
-INDEX = SITE / "index.html"
+INDEX = SITE / "meciuri.html"
 ARHIVA = Path.home() / "football_predictor" / "data" / "pro_analyses"
 DB = "file:" + str(Path.home() / "football_predictor" / "football.db") + "?mode=ro"
 RO = ZoneInfo("Europe/Bucharest")
@@ -645,7 +645,7 @@ def _inlocuieste_bloc(html: str, start: str, end: str, content: str) -> str:
         if count == 1:
             return updated
     raise SystemExit(
-        f"[gen_pro_sample] markerii {start} / {end} nu delimitează un bloc în index.html — abort, nimic scris"
+        f"[gen_pro_sample] markerii {start} / {end} nu delimitează un bloc în meciuri.html — abort, nimic scris"
     )
 
 

@@ -3,11 +3,18 @@
 Rulează din launchd la 08:15, 12:45, 20:15. Orice lipsă → mesaj pe Telegram (tg_trimite.sh). Nu scrie nimic pe site.
 Uz: site_check_live.py [--fara-telegram]"""
 from __future__ import annotations
-import datetime as dt, json, re, subprocess, sys, time, urllib.error, urllib.request
+import datetime as dt
+import json
+import re
+import subprocess
+import sys
+import time
+import urllib.error
+import urllib.request
 from html.parser import HTMLParser
 from zoneinfo import ZoneInfo
 
-from gate_html import este_compact
+from gate_html import Structura, verifica_prima_pagina
 
 SITE = "https://poseidonstats.com"
 API = "https://poseidon-members.poseidonstats.workers.dev"
@@ -83,21 +90,73 @@ def verifica_exemplu(html: str, zi: str, compact: bool) -> list[str]:
     return erori
 
 
+def verifica_gratuite(meciuri: list, azi: dt.date) -> list[str]:
+    """Alertează și dacă există cinci rânduri, dar un vizitator nu poate folosi datele."""
+    identitati = set()
+    erori = []
+    for meci in meciuri:
+        if meci.get("free") is not True:
+            continue
+        fid = meci.get("fixture_id")
+        if type(fid) is not int or fid <= 0 or fid in identitati:
+            erori.append(f"predicție gratuită: identificator absent, invalid sau duplicat ({fid})")
+            continue
+        identitati.add(fid)
+        try:
+            start = dt.datetime.fromisoformat(meci["match_date"].replace("Z", "+00:00"))
+            zi_corecta = start.tzinfo is not None and start.astimezone(ZoneInfo("Europe/Bucharest")).date() == azi
+        except (KeyError, ValueError, AttributeError, TypeError):
+            zi_corecta = False
+        if not zi_corecta or meci.get("locked") or not all(isinstance(meci.get(k), str) and meci[k].strip() for k in ("home_team", "away_team")):
+            erori.append(f"predicție gratuită {fid}: zi, echipe sau acces incorect")
+        probabilitati = [meci.get(k) for k in ("prob_home", "prob_draw", "prob_away")]
+        if (not all(type(v) in (int, float) and 0 <= v <= 1 for v in probabilitati)
+                or abs(sum(probabilitati) - 1) > 0.002):
+            erori.append(f"predicție gratuită {fid}: probabilități 1/X/2 invalide")
+    return erori
+
+
+def verifica_traduceri() -> list[str]:
+    st, body = get(f"{SITE}/assets/i18n.json")
+    if st != 200:
+        return [f"i18n.json: {cod(st, body)}"]
+    chei = ("visitor.home.title", "visitor.home.free", "visitor.home.basic", "visitor.home.pro",
+            "visitor.home.lockedTitle", "visitor.home.lockedMore", "visitor.home.lockedLess",
+            "dashboard.data.unavailable", "nav.predictii", "nav.abonamente", "redesign.edition.read")
+    try:
+        catalog = json.loads(body)
+        return [f"i18n.json: lipsește traducerea {limba}/{cheie}"
+                for limba in ("ro", "en", "es", "it", "fr", "id")
+                for cheie in chei if not isinstance(catalog.get(limba, {}).get(cheie), str)
+                or not catalog[limba][cheie].strip()]
+    except (ValueError, AttributeError, TypeError):
+        return ["i18n.json: catalog invalid"]
+
+
 def verifica(acum: dt.datetime) -> list[str]:
-    azi = acum.date(); ieri = azi - dt.timedelta(days=1); err: list[str] = []
+    azi = acum.date()
+    ieri = azi - dt.timedelta(days=1)
+    err: list[str] = []
     data_ro = f"{azi.day} {LUNI[azi.month - 1]} {azi.year}"
     st, html = get(f"{SITE}/index.html")
-    if st != 200: return [f"index.html: {cod(st, html)}"]
-    compact = este_compact(html)
-    if not compact and 'class="pro-card"' not in html:
-        err.append("index.html: lipsește cardul Pro")
-    for nume, semn in (("secțiunea Exemplul Pro", 'id="exemplu-pro"'), ("lista Pro de azi", 'class="pro-today"'),
-                       ("blocul «Ce primești pentru 20 $»", 'class="plans-pro-detail"'), ("secțiunea Dovada", 'id="dovada"'), ("Repere azi", 'id="repere-azi"'),
-                       ("abonamentele", 'id="abonament"'), ("banner-ul legal", "legal-banner"), ("nota Pro de sub preț", "plans.pro.trial")):
-        if semn not in html: err.append(f"index.html: lipsește {nume}")
-    if acum.hour >= 8:
-        err.extend(verifica_exemplu(html, azi.isoformat(), compact))
-    if 'id="repere-azi"' in html and data_ro not in html.split('id="repere-azi"')[1][:1500]: err.append(f"Repere azi nu are data de azi ({data_ro})")
+    if st != 200:
+        return [f"index.html: {cod(st, html)}"]
+    err.extend(f"index.html: {mesaj}" for mesaj in verifica_prima_pagina(html))
+    st_catalog, catalog = get(f"{SITE}/meciuri.html")
+    if st_catalog != 200:
+        err.append(f"meciuri.html: {cod(st_catalog, catalog)}")
+    else:
+        if "data-match-catalog" not in Structura(catalog).atribute:
+            err.append("meciuri.html: lipsește catalogul complet")
+        for nume, semn in (("secțiunea Exemplul Pro", 'id="exemplu-pro"'), ("lista Pro de azi", 'class="pro-today"'),
+                           ("blocul «Ce primești pentru 20 $»", 'class="plans-pro-detail"'), ("secțiunea Dovada", 'id="dovada"'), ("Repere azi", 'id="repere-azi"'),
+                           ("abonamentele", 'id="abonament"'), ("banner-ul legal", "legal-banner"), ("nota Pro de sub preț", "plans.pro.trial")):
+            if semn not in catalog:
+                err.append(f"meciuri.html: lipsește {nume}")
+        if acum.hour >= 8:
+            err.extend(verifica_exemplu(catalog, azi.isoformat(), True))
+        if 'id="repere-azi"' in catalog and data_ro not in catalog.split('id="repere-azi"')[1][:1500]:
+            err.append(f"Repere azi nu are data de azi ({data_ro})")
     st, js = get(f"{SITE}/assets/app.js")
     if st != 200:
         err.append(f"app.js: {cod(st, js)}")
@@ -108,38 +167,61 @@ def verifica(acum: dt.datetime) -> list[str]:
         err.append(f"predictions.json: {cod(st, body)}"[:160])
     else:
         try:
-            d = json.loads(body); gen = d.get("generated_at", "")[:10]
-            if gen != azi.isoformat(): err.append(f"predictions.json generat {gen or '?'}, nu azi")
+            d = json.loads(body)
+            gen = d.get("generated_at", "")[:10]
+            if gen != azi.isoformat():
+                err.append(f"predictions.json generat {gen or '?'}, nu azi")
+            err.extend(verifica_gratuite(d.get("matches", []), azi))
             free = sum(1 for x in d.get("matches", []) if x.get("free"))
-            if free != 5: err.append(f"predicții gratuite: {free} în loc de 5")
-        except Exception as e: err.append(f"predictions.json invalid: {e!r}"[:160])
+            if free != 5:
+                err.append(f"predicții gratuite: {free} în loc de 5")
+        except Exception as e:
+            err.append(f"predictions.json invalid: {e!r}"[:160])
+    err.extend(verifica_traduceri())
     st, b = get(f"{SITE}/analize/{ieri.isoformat()}.html")
-    if st != 200 and acum.hour >= 8: err.append(f"arhiva Pro de ieri nu se deschide ({ieri}, {cod(st, b)})"[:160])
+    if st != 200 and acum.hour >= 8:
+        err.append(f"arhiva Pro de ieri nu se deschide ({ieri}, {cod(st, b)})"[:160])
     # 7 oct 2026: regresia din 29 sept (membrul Basic vedea lacăte 50 de minute): CSP-ul paginilor care încarcă members.js
     # trebuie să permită cererile către Worker, altfel browserul le blochează tăcut și site-ul cade pe lista publică
-    for pag in ("index.html", "simulator.html", "track-record.html", "istoric.html"):
-        st, h = get(f"{SITE}/{pag}")
-        if st == 200 and "members.js" in h:
+    for pag in ("index.html", "meciuri.html", "simulator.html", "track-record.html", "istoric.html"):
+        if pag == "index.html":
+            st, h = 200, html
+        elif pag == "meciuri.html":
+            if st_catalog != 200:
+                continue
+            st, h = st_catalog, catalog
+        else:
+            st, h = get(f"{SITE}/{pag}")
+        if st != 200:
+            err.append(f"{pag}: {cod(st, h)}")
+        elif "members.js" in h:
             m = re.search(r"connect-src([^;\"]*)", h)
-            if not m or "poseidon-members.poseidonstats.workers.dev" not in m.group(1): err.append(f"{pag}: încarcă members.js dar CSP connect-src NU permite Worker-ul (membrii ar vedea lacăte)")
+            if not m or "poseidon-members.poseidonstats.workers.dev" not in m.group(1):
+                err.append(f"{pag}: încarcă members.js dar CSP connect-src NU permite Worker-ul (membrii ar vedea lacăte)")
     st, body = get(f"{API}/api/health?zi={azi.isoformat()}")
     if st != 200:
         err.append(f"membri: /api/health {cod(st, body)}"[:160])
     else:
         try:
-            h = json.loads(body); gen = (h.get("predictions_full") or {}).get("generated_at", "")[:10]
-            if gen != azi.isoformat(): err.append(f"membri: predictions_full în KV e din {gen or '?'}, nu de azi")
-            if acum.hour >= 8 and (h.get("pro") or 0) < 1: err.append("membri: ZERO analize Pro în KV pentru azi (abonații Pro nu văd nimic)")
-        except Exception as e: err.append(f"membri: /api/health răspuns invalid: {e!r}"[:160])
+            h = json.loads(body)
+            gen = (h.get("predictions_full") or {}).get("generated_at", "")[:10]
+            if gen != azi.isoformat():
+                err.append(f"membri: predictions_full în KV e din {gen or '?'}, nu de azi")
+            if acum.hour >= 8 and (h.get("pro") or 0) < 1:
+                err.append("membri: ZERO analize Pro în KV pentru azi (abonații Pro nu văd nimic)")
+        except Exception as e:
+            err.append(f"membri: /api/health răspuns invalid: {e!r}"[:160])
     return err
 
 
 def main() -> None:
-    acum = dt.datetime.now(ZoneInfo("Europe/Bucharest")); err = verifica(acum)
+    acum = dt.datetime.now(ZoneInfo("Europe/Bucharest"))
+    err = verifica(acum)
     if err:
         msg = f"❌ Site check {acum:%d.%m %H:%M}: {len(err)} probleme pe poseidonstats.com\n" + "\n".join(f"• {e}" for e in err)
         print(msg)
-        if "--fara-telegram" not in sys.argv: subprocess.run([TG, msg], check=False)
+        if "--fara-telegram" not in sys.argv:
+            subprocess.run([TG, msg], check=False)
         sys.exit(1)
     print(f"[site_check] OK {acum:%d.%m %H:%M}: starea exemplului Pro, lista Pro, nota Pro, 5 gratuite, JSON de azi, arhiva de ieri, KV membri de azi, CSP permite Worker-ul pe paginile de membri")
 

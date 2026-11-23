@@ -1079,13 +1079,15 @@
 
   function samplePayload(day) {
     if (!sampleRequests.has(day)) {
-      const request = publicGet("/api/exemplu/" + day).then(response => {
+      const controller = new AbortController();
+      const deadline = root.setTimeout(() => controller.abort(),8000);
+      const request = publicGet("/api/exemplu/" + day,controller.signal).then(response => {
         if (!response.ok) throw new Error("Public sample unavailable");
         return response.json();
       }).catch(error => {
         sampleRequests.delete(day);
         throw error;
-      });
+      }).finally(() => root.clearTimeout(deadline));
       sampleRequests.set(day,request);
     }
     return sampleRequests.get(day);

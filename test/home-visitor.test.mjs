@@ -2,19 +2,77 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import test from 'node:test';
+import {runInNewContext} from 'node:vm';
 
 const require = createRequire(import.meta.url);
-const {compactRoute, selectFreeMatches, selectSample} = require('../assets/home-visitor.js');
+const {compactRoute, selectFreeMatches, selectLockedMatches, selectSample} = require('../assets/home-visitor.js');
 const html = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
+const source = readFileSync(new URL('../assets/home-visitor.js', import.meta.url), 'utf8');
 
-test('only the base visitor route and its plans fragment use the compact view', () => {
-  const route = path => new URL(path, 'https://poseidonstats.com/');
-  for (const path of ['/', '/?lang=en&utm_source=example', '/#visitor-plans']) assert(compactRoute(route(path)));
-  for (const path of ['/?view=full', '/#dashboard', '/#matches', '/#public-pro-demo', '/#pro-analize', '/#intrebari', '/?members=none', '/?members_token=return']) {
-    assert(!compactRoute(route(path)), path);
+function mockFeed(start) {
+  let now = Date.parse(start);
+  const requests = [], published = [];
+  const document = {documentElement:{classList:{add(){},toggle(){}}},readyState:'loading',addEventListener(){},querySelector(){return null;}};
+  const window = {
+    document,location:new URL('https://poseidonstats.com/'),setTimeout,clearTimeout,
+    fetch(path,options) {
+      return new Promise(resolve => requests.push({path,options,resolve}));
+    },
+    PoseidonDossier:{setPublicPredictions(data){published.push(data);}},
+  };
+  class Clock extends Date { static now() { return now; } }
+  runInNewContext(source,{window,URLSearchParams,AbortController,Date:Clock});
+  return {load:window.PoseidonVisitor.loadPublicPredictions,requests,published,advance:time=>{now=Date.parse(time);}};
+}
+
+test('public feed shares the initial request, retries a failure and retains today on a stale refresh', async () => {
+  const {load,requests,published} = mockFeed('2026-11-23T12:00:00Z');
+  const first = load();
+  assert.equal(load(),first);
+  assert.equal(requests[0].path,'data/predictions.json');
+  assert.equal(requests[0].options.credentials,'omit');
+  requests[0].resolve({ok:false});
+  assert.equal(await first,null);
+  const retry = load();
+  const today = {generated_at:'2026-11-23T10:00:00Z',matches:[]};
+  requests[1].resolve({ok:true,json:async()=>today});
+  assert.equal(await retry,today);
+  assert.equal(await load(),today);
+  assert.equal(requests.length,2);
+  const refresh = load(true);
+  requests[2].resolve({ok:true,json:async()=>({generated_at:'2026-11-22T10:00:00Z',matches:[]})});
+  assert.equal(await refresh,today);
+  assert.deepEqual(published,[today]);
+});
+
+test('a late response for the previous Bucharest day cannot replace the new day', async () => {
+  const {load,requests,published,advance} = mockFeed('2026-11-23T21:59:59Z');
+  const previous = load();
+  advance('2026-11-23T22:00:01Z');
+  const next = load();
+  const today = {generated_at:'2026-11-23T22:00:00Z',matches:[]};
+  requests[1].resolve({ok:true,json:async()=>today});
+  requests[0].resolve({ok:true,json:async()=>({generated_at:'2026-11-23T10:00:00Z',matches:[]})});
+  assert.equal(await next,today);
+  assert.equal(await previous,null);
+  assert.deepEqual(published,[today]);
+});
+
+test('the homepage layout does not depend on fragment, campaign query or account state', () => {
+  const route = path => new URL(path,'https://poseidonstats.com/');
+  for (const url of ['/', '/index.html', '/?view=full', '/?lang=en&utm_source=uk', '/#dashboard', '/?members=none', '/?members_token=return']) {
+    for (const state of ['guest','basic','pro','none','login']) assert(compactRoute(route(url),state),url);
   }
-  for (const state of ['basic','pro','none','login']) assert(!compactRoute(route('/'),state));
-  assert(!compactRoute(route('/'),'guest',true));
+  assert(!compactRoute(route('/meciuri.html#dashboard')));
+});
+
+test('subscriber rows require an explicitly locked current local fixture and are ordered and deduplicated', () => {
+  const make = (id,time,more={}) => ({fixture_id:id,match_date:time,home_team:'Home',away_team:'Away',locked:true,...more});
+  const first = make(1,'2026-11-22T22:04:00Z'), last = make(2,'2026-11-23T21:59:59Z');
+  const matches = [last, first, first, make(3,'2026-11-23T22:00:00Z'), {...first,fixture_id:4,free:true},
+    {...first,fixture_id:5,locked:false}, {...first,fixture_id:6,away_team:' '}, {...first,fixture_id:null}];
+  assert.deepEqual(selectLockedMatches({matches},'2026-11-23'),[first,last]);
+  assert.deepEqual(selectLockedMatches(null,'2026-11-23'),[]);
 });
 
 test('compact list takes at most five unlocked current Bucharest fixtures with all three probabilities', () => {
@@ -37,17 +95,25 @@ test('public sample rejects a stale day, a moved kickoff or an incomplete identi
   assert.equal(selectSample({date:today},today),null);
 });
 
-test('compact plan and secondary links maintain price mapping, conversion attribution and original destinations', () => {
-  const markup = html.match(/<main class="visitor-home" data-compact-home>[\s\S]*?<\/main>/)?.[0];
+test('one homepage presents free fixtures, the daily Pro sample and subscriber fixtures before any offer', () => {
+  const markup = html.match(/<main[^>]*data-compact-home[^>]*>[\s\S]*?<\/main>/)?.[0];
   assert(markup);
+  const sections = [...markup.matchAll(/<section[^>]* id="([^"]+)"/g)].map(m=>m[1]);
+  assert.deepEqual(sections,['dashboard','public-pro-demo','meciuri-cu-abonament']);
+  for (const part of ['data-visitor-locked-first','data-visitor-locked-rest','data-visitor-locked-more','data-visitor-member-pro']) assert(markup.includes(part));
+  assert(!html.includes('visitor-expanded'));
+  const catalog = readFileSync(new URL('../meciuri.html',import.meta.url),'utf8');
   for (const [tier,id,price] of [['basic',28975826,5],['pro',28975836,20]]) {
-    assert.match(markup,new RegExp(`${price} USD[\\s\\S]*?rid=${id}[^>]*data-conversion-tier="${tier}" data-conversion-source="planstrip"`));
+    const plan = catalog.match(new RegExp('<article class="conversion-plan conversion-plan-'+tier+'">[\\s\\S]*?</article>'))?.[0];
+    assert(plan?.includes('$'+price));
+    assert(plan.includes('rid='+id) && plan.includes('data-conversion-tier="'+tier+'"'));
   }
-  for (const link of ['?view=full#dashboard','?view=full#dashboard-evidence-details','?view=full#intrebari','?view=full#discord-access-details','track-record.html','metodologie.html']) assert(markup.includes(`href="${link}"`));
-  assert.match(markup,/<section[^>]*data-visitor-sample[^>]* hidden>/);
+  for (const link of ['meciuri.html#dashboard','meciuri.html#pro-analize','meciuri.html#abonament','track-record.html','metodologie.html']) assert(markup.includes('href="'+link+'"'));
   assert.match(markup,/data-i18n="banner.legal"/);
   const dictionary = JSON.parse(readFileSync(new URL('../assets/i18n.json',import.meta.url), 'utf8'));
-  for (const language of Object.keys(dictionary)) {
-    for (const key of markup.matchAll(/data-i18n="([^\"]+)"/g)) assert(dictionary[language][key[1]],`${language}:${key[1]}`);
+  for (const [lang,words] of Object.entries(dictionary)) {
+    for (const key of markup.matchAll(/data-i18n="([^"]+)"/g)) assert(words[key[1]],lang+':'+key[1]);
+    assert(words['visitor.home.lockedMore'].includes('{n}'));
+    assert(words['visitor.home.lockedLess']);
   }
 });

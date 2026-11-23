@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
-"""Gate HTML (6 oct 2026): înainte de git add, index.html trebuie să aibă toate secțiunile și markerii și cel puțin
-atâtea <section> cât în commit-ul anterior. Ieșire ≠0 = NU publica. Pe 3 oct generatorul a șters „Exemplul Pro” și
-nimic n-a observat 3 zile — asta e plasa.
-Uz: gate_html.py [index.html] [--vs HEAD]"""
+"""Verifică separat structura primei pagini și secțiunile generate din catalog."""
 from __future__ import annotations
-import re, subprocess, sys
+import re
+import subprocess
+import sys
 from html.parser import HTMLParser
 from pathlib import Path
 
@@ -16,22 +15,48 @@ OBLIGATORII = ['id="exemplu-pro"', "PRO_SAMPLE_CARD_START", "PRO_SAMPLE_CARD_END
 PERECHI = ["PRO_SAMPLE_CARD", "PRO_TODAY_LIST", "PROOF_STATIC", "DAILY_STATIC", "LEAGUES_LINKS"]
 
 
-def este_compact(html: str) -> bool:
-    class Pagina(HTMLParser):
-        compact = False
+class Structura(HTMLParser):
+    def __init__(self, html: str):
+        super().__init__()
+        self.atribute: list[str] = []
+        self.taguri: list[str] = []
+        self.iduri: set[str] = set()
+        self.feed(html)
+        self.close()
 
-        def handle_starttag(self, tag, attrs):
-            if any(name == "data-compact-home" for name, _ in attrs):
-                self.compact = True
+    def handle_starttag(self, tag, attrs):
+        self.taguri.append(tag)
+        for name, value in attrs:
+            if name.startswith("data-"):
+                self.atribute.append(name)
+            elif name == "id":
+                self.iduri.add(value)
 
-    pagina = Pagina()
-    pagina.feed(html)
-    pagina.close()
-    return pagina.compact
+
+def verifica_prima_pagina(html: str) -> list[str]:
+    pagina = Structura(html)
+    erori = []
+    etape = ("data-visitor-matches", "data-visitor-sample", "data-visitor-locked")
+    for nume in ("data-home-page", "data-compact-home", *etape):
+        if pagina.atribute.count(nume) != 1:
+            erori.append(f"{nume}: trebuie să apară o singură dată")
+    if not erori and sorted(etape, key=pagina.atribute.index) != list(etape):
+        erori.append("ordinea obligatorie este gratuite, exemplul Pro, meciuri cu lacăt")
+    if pagina.taguri.count("main") != 1:
+        erori.append("prima pagină trebuie să conțină un singur element main")
+    if "data-match-catalog" in pagina.atribute or pagina.iduri & {"dovada", "repere-azi", "pro-analize", "discord-access-details"}:
+        erori.append("prima pagină conține blocuri din catalogul complet")
+    return erori
 
 
-def verifica(html: str, vechi: str | None) -> list[str]:
-    compact = este_compact(html)
+def verifica(html: str, vechi: str | None, fisier: str = "") -> list[str]:
+    pagina = Structura(html)
+    if fisier == "index.html" or "data-home-page" in pagina.atribute:
+        return verifica_prima_pagina(html)
+    catalog = "data-match-catalog" in pagina.atribute
+    if fisier == "meciuri.html" and not catalog:
+        return ["catalogul complet nu are identificatorul data-match-catalog"]
+    compact = catalog or "data-compact-home" in pagina.atribute
     fara_exemplu = compact and all(
         re.search(rf"<!-- PRO_SAMPLE_{rol}_START -->\s*<!-- PRO_SAMPLE_{rol}_END -->", html)
         for rol in ("CARD", "PREVIEW")
@@ -50,7 +75,8 @@ def verifica(html: str, vechi: str | None) -> list[str]:
         n0, n1 = len(re.findall(r"<section[\s>]", vechi)), len(re.findall(r"<section[\s>]", html))
         if n1 < n0:
             err.append(f"secțiuni: {n1} acum, {n0} în commit-ul anterior — s-a pierdut conținut")
-        ids0 = set(re.findall(r'<section[^>]*id="([^"]+)"', vechi)); ids1 = set(re.findall(r'<section[^>]*id="([^"]+)"', html))
+        ids0 = set(re.findall(r'<section[^>]*id="([^"]+)"', vechi))
+        ids1 = set(re.findall(r'<section[^>]*id="([^"]+)"', html))
         if ids0 - ids1:
             err.append(f"secțiuni dispărute față de commit-ul anterior: {sorted(ids0 - ids1)}")
     return err
@@ -63,15 +89,25 @@ def main() -> None:
     vechi = None
     if "--vs" in sys.argv:
         ref = sys.argv[sys.argv.index("--vs") + 1]
-        try:
-            vechi = subprocess.check_output(["git", "-C", str(SITE), "show", f"{ref}:{cale.relative_to(SITE).as_posix()}"], text=True)
-        except Exception as e:
-            print(f"[gate_html] nu pot citi {ref}: {e}")
-    err = verifica(html, vechi)
+        rel = cale.relative_to(SITE).as_posix()
+        git = ["git", "-C", str(SITE), "show"]
+        rezultat = subprocess.run([*git, f"{ref}:{rel}"], text=True, capture_output=True)
+        if rezultat.returncode == 0:
+            vechi = rezultat.stdout
+        elif rel == "meciuri.html":
+            # Prima publicare după separare: comparăm catalogul cu secțiunile sale din vechea pagină.
+            index = subprocess.check_output([*git, f"{ref}:index.html"], text=True)
+            principal = re.search(r'<main class="container visitor-expanded"[^>]*>.*?</main>', index, re.S)
+            if principal is None:
+                sys.exit(f"[gate_html] Nu pot identifica vechiul catalog în {ref}.")
+            vechi = principal.group()
+        else:
+            sys.exit(f"[gate_html] Nu pot citi {ref}:{rel}.")
+    err = verifica(html, vechi, cale.name)
     if err:
-        print("[gate_html] BLOCAT: " + " | ".join(err)); sys.exit(1)
-    n = len(PERECHI) + este_compact(html)
-    print(f"[gate_html] OK: {cale.name}, {len(re.findall(r'<section[\s>]', html))} secțiuni, markeri {n}/{n}")
+        print("[gate_html] BLOCAT: " + " | ".join(err))
+        sys.exit(1)
+    print(f"[gate_html] OK: {cale.name}, {len(re.findall(r'<section[\s>]', html))} secțiuni")
 
 
 if __name__ == "__main__":

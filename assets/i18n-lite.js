@@ -17,7 +17,7 @@
   };
 
   function languageHref(href, language) {
-    if (!englishLeague) return href;
+    if ((!englishLeague && !requestedLanguage()) || !href || href.charAt(0) === "#") return href;
     var url;
     try { url = new URL(href, document.baseURI); } catch (e) { return href; }
     if (url.origin !== new URL(location.href).origin
@@ -27,7 +27,7 @@
   }
 
   function updateLanguageLinks(language) {
-    if (!englishLeague) return;
+    if (!englishLeague && !requestedLanguage()) return;
     document.querySelectorAll("a[href]").forEach(function (link) {
       var href = link.getAttribute("href");
       var localized = languageHref(href, language);
@@ -275,10 +275,33 @@
         return;
       }
       L = selected;
-      dictionaryReady.then(traduceCandGata).catch(function () {});
+      loadDictionary().then(traduceCandGata).catch(function () {});
     });
   }
   selector();
-  var dictionaryReady = fetch(sus + "assets/i18n.json?v=20261119-functions", { cache: "no-cache" }).then(function (r) { return r.json(); });
-  dictionaryReady.then(traduceCandGata).catch(function () {});
+  var dictionaryReady;
+  function loadDictionary() {
+    if (!dictionaryReady) {
+      dictionaryReady = (async function () {
+        for (var attempt = 0; attempt < 2; attempt++) {
+          try {
+            var options = {cache: "no-cache"};
+            if (typeof AbortSignal !== "undefined" && AbortSignal.timeout) options.signal = AbortSignal.timeout(8000);
+            var response = await fetch(sus + "assets/i18n.json?v=20261119-functions", options);
+            if (response.ok === false) throw new Error("HTTP " + response.status);
+            var catalog = await response.json();
+            if (!LANGS.every(function (lang) { return catalog[lang] && catalog[lang]["lang.name"]; })) throw new Error("Incomplete translations");
+            return catalog;
+          } catch (error) {
+            if (attempt) throw error;
+            await new Promise(function (resolve) { setTimeout(resolve, 600); });
+          }
+        }
+      })().catch(function (error) { dictionaryReady = null; throw error; });
+    }
+    return dictionaryReady;
+  }
+  function translatePage() { loadDictionary().then(traduceCandGata).catch(function () {}); }
+  translatePage();
+  if (window.addEventListener) window.addEventListener("online", function () { if (!dictionaryReady) translatePage(); });
 })();

@@ -35,3 +35,17 @@ def test_pagina_compacta_verifica_markerii_ambelor_carduri():
 
 def test_pagina_veche_cere_card_chiar_daca_sentinela_apare_in_text():
     assert 'lipsește: class="pro-card"' in G.verifica(pagina('<!-- data-compact-home -->'), None)
+
+
+def test_prima_pagina_respinge_regresia_la_catalog_chiar_fara_marker():
+    html = pagina('<section data-compact-home></section>')
+    erori = G.verifica(html, None, "index.html")
+    assert any("data-home-page" in eroare for eroare in erori)
+    assert any("blocuri din catalog" in eroare for eroare in erori)
+
+
+def test_catalogul_cere_markeri_de_generare_si_permita_o_zi_fara_mostra():
+    html = pagina('<section data-match-catalog></section>')
+    assert G.verifica(html, None, "meciuri.html") == []
+    assert G.verifica(html.replace("data-match-catalog", ""), None, "meciuri.html")
+    assert G.verifica(html.replace("PRO_SAMPLE_PREVIEW_START", "INVALID"), None, "meciuri.html")

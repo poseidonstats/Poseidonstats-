@@ -310,7 +310,7 @@ test('fetch failure renders a visible unavailable state and calls only local pub
 });
 
 test('navigation and date expose translated accessible names in all six languages', () => {
-  const html = readFileSync(new URL('../index.html',import.meta.url),'utf8');
+  const html = readFileSync(new URL('../meciuri.html',import.meta.url),'utf8');
   assert.match(html,/<nav\b[^>]*aria-label="Navigare principală"[^>]*data-i18n-attr="aria-label:dashboard.nav.label"/);
   assert.match(html,/<label for="dashboard-date" data-i18n="matchlist.date">Data meciurilor<\/label>/);
   assert.match(html,/<select id="dashboard-date"><\/select>/);
@@ -324,7 +324,7 @@ test('analysis actions route anonymous, Basic and Pro visitors to accessible exi
   assert.deepEqual(dashboard.analysisAction(null),{href:'#exemplu-pro',key:'dashboard.analysis.read',sample:true});
   assert.deepEqual(dashboard.analysisAction('basic'),{href:'analize/index.html',key:'dashboard.analysis.readarchive',sample:false});
   assert.deepEqual(dashboard.analysisAction('pro'),{href:'#pro-analize',key:'dashboard.analysis.member',sample:false});
-  const html = readFileSync(new URL('../index.html',import.meta.url),'utf8');
+  const html = readFileSync(new URL('../meciuri.html',import.meta.url),'utf8');
   for (const state of [null,'basic','pro']) {
     const action=dashboard.analysisAction(state);
     if (action.href.startsWith('#')) assert(html.includes(`id="${action.href.slice(1)}"`));
@@ -434,7 +434,7 @@ test('dashboard translations keep correct-decision/evaluated terminology and pre
 });
 
 test('new dashboard and header links avoid member-hidden intro targets', () => {
-  const html=readFileSync(new URL('../index.html',import.meta.url),'utf8');
+  const html=readFileSync(new URL('../meciuri.html',import.meta.url),'utf8');
   const start=html.indexOf('<header>'), end=html.indexOf('<div class="dashboard-detail-heading">');
   assert(start >= 0 && end > start);
   const newUI=html.slice(start,end);
@@ -478,7 +478,12 @@ test('service worker shell includes homepage assets once and leaves external or 
   runInContext(current,context);
   assert.match(runInContext('CACHE',context),/^poseidon-v\d+$/);
   const shell=Array.from(runInContext('SHELL',context));
-  for (const asset of ['./assets/home-modern.css','./assets/home-dashboard.js']) {
+  const homePaths=Array.from(runInContext('HOME_PATHS',context));
+  for (const path of ['', 'index.html', 'meciuri.html']) {
+    assert(homePaths.includes(path), `offline navigation validates the release for /${path}`);
+    assert(runInContext('isPublicPath',context)(path), `public cache accepts /${path}`);
+  }
+  for (const asset of ['./index.html','./meciuri.html','./assets/home-modern.css','./assets/home-dashboard.js']) {
     assert.equal(shell.filter(value=>value===asset).length,1);
     assert(readFileSync(new URL('../'+asset.slice(2),import.meta.url)).length>0);
   }
@@ -500,7 +505,7 @@ test('explicit synthetic public fixture preserves finite probabilities when dail
 });
 
 test('demonstration and honest evidence precede truthful plans and activation', () => {
-  const html=readFileSync(new URL('../index.html',import.meta.url),'utf8');
+  const html=readFileSync(new URL('../meciuri.html',import.meta.url),'utf8');
   const hero=html.indexOf('<div class="dashboard-hero">');
   const plans=html.indexOf('<section class="conversion-plans" id="abonament"');
   const dashboardIndex=html.indexOf('id="dashboard"');
@@ -544,7 +549,7 @@ test('conversion labels are complete in six languages and legacy dictionary valu
 });
 
 test('conversion member visibility, privacy script order and numeric display contracts are retained', () => {
-  const html=readFileSync(new URL('../index.html',import.meta.url),'utf8');
+  const html=readFileSync(new URL('../meciuri.html',import.meta.url),'utf8');
   const css=readFileSync(new URL('../assets/home-modern.css',import.meta.url),'utf8');
   const scripts=Array.from(html.matchAll(/<script\b[^>]*\bsrc="([^"]+)"[^>]*>/g),m=>({tag:m[0],src:m[1],index:m.index}));
   const bootstrap=scripts.find(script=>script.src.startsWith('assets/conversion.js?'));
@@ -569,7 +574,7 @@ test('conversion member visibility, privacy script order and numeric display con
 });
 
 test('long original content and metric mounts remain reachable inside named closed disclosures', () => {
-  const html=readFileSync(new URL('../index.html',import.meta.url),'utf8');
+  const html=readFileSync(new URL('../meciuri.html',import.meta.url),'utf8');
   const stack=[],ranges=[];
   for (const match of html.matchAll(/<details\b[^>]*>|<\/details\s*>/g)) {
     if (match[0].startsWith('</')) {
@@ -607,7 +612,7 @@ test('long original content and metric mounts remain reachable inside named clos
 });
 
 test('search, league choice, honest copy and activation labels are complete without rewriting existing translations', () => {
-  const html=readFileSync(new URL('../index.html',import.meta.url),'utf8');
+  const html=readFileSync(new URL('../meciuri.html',import.meta.url),'utf8');
   const original=JSON.parse(execFileSync('git',['show','HEAD:assets/i18n.json'],{encoding:'utf8',cwd:new URL('..',import.meta.url)}));
   const keys=Object.keys(i18n.ro).filter(key=>key.startsWith('simplify.')).sort();assert(keys.length>=19);
   for (const lang of ['ro','en','es','it','fr','id']) {
@@ -658,7 +663,7 @@ test('dashboard rows expose each probability and access cell with its table head
 });
 
 test('both native example fragments target the visible card in the first HTML response',()=>{
-  const html=readFileSync(new URL('../index.html',import.meta.url),'utf8');
+  const html=readFileSync(new URL('../meciuri.html',import.meta.url),'utf8');
   const visible=html.slice(html.indexOf('id="exemplu-pro"'),html.indexOf('data-dashboard-pro-summary'));
   assert.match(visible,/id="public-pro-demo"><h2\b/);
   assert.match(html,/<section class="pro-sample" id="exemplu-pro-source"/);

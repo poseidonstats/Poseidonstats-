@@ -11,7 +11,7 @@ const dictionary=JSON.parse(readFileSync(new URL('../assets/i18n.json',import.me
 const languages=['ro','en','es','it','fr','id'];
 
 test('the hero shows both store badges under its actions without a separate English language link', () => {
-  const homepage = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
+  const homepage = readFileSync(new URL('../meciuri.html', import.meta.url), 'utf8');
   const hero = homepage.slice(homepage.indexOf('<section class="dashboard-opening">'), homepage.indexOf('id="dashboard"'));
   const downloads = hero.match(/class="dashboard-hero-actions">[\s\S]*?<\/div>\s*<div class="app-store-download">([\s\S]*?)<\/div>/)?.[1];
   assert.ok(downloads, 'store badges directly follow the hero actions');
@@ -152,15 +152,21 @@ test('actual tooltip renderers translate raw/calibration/skill text and keep att
   }
 });
 
-test('homepage market filters use translated labels and homepage assets use their expected release versions', () => {
-  const html=readFileSync(new URL('../index.html',import.meta.url),'utf8');
+test('catalogue market filters use translated labels and HTML entries use the service worker release', () => {
+  const html=readFileSync(new URL('../meciuri.html',import.meta.url),'utf8');
   for (const market of ['btts','1x2','dc_1x','dc_x2','dc_12']) {
     const tag=Array.from(html.matchAll(/<option\b[^>]*>/g),m=>m[0]).find(value=>value.includes(`value="${market}"`));
     const key=tag?.match(/data-i18n="([^"]+)"/)?.[1];
     assert.equal(key,`filters.market.${market}`);
     for (const language of languages) assert(dictionary[language][key]);
   }
-  const release='20261123-visitor-home';
+  const worker=readFileSync(new URL('../sw.js',import.meta.url),'utf8');
+  const release=worker.match(/^const RELEASE = "([^"]+)";/m)?.[1];
+  assert.ok(release, 'service worker declares a release');
+  const home=readFileSync(new URL('../index.html',import.meta.url),'utf8');
+  for (const asset of ['app.js','members.js','home-visitor.js','home-visitor.css','member-dossier.js','member-dossier.css','conversion.js']) {
+    assert(home.includes(`assets/${asset}?release=${release}`), `clean homepage loads ${asset} for the current release`);
+  }
   for (const asset of ['country-label.js','app.js','member-dossier.js','member-dossier.css','home-dashboard.js','home-watchlist.js','home-modern.css','home-visitor.css','home-visitor.js','conversion.js']) {
     assert(html.includes(`assets/${asset}?release=${release}`));
   }
@@ -168,8 +174,6 @@ test('homepage market filters use translated labels and homepage assets use thei
   for (const asset of ['i18n.json','pro-report.js']) {
     assert(app.includes(`assets/${asset}?release=${release}`));
   }
-  const worker=readFileSync(new URL('../sw.js',import.meta.url),'utf8');
-  assert(worker.includes(`const RELEASE = "${release}";`));
   const releaseHashes=worker.match(/const RELEASE_ASSET_SHA256 = \{([\s\S]*?)\n\};/)?.[1] ?? '';
   for (const asset of ['country-label.js','app.js','member-dossier.js','member-dossier.css','home-dashboard.js','home-watchlist.js','home-modern.css','home-visitor.css','home-visitor.js','conversion.js','pro-report.js','pro-report.css','pro-context.js','members.js','home-watchlist.js','conversion.js']) {
     const bytes=readFileSync(new URL(`../assets/${asset}`,import.meta.url));
@@ -215,4 +219,94 @@ test('historical proof notice stays singular, translates on rerender, and links 
     assert.equal(notices[0].children[0].attributes.href,'track-record.html');
     assert.equal(notices[0].children[0].textContent,dictionary[language]['proof.previous.link']);
   }
+});
+
+test('a campaign language follows internal menu links through another page and preserves anchors', () => {
+  const origin = 'https://poseidonstats.com';
+  const addresses = ['track-record.html', 'meciuri.html?ref=site#dashboard', '#local', 'https://www.patreon.com/checkout'];
+  const links = addresses.map(href => ({
+    href: new URL(href, origin + '/simulator.html').href,
+    getAttribute() { return href; },
+    hasAttribute() { return false; },
+    setAttribute(_, value) { this.href = value; },
+  }));
+  const ctx = createContext({location:{origin, search:'?lang=en'}, LANG:'en', requestedLanguage:()=> 'en',
+    URL, document:{querySelectorAll:()=>links}});
+  runInContext(actual('function updateNavigationLanguage()', 'function _loc()') + '\nupdateNavigationLanguage()', ctx);
+  assert.equal(links[0].href,'/track-record.html?lang=en');
+  assert.equal(links[1].href,'/meciuri.html?ref=site&lang=en#dashboard');
+  assert.equal(links[2].href,origin+'/simulator.html#local');
+  assert.equal(links[3].href,addresses[3]);
+});
+
+test('the interface recovers from a transient dictionary failure and applies the requested language once', async () => {
+  const requests = [], events = [], renders = [];
+  const ctx = createContext({
+    I18N: null, I18N_URL: 'assets/i18n.json', LIMBI_SITE: languages, LANG: 'ro',
+    detectLang: () => 'en',
+    fetch: async (url, options) => {
+      requests.push([url, options.cache]);
+      if (requests.length === 1) return {ok:false, status:503};
+      return {ok:true, json: async () => dictionary};
+    },
+    setTimeout: callback => queueMicrotask(callback),
+    console: {error: () => {}}, Event,
+    window: {dispatchEvent: event => events.push(event.type)},
+    applyI18n: () => renders.push(ctx.LANG),
+    updateNavigationLanguage() {}, puneRezumatInCaseta() {}, mountLangSwitcher() {},
+    loadLiveStats: async () => {}, injectLiveStats() {}, refreshTranslatedViews() {},
+  });
+  runInContext([
+    actual('let _i18nGataResolve = null;', 'function mountLangSwitcher()'),
+    actual('async function fetchJSON(url) {','function pctClass('),
+  ].join('\n'), ctx);
+  await Promise.all([ctx.initI18n(), ctx.initI18n()]);
+  await ctx.initI18n();
+  assert.deepEqual(requests, Array(2).fill(['assets/i18n.json','no-cache']));
+  assert.deepEqual(renders, ['en']);
+  assert.deepEqual(events, ['poseidon:dictionary-ready']);
+});
+
+test('homepage links and previous bookmarks still point to real sections and preserve the chosen language', () => {
+  const home = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
+  const catalogue = readFileSync(new URL('../meciuri.html', import.meta.url), 'utf8');
+  const router = [...home.matchAll(/<script>([\s\S]*?)<\/script>/g)]
+    .map(match => match[1]).find(code => code.includes('hashchange') && code.includes('meciuri.html'));
+  assert.ok(router, 'existing section bookmarks are routed by the initial HTML');
+  for (const [,id] of home.matchAll(/href="meciuri\.html#([^"]+)"/g)) {
+    assert(catalogue.includes(`id="${id}"`), `catalogue exposes #${id} to homepage navigation`);
+  }
+  for (const id of ['dashboard','exemplu-pro','visitor-plans','abonament','pro-analize','dashboard-evidence-details',
+    'matches','intrebari','discord-access-details','predictions','cum-functioneaza','plans','lista-completa','predictii','rezultate']) {
+    const url = new URL('https://poseidonstats.com/?lang=en#' + id);
+    let destination=url;
+    const location={hash:url.hash, search:url.search, replace:next=>{destination=new URL(next,url);}};
+    runInContext(router, createContext({location, window:{addEventListener() {}}}));
+    assert.equal(destination.search, '?lang=en');
+    const document=destination.pathname==='/' ? home : catalogue;
+    assert(['/', '/meciuri.html'].includes(destination.pathname));
+    assert(document.includes(`id="${destination.hash.slice(1)}"`), `#${id} resolves to an existing target at ${destination.pathname}${destination.hash}`);
+  }
+});
+
+test('a quick reconnect translates views that already rendered their fallback while offline', async () => {
+  let online=false, now=1000, refreshes=0;
+  const ctx=createContext({
+    I18N:null, I18N_URL:'assets/i18n.json', LIMBI_SITE:languages, LANG:'ro',
+    Date:class extends Date {static now() {return now;}},
+    setTimeout:callback=>queueMicrotask(callback),
+    fetchJSON:async()=>online ? dictionary : null,
+    detectLang:()=> 'en', applyI18n() {}, updateNavigationLanguage() {}, puneRezumatInCaseta() {},
+    mountLangSwitcher() {}, window:{dispatchEvent() {}}, Event,
+    loadLiveStats:async()=>{}, injectLiveStats() {},
+    refreshTranslatedViews:()=>{refreshes++;},
+  });
+  runInContext(actual('let _i18nGataResolve = null;', 'function mountLangSwitcher()'),ctx);
+  await Promise.all([ctx.initI18n(), ctx.i18nGata()]);
+  assert.equal(ctx.I18N,null);
+  now+=5000;
+  online=true;
+  await ctx.initI18n();
+  assert.equal(ctx.LANG,'en');
+  assert.equal(refreshes,1, 'refresh the already rendered match lists and simulator');
 });

@@ -32,6 +32,6 @@ def test_displays_historical_data_limit_without_attribution():
 
 def test_shipped_html_has_no_vendor_references():
     root = Path(__file__).resolve().parents[1]
-    paths = [root / "index.html", *(root / "analize").glob("*.html")]
+    paths = [root / "index.html", root / "meciuri.html", *(root / "analize").glob("*.html")]
     provider = re.compile(r"\bapi[-‐‑–—\s]*football\b", re.IGNORECASE)
     assert not [path for path in paths if provider.search(path.read_text(encoding="utf-8"))]

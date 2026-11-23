@@ -5,7 +5,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 
 const WORKER = "https://poseidon-members.poseidonstats.workers.dev";
-for (const f of ["index.html", "simulator.html"]) {
+for (const f of ["index.html", "meciuri.html", "simulator.html"]) {
   test(`${f}: connect-src include Worker-ul de membri`, () => {
     const html = fs.readFileSync(new URL("../" + f, import.meta.url), "utf8");
     const m = html.match(/<meta http-equiv="Content-Security-Policy" content="([^"]+)"/);

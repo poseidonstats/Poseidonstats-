@@ -2,10 +2,10 @@
 """Conținut static zilnic pentru SEO — rulat de daily_publish.sh la fiecare publish.
 
 Face trei lucruri:
-  1. Rescrie secțiunea dintre markerii DAILY_STATIC din index.html cu numărul
+  1. Rescrie secțiunea dintre markerii DAILY_STATIC din meciuri.html cu numărul
      meciurilor zilei și accesul la filtre. Vizitatorul alege piața; nu generăm
      un pariu principal sau un clasament după probabilitate.
-  2. Rescrie secțiunea dintre markerii PROOF_STATIC din index.html cu tabelul
+  2. Rescrie secțiunea dintre markerii PROOF_STATIC din meciuri.html cu tabelul
      „ce s-a adeverit" din data/history.json (cumulated_markets) — dovada de
      conversie de pe homepage, statică pentru crawler și niciodată inventată.
   3. Actualizează <lastmod> în sitemap.xml pentru paginile cu changefreq daily
@@ -42,7 +42,7 @@ PRED = SITE / "data" / "predictions.json"
 HIST = SITE / "data" / "history.json"
 AUDIT = SITE / "data" / "audit.json"
 I18N = SITE / "assets" / "i18n.json"
-INDEX = SITE / "index.html"
+INDEX = SITE / "meciuri.html"
 SITEMAP = SITE / "sitemap.xml"
 
 START = "<!-- DAILY_STATIC_START -->"
@@ -313,7 +313,7 @@ def _fara_sectiuni_straine(vechi: str, nou: str, nume: str) -> None:
 def update_index() -> None:
     html = INDEX.read_text()
     if START not in html or END not in html:
-        sys.exit(f"[gen_static_daily] markerii {START} lipsesc din index.html — abort")
+        sys.exit(f"[gen_static_daily] markerii {START} lipsesc din meciuri.html — abort")
     sect = build_section()
     _fara_sectiuni_straine(
         re.search(re.escape(START) + r".*?" + re.escape(END), html, flags=re.S).group(
@@ -349,5 +349,5 @@ if __name__ == "__main__":
     update_proof()
     update_sitemap()
     print(
-        f"[gen_static_daily] OK — index.html + sitemap.xml la {bucharest_today().date().isoformat()}"
+        f"[gen_static_daily] OK — meciuri.html + sitemap.xml la {bucharest_today().date().isoformat()}"
     )

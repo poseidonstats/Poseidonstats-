@@ -125,7 +125,7 @@ test('an export failure remains unavailable rather than becoming a no-search-res
 });
 
 test('generated Pro fallback shows only the match, public editorial selection and one reading control before expansion',()=>{
-  const html=readFileSync(new URL('../index.html',import.meta.url),'utf8');
+  const html=readFileSync(new URL('../meciuri.html',import.meta.url),'utf8');
   const preview=html.split('<!-- PRO_SAMPLE_PREVIEW_START -->')[1].split('<!-- PRO_SAMPLE_PREVIEW_END -->')[0];
   const source=html.split('<!-- PRO_SAMPLE_CARD_START -->')[1].split('<!-- PRO_SAMPLE_CARD_END -->')[0];
   assert.match(preview,/<article class="dashboard-pro-summary pro-card"[^>]+data-dashboard-pro-fallback/);

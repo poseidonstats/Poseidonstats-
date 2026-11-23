@@ -1,10 +1,27 @@
 /* Public responses only. Keep the homepage and its versioned assets together. */
-const CACHE = "poseidon-v126";
-const RELEASE = "20261123-visitor-home";
-const PREVIOUS_CACHE = "poseidon-v125";
-const PREVIOUS_RELEASE = "20261123-grouped-matches-r2";
+const CACHE = "poseidon-v127";
+const RELEASE = "20261123-visitor-feed";
+const PREVIOUS_CACHE = "poseidon-v126";
+const PREVIOUS_RELEASE = "20261123-visitor-home";
 // Update with RELEASE when these static files change. The daily dictionary is validated separately.
 const RELEASE_ASSET_SHA256 = {
+  "assets/app.js": "1ce1fe174a69e3c64860ae2746ca4a1fe25e88788c07270568e9ecae4c349ad3",
+  "assets/home-dashboard.js": "f91aed33b17300e1b92af00891bde976fac4793f9e64e374aced546da46645b9",
+  "assets/i18n-lite.js": "c5bd8e691a9640a986df7d8186b376480452ec5cc7870eed374bce3ff9c4be76",
+  "assets/member-dossier.css": "0e4a89b6aba2e0ec1aca1f60d4c10fc7b52d6a26467899c733a4e9718fb646e2",
+  "assets/member-dossier.js": "aacbff031cf599cdef22848b7a83c802cbcfc93f8b637799405a651d9696b884",
+  "assets/pro-report.js": "59f49fe21a062c564eaa3ca0b7dea418fe88f3758e8cfa6b6e97e2e5941c9b0b",
+  "assets/pro-context.js": "85883d7956fd08c68addc2966880103308b678f902c92eb4a3c68d719c3c987c",
+  "assets/home-modern.css": "7d895e32f3dc529a75dcbe83a2075c31a92472159876811c73fa3b6c300b28eb",
+  "assets/members.js": "a25510651b61bda03af790d9f38aaa6e95027343ac57335437c305737eb029ed",
+  "assets/home-watchlist.js": "ab2473d038e3c2ac0f2d465dd35afd7ed616d38926a270c81ea9190465be35db",
+  "assets/pro-report.css": "0354032afbda4e020f84c16c62960f6bf0d42256578e32b9843b76c3721b7939",
+  "assets/conversion.js": "2e83078674dd83600fb53f70e65dc884605d5a7b07a50e3788a8ea8ed413c729",
+  "assets/country-label.js": "8d2bc3956ddfab93f81fb7341b677a12ecb8525bdb603e05ca93b4401c8d34bd",
+  "assets/home-visitor.css": "d3a6f18da617d6e730a556138004fa4a75918ed1ba7cb0b39cb009c9a0fcc57c",
+  "assets/home-visitor.js": "4f7777552dcb375919d881824619b58930e3ee2b84956a4eb184a23a97ddda09",
+};
+const PREVIOUS_ASSET_SHA256 = {
   "assets/app.js": "cca7815571595bb638013d9920a0f8a1f13c6160371b2ff8feaf9af5c35a19b7",
   "assets/home-dashboard.js": "e6219fb93845f256f35a4a668ccb755c07b7113fa98dbe60c232b89e45691d06",
   "assets/i18n-lite.js": "f6d559fb6196d90e2d8ef8a5dbbec115d5912df42c3b15bd6c24e575bc6fc031",
@@ -21,22 +38,7 @@ const RELEASE_ASSET_SHA256 = {
   "assets/home-visitor.css": "c41ee79f9e0bc2ae93163b424c907acdd36858f991dbaf39ec203ae0ba096755",
   "assets/home-visitor.js": "08cc0a3f8da4fbaee6986cc2895d6060f2b1c7ce04490b81a22d3b38b6b9fcfb",
 };
-const PREVIOUS_ASSET_SHA256 = {
-  "assets/app.js": "03b8196bb1ec3c34a0c5b853ba4baa203558abc46e56d2f0f86e35050eb6bd99",
-  "assets/home-dashboard.js": "bae42f2bc33d5ac097f7763d0f9d07298665126380727a4fa5d93a2f8f1ce03a",
-  "assets/i18n-lite.js": "f6d559fb6196d90e2d8ef8a5dbbec115d5912df42c3b15bd6c24e575bc6fc031",
-  "assets/member-dossier.css": "0e4a89b6aba2e0ec1aca1f60d4c10fc7b52d6a26467899c733a4e9718fb646e2",
-  "assets/member-dossier.js": "f1bbd43473f224800d3df8d9ae6943b1a05fc96135b2c6a526eee96f532ed76c",
-  "assets/pro-report.js": "59f49fe21a062c564eaa3ca0b7dea418fe88f3758e8cfa6b6e97e2e5941c9b0b",
-  "assets/pro-context.js": "85883d7956fd08c68addc2966880103308b678f902c92eb4a3c68d719c3c987c",
-  "assets/home-modern.css": "7d895e32f3dc529a75dcbe83a2075c31a92472159876811c73fa3b6c300b28eb",
-  "assets/members.js": "a25510651b61bda03af790d9f38aaa6e95027343ac57335437c305737eb029ed",
-  "assets/home-watchlist.js": "ab2473d038e3c2ac0f2d465dd35afd7ed616d38926a270c81ea9190465be35db",
-  "assets/pro-report.css": "0354032afbda4e020f84c16c62960f6bf0d42256578e32b9843b76c3721b7939",
-  "assets/conversion.js": "2e83078674dd83600fb53f70e65dc884605d5a7b07a50e3788a8ea8ed413c729",
-  "assets/country-label.js": "8d2bc3956ddfab93f81fb7341b677a12ecb8525bdb603e05ca93b4401c8d34bd",
-};
-const HOME_PATHS = ["", "index.html"];
+const HOME_PATHS = ["", "index.html", "meciuri.html"];
 const HOME_ASSETS = [
   "assets/country-label.js",
   "assets/members.js",
@@ -55,6 +57,7 @@ const RELEASE_PATHS = new Set([...Object.keys(RELEASE_ASSET_SHA256), I18N_PATH])
 const SHELL = [
   "./",
   "./index.html",
+  "./meciuri.html",
   "./simulator.html",
   "./istoric.html",
   "./track-record.html",
@@ -108,7 +111,7 @@ function releaseUrl(path, version) {
 
 function isPublicPath(path) {
   return path !== null && (path === "" || /^(?:assets|data|analize|predictii|en)\//.test(path)
-    || /^(?:index|simulator|istoric|track-record|metodologie|statistici-pariuri|terms|privacy)\.html$/.test(path)
+    || /^(?:index|meciuri|simulator|istoric|track-record|metodologie|statistici-pariuri|terms|privacy)\.html$/.test(path)
     || path === "manifest.json");
 }
 
@@ -148,7 +151,7 @@ async function matchesRelease(path, response, version = RELEASE) {
         && dictionary?.[lang]?.["matchlist.back"] && dictionary?.[lang]?.["matchlist.halfUnavailable"]
         && (version === PREVIOUS_RELEASE || (["freeTitle", "freeNote", "freeTotal"]
           .every(key => Boolean(dictionary?.[lang]?.[`dashboard.chart.${key}`]))
-          && ["title", "freeTitle", "freeOne", "free", "empty", "basic", "pro"]
+          && ["title", "freeTitle", "freeOne", "free", "empty", "basic", "pro", "lockedTitle", "lockedMore", "lockedLess"]
             .every(key => Boolean(dictionary?.[lang]?.[`visitor.home.${key}`]))))));
   }
   return hasDigest(response, RELEASE_ASSET_SHA256[path]);
@@ -207,7 +210,7 @@ button.addEventListener("click",()=>location.reload());
 self.addEventListener("install", event => {
   event.waitUntil((async () => {
     const cache = await caches.open(CACHE);
-    // Both home entry points and the scoped assets must be ready before activation.
+    // The home entry points, catalog and the scoped assets must be ready before activation.
     const requiredPaths = [...HOME_PATHS, ...RELEASE_PATHS];
     await Promise.all(requiredPaths.map(async path => {
       const request = new Request(RELEASE_PATHS.has(path) ? releaseUrl(path, RELEASE) : new URL(path, SCOPE),

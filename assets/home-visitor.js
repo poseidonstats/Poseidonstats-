@@ -1,4 +1,4 @@
-/* Compact homepage for visitors. The existing member and complete views stay in this document. */
+/* Daily public homepage. The full catalog uses the shared public feed from its own page. */
 (function (root, factory) {
   if (typeof module === 'object' && module.exports) module.exports = factory();
   else root.PoseidonVisitor = factory(root);
@@ -14,19 +14,27 @@
   const markets = ['prob_home','prob_draw','prob_away'];
   const probability = value => typeof value === 'number' && Number.isFinite(value) && value >= 0 && value <= 1;
 
-  function compactRoute(location, account = 'guest', webFree = false) {
-    const params = new URLSearchParams(location.search);
-    return !webFree && account === 'guest' && params.get('view') !== 'full' && !params.has('members')
-      && !params.has('members_token') && (!location.hash || location.hash === '#visitor-plans');
+  function compactRoute(location) {
+    return location.pathname === '/' || location.pathname === '/index.html';
+  }
+
+  function dailyFixtures(data, today, include) {
+    if (!Array.isArray(data?.matches) || !validDay(today)) return [];
+    const rows = data.matches.filter(row => row && include(row) && day(row.match_date) === today &&
+      Number.isSafeInteger(row.fixture_id) && row.fixture_id > 0 &&
+      typeof row.home_team === 'string' && row.home_team.trim() &&
+      typeof row.away_team === 'string' && row.away_team.trim());
+    rows.sort((a,b) => Date.parse(a.match_date) - Date.parse(b.match_date) || a.fixture_id - b.fixture_id);
+    return [...new Map(rows.map(row => [row.fixture_id,row])).values()];
   }
 
   function selectFreeMatches(data, today) {
-    if (!Array.isArray(data?.matches) || !validDay(today)) return [];
-    const eligible = data.matches.filter(row => row?.free === true && row.locked !== true && day(row.match_date) === today
-      && Number.isSafeInteger(row.fixture_id) && row.fixture_id > 0 && typeof row.home_team === 'string' && row.home_team.trim()
-      && typeof row.away_team === 'string' && row.away_team.trim() && markets.every(key => probability(row[key])));
-    eligible.sort((a,b) => Date.parse(a.match_date) - Date.parse(b.match_date) || a.fixture_id - b.fixture_id);
-    return [...new Map(eligible.map(row => [row.fixture_id,row])).values()].slice(0,5);
+    return dailyFixtures(data,today,row => row.free === true && row.locked !== true &&
+      markets.every(key => probability(row[key]))).slice(0,5);
+  }
+
+  function selectLockedMatches(data, today) {
+    return dailyFixtures(data,today,row => row.locked === true && row.free !== true);
   }
 
   function selectSample(payload, today) {
@@ -38,12 +46,12 @@
     return match;
   }
 
-  if (!view) return {compactRoute, selectFreeMatches, selectSample};
+  if (!view) return {compactRoute, selectFreeMatches, selectLockedMatches, selectSample};
   const doc = view.document, html = doc.documentElement;
   html.classList.add('visitor-no-sample');
   html.classList.toggle('visitor-compact',compactRoute(view.location));
-  let predictions, history, dataReady = false, liveDay = '', revision = 0;
-  let currentSample = null;
+  let predictions, history, readyDay = '', liveDay = '', revision = 0;
+  let predictionRequest, sampleInFlightDay = '', currentSample = null;
   const tr = (key, vars = {}) => Object.entries(vars).reduce((text,[name,value]) => text.replace(`{${name}}`, value),view.t(key));
   const locale = () => ({ro:'ro-RO',en:'en-GB',es:'es-ES',it:'it-IT',fr:'fr-FR',id:'id-ID'})[html.lang] || 'ro-RO';
   const clock = value => new Intl.DateTimeFormat(locale(),{timeZone:zone,hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(Date.parse(value));
@@ -54,11 +62,15 @@
     return el;
   };
 
-  function syncView() {
+  function hasCatalogAccess() {
     const member = view.PoseidonMembers;
-    const state = doc.getElementById('members-bar')?.dataset.accountState;
-    const account = member?.tier?.() || state || 'guest';
-    html.classList.toggle('visitor-compact',compactRoute(view.location,account,Boolean(member?.webFreeDay?.())));
+    return ['basic','pro'].includes(member?.tier?.()) || Boolean(member?.webFreeDay?.());
+  }
+
+  function syncView() {
+    const link = doc.querySelector('[data-visitor-member-pro]');
+    if (link) link.hidden = !(view.PoseidonMembers?.tier?.() === 'pro' || view.PoseidonMembers?.webFreeDay?.());
+    html.classList.toggle('visitor-catalog-access',hasCatalogAccess());
   }
 
   function syncLinks() {
@@ -69,27 +81,71 @@
     }
   }
 
+  let remainingLocked = [];
+
+  function lockedRow(row) {
+    const li = doc.createElement('li');
+    const time = text('time',clock(row.match_date),'visitor-time');
+    time.dateTime = row.match_date;
+    const name = doc.createElement('div');
+    name.className = 'visitor-fixture';
+    name.append(text('small',row.league || ''),text('strong',`${row.home_team} – ${row.away_team}`));
+    const lock = text('span','🔒','visitor-lock');
+    lock.setAttribute('aria-hidden','true');
+    li.append(time,name,lock);
+    return li;
+  }
+
+  function updateLockedDisclosure() {
+    const more = doc.querySelector('[data-visitor-locked-more]');
+    const rest = doc.querySelector('[data-visitor-locked-rest]');
+    const toggle = doc.querySelector('[data-visitor-locked-toggle]');
+    toggle.textContent = more.open ? tr('visitor.home.lockedLess') : tr('visitor.home.lockedMore',{n:remainingLocked.length});
+    if (more.open && rest.childElementCount === 0) rest.replaceChildren(...remainingLocked.map(lockedRow));
+  }
+
+  function renderLocked(data,today) {
+    const section = doc.querySelector('[data-visitor-locked]');
+    if (!section) return;
+    const rows = selectLockedMatches(data,today);
+    section.hidden = !rows.length;
+    const first = doc.querySelector('[data-visitor-locked-first]');
+    first.replaceChildren(...rows.slice(0,3).map(lockedRow));
+    section.querySelector('[data-visitor-locked-count]').textContent = new Intl.NumberFormat(locale()).format(rows.length);
+    remainingLocked = rows.slice(3);
+    const more = doc.querySelector('[data-visitor-locked-more]');
+    more.hidden = !remainingLocked.length;
+    if (more.dataset.day !== today || more.hidden) more.open = false;
+    more.dataset.day = today;
+    doc.querySelector('[data-visitor-locked-rest]').replaceChildren();
+    updateLockedDisclosure();
+  }
+
   function renderMatches() {
     const list = doc.querySelector('[data-visitor-matches]');
     if (!list) return;
     const today = siteDay.format(Date.now());
     const dateEl = doc.querySelector('[data-visitor-today]');
     dateEl.dateTime = today;
-    dateEl.textContent = today.split('-').reverse().join('.');
-    if (!dataReady) return;
-    const rows = selectFreeMatches(predictions,today), status = doc.querySelector('[data-visitor-status]');
+    dateEl.textContent = new Intl.DateTimeFormat(locale(),{
+      timeZone:zone, weekday:'long', day:'numeric', month:'long', year:'numeric',
+    }).format(Date.now());
+    const current = day(predictions?.generated_at) === today ? predictions : null;
+    renderLocked(current,today);
+    const rows = selectFreeMatches(current,today), status = doc.querySelector('[data-visitor-status]');
     const title = doc.querySelector('[data-visitor-free-title]');
     const titleKey = rows.length > 1 ? 'visitor.home.free' : rows.length ? 'visitor.home.freeOne' : 'visitor.home.freeTitle';
     title.dataset.i18n = titleKey;
     title.dataset.i18nVars = JSON.stringify({n:rows.length});
     title.textContent = tr(titleKey,{n:rows.length});
-    const statusKey = predictions ? 'visitor.home.empty' : 'dashboard.data.unavailable';
+    const statusKey = readyDay !== today ? 'loading'
+      : current ? 'visitor.home.empty' : 'dashboard.data.unavailable';
     status.dataset.i18n = statusKey;
     status.textContent = tr(statusKey);
     status.hidden = rows.length > 0;
-    const fmt = new Intl.NumberFormat(locale(),{style:'percent',maximumFractionDigits:0});
+    const fmt = new Intl.NumberFormat(locale(),{style:'percent',maximumFractionDigits:1});
     const dossier = view.PoseidonDossier;
-    const publicDossiers = dossier?.publicFixtureIds(predictions);
+    const publicDossiers = dossier?.publicFixtureIds(current);
     list.replaceChildren(...rows.map(row => {
       const li = doc.createElement('li');
       const time = text('time',clock(row.match_date),'visitor-time');
@@ -107,9 +163,51 @@
         label.append(text('b',fmt.format(row[key])));
         probs.append(label);
       });
-      li.append(time,name,probs);
+      name.append(probs);
+      li.append(time,name);
+      if (link) {
+        const arrow = text('span','›','visitor-arrow');
+        arrow.setAttribute('aria-hidden','true');
+        li.append(arrow);
+      }
       return li;
     }));
+  }
+
+  function loadPublicPredictions(refresh = false) {
+    const today = siteDay.format(Date.now());
+    if (predictionRequest?.day === today) return predictionRequest.promise;
+    if (!refresh && readyDay === today && day(predictions?.generated_at) === today) return Promise.resolve(predictions);
+    const controller = new AbortController();
+    const request = {day:today};
+    predictionRequest = request;
+    const deadline = view.setTimeout(() => controller.abort(),8000);
+    request.promise = (async () => {
+      try {
+        const response = await view.fetch('data/predictions.json',{credentials:'omit',cache:'no-cache',signal:controller.signal});
+        if (!response.ok) throw new Error('Public predictions unavailable');
+        const data = await response.json();
+        if (!Array.isArray(data?.matches)) throw new Error('Missing public predictions');
+        if (predictionRequest !== request || siteDay.format(Date.now()) !== today) return null;
+        if (day(predictions?.generated_at) === today && day(data.generated_at) !== today) return predictions;
+        predictions = data;
+        view.PoseidonDossier?.setPublicPredictions(data);
+        return data;
+      } catch (_) {
+        // Keep the last validated response, with the displayed rows restricted to the current day.
+        return predictions ?? null;
+      } finally {
+        view.clearTimeout(deadline);
+        if (predictionRequest === request) {
+          predictionRequest = null;
+          if (siteDay.format(Date.now()) === today) {
+            readyDay = today;
+            renderMatches();
+          }
+        }
+      }
+    })();
+    return request.promise;
   }
 
   function hideLegacySample(unavailable) {
@@ -124,6 +222,7 @@
     const card = doc.querySelector('[data-visitor-sample]'), dossier = view.PoseidonDossier;
     if (!card || !dossier) return;
     const today = siteDay.format(Date.now()), run = ++revision;
+    sampleInFlightDay = today;
     const keepCard = currentSample && day(currentSample.match_date) === today;
     if (!keepCard) {
       card.hidden = true;
@@ -133,56 +232,87 @@
       const available = selectSample(await dossier.samplePayload(today),today);
       if (run !== revision || siteDay.format(Date.now()) !== today) return;
       if (!available) throw new Error('Public analysis is unavailable');
-      const marker = doc.querySelector('#exemplu-pro [data-sample-fixture]');
-      hideLegacySample(marker?.dataset.sampleDay !== today || Number(marker.dataset.sampleFixture) !== available.fixture_id);
       const action = card.querySelector('[data-visitor-sample-action]');
       const selection = await dossier.mountPublicSample(card.querySelector('[data-visitor-sample-reader]'),
         {dataset:{sampleFixture:available.fixture_id,sampleDay:today}}, html.lang, predictions, history, action);
       if (run !== revision || siteDay.format(Date.now()) !== today) return;
       if (!selection?.market) throw new Error('Public selection is unavailable');
       card.querySelector('[data-visitor-sample-title]').textContent = `${available.home} – ${available.away}`;
-      card.querySelector('[data-visitor-sample-meta]').textContent = `${available.league} · ${today} · ${clock(available.match_date)}`;
+      card.querySelector('[data-visitor-sample-meta]').textContent = `${available.league} · ${clock(available.match_date)}`;
       card.querySelector('[data-visitor-sample-pick]').textContent = selection.market;
       currentSample = available;
+      hideLegacySample(false);
       card.hidden = false;
     } catch (_) {
       if (run !== revision) return;
       card.hidden = true;
       currentSample = null;
       hideLegacySample(true);
+    } finally {
+      if (run === revision) sampleInFlightDay = '';
     }
   }
 
-  function syncDay() {
+  function syncDay(refresh = false) {
     const today = siteDay.format(Date.now());
-    if (liveDay === today) return;
-    liveDay = today;
+    if (liveDay !== today) {
+      liveDay = today;
+      renderMatches();
+    }
+    void loadPublicPredictions(refresh);
+    if (sampleInFlightDay !== today && day(currentSample?.match_date) !== today) void renderSample();
+  }
+
+  function refreshLanguage() {
+    syncLinks();
     renderMatches();
-    void renderSample();
+    if (day(currentSample?.match_date) === liveDay && sampleInFlightDay !== liveDay) void renderSample();
+  }
+
+  function guardCatalogSample() {
+    const marker = doc.querySelector('#exemplu-pro [data-sample-fixture]');
+    const today = siteDay.format(Date.now());
+    if (!marker || marker.dataset.sampleDay !== today || !view.PoseidonDossier) {
+      hideLegacySample(true);
+      return;
+    }
+    view.PoseidonDossier.samplePayload(today).then(payload => {
+      const sample = selectSample(payload,siteDay.format(Date.now()));
+      hideLegacySample(!sample || sample.fixture_id !== Number(marker.dataset.sampleFixture));
+    }).catch(() => hideLegacySample(true));
   }
 
   function mount() {
+    if (!doc.querySelector('[data-compact-home]')) {
+      if (doc.querySelector('[data-match-catalog]')) {
+        guardCatalogSample();
+        view.addEventListener('pageshow',guardCatalogSample);
+        view.addEventListener('online',guardCatalogSample);
+        doc.addEventListener('visibilitychange',() => {if (!doc.hidden) guardCatalogSample();});
+        view.setInterval(() => {if (!doc.hidden) guardCatalogSample();},60000);
+      }
+      return;
+    }
+    doc.querySelector('[data-visitor-locked-more]')?.addEventListener('toggle',updateLockedDisclosure);
     const memberBar = doc.getElementById('members-bar');
     if (memberBar) new MutationObserver(syncView).observe(memberBar,{attributes:true,attributeFilter:['data-account-state']});
-    new MutationObserver(syncView).observe(doc.body,{attributes:true,attributeFilter:['class']});
-    for (const event of ['hashchange','popstate','storage','pageshow']) view.addEventListener(event,syncView);
+    for (const event of ['storage','pageshow']) view.addEventListener(event,syncView);
     doc.addEventListener('change',event => {
       if (!event.target.matches('.lang-select')) return;
-      view.setTimeout(() => {syncLinks();renderMatches();void renderSample();},0);
+      view.setTimeout(refreshLanguage,0);
     });
+    view.addEventListener('poseidon:dictionary-ready',refreshLanguage);
     syncView();
     Promise.resolve(view.i18nGata?.()).then(() => {syncLinks();syncDay();});
     doc.addEventListener('visibilitychange',() => {if (!doc.hidden) syncDay();});
-    view.setInterval(syncDay,60000);
+    view.addEventListener('pageshow',() => syncDay());
+    view.addEventListener('online',() => syncDay(true));
+    view.setInterval(() => {if (!doc.hidden) syncDay();},60000);
   }
 
   if (doc.readyState === 'loading') doc.addEventListener('DOMContentLoaded',mount);
   else mount();
-  return {compactRoute, selectFreeMatches, selectSample, setPublicData(data, journal) {
-    predictions = data;
+  return {compactRoute, selectFreeMatches, selectLockedMatches, selectSample, loadPublicPredictions, setPublicHistory(journal) {
     history = journal;
-    dataReady = true;
-    view.PoseidonDossier?.setPublicPredictions(data);
-    renderMatches();
   }};
 });

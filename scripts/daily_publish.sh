@@ -134,13 +134,13 @@ $PY ~/poseidon-site/scripts/gen_dashboard_market_history.py >> "$LOG" 2>&1 || \
 $PY ~/poseidon-site/scripts/gen_audit.py >> "$LOG" 2>&1 || echo "[$(ts)] [WARN] gen_audit failed (auditul de ieri rămâne)" >> "$LOG"
 
 # 1b. 🆕 3 aug 2026 — conținut static zilnic (SEO): secțiunea „repere azi" în
-# index.html + lastmod la zi în sitemap.xml. Best-effort: un eșec aici nu
+# meciuri.html + lastmod la zi în sitemap.xml. Best-effort: un eșec aici nu
 # blochează publicarea datelor (secțiunea veche rămâne, datele merg).
 $PY ~/poseidon-site/scripts/gen_static_daily.py >> "$LOG" 2>&1 || \
     echo "[$(ts)] [WARN] gen_static_daily failed (publish continuă fără refresh static)" >> "$LOG"
 
 # 🆕 28 sept 2026 (cerința Andreei: „o analiză Pro pe site în fiecare zi, ca exemplu") — cardul „Exemplu de analiză Pro"
-# din index.html = analiza de IERI din arhiva #analize-pro, cu rezultatul real; best-effort (cardul vechi rămâne la eșec).
+# din meciuri.html = analiza eligibilă a ediției curente; best-effort (cardul vechi rămâne la eșec).
 $PY ~/poseidon-site/scripts/gen_pro_sample.py >> "$LOG" 2>&1 || \
     echo "[$(ts)] [WARN] gen_pro_sample failed (cardul Pro rămâne cel de ieri)" >> "$LOG"
 
@@ -169,10 +169,10 @@ $PY ~/poseidon-site/scripts/gen_dataset.py >> "$LOG" 2>&1 || echo "[$(ts)] [WARN
 
 # 2. Git add/commit/push
 cd ~/poseidon-site
-# 19 nov 2026 — badge-ul Google Play se activează în aceeași publicare cu index.html.
-"$PY" scripts/google_play_badge.py index.html >> "$LOG" 2>&1 || \
+# 19 nov 2026 — badge-ul Google Play se activează în aceeași publicare cu meciuri.html.
+"$PY" scripts/google_play_badge.py meciuri.html >> "$LOG" 2>&1 || \
     echo "[$(ts)] [WARN] Google Play badge refresh failed (publish continuă)" >> "$LOG"
-if [ -z "$(git status --porcelain data/ index.html sitemap.xml predictii/)" ]; then
+if [ -z "$(git status --porcelain data/ meciuri.html sitemap.xml predictii/)" ]; then
     echo "[$(ts)] No changes to publish." >> "$LOG"
     exit 0
 fi
@@ -196,15 +196,17 @@ NU s-a făcut push (date goale/invalide). Verifică build_public_json + predict_
 fi
 echo "[$(ts)] [GATE] OK: $GATE_OUT" >> "$LOG"
 
-# 🆕 6 oct 2026 — Gate HTML: index.html trebuie să aibă toate secțiunile/markerii și cel puțin atâtea <section> ca în HEAD.
+# 🆕 6 oct 2026 — Gate HTML: meciuri.html trebuie să aibă toate secțiunile/markerii și cel puțin atâtea <section> ca în HEAD.
 # Pe 3 oct gen_static_daily a șters „Exemplul Pro” și s-a publicat 3 zile fără el. Eșec = NU se publică + Telegram.
 HTML_RC=0
-HTML_OUT=$("$PY" ~/poseidon-site/scripts/gate_html.py ~/poseidon-site/index.html --vs HEAD 2>&1) || HTML_RC=$?
+HTML_OUT=$(for page in index.html meciuri.html; do
+    "$PY" scripts/gate_html.py "$page" --vs HEAD || exit 1
+done 2>&1) || HTML_RC=$?
 if [ "$HTML_RC" -ne 0 ]; then
     echo "[$(ts)] [GATE HTML] BLOCAT push: $HTML_OUT" >> "$LOG"
     tg_send_quick "❌ <b>POSEIDON publish BLOCAT — gate HTML</b>
 $HTML_OUT
-NU s-a făcut push. index.html local e stricat de un generator; site-ul rămâne pe versiunea de ieri."
+NU s-a făcut push. Pagina sau catalogul a picat verificarea HTML; site-ul rămâne pe versiunea de ieri."
     exit 1
 fi
 echo "[$(ts)] [GATE HTML] $HTML_OUT" >> "$LOG"
@@ -216,7 +218,7 @@ echo "[$(ts)] [GATE HTML] $HTML_OUT" >> "$LOG"
 
 # (13 iun — R2: verificarea RC2 era COD MORT sub set -e; push eșuat → trap ERR.)
 # 15 oct 2026: și assets/i18n.json — gen_static_daily scrie acolo proof.metrici în 6 limbi; fără add, cifrele de pe site rămâneau cu o zi în urmă
-git add data/ index.html sitemap.xml predictii/ en/ track-record.html statistici-pariuri.html analize/ assets/i18n.json
+git add data/ meciuri.html sitemap.xml predictii/ en/ track-record.html statistici-pariuri.html analize/ assets/i18n.json
 git commit -m "data: $(date +%Y-%m-%d) refresh predicții + jurnal" >> "$LOG" 2>&1
 git push origin main >> "$LOG" 2>&1
 echo "[$(ts)] Published." >> "$LOG"

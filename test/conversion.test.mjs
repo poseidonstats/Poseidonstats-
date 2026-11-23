@@ -62,35 +62,33 @@ test('a throwing counter cannot start an infinite retry loop or block navigation
   assert.doesNotThrow(()=>funnel.mount());env.runTimers();assert(attempts<=21);assert.equal(env.timers.size,0);
 });
 
-test('each homepage store link emits one private event for its store and preserves navigation',()=>{
-  const env=environment('?email=person@example.test');
-  const funnel=tracker(env);
-  funnel.mount();
-  funnel.mount();
-  const html=readFileSync(new URL('../index.html',import.meta.url),'utf8');
-  const storeLinks=[...html.matchAll(/<a href="(https:\/\/(?:apps\.apple\.com|play\.google\.com)\/[^"]+)"/g)];
-  assert.equal(storeLinks.length,4);
-  for(const [,href] of storeLinks){
-    const anchor=link({href});
-    const target={closest:selector=>anchor.closest(selector)};
-    env.listeners.click[0]({
-      target,
-      preventDefault:()=>assert.fail('the store link must retain its native navigation')
-    });
-    assert.equal(anchor.getAttribute('href'),href);
-    assert.equal(env.listeners.click.length,1);
-    assert.equal(env.calls.length,0);
-  }
-  env.ready();
-  env.runTimers();
-  assert.equal(env.calls[0].ns,undefined);
-  assert.deepEqual(env.calls.slice(1).map(({p,e,q,ns})=>[p,e,q,ns]),[
-    ['funnel/app-outbound/app-store',true,'',true],
-    ['funnel/app-outbound/google-play',true,'',true],
-    ['funnel/app-outbound/app-store',true,'',true],
-    ['funnel/app-outbound/google-play',true,'',true]
-  ]);
-});
+for (const [filename, pairCount] of [['index.html',1], ['meciuri.html',2]]) {
+  test(`each store link on ${filename} emits one private event and preserves navigation`, () => {
+    const env=environment('?email=person@example.test');
+    const funnel=tracker(env);
+    funnel.mount();
+    funnel.mount();
+    const html=readFileSync(new URL('../'+filename,import.meta.url),'utf8');
+    const storeLinks=[...html.matchAll(/<a href="(https:\/\/(?:apps\.apple\.com|play\.google\.com)\/[^"]+)"/g)];
+    assert.equal(storeLinks.length,2*pairCount);
+    for (const [,href] of storeLinks) {
+      const anchor=link({href});
+      const target={closest:selector=>anchor.closest(selector)};
+      env.listeners.click[0]({target, preventDefault:()=>assert.fail('preserve native store navigation')});
+      assert.equal(anchor.getAttribute('href'),href);
+      assert.equal(env.listeners.click.length,1);
+      assert.equal(env.calls.length,0);
+    }
+    env.ready();
+    env.runTimers();
+    assert.equal(env.calls[0].ns,undefined);
+    const events=[
+      ['funnel/app-outbound/app-store',true,'',true],
+      ['funnel/app-outbound/google-play',true,'',true],
+    ];
+    assert.deepEqual(env.calls.slice(1).map(({p,e,q,ns})=>[p,e,q,ns]), Array.from({length:pairCount},()=>events).flat());
+  });
+}
 
 test('store middle-clicks support localized URLs and ignore other destinations',()=>{
   const env=environment();
@@ -182,7 +180,7 @@ test('real anonymous/Basic/Pro analysis actions and static feature/legacy anchor
     assert.equal(env.calls.at(-1).p,`funnel/${action}/dashboard`);
     assert.equal(element.getAttribute('href'),actual.href,'tracking preserves the actual destination');
   }
-  const html=readFileSync(new URL('../index.html',import.meta.url),'utf8');
+  const html=readFileSync(new URL('../meciuri.html',import.meta.url),'utf8');
   const feature=html.match(/<div class="dashboard-feature-strip">([\s\S]*?)<\/div>/)?.[1];
   const legacy=html.match(/<div class="legacy-links">([\s\S]*?)<\/div>/)?.[1];
   assert(feature&&legacy,'actual homepage CTA groups exist');

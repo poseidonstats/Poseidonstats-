@@ -5,7 +5,7 @@ const CALIB_URL = "data/calibration.json";
 const FORWARD_URL = "data/forward.json";
 const HISTORY_URL = "data/history.json";
 const SCORECARD_URL = "data/scorecard.json";
-const I18N_URL = "assets/i18n.json?release=20261123-visitor-home";
+const I18N_URL = "assets/i18n.json?release=20261123-visitor-feed";
 
 // Scorecard skill per piață (din backtest OOS), folosit pentru contextul piețelor.
 let SCORECARD = {};                       // key -> card (label, tier, threshold, skill_stars, lift_pp, hit)
@@ -44,7 +44,6 @@ function requestedLanguage() {
 }
 
 function updateRouteLanguage(language) {
-  if (!requestedLanguage()) return;
   const url = new URL(location.href);
   url.searchParams.set("lang", language);
   history.replaceState(history.state, "", url);
@@ -66,14 +65,18 @@ function t(key) {
   return (I18N[LANG] && I18N[LANG][key]) || (I18N.ro && I18N.ro[key]) || key;
 }
 
-function updateLegalLinks() {
+function updateNavigationLanguage() {
   if (!requestedLanguage()) return;
-  document.querySelectorAll('a[data-i18n="footer.terms"], a[data-i18n="footer.privacy"]').forEach(link => {
+  // Carry an explicit page language across internal navigation without overwriting a saved preference.
+  const links = document.querySelectorAll('header a[href], footer a[href], nav a[href], a[data-i18n="footer.terms"], a[data-i18n="footer.privacy"]');
+  for (const link of links) {
+    const href = link.getAttribute("href");
+    if (!href || href.startsWith("#") || link.hasAttribute("hreflang")) continue;
     const url = new URL(link.href);
-    if (url.origin !== location.origin || !/^\/(?:terms|privacy)\.html$/.test(url.pathname)) return;
+    if (url.origin !== location.origin || !(url.pathname === "/" || url.pathname.endsWith(".html"))) continue;
     url.searchParams.set("lang", LANG);
     link.setAttribute("href", url.pathname + url.search + url.hash);
-  });
+  }
 }
 
 function _loc() { return LANG === "en" ? "en-GB" : LANG === "es" ? "es-ES" : LANG === "it" ? "it-IT" : LANG === "fr" ? "fr-FR" : LANG === "id" ? "id-ID" : "ro-RO"; }
@@ -126,14 +129,33 @@ let _i18nGataResolve = null;
 const I18N_READY = new Promise(r => { _i18nGataResolve = r; });
 // așteaptă i18n.json cel mult 2,5 s — dacă initI18n nu rulează (pagină fără auto-init), randarea nu rămâne blocată
 function i18nGata() { return I18N ? Promise.resolve() : Promise.race([I18N_READY, new Promise(r => setTimeout(r, 2500))]); }
+let loadingDictionary = false;
+let dictionaryStartedAt;
 async function initI18n() {
-  I18N = await fetchJSON(I18N_URL);
+  if (I18N || loadingDictionary) return;
+  loadingDictionary = true;
+  dictionaryStartedAt ??= Date.now();
+  try {
+    for (let attempt = 0; attempt < 2; attempt++) {
+      if (attempt) await new Promise(resolve => setTimeout(resolve, 600));
+      const dictionary = await fetchJSON(I18N_URL);
+      if (LIMBI_SITE.every(lang => typeof dictionary?.[lang]?.["lang.name"] === "string")) {
+        I18N = dictionary;
+        break;
+      }
+    }
+  } finally {
+    loadingDictionary = false;
+  }
+  if (!I18N) return;
   if (_i18nGataResolve) _i18nGataResolve();
   LANG = detectLang();
   applyI18n();
-  updateLegalLinks();
+  updateNavigationLanguage();
   puneRezumatInCaseta();
   mountLangSwitcher();
+  window.dispatchEvent(new Event("poseidon:dictionary-ready"));
+  if (Date.now() - dictionaryStartedAt >= 2500) refreshTranslatedViews();
   // Cifrele vii se injectează DUPĂ i18n (applyI18n rescrie innerHTML pe [data-i18n])
   loadLiveStats().then(injectLiveStats);
 }
@@ -153,21 +175,26 @@ function mountLangSwitcher() {
     try { localStorage.setItem("poseidon_lang", LANG); } catch (error) {}
     updateRouteLanguage(LANG);
     applyI18n();
-    updateLegalLinks();
+    updateNavigationLanguage();
     window.PoseidonDossier?.switchLanguage(LANG);
     puneRezumatInCaseta();
     injectLiveStats(); // re-injectare după ce applyI18n a rescris [data-i18n]
-    // Re-render pagini dinamice
-    if (document.getElementById("matches")) renderHome();
-    if (document.getElementById("days-list")) renderIstoric();
-    if (document.getElementById("calibration-tables")) renderTrackRecord();
-    if (document.getElementById("sim-gen-result")) renderSimulator();
+    refreshTranslatedViews();
   });
+}
+
+function refreshTranslatedViews() {
+  if (document.getElementById("matches")) renderHome();
+  if (document.getElementById("days-list")) renderIstoric();
+  if (document.getElementById("calibration-tables")) renderTrackRecord();
+  if (document.getElementById("sim-gen-result")) renderSimulator();
 }
 
 // Auto-init pe TOATE paginile (cu i18n.json fetch)
 if (typeof window !== "undefined") {
-  document.addEventListener("DOMContentLoaded", () => { initI18n(); });
+  document.addEventListener("DOMContentLoaded", initI18n);
+  window.addEventListener("online", initI18n);
+  window.addEventListener("pageshow", initI18n);
 }
 
 // 28 sept 2026 — zona de membri: membrii (Basic/Pro, login Patreon) primesc setul complet de la worker;
@@ -377,7 +404,11 @@ if (typeof window !== "undefined") {
 
 async function fetchJSON(url) {
   try {
-    const r = await fetch(url, { cache: "no-cache" });
+    const options = { cache: "no-cache" };
+    if (typeof I18N_URL !== "undefined" && url === I18N_URL && typeof AbortSignal !== "undefined" && AbortSignal.timeout) {
+      options.signal = AbortSignal.timeout(8000);
+    }
+    const r = await fetch(url, options);
     if (!r.ok) throw new Error(`HTTP ${r.status}`);
     return await r.json();
   } catch (e) {
@@ -1668,11 +1699,11 @@ let PRO_REPORT_LOAD;
 function loadProReport() {
   if (window.PoseidonProReport) return Promise.resolve(window.PoseidonProReport);
   if (PRO_REPORT_LOAD) return PRO_REPORT_LOAD;
-  const css = document.createElement("link"); css.rel = "stylesheet"; css.href = "assets/pro-report.css?release=20261123-visitor-home"; document.head.appendChild(css);
+  const css = document.createElement("link"); css.rel = "stylesheet"; css.href = "assets/pro-report.css?release=20261123-visitor-feed"; document.head.appendChild(css);
   PRO_REPORT_LOAD = new Promise((resolve,reject) => {
-    const script = document.createElement("script"); script.id = "pro-report-script"; script.src = "assets/pro-context.js?release=20261123-visitor-home";
+    const script = document.createElement("script"); script.id = "pro-report-script"; script.src = "assets/pro-context.js?release=20261123-visitor-feed";
     script.onload = script.onerror = () => {
-      const report = document.createElement("script"); report.src = "assets/pro-report.js?release=20261123-visitor-home";
+      const report = document.createElement("script"); report.src = "assets/pro-report.js?release=20261123-visitor-feed";
       report.onload = () => resolve(window.PoseidonProReport);
       report.onerror = () => { PRO_REPORT_LOAD = null; css.remove(); script.remove(); report.remove(); reject(new Error("Pro report unavailable")); };
       document.head.appendChild(report);

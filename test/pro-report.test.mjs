@@ -93,7 +93,7 @@ function assertSampleConserved(sample) {
  }
 }
 test('current public sample keeps one principal selection, context and the review in every language',()=>{
- const sample=proSample(readFileSync(new URL('../index.html',import.meta.url),'utf8'));
+ const sample=proSample(readFileSync(new URL('../meciuri.html',import.meta.url),'utf8'));
  const probability=sample.variants[0].selection?.probability;
  for(const variant of sample.variants){
   assert.equal(variant.selection?.probability,probability,variant.language);

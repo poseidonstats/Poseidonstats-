@@ -691,10 +691,15 @@
       if (!response.ok) throw new Error(`Public export unavailable: ${path}`);
       return response.json();
     }
-    const required = Promise.allSettled([localJSON('data/predictions.json'), localJSON('data/history.json'), localJSON('data/audit.json')]);
+    const visitor = view?.PoseidonVisitor;
+    const publicPredictions = visitor ? visitor.loadPublicPredictions() : localJSON('data/predictions.json');
+    const publicHistory = localJSON('data/history.json').then(data => {
+      visitor?.setPublicHistory(data);
+      return data;
+    });
+    const required = Promise.allSettled([publicPredictions, publicHistory, localJSON('data/audit.json')]);
     const supplemental = localJSON('data/dashboard-market-history.json').catch(() => null);
     [predictions, history, audit] = (await required).map(result => result.status === 'fulfilled' ? result.value : null);
-    view?.PoseidonVisitor?.setPublicData(predictions,history);
     function renderMetrics() {
       const tr = translator(), loc = locale(doc), num = n => n == null ? '—' : new Intl.NumberFormat(loc).format(n);
       const auditGrid = doc.getElementById('approved-audit-metrics');

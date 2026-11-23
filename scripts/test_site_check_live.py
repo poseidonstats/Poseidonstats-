@@ -15,13 +15,14 @@ import site_check_live as S
 ACUM = dt.datetime(2026, 10, 16, 20, 15, tzinfo=ZoneInfo("Europe/Bucharest"))
 PREVIEW = '<article data-dashboard-pro-fallback data-sample-day="2026-10-16" data-sample-fixture="123" data-public-pro-report><div class="pro-card-head"><h3>Gazdă – Oaspeți</h3></div></article>'
 CARD = '<div class="pro-card" data-public-pro-report data-sample-day="2026-10-16" data-sample-fixture="123">'
-INDEX = ('<section id="exemplu-pro">' + PREVIEW + '</section>' + CARD + '<div class="pro-card-head">Exemplul Pro · <span data-date>16 octombrie 2026</span></div>'
+CATALOG = ('<main data-match-catalog><section id="exemplu-pro">' + PREVIEW + '</section>' + CARD + '<div class="pro-card-head">Exemplul Pro · <span data-date>16 octombrie 2026</span></div>'
          '<ul class="pro-today"></ul></div><div class="plans-pro-detail"></div><section id="dovada"></section><section id="repere-azi">16 octombrie 2026</section>'
-         '<section id="abonament"></section><div class="legal-banner"></div><span data-i18n="plans.pro.trial"></span>')
-PREDICTII = json.dumps({"generated_at": "2026-10-16T02:28:11+00:00", "matches": [{"free": True}] * 5})
+         '<section id="abonament"></section><div class="legal-banner"></div><span data-i18n="plans.pro.trial"></span></main>')
+PREDICTII = json.dumps({"generated_at": "2026-10-16T02:28:11+00:00", "matches": [{"free": True, "fixture_id": i+1, "home_team":"A", "away_team":"B", "match_date":"2026-10-16T17:30:00Z", "prob_home":0.4, "prob_draw":0.2, "prob_away":0.4} for i in range(5)]})
 HEALTH = json.dumps({"predictions_full": {"generated_at": "2026-10-16T02:28:11+00:00"}, "pro": 3})
 EXEMPLU = json.dumps({"date": "2026-10-16", "item": {"match": {"fixture_id": 123}}})
-INDEX_COMPACT = INDEX + '<section data-compact-home></section>'
+INDEX = ('<main data-home-page data-compact-home><section data-visitor-matches></section>'
+         '<section data-visitor-sample></section><section data-visitor-locked></section></main>')
 
 
 class Raspuns:
@@ -86,8 +87,12 @@ def site_fals(monkeypatch, **inlocuiri):
             return 200, EXEMPLU
         if url.endswith("/data/predictions.json"):
             return 200, PREDICTII
+        if url.endswith("/assets/i18n.json"):
+            return 200, (Path(__file__).resolve().parents[1] / "assets/i18n.json").read_text()
         if url.endswith("/assets/app.js"):
             return 200, "trial-banner"
+        if url.endswith("/meciuri.html"):
+            return 200, CATALOG
         return 200, INDEX if url.endswith("/index.html") else "<html></html>"
     monkeypatch.setattr(S, "get", get)
 
@@ -123,13 +128,13 @@ def test_fara_raspuns_la_pagini_si_la_api(monkeypatch):
 ])
 def test_verifica_editia_fiecarui_card(monkeypatch, card, rol, data, mesaj):
     vechi = card.replace('data-sample-day="2026-10-16"', data)
-    site_fals(monkeypatch, **{"index.html": (200, INDEX.replace(card, vechi))})
+    site_fals(monkeypatch, **{"meciuri.html": (200, CATALOG.replace(card, vechi))})
     assert S.verifica(ACUM) == [f"ediția Pro ({rol}): așteptat 2026-10-16, găsit {mesaj}"]
 
 
 def test_pagina_compacta_poate_sa_nu_aiba_exemplu_public(monkeypatch):
-    html = INDEX_COMPACT.replace(PREVIEW, '').replace(CARD, '<div>')
-    site_fals(monkeypatch, **{"index.html": (200, html), "/api/exemplu/": (404, "")})
+    html = CATALOG.replace(PREVIEW, '').replace(CARD, '<div>')
+    site_fals(monkeypatch, **{"meciuri.html": (200, html), "/api/exemplu/": (404, "")})
     assert S.verifica(ACUM) == []
 
 
@@ -138,18 +143,39 @@ def test_pagina_compacta_poate_sa_nu_aiba_exemplu_public(monkeypatch):
     ((0, "TimeoutError: expirat"), "fără răspuns după 2 încercări (TimeoutError: expirat)"),
 ])
 def test_pagina_compacta_raporteaza_eroarea_api_exemplu(monkeypatch, raspuns, mesaj):
-    site_fals(monkeypatch, **{"index.html": (200, INDEX_COMPACT), "/api/exemplu/": raspuns})
+    site_fals(monkeypatch, **{"meciuri.html": (200, CATALOG), "/api/exemplu/": raspuns})
     assert S.verifica(ACUM) == [f"exemplu Pro: /api/exemplu/2026-10-16 {mesaj}"]
 
 
 def test_pagina_compacta_verifica_acelasi_meci_din_exemplu(monkeypatch):
-    site_fals(monkeypatch, **{"index.html": (200, INDEX_COMPACT)})
+    site_fals(monkeypatch, **{"meciuri.html": (200, CATALOG)})
     assert S.verifica(ACUM) == []
     alt_card = CARD.replace('data-sample-fixture="123"', 'data-sample-fixture="321"')
-    site_fals(monkeypatch, **{"index.html": (200, INDEX_COMPACT.replace(CARD, alt_card))})
+    site_fals(monkeypatch, **{"meciuri.html": (200, CATALOG.replace(CARD, alt_card))})
     assert S.verifica(ACUM) == ["ediția Pro (card complet): așteptat meciul 123, găsit 321"]
 
 
-def test_pagina_veche_nu_depinde_de_api_exemplu(monkeypatch):
-    site_fals(monkeypatch, **{"/api/exemplu/": (503, "")})
-    assert S.verifica(ACUM) == []
+def test_monitorul_verifica_ordinea_pe_prima_pagina_si_disponibilitatea_catalogului(monkeypatch):
+    eronat = INDEX.replace("data-visitor-matches", "temporar").replace("data-visitor-locked", "data-visitor-matches").replace("temporar", "data-visitor-locked")
+    site_fals(monkeypatch, **{"index.html": (200, eronat), "meciuri.html": (503, "")})
+    assert S.verifica(ACUM) == ["index.html: ordinea obligatorie este gratuite, exemplul Pro, meciuri cu lacăt", "meciuri.html: HTTP 503"]
+
+
+def test_monitorul_detecteaza_date_incorecte_chiar_daca_sunt_cinci_gratuite():
+    meciuri = json.loads(PREDICTII)["matches"]
+    meciuri[0]["match_date"] = "2026-10-16T23:00:00Z"
+    meciuri[1]["fixture_id"] = meciuri[2]["fixture_id"]
+    meciuri[3]["locked"] = True
+    meciuri[4]["prob_draw"] = None
+    erori = S.verifica_gratuite(meciuri, ACUM.date())
+    assert len(erori) == 4
+    assert any("duplicat" in e for e in erori)
+    assert any("1/X/2" in e for e in erori)
+
+
+def test_monitorul_semnaleaza_pagina_cazuta_si_limba_lipsa(monkeypatch):
+    catalog = json.loads((Path(__file__).resolve().parents[1] / "assets/i18n.json").read_text())
+    del catalog["en"]["visitor.home.free"]
+    site_fals(monkeypatch, **{"meciuri.html": (200, CATALOG), "simulator.html": (503, ""),
+                               "assets/i18n.json": (200, json.dumps(catalog))})
+    assert S.verifica(ACUM) == ["i18n.json: lipsește traducerea en/visitor.home.free", "simulator.html: HTTP 503"]

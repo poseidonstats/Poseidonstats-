@@ -60,7 +60,7 @@ DATA = SITE / "data"
 OUT = SITE / "predictii"
 ARH = OUT / "arhiva"
 SITEMAP = SITE / "sitemap.xml"
-INDEX = SITE / "index.html"
+INDEX = SITE / "meciuri.html"
 try:
     N_CAL = f"{json.load(open(SITE / 'data' / 'calibration.json'))['meta']['n_total']:,}".replace(",", ".")
 except Exception:
@@ -775,7 +775,7 @@ def pagina_arhiva(zile: list[str]) -> str:
 
 
 def scrie_legaturi_index(randuri: list[dict]) -> None:
-    """Legături din index.html către paginile de ligă.
+    """Legături din meciuri.html către paginile de ligă.
 
     Fără ele, paginile generate n-ar fi legate de nicăieri: sitemap-ul le anunță,
     dar link-urile interne sunt cele care le dau greutate și le țin crawl-uite.
@@ -785,7 +785,7 @@ def scrie_legaturi_index(randuri: list[dict]) -> None:
         return
     html_src = INDEX.read_text()
     if LINKS_START not in html_src or LINKS_END not in html_src:
-        print(f"[gen_seo_pages] markerii {LINKS_START} lipsesc din index.html — sar peste "
+        print(f"[gen_seo_pages] markerii {LINKS_START} lipsesc din meciuri.html — sar peste "
               "legăturile interne", file=sys.stderr)
         return
     cu_meci = [r for r in randuri if r["n"] > 0]
@@ -882,6 +882,7 @@ def main() -> int:
               (f"{BASE}/analize/index.html", "daily", "0.8"),                 # 1 oct 2026 — arhiva analizelor Pro cu verificarea de a doua zi
               (f"{BASE}/simulator.html", "weekly", "0.8"),
               (f"{BASE}/metodologie.html", "monthly", "0.6"),
+              (f"{BASE}/meciuri.html", "daily", "0.8"),
               (f"{BASE}/terms.html", "yearly", "0.3"),
               (f"{BASE}/privacy.html", "yearly", "0.3"),
               (f"{BASE}/predictii/index.html", "daily", "0.9"),
