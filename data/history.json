@@ -1,27 +1,22 @@
 {
- "generated_at": "2026-11-22T03:25:33+00:00",
+ "generated_at": "2026-11-23T03:25:26+00:00",
  "days": [
   {
-   "date": "2026-11-22",
+   "date": "2026-11-23",
    "status": "in_progress",
    "matches": [
     {
-     "fixture_id": 1555430,
-     "time": "15:00",
-     "country": "Switzerland",
-     "league": "Super League",
-     "home": "FC Zurich",
-     "away": "FC ST. Gallen",
+     "fixture_id": 1552536,
+     "time": "21:45",
+     "country": "France",
+     "league": "Ligue 2",
+     "home": "Nantes",
+     "away": "Grenoble",
      "calibrated_lg": true,
      "picks": [
       {
-       "market": "Over 1.5",
-       "prob": 87,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "Over 2.5",
-       "prob": 69,
+       "market": "Under 3.5",
+       "prob": 70,
        "outcome": "PENDING"
       }
      ],
@@ -32,22 +27,59 @@
      "snapshot": "dayof"
     },
     {
-     "fixture_id": 1548562,
-     "time": "16:00",
+     "fixture_id": 1548566,
+     "time": "19:00",
      "country": "Croatia",
      "league": "HNL",
-     "home": "Dinamo Zagreb",
-     "away": "Istra 1961",
+     "home": "NK Slaven Belupo",
+     "away": "NK Osijek",
+     "calibrated_lg": true,
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 79,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null,
+     "snapshot": "dayof"
+    },
+    {
+     "fixture_id": 1584467,
+     "time": "19:00",
+     "country": "Turkey",
+     "league": "Süper Lig",
+     "home": "Başakşehir",
+     "away": "Yeni Çorumspor",
+     "calibrated_lg": true,
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 81,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null,
+     "snapshot": "dayof"
+    },
+    {
+     "fixture_id": 1553233,
+     "time": "20:00",
+     "country": "Poland",
+     "league": "Ekstraklasa",
+     "home": "Wieczysta Kraków",
+     "away": "Motor Lublin",
      "calibrated_lg": true,
      "picks": [
       {
        "market": "Over 1.5",
        "prob": 84,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "1X",
-       "prob": 82,
        "outcome": "PENDING"
       },
       {
@@ -63,79 +95,17 @@
      "snapshot": "dayof"
     },
     {
-     "fixture_id": 1555426,
-     "time": "17:30",
-     "country": "Switzerland",
-     "league": "Super League",
-     "home": "Lausanne",
-     "away": "FC Vaduz",
-     "calibrated_lg": true,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 88,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "Over 2.5",
-       "prob": 71,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null,
-     "snapshot": "dayof"
-    },
-    {
-     "fixture_id": 1557473,
-     "time": "18:30",
+     "fixture_id": 1557469,
+     "time": "22:00",
      "country": "England",
      "league": "Premier League",
-     "home": "Liverpool",
-     "away": "Manchester United",
+     "home": "Brentford",
+     "away": "Everton",
      "calibrated_lg": true,
      "picks": [
       {
        "market": "Over 1.5",
-       "prob": 85,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "Over 2.5",
-       "prob": 66,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null,
-     "snapshot": "dayof"
-    },
-    {
-     "fixture_id": 1651119,
-     "time": "23:00",
-     "country": "USA",
-     "league": "Major League Soccer",
-     "home": "Nashville SC",
-     "away": "FC Cincinnati",
-     "calibrated_lg": true,
-     "picks": [
-      {
-       "market": "1X",
-       "prob": 84,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "Over 1.5",
-       "prob": 84,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "1 (Home)",
-       "prob": 65,
+       "prob": 76,
        "outcome": "PENDING"
       }
      ],
@@ -147,11 +117,11 @@
     }
    ],
    "totals": {
-    "picks": 12,
+    "picks": 6,
     "wins": 0,
     "losses": 0,
-    "pending": 12,
-    "locked_pending": 963
+    "pending": 6,
+    "locked_pending": 138
    }
   }
  ],
@@ -242,9 +212,9 @@
   }
  ],
  "integritate": {
-  "total": 63830,
+  "total": 64646,
   "pastrate": 39365,
-  "nerezolvate": 14982,
+  "nerezolvate": 15798,
   "inghetate_dupa_start": 344,
   "reprogramate_peste_prag": 3,
   "recalibrare_indisponibila": 8765,
