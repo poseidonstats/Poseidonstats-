@@ -1,10 +1,7 @@
 #!/usr/bin/env python3
 """Exemplul de analiză Pro de pe prima pagină (28 sept 2026, cerut de Andreea; 2 oct 2026: „zilnic una nouă, ÎNAINTE de meci, nu după”).
 
-Cardul = analiza de AZI, completă, fără lacăt — prima din arhiva zilei (~/football_predictor/data/pro_analyses/<zi>.json, cea
-scrisă la 07:20 și postată în #analize-pro). Până apare fișierul zilei (publicarea site-ului e la 06:10, analizele la 07:28),
-cardul rămâne analiza de ieri, aceeași, acum cu scorul final. Sub card: rezultatul analizei de ieri + link la verificarea de a
-doua zi din arhivă (analize/<zi>.html). Lista „azi în Pro” rămâne cu lacăt, fără meciul publicat.
+Cardul folosește mostra publică a zilei. Edițiile fără un meci eligibil rămân fără mostră.
 Exemplul trebuie să coincidă cu exemplul deja aprobat pe ruta publică; eticheta pre-meci cere chitanța originală de site.
 Se cheamă din daily_publish.sh (06:10) și din publish_pro_sample.sh (07:50 și la reîncercarea de la 12:35).
 Uz: gen_pro_sample.py [--date 2026-10-02] [--dry-run]     (implicit: azi, ora României)"""
@@ -849,10 +846,12 @@ def _incarca(zi: str):
     raw = f.read_bytes()
     d = json.loads(raw)
     items = d.get("items") or []
-    if not items or not items[0].get("match", {}).get("fixture_id"):
+    public = _public_sample(zi) if items else None
+    fixture = (public or {}).get("match", {}).get("fixture_id")
+    matching = [it for it in items if fixture and it.get("match", {}).get("fixture_id") == fixture]
+    if len(matching) != 1:
         return None, ""
-    item = items[0]
-    public = _public_sample(zi)
+    item = matching[0]
     # Worker-ul poate serializa 2.0 ca 2 și poate publica proiecția editorială.
     # Verificăm identitatea și proveniența exact, inclusiv pentru copia publică proiectată.
     if not public or any(item.get(key) != public.get(key) for key in ("match", "provenance")):
@@ -923,39 +922,21 @@ def main() -> None:
     ap.add_argument("--dry-run", action="store_true")
     a = ap.parse_args()
     azi = a.date
-    ieri = (datetime.strptime(azi, "%Y-%m-%d") - timedelta(days=1)).strftime("%Y-%m-%d")
-    it_azi, gen_azi = _incarca(azi)
-    fid_card = None if it_azi else _exemplul_deja_pe_site(azi)
-    it_ieri, _ = _incarca(ieri) if fid_card is None else (None, "")
-    fids = [i["match"]["fixture_id"] for i in (it_azi, it_ieri) if i]
-    rez = rezultate(fids) if fids else {}
-    sample, linie = None, ""
-    if it_azi:
-        sample, zi_card = it_azi, azi
-        fid_card = it_azi["match"]["fixture_id"]
-        linie = (
-            html_ieri(
-                it_ieri,
-                ieri,
-                _date_rezultat(rez.get(it_ieri["match"]["fixture_id"]))[0],
-            )
-            if it_ieri
-            else ""
-        )
-        print(
-            f"[gen_pro_sample] card AZI {azi}: {it_azi['match']['home']} – {it_azi['match']['away']} ({it_azi['match'].get('league')}), scrisă la {gen_azi[11:16]}"
-        )
-    elif it_ieri:
-        sample, zi_card = it_ieri, ieri
-        fid_card = None
-        linie = ""
-        print(
-            f"[gen_pro_sample] fără exemplu public confirmat pentru {azi} — rămâne exemplul de ieri ({ieri}: {it_ieri['match']['home']} – {it_ieri['match']['away']})"
-        )
-    else:
-        print(f"[gen_pro_sample] nicio confirmare publică nouă pentru exemplul din {azi}")
+    sample, _ = _incarca(azi)
+    if azi >= "2026-11-23" and sample and not sample.get("_public_site_delivery"):
+        sample = None
+    zi_card = azi
+    linie = ""
+    fid_card = sample["match"]["fixture_id"] if sample else _exemplul_deja_pe_site(azi)
+    if not sample and azi >= "2026-11-23":
+        # A transient public lookup cannot promote yesterday's or a removed report.
+        from featured_pro import edition_for
+        expected = edition_for(datetime.fromisoformat(azi).date()).get("item")
+        if not expected or expected["match"]["fixture_id"] != fid_card:
+            fid_card = None
+    rez = rezultate([fid_card]) if sample else {}
     rows = lista_pro_azi(azi)
-    if sample is None and not rows:
+    if sample is None and not rows and (fid_card or azi < "2026-11-23"):
         return
     print(
         f"[gen_pro_sample] lista Pro de azi ({azi}): {len(rows)} meciuri"
@@ -975,6 +956,8 @@ def main() -> None:
     html = INDEX.read_text(encoding="utf-8")
     if sample is not None:
         html = injecteaza(html, card, linie, preview=preview)
+    elif fid_card is None:
+        html = injecteaza(html, "", preview="")
     html = injecteaza_lista(html, html_lista_pro(rows, fid_card, stat_30_zile(azi)))
     INDEX.write_text(html, encoding="utf-8")
     update = f"card {zi_card}" if sample is not None else "lista Pro"
