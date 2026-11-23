@@ -85,6 +85,18 @@ test('real recent journal sums resolved selections chronologically, never pendin
   assert.doesNotMatch(chart,/profit/i);
 });
 
+test('five forecast slots take precedence over earlier stats-only matches, which stay searchable', () => {
+  const day = '2026-11-23';
+  const stats = {fixture_id: 1, home_team: 'Early Team', dossier_only: true, match_date: day + 'T02:00:00Z'};
+  const forecasts = [5, 4, 3, 2, 1].map(hour => ({
+    fixture_id: 10 + hour, match_date: day + 'T1' + hour + ':00:00Z', prob_home: 0.4
+  }));
+  const data = {matches: [stats, ...forecasts]};
+  const select = (query = '') => dashboard.selectRows(data, day, '', 5, query, true).rows;
+  assert.deepEqual(select().map(row => row.fixture_id), [11, 12, 13, 14, 15]);
+  assert.deepEqual(select('early').map(row => [row.fixture_id, row.dossierOnly]), [[1, true]]);
+});
+
 test('public real rows preserve exact probabilities and prioritize free chronological matches', () => {
   const days = dashboard.availableDays(predictions);
   const firstPublic=predictions.matches.find(m => m.free === true && m.locked !== true);

@@ -1,12 +1,12 @@
 /* Public responses only. Keep the homepage and its versioned assets together. */
-const CACHE = "poseidon-v121";
-const RELEASE = "20261122-web-free";
-const PREVIOUS_CACHE = "poseidon-v120";
-const PREVIOUS_RELEASE = "20261121-pro-search-stats";
+const CACHE = "poseidon-v122";
+const RELEASE = "20261123-predictions-first";
+const PREVIOUS_CACHE = "poseidon-v121";
+const PREVIOUS_RELEASE = "20261122-web-free";
 // Update with RELEASE when these static files change. The daily dictionary is validated separately.
 const RELEASE_ASSET_SHA256 = {
-  "assets/app.js": "a2db295d4a01fbc8f73223aa3896c71863d2e953f64f0d24a2bace56f9c4cf4b",
-  "assets/home-dashboard.js": "8ccb326c6379a4cff1cbf9e85cdd6c387145fb219e2782ec1b2b0475f25b6daa",
+  "assets/app.js": "6aee1b70267050fb8e1acfb214e29488353153d8614832ecba52c7475b1d9bd6",
+  "assets/home-dashboard.js": "cd52b1e1cf308bedaf7436def2c0121e0e1428197afebf6cf0c180a8ac79a53a",
   "assets/member-dossier.css": "ad2846535906b2ac472b41f9368675d3e2dd3a5f5acd4f9ab883fe841f463881",
   "assets/member-dossier.js": "cfb97ebaa9d43f51c3317590207523a57ae3854e2acf3d738fb52773160f83bd",
   "assets/pro-report.js": "7aa98e931ac6974fc1f3c8791833df02a4789a2df7a80ca3417498c70826fde3",
@@ -15,13 +15,14 @@ const RELEASE_ASSET_SHA256 = {
   "assets/members.js": "a25510651b61bda03af790d9f38aaa6e95027343ac57335437c305737eb029ed",
 };
 const PREVIOUS_ASSET_SHA256 = {
-  "assets/app.js": "eda84c4797df76f38b682301e18373e2d093e6814c9b189ba6af06f3976c6c09",
-  "assets/home-dashboard.js": "235fe52dfdb54950a48a90206da201a711ad89a88bddf9a11050dde0450fa91f",
+  "assets/app.js": "a2db295d4a01fbc8f73223aa3896c71863d2e953f64f0d24a2bace56f9c4cf4b",
+  "assets/home-dashboard.js": "8ccb326c6379a4cff1cbf9e85cdd6c387145fb219e2782ec1b2b0475f25b6daa",
   "assets/member-dossier.css": "ad2846535906b2ac472b41f9368675d3e2dd3a5f5acd4f9ab883fe841f463881",
-  "assets/member-dossier.js": "921febc0c9f4e068ea9c3c7e0e2c6ce8a939cff40a62e8c575fcbb7c5d1d6162",
+  "assets/member-dossier.js": "cfb97ebaa9d43f51c3317590207523a57ae3854e2acf3d738fb52773160f83bd",
   "assets/pro-report.js": "7aa98e931ac6974fc1f3c8791833df02a4789a2df7a80ca3417498c70826fde3",
   "assets/pro-context.js": "85883d7956fd08c68addc2966880103308b678f902c92eb4a3c68d719c3c987c",
-  "assets/home-modern.css": "8bed71936da8617010797011033fad8eb1b6bc7eda84410182b2218fb3575e24",
+  "assets/home-modern.css": "ab8b6e83119846a87ad86a64f08d2749b62fdc3a985f93f9a4dea626f91b63a4",
+  "assets/members.js": "a25510651b61bda03af790d9f38aaa6e95027343ac57335437c305737eb029ed",
 };
 const HOME_PATHS = ["", "index.html"];
 const HOME_ASSETS = [

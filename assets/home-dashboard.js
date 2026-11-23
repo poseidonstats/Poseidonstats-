@@ -68,7 +68,10 @@
     const matching = data.matches.filter(m => dayOf(m.match_date) === day && (!league || m.league === league) && (!country || m.country === country) &&
       (!query || normalizeSearch(m.home_team).includes(query) || normalizeSearch(m.away_team).includes(query)));
     const visible = m => isPublic(m) || member && (m.dossier_only || memberForecast(m));
-    matching.sort((a, b) => Number(visible(b)) - Number(visible(a)) || Date.parse(a.match_date) - Date.parse(b.match_date));
+    const hasForecast = m => visible(m) && !m.dossier_only && memberForecast(m);
+    matching.sort((a, b) => Number(hasForecast(b)) - Number(hasForecast(a))
+      || Number(visible(b)) - Number(visible(a))
+      || Date.parse(a.match_date) - Date.parse(b.match_date));
     return {
       total: matching.length,
       free: matching.filter(isPublic).length,
