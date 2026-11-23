@@ -83,7 +83,9 @@
         marketProbabilities: visible(m) && !m.dossier_only ? {
           btts:probability(m.prob_btts), over_2_5:probability(m.prob_over_2_5), ht_over_0_5:probability(m.prob_ht_over_0_5)
         } : null,
-        probabilities: visible(m) && !m.dossier_only ? [probability(m.prob_home), probability(m.prob_draw), probability(m.prob_away)] : [null, null, null]
+        probabilities: visible(m) && !m.dossier_only ? [probability(m.prob_home), probability(m.prob_draw), probability(m.prob_away)] : [null, null, null],
+        ...(visible(m) && !m.dossier_only && [m.top_score_h,m.top_score_a].every(n => Number.isSafeInteger(n) && n >= 0)
+          ? {estimatedScore:[m.top_score_h,m.top_score_a]} : {})
       }))
     };
   }
@@ -203,6 +205,124 @@
         `<td class="dashboard-access-cell" role="cell" headers="dashboard-th-access"><span class="${row.locked ? 'dashboard-lock' : 'dashboard-free'}">${row.locked ? '🔒 ' : ''}${escapeHTML(accessLabel)}</span>${dossier}${follow}</td></tr>${reading}`;
     }).join('');
   }
+  const favoriteKey = row => dayOf(row.match_date) + '/' + row.fixture_id;
+  const groupKey = row => JSON.stringify([row.country,row.league]);
+
+  function groupMatchRows(rows) {
+    const groups = new Map();
+    for (const row of rows) {
+      const key = groupKey(row);
+      if (!groups.has(key)) groups.set(key,{key,country:row.country,league:row.league,rows:[]});
+      groups.get(key).rows.push(row);
+    }
+    return [...groups.values()];
+  }
+
+  const groupedTime = new Intl.DateTimeFormat('en-GB',{timeZone:TIMEZONE,hour:'2-digit',minute:'2-digit',hour12:false});
+
+  function linkedHistoryMatch(entry, row, history) {
+    if (!Array.isArray(history?.days)) return null;
+    const matches = history.days.filter(day => day?.date === entry.day && Array.isArray(day.matches))
+      .flatMap(day => day.matches).filter(match => String(match?.fixture_id) === entry.fixture_id);
+    if (matches.length !== 1) return null;
+    const [match] = matches;
+    if ((match.home_team ?? match.home) !== entry.home || (match.away_team ?? match.away) !== entry.away
+      || (match.league && match.league !== entry.league) || (match.country && match.country !== entry.country)) return null;
+    const kickoff = match.match_date
+      ? Date.parse(match.match_date) === Date.parse(row.match_date)
+      : match.time === groupedTime.format(new Date(row.match_date));
+    return kickoff ? match : null;
+  }
+
+  function groupedOutcome(row, market, context) {
+    const entry = watchlist.entry(row,market);
+    const unavailable = {ft:null,outcome:'unavailable'};
+    if (!entry) return unavailable;
+    const canonical = context.feed?.days?.[entry.day]?.results?.[entry.fixture_id];
+    if (canonical && Date.parse(canonical.match_date) !== Date.parse(row.match_date)) return unavailable;
+    const {ft,ht,outcome} = watchlist.settle(entry,context.feed,context.history);
+    const hasEvent = market === '1x2' ? row.probabilities?.some(p => probability(p) !== null)
+      : probability(row.marketProbabilities?.[market]) !== null;
+    const scheduled = !ft && outcome === 'unavailable' && Date.parse(row.match_date) > +context.now;
+    const displayedOutcome = scheduled ? 'scheduled' : hasEvent ? outcome : 'unavailable';
+    if (market !== 'ht_over_0_5') return {ft,outcome:displayedOutcome};
+    const archived = linkedHistoryMatch(entry,row,context.history);
+    // Keep the existing score validation. An archive verdict can stand on its own
+    // when the score is unavailable, provided it identifies this exact market.
+    const linkedHt = ht && (archived || watchlist.settle(entry,context.feed).ht) ? ht : null;
+    const picks = Array.isArray(archived?.picks) ? archived.picks : [];
+    const tags = new Set(picks.filter(pick => pick?.market === 'HT Over 0.5'
+      && ['WIN','LOSS'].includes(pick.outcome)).map(pick => pick.outcome));
+    const archivedOutcome = tags.size === 1 ? (tags.has('WIN') ? 'hit' : 'miss') : null;
+    return {...(linkedHt ? {ht:linkedHt} : {}),ft,
+      outcome:!linkedHt && archivedOutcome ? archivedOutcome : displayedOutcome};
+  }
+
+  function renderGroupedRows(rows, tr, loc, context) {
+    const time = new Intl.DateTimeFormat(loc,{timeZone:TIMEZONE,hour:'2-digit',minute:'2-digit',hour12:false});
+    const number = new Intl.NumberFormat(loc,{maximumFractionDigits:1});
+    const px = v => v == null ? '—' : number.format(v * 100) + '%';
+    const market = context.market;
+    const language = key => escapeHTML(tr(key));
+    const pick = (label,p) => `<span class="match-pick"><span>${language(label)}</span><strong class="match-probability">${px(p)}</strong></span>`;
+    return rows.map(row => {
+      const fixture = escapeHTML(row.fixture_id);
+      const fullName = row.home + ' – ' + row.away;
+      const title = escapeHTML(fullName);
+      const entry = watchlist.entry(row,market);
+      const key = watchlist.key(entry);
+      const saved = context.favorites.has(favoriteKey(row));
+      const watched = context.watched.some(item => watchlist.key(item) === key);
+      const identity = {fixture_id:row.fixture_id,home_team:row.home,away_team:row.away,match_date:row.match_date,locked:row.locked,free:row.free};
+      const dossier = !row.locked && context.dossiers?.button(identity,context.publicDossiers?.has(row.fixture_id),{list:true});
+      const access = row.free || (context.freeDay && dayOf(row.match_date) === context.freeDay && dossier)
+        ? 'matchlist.free' : 'matchlist.basicPro';
+      const name = dossier || `<strong class="match-team-label">${title}</strong>`;
+      const canShow = !row.locked && !row.dossierOnly;
+      const hasMarket = canShow && (market === '1x2' ? row.probabilities.some(p => p !== null)
+        : row.marketProbabilities?.[market] != null);
+      const choices = !hasMarket ? `<span class="match-missing">${language(row.dossierOnly ? 'dashboard.table.statsOnly' : 'dashboard.market.noEstimate')}</span>`
+        : market === '1x2' ? ['marketHome','marketDraw','marketAway'].map((label,i) => pick('matchlist.' + label,row.probabilities[i])).join('')
+          : pick(market === 'btts' ? 'matchlist.bttsYes' : 'dashboard.market.' + market,row.marketProbabilities[market]);
+      const {ft,ht,outcome} = groupedOutcome(row,market,context);
+      const label = {hit:'matchlist.confirmed',miss:'matchlist.missed',scheduled:'matchlist.scheduled',unavailable:'matchlist.unavailable'}[outcome]
+        || 'dashboard.market.result.' + outcome;
+      const halfScore = market === 'ht_over_0_5' ? `<span class="match-half-score">${ht
+        ? escapeHTML(tr('dashboard.market.ht',{score:ht.join('–')})) : language('matchlist.halfUnavailable')}</span>` : '';
+      const result = `<div class="match-result-line"><span class="match-outcome" data-outcome="${outcome}">${language(label)}</span>${halfScore}</div>`;
+      const addWatch = key && hasMarket ? `<button type="button" class="dashboard-watch-button" data-home-watch="${escapeHTML(key)}" data-conversion="watch-toggle" aria-pressed="${watched}">${language('matchlist.' + (watched ? 'marketFollowed' : 'followMarket'))}</button>` : '';
+      const historyId = `${row.fixture_id}|${row.match_date}|${market}`;
+      const historyOpen = context.openHistory?.has(historyId) ? ' open' : '';
+      const disclosure = addWatch ? `<details class="dashboard-market-details" data-home-team-history="${escapeHTML(historyId)}"${historyOpen}><summary>${language(market === '1x2' ? 'matchlist.marketTracking' : 'dashboard.market.history')}</summary>${
+        market === '1x2' ? '' : renderTeamHistory(archiveStat(context.feed,row,market),tr,loc,context.marketHistoryPending)}${addWatch}</details>` : '';
+      const score = (name, value, css = '') => `<span class="match-score${css}">${language(name)} <strong>${value.join('–')}</strong></span>`;
+      const scores = (ft ? score('matchlist.final',ft) : '') + (canShow && row.estimatedScore
+        ? score('matchlist.estimated',row.estimatedScore,' match-score-estimated') : '');
+      const favorite = `<button type="button" class="match-favorite" data-match-favorite="${escapeHTML(favoriteKey(row))}" aria-label="${escapeHTML(tr('matchlist.favorite',{match:fullName}))}" aria-pressed="${saved}"><span aria-hidden="true">${saved ? '★' : '☆'}</span></button>`;
+      const restricted = access !== 'matchlist.free' && !row.free;
+      return `<tr class="dashboard-match-row" role="row" data-match-row="${fixture}"><td class="match-time" role="cell"><time datetime="${escapeHTML(row.match_date)}">${time.format(new Date(row.match_date))}</time></td><td class="match-teams" role="cell">${name}${
+        dossier ? '' : `<small class="match-dossier-unavailable">${language(context.past && row.free ? 'matchlist.archiveDossierUnavailable' : 'matchlist.dossierUnavailable')}</small>`}</td><td class="match-selection" role="cell"><div class="match-picks${market === '1x2' && hasMarket ? ' match-picks-1x2' : ''}">${choices}</div>${result}</td><td class="match-scores" role="cell">${scores ? `<div>${scores}</div>` : ''}${disclosure}</td><td class="match-access" role="cell"><span class="match-access-label">${restricted ? '<span aria-hidden="true">🔒</span> ' : ''}${language(access)}</span></td><td class="match-favorite-cell" role="cell">${favorite}</td></tr>`;
+    }).join('');
+  }
+
+  function renderGroups(groups, tr, loc, context) {
+    const number = new Intl.NumberFormat(loc);
+    const header = ['dashboard.table.time','dashboard.table.match','dashboard.market.model','matchlist.score','dashboard.table.access','matchlist.favorites']
+      .map(label => `<th scope="col" role="columnheader">${escapeHTML(tr(label))}</th>`).join('');
+    return groups.map(group => {
+      const {key,country,league,rows} = group;
+      const nation = countries?.label(country,loc) || country || '—';
+      const heading = [nation,league].filter(Boolean).join(' · ');
+      const flag = country === 'England' ? '' : countries?.flag(country) || '🌐';
+      const count = rows.length === 1 ? tr('matchlist.oneMatch') : tr('matchlist.matchCount',{n:number.format(rows.length)});
+      return `<details class="match-competition" data-match-competition="${escapeHTML(key)}"${context.isOpen(key) ? ' open' : ''}><summary>
+        <span class="match-flag" data-flag="${escapeHTML(country)}" aria-hidden="true">${flag}</span>
+        <span class="match-competition-heading"><span class="match-country">${escapeHTML(nation)}</span><span class="match-competition-name">${escapeHTML(league || '—')}</span></span>
+        <span class="match-competition-count">${escapeHTML(count)}</span><span class="match-competition-chevron" aria-hidden="true">⌄</span>
+      </summary><table class="match-competition-table" aria-label="${escapeHTML(heading)}" role="table"><colgroup><col><col><col><col><col><col></colgroup><thead role="rowgroup"><tr role="row">${header}</tr></thead><tbody role="rowgroup">${renderGroupedRows(rows,tr,loc,context)}</tbody></table></details>`;
+    }).join('');
+  }
+
   function renderChart(points, tr, loc, id, layout = {}) {
     if (!points.length) return `<p class="muted">${escapeHTML(tr('dashboard.data.unavailable'))}</p>`;
     const width = layout.width || 480, height = layout.height || 180, left = 40, top = 14, bottom = 28, right = 12;
@@ -294,12 +414,16 @@
     };
     mountFragmentHistory(view, readSaved);
     const savedY = ['reload','back_forward'].includes(type) ? readSaved() : null;
-    view.addEventListener('pagehide', () => {
+    const savePosition = () => {
       if (view.history?.state?.poseidonDossierReading) return;
       try {
         view.sessionStorage.setItem(storageKey(), JSON.stringify({page:page(), y:Math.max(0,view.scrollY)}));
       } catch (_) { /* Storage may be unavailable in this browser. */ }
-    });
+    };
+    view.addEventListener('pagehide',savePosition);
+    doc.addEventListener?.('click',event => {
+      if (event.target.closest?.('[data-dossier-list]')) savePosition();
+    },true);
     let moved = false;
     const stopRestoration = () => { moved = true; };
     const inputEvents = ['touchstart', 'wheel', 'pointerdown', 'keydown'];
@@ -489,6 +613,54 @@
     const table = doc.getElementById('dashboard-predictions');
     const status = doc.getElementById('dashboard-table-status');
     const dossiers = doc.defaultView?.PoseidonDossier;
+    const grouped = table?.tagName === 'DIV';
+    const matchFavoritesStorage = 'poseidon:grouped-favorites:v1';
+    const matchViewStorage = 'poseidon:grouped-list-view:v1';
+    function readStored(area,key) {
+      try { return JSON.parse(view?.[area]?.getItem(key) || 'null'); }
+      catch (_) { return null; }
+    }
+    function readFavorites() {
+      const keys = readStored('localStorage',matchFavoritesStorage);
+      return new Set(Array.isArray(keys) ? keys.filter(key => /^\d{4}-\d{2}-\d{2}\/\d+$/.test(key)) : []);
+    }
+    let favorites = grouped ? readFavorites() : new Set(), onlyFavorites = false, favoriteError = false;
+    let visibleGroups = [], openByDay = new Map(), filteredClosed = new Set();
+    let preferredDate = '';
+    if (grouped) {
+      const previous = readStored('sessionStorage',matchViewStorage);
+      if (previous?.day && watchlist.shiftDay(previous.day,0)) preferredDate = previous.day;
+      if (watchlist.markets.includes(previous?.market)) market = previous.market;
+      if (search && typeof previous?.query === 'string') search.value = previous.query;
+      onlyFavorites = previous?.onlyFavorites === true;
+      if (Array.isArray(previous?.filteredClosed)) filteredClosed = new Set(previous.filteredClosed);
+      if (Array.isArray(previous?.openGroups)) openByDay = new Map(previous.openGroups.filter(pair => Array.isArray(pair)
+        && typeof pair[0] === 'string' && Array.isArray(pair[1])).map(([day,groups])=>[day,new Set(groups)]));
+      if (/^(?:localhost|127\.0\.0\.1|\[::1\])$/.test(view?.location?.hostname || '')) {
+        const marker = doc.querySelector('[data-match-preview]');
+        if (marker) marker.hidden = false;
+      }
+    }
+    function saveGroupedView() {
+      if (!grouped || !dateSelect) return;
+      try {
+        view.sessionStorage.setItem(matchViewStorage,JSON.stringify({day:dateSelect.value,query:search?.value || '',
+          market,onlyFavorites,filteredClosed:[...filteredClosed],openGroups:[...openByDay].map(([day,groups])=>[day,[...groups]])}));
+      } catch (_) { /* The list remains usable without storage. */ }
+    }
+    const groupFilterActive = () => onlyFavorites || Boolean(normalizeSearch(search?.value));
+    const unfilteredOpen = () => openByDay.get(dateSelect?.value) ?? new Set(visibleGroups.slice(0,2).map(group=>group.key));
+    function setGroupOpenness(key, open) {
+      if (groupFilterActive()) {
+        if (open) filteredClosed.delete(key);
+        else filteredClosed.add(key);
+      } else {
+        const expanded = unfilteredOpen();
+        if (open) expanded.add(key);
+        else expanded.delete(key);
+        openByDay.set(dateSelect.value,expanded);
+      }
+    }
     let selectedLeague = '';
     let competitions = [];
     async function localJSON(path) {
@@ -610,6 +782,8 @@
       const tr = translator();
       renderQuickFilters();
       const focusedKey = doc.activeElement?.dataset?.homeWatch;
+      const focusedFavorite = doc.activeElement?.dataset?.matchFavorite;
+      const focusedDossier = doc.activeElement?.dataset?.dossierList ? doc.activeElement.dataset.dossierFixture : null;
       const focusedHistory = doc.activeElement?.tagName === 'SUMMARY'
         ? doc.activeElement.parentElement?.dataset?.homeTeamHistory : null;
       const openHistory = new Set(Array.from(table.querySelectorAll?.('details[data-home-team-history][open]') || [],
@@ -622,30 +796,56 @@
         const data = dashboardPredictions();
         const competition = competitions.find(option => option.value === selectedLeague);
         const freeDay = doc.defaultView?.PoseidonMembers?.webFreeDay?.();
-        const limit = member && freeDay && dateSelect?.value === freeDay ? Infinity : 5;
+        const limit = member && (grouped || (freeDay && dateSelect?.value === freeDay)) ? Infinity : 5;
         const selection = selectRows(data,dateSelect ? dateSelect.value : '',competition?.league,limit,query,member,competition?.country);
+        const rows = grouped && onlyFavorites ? selection.rows.filter(row => favorites.has(favoriteKey(row))) : selection.rows;
         const publicDossiers = member ? null : dossiers?.publicFixtureIds?.(data);
         if (search) search.disabled = false;
         if (clearSearch) clearSearch.disabled = !normalizeSearch(query);
-        for (const row of selection.rows) {
+        for (const row of rows) {
           const entry = watchlist.entry(row, market);
-          if (entry) shown.set(watchlist.key(entry), entry);
+          if (entry && !row.locked) shown.set(watchlist.key(entry), entry);
         }
         const past = dateSelect?.value < relativeDays().today;
-        table.innerHTML = selection.rows.length ? renderRows(selection.rows,tr,locale(doc),dossiers,member,publicDossiers,freeDay,
-          {market,past,watched,feed:marketHistory,history,marketHistoryPending,openHistory}) : `<tr><td colspan="6">${escapeHTML(tr(
-            past && marketHistoryPending ? 'loading' : normalizeSearch(query) ? 'simplify.search.empty'
-              : past ? 'dashboard.market.noArchive' : 'dashboard.table.empty'))}</td></tr>`;
+        const empty = past && marketHistoryPending ? 'loading' : normalizeSearch(query) ? 'simplify.search.empty'
+          : grouped && onlyFavorites ? 'matchlist.noFavorites' : past ? 'dashboard.market.noArchive' : 'dashboard.table.empty';
+        const context = {market,past,watched,feed:marketHistory,history,marketHistoryPending,openHistory};
+        if (grouped) {
+          for (const note of doc.querySelectorAll('[data-match-free-context]')) note.hidden = member;
+          visibleGroups = groupMatchRows(rows);
+          const expanded = unfilteredOpen();
+          table.innerHTML = rows.length ? renderGroups(visibleGroups,tr,locale(doc),{...context,dossiers,publicDossiers,freeDay,
+            favorites,now:new Date(),isOpen:key=>groupFilterActive() ? !filteredClosed.has(key) : expanded.has(key)})
+            : `<p class="match-empty">${escapeHTML(tr(empty))}</p>`;
+          const favoriteButton = doc.querySelector('[data-match-favorites]');
+          favoriteButton?.setAttribute('aria-pressed',String(onlyFavorites));
+          const count = doc.querySelector('[data-match-favorite-count]');
+          if (count) count.textContent = favorites.size ? '(' + favorites.size + ')' : '';
+          for (const button of doc.querySelectorAll('[data-match-expand], [data-match-collapse]')) button.disabled = !rows.length;
+          if (focusedDossier) table.querySelector('[data-dossier-fixture="' + focusedDossier + '"]')?.focus({preventScroll:true});
+          if (focusedFavorite) ([...table.querySelectorAll('[data-match-favorite]')]
+            .find(button => button.dataset.matchFavorite === focusedFavorite) || favoriteButton)?.focus({preventScroll:true});
+          if (status) status.textContent = favoriteError ? tr('matchlist.favoriteStore')
+            : [
+              rows.length === 1 ? tr('matchlist.oneMatch') : tr('matchlist.matchCount',{n:rows.length}),
+              visibleGroups.length === 1 ? tr('matchlist.oneCompetition') : tr('matchlist.competitionCount',{n:visibleGroups.length})
+            ].join(' · ');
+          saveGroupedView();
+        } else {
+          table.innerHTML = rows.length ? renderRows(rows,tr,locale(doc),dossiers,member,publicDossiers,freeDay,context)
+            : `<tr><td colspan="6">${escapeHTML(tr(empty))}</td></tr>`;
+        }
         if (focusedKey) [...table.querySelectorAll('[data-home-watch]')].find(button => button.dataset.homeWatch === focusedKey)?.focus();
         if (focusedHistory) [...table.querySelectorAll('details[data-home-team-history]')]
           .find(details => details.dataset.homeTeamHistory === focusedHistory)?.querySelector('summary')?.focus();
-        if (status) status.textContent = (member
+        if (status && !grouped) status.textContent = (member
           ? tr('match.count', {shown:selection.rows.length,total:selection.total})
           : tr('dashboard.table.count', {shown:selection.rows.length,total:selection.total,free:selection.free})) + ' · ' + tr('dashboard.table.timezone') + (member ? '' : ' · ' + tr('dashboard.table.rawnote'));
       } catch (_) {
         if (search) search.disabled = true;
         if (clearSearch) clearSearch.disabled = true;
-        table.innerHTML = `<tr><td colspan="6">${escapeHTML(tr('dashboard.data.unavailable'))}</td></tr>`;
+        table.innerHTML = grouped ? `<p class="match-empty">${escapeHTML(tr('dashboard.data.unavailable'))}</p>`
+          : `<tr><td colspan="6">${escapeHTML(tr('dashboard.data.unavailable'))}</td></tr>`;
         if (status) status.textContent = tr('dashboard.table.error');
       }
     }
@@ -655,10 +855,17 @@
       const guestDay = dossiers?.guestPredictionDay?.();
       const data = dossiers?.predictions() || predictions;
       const available = Array.isArray(data?.matches) ? availableDays(data) : [];
-      const days = [...new Set([today,yesterday,...(guestDay ? [guestDay] : available),
+      const archived = grouped ? Object.keys(marketHistory?.days || {}).filter(day => watchlist.shiftDay(day,0)) : [];
+      const resume = grouped && preferredDate && preferredDate >= watchlist.shiftDay(today,-6) && preferredDate < today ? [preferredDate] : [];
+      const days = [...new Set([today,yesterday,...(guestDay ? [guestDay] : available),...archived,...resume,
         ...(dossiers?.predictions() && !guestDay ? dossiers.recentDays() : [])])].sort();
-      const previous = dateSelect.value;
-      dateSelect.innerHTML = days.map(day => `<option value="${day}">${escapeHTML(formatDay(day,locale(doc)))}</option>`).join('');
+      const previous = dateSelect.value || preferredDate;
+      const format = grouped ? new Intl.DateTimeFormat(locale(doc),{day:'numeric',month:'short',timeZone:TIMEZONE}) : null;
+      dateSelect.innerHTML = days.map(day => {
+        const label = format ? format.format(new Date(day+'T12:00:00Z')) : formatDay(day,locale(doc));
+        const relative = day === today ? 'today' : day === yesterday ? 'yesterday' : '';
+        return `<option value="${day}">${escapeHTML(label + (format && relative ? ' · ' + translator()('dashboard.market.' + relative) : ''))}</option>`;
+      }).join('');
       dateSelect.value = days.includes(previous) ? previous : today;
       dateSelect.disabled = !days.length;
     }
@@ -695,9 +902,10 @@
       target.innerHTML = cards.join('') || `<p>${escapeHTML(tr('dashboard.data.unavailable'))}</p>`;
     }
     function render() {decorateLanguageSelector(doc,translator());decorateMemberLogin(doc,translator());ensureProofNotice(doc,translator());renderDates();renderLeagues();renderTable();renderWatchlist();renderMetrics();renderAnalyses();}
-    if (dateSelect) dateSelect.addEventListener('change', () => {selectedLeague='';renderLeagues();renderTable();});
-    if (search) search.addEventListener('input',renderTable);
-    if (clearSearch) clearSearch.addEventListener('click',() => {if (search) {search.value='';renderTable();search.focus && search.focus();}});
+    if (dateSelect) dateSelect.addEventListener('change', () => {selectedLeague='';filteredClosed.clear();renderLeagues();renderTable();});
+    const renderSearch = () => {filteredClosed.clear();renderTable();};
+    if (search) search.addEventListener('input',renderSearch);
+    if (clearSearch) clearSearch.addEventListener('click',() => {if (search) {search.value='';renderSearch();search.focus && search.focus();}});
     if (leagueMenu) leagueMenu.addEventListener('change',() => {selectedLeague=leagueMenu.value;renderLeagues();renderTable();});
     if (leagues) leagues.addEventListener('click', event => {
       const button = event.target.closest('[data-dashboard-league]');
@@ -713,6 +921,41 @@
       if (watchError) doc.getElementById('dashboard-watchlist').open = true;
     }
     doc.addEventListener('click', event => {
+      if (grouped) {
+        const favorite = event.target.closest('[data-match-favorite]');
+        if (favorite) {
+          const key = favorite.dataset.matchFavorite;
+          const next = readFavorites();
+          if (next.has(key)) next.delete(key);
+          else next.add(key);
+          try {
+            storage.setItem(matchFavoritesStorage,JSON.stringify([...next]));
+            favorites = next;
+            favoriteError = false;
+          } catch (_) { favoriteError = true; }
+          renderTable();
+        }
+        if (event.target.closest('[data-match-favorites]')) {
+          onlyFavorites = !onlyFavorites;
+          filteredClosed.clear();
+          renderTable();
+        }
+        const bulk = event.target.closest('[data-match-expand], [data-match-collapse]');
+        if (bulk) {
+          const open = bulk.hasAttribute('data-match-expand');
+          for (const group of table.querySelectorAll('.match-competition')) {
+            setGroupOpenness(group.dataset.matchCompetition,open);
+            group.open = open;
+          }
+          saveGroupedView();
+        }
+        const summary = event.target.closest('.match-competition > summary');
+        if (summary) {
+          const group = summary.parentElement;
+          setGroupOpenness(group.dataset.matchCompetition,!group.open);
+          saveGroupedView();
+        }
+      }
       const marketButton = event.target.closest('[data-home-market]');
       if (marketButton && watchlist.markets.includes(marketButton.dataset.homeMarket)) {
         market = marketButton.dataset.homeMarket;
@@ -765,6 +1008,7 @@
       view.addEventListener('storage', event => {
         if (event.storageArea !== storage) return;
         watched = watchlist.read(storage);
+        if (grouped) favorites = readFavorites();
         renderWatchlist();
         renderTable();
       });
@@ -778,6 +1022,7 @@
     void supplemental.then(data => {
       marketHistoryPending = false;
       marketHistory = data;
+      if (grouped) renderDates();
       if (dateSelect?.value < relativeDays().today) renderLeagues();
       renderTable();
       renderWatchlist();
@@ -790,5 +1035,5 @@
     try { await view?.PoseidonHomeLayoutReady; } catch (_) { /* Still open reachable page sections. */ }
     finishNavigation();
   }
-  return {escapeHTML,dayOf,availableDays,chooseDay,isPublic,normalizeSearch,leagueChoices,competitionChoices,selectRows,publicArchive,archiveStat,renderMarketResult,extractMetrics,cumulativeResolved,renderRows,renderChart,openTargetDetails,revealMatch,chooseAnalysisLanguage,analysisLanguageNotice,decorateLanguageSelector,watchLanguageSelector,decorateMemberLogin,watchMemberLogin,ensureProofNotice,analysisAction,membershipTier,observeMembership,mount};
+  return {escapeHTML,dayOf,availableDays,chooseDay,isPublic,normalizeSearch,leagueChoices,competitionChoices,selectRows,publicArchive,archiveStat,renderMarketResult,groupedOutcome,groupMatchRows,renderGroupedRows,extractMetrics,cumulativeResolved,renderRows,renderChart,openTargetDetails,revealMatch,chooseAnalysisLanguage,analysisLanguageNotice,decorateLanguageSelector,watchLanguageSelector,decorateMemberLogin,watchMemberLogin,ensureProofNotice,analysisAction,membershipTier,observeMembership,mount};
 });

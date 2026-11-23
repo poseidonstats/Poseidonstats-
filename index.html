@@ -14,13 +14,13 @@
 <link rel="canonical" href="https://poseidonstats.com/">
 <meta property="og:type" content="website">
 <link rel="stylesheet" href="assets/style.css?v=20261119-native-pro-anchor">
-<link rel="stylesheet" href="assets/home-modern.css?release=20261123-markets-follow">
-<link rel="stylesheet" href="assets/member-dossier.css?release=20261123-markets-follow">
+<link rel="stylesheet" href="assets/home-modern.css?release=20261123-grouped-matches-r2">
+<link rel="stylesheet" href="assets/member-dossier.css?release=20261123-grouped-matches-r2">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#1e3a8a">
 <link rel="apple-touch-icon" href="assets/icon-192.png">
 <script>if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js");</script>
-<script src="assets/conversion.js?release=20261123-markets-follow"></script>
+<script src="assets/conversion.js?release=20261123-grouped-matches-r2"></script>
 <script data-goatcounter="https://poseidonstats.goatcounter.com/count" data-goatcounter-settings='{"no_onload":true,"no_events":true}' async src="//gc.zgo.at/count.js"></script>
 <script type="application/ld+json">
 {
@@ -208,50 +208,56 @@ Statistici informative. Modelul poate greși. Verifică sursa. 18+.
     </div></section>
 
   <section class="dashboard-grid simplify-demo" id="dashboard" tabindex="-1" data-conversion-view="dashboard">
-<div class="dashboard-column dashboard-prediction-panel">
-      <div class="dashboard-panel-heading"><h2><span class="conversion-visitor-title" data-i18n="redesign.free.title">Cele 5 predicții gratuite</span><span class="conversion-member-title" data-i18n="nav.predictii">Predicții</span></h2><label class="dashboard-date-wrap"><span data-i18n="filters.day">Zi:</span><select id="dashboard-date" aria-label="Zi:" data-i18n-attr="aria-label:filters.day"></select></label></div>
-      <div class="dashboard-quick-filters">
-        <div class="dashboard-market-buttons" role="group" aria-label="Piață" data-i18n-attr="aria-label:dashboard.market.label">
-          <button type="button" data-home-market="btts" data-conversion="market-select" aria-pressed="false" data-i18n="dashboard.market.btts">Ambele marchează</button>
-          <button type="button" data-home-market="over_2_5" data-conversion="market-select" aria-pressed="false" data-i18n="dashboard.market.over_2_5">Peste 2,5 goluri</button>
-          <button type="button" data-home-market="ht_over_0_5" data-conversion="market-select" aria-pressed="false" data-i18n="dashboard.market.ht_over_0_5">Gol în prima repriză</button>
-          <button type="button" data-home-market="1x2" data-conversion="market-select" aria-pressed="true">1X2</button>
+    <div class="dashboard-column dashboard-prediction-panel dashboard-grouped">
+      <div class="match-list-heading">
+        <h2 data-i18n="matchlist.title">Lista de meciuri</h2>
+        <span class="match-preview" data-match-preview data-i18n="matchlist.preview" hidden>Versiune de test · Nepublicată</span>
+        <p data-i18n="matchlist.subtitle">Pronosticuri și probabilitățile modelului</p>
+        <p class="match-free-context" data-match-free-context data-i18n="matchlist.freeDaily">5 meciuri gratuite pe zi</p>
+      </div>
+      <div class="match-list-controls">
+        <div class="match-list-field">
+          <label for="dashboard-search" data-i18n="simplify.search.label">Caută o echipă</label>
+          <div class="match-list-input">
+            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="10.8" cy="10.8" r="6.3"/><path d="m16 16 4 4"/></svg>
+            <input id="dashboard-search" type="search" autocomplete="off" placeholder="Numele echipei" data-i18n-attr="placeholder:simplify.search.placeholder">
+            <button type="button" id="dashboard-search-clear" aria-label="Șterge căutarea" data-i18n-attr="aria-label:matchlist.clearSearch" disabled>×</button>
+          </div>
         </div>
-        <div class="dashboard-date-buttons" role="group" aria-label="Zi" data-i18n-attr="aria-label:filters.day">
-          <button type="button" data-home-day="today" aria-pressed="true" data-i18n="dashboard.market.today">Azi</button>
-          <button type="button" data-home-day="yesterday" aria-pressed="false" data-i18n="dashboard.market.yesterday">Ieri</button>
+        <div class="match-list-field">
+          <label for="dashboard-date" data-i18n="matchlist.date">Data meciurilor</label>
+          <select id="dashboard-date"></select>
+        </div>
+        <div class="dashboard-market-buttons" role="group" aria-label="Piață" data-i18n-attr="aria-label:dashboard.market.label">
+          <button type="button" data-home-market="1x2" data-conversion="market-select" aria-pressed="true">1X2</button>
+          <button type="button" data-home-market="btts" data-conversion="market-select" aria-pressed="false" data-i18n="matchlist.bttsShort" data-i18n-attr="aria-label:dashboard.market.btts">GG</button>
+          <button type="button" data-home-market="over_2_5" data-conversion="market-select" aria-pressed="false" data-i18n="matchlist.overShort" data-i18n-attr="aria-label:dashboard.market.over_2_5">Peste 2,5</button>
+          <button type="button" data-home-market="ht_over_0_5" data-conversion="market-select" aria-pressed="false" data-i18n="matchlist.halfShort" data-i18n-attr="aria-label:dashboard.market.ht_over_0_5">Gol la pauză</button>
+          <button type="button" data-match-favorites aria-pressed="false"><span data-i18n="matchlist.favorites">Favorite</span> <span data-match-favorite-count></span></button>
         </div>
       </div>
+      <div class="match-list-toolbar">
+        <div>
+          <h3 data-i18n="matchlist.competitions">Campionate</h3>
+          <p class="dashboard-status" id="dashboard-table-status" role="status"></p>
+        </div>
+        <div class="match-list-actions">
+          <button type="button" data-match-expand data-i18n="matchlist.expand">Deschide toate</button>
+          <button type="button" data-match-collapse data-i18n="matchlist.collapse">Restrânge toate</button>
+        </div>
+      </div>
+      <div class="match-competitions" id="dashboard-predictions"></div>
+      <p class="match-list-note" data-i18n="dashboard.table.timezone">Ora Bucureștiului</p>
       <details class="dashboard-watchlist" id="dashboard-watchlist">
-        <summary><span data-i18n="dashboard.watch.title">Meciuri urmărite</span> <span id="dashboard-watch-count">(0)</span></summary>
-        <p data-i18n="dashboard.watch.scope">Lista se păstrează în acest browser. Verdictul se referă la piața urmărită.</p>
+        <summary><span data-i18n="matchlist.followedMarkets">Piețe urmărite</span> <span id="dashboard-watch-count">(0)</span></summary>
+        <p data-i18n="matchlist.followedMarketScope">Aici urmărești verdictul unei piețe. Steaua salvează meciul în Favorite. Ambele liste rămân în acest browser.</p>
         <ul id="dashboard-watch-entries"></ul>
         <p id="dashboard-watch-status" role="status"></p>
       </details>
-      <div class="dashboard-demo-controls">
-        <label for="dashboard-search" data-i18n="simplify.search.label">Caută o echipă</label>
-        <div class="dashboard-search-control"><input id="dashboard-search" type="search" autocomplete="off" placeholder="Numele echipei" aria-label="Caută o echipă" data-i18n-attr="placeholder:simplify.search.placeholder,aria-label:simplify.search.label"><button id="dashboard-search-clear" type="button" data-i18n="simplify.search.clear">Șterge</button></div>
-        <label for="dashboard-league-menu" data-i18n="simplify.leagues.label">Ligă</label>
-        <select id="dashboard-league-menu" aria-label="Ligă" data-i18n-attr="aria-label:simplify.leagues.label"></select>
+      <div class="match-list-all">
+        <a href="#matches" class="dashboard-text-link" data-i18n="dashboard.predictions.all">Vezi toate predicțiile</a>
+        <span data-match-free-context data-i18n="matchlist.basicOffer">Basic: toate meciurile disponibile, 5 USD/lună</span>
       </div>
-      <div class="dashboard-league-tabs" id="dashboard-leagues"></div>
-      <div class="dashboard-table-scroll">
-        <table class="dashboard-table" role="table">
-          <colgroup><col class="dashboard-col-time"><col class="dashboard-col-match"><col class="dashboard-col-prob"><col class="dashboard-col-prob"><col class="dashboard-col-prob"><col class="dashboard-col-access"></colgroup>
-          <thead role="rowgroup"><tr role="row">
-            <th id="dashboard-th-time" scope="col" role="columnheader" data-i18n="dashboard.table.time">Ora</th>
-            <th id="dashboard-th-match" scope="col" role="columnheader" data-i18n="dashboard.table.match">Meci</th>
-            <th id="dashboard-th-0" scope="col" role="columnheader">1</th>
-            <th id="dashboard-th-1" scope="col" role="columnheader">X</th>
-            <th id="dashboard-th-2" scope="col" role="columnheader">2</th>
-            <th id="dashboard-th-market" scope="col" role="columnheader" colspan="3" hidden data-i18n="dashboard.market.model">Estimarea modelului</th>
-            <th id="dashboard-th-access" scope="col" role="columnheader" data-i18n="dashboard.table.access">Acces</th>
-          </tr></thead>
-          <tbody id="dashboard-predictions" role="rowgroup"></tbody>
-        </table>
-      </div>
-      <p class="dashboard-status" id="dashboard-table-status" role="status"></p>
-      <a href="#matches" class="dashboard-text-link" data-i18n="dashboard.predictions.all">Vezi toate predicțiile</a>
     </div>
     <section class="dashboard-column dashboard-analysis-panel simplify-pro-demo" id="exemplu-pro">
       <div class="dashboard-panel-heading" id="public-pro-demo"><h2 data-i18n="redesign.edition.title">Ce adaugă analiza Pro</h2></div>
@@ -993,12 +999,12 @@ Statistici informative. Modelul poate greși. Verifică sursa. 18+.
   </div>
   <div class="dossier-body" data-dossier-body></div>
 </dialog>
-<script src="assets/members.js?release=20261123-markets-follow"></script>
-<script src="assets/member-dossier.js?release=20261123-markets-follow"></script>
-<script src="assets/country-label.js?v=20261118e"></script>
-<script src="assets/home-watchlist.js?release=20261123-markets-follow"></script>
-<script src="assets/home-dashboard.js?release=20261123-markets-follow"></script>
-<script src="assets/app.js?release=20261123-markets-follow"></script>
+<script src="assets/members.js?release=20261123-grouped-matches-r2"></script>
+<script src="assets/member-dossier.js?release=20261123-grouped-matches-r2"></script>
+<script src="assets/country-label.js?release=20261123-grouped-matches-r2"></script>
+<script src="assets/home-watchlist.js?release=20261123-grouped-matches-r2"></script>
+<script src="assets/home-dashboard.js?release=20261123-grouped-matches-r2"></script>
+<script src="assets/app.js?release=20261123-grouped-matches-r2"></script>
 <script src="assets/citire.js?v=20261024-onestitate3"></script>
 </body>
 </html>

@@ -118,6 +118,7 @@
   let current = null;
   let dialog, nativeDialog, readingPage;
   let readingEntry = 0;
+  const matchListReadings = new Map();
   let publicPredictions;
 
   const words = (lang = document.documentElement.lang) => labels[lang] || labels.en;
@@ -175,18 +176,25 @@
   }
 
   // A history entry switches views inside the existing URL. It carries no report or session data.
-  function openReading(source, position, returnFocus) {
+  function openReading(source, position, returnFocus, matchListState) {
     if (!root.matchMedia("(max-width: 767px)").matches || readingPage) return null;
-    const entry = `${Date.now()}-${++readingEntry}`;
-    try { root.history.pushState({...root.history.state,poseidonDossierReading:entry},""); }
-    catch (_) { return null; }
+    const entry = matchListState?.readingEntry || `${Date.now()}-${++readingEntry}`;
+    if (matchListState?.readingEntry) {
+      if (root.history.state?.poseidonDossierReading !== entry) return null;
+    } else {
+      try { root.history.pushState({...root.history.state,poseidonDossierReading:entry},""); }
+      catch (_) { return null; }
+    }
+    if (matchListState) matchListReadings.set(entry, {
+      fixture:matchListState.fixture, kickoff:matchListState.kickoff, position
+    });
     const restoration = root.history.scrollRestoration;
     root.history.scrollRestoration = "manual";
     const page = text("main",undefined,"dossier-reading-page");
     const toolbar = text("div",undefined,"dossier-reading-toolbar");
     const back = text("button");
     const arrow = text("span","←");
-    const backLabel = text("span",label("backMatch"));
+    const backLabel = text("span",matchListState ? tt("matchlist.back",label("backMatch")) : label("backMatch"));
     arrow.setAttribute("aria-hidden","true");
     back.type = "button";
     back.addEventListener("click",returnToMatch);
@@ -224,12 +232,17 @@
     view.source.append(...view.surface.childNodes);
     view.page.remove();
     document.body.classList.remove("dossier-reading-active");
-    view.returnFocus()?.focus({preventScroll:true});
+    const trigger = view.returnFocus();
+    trigger?.focus({preventScroll:true});
     const restore = () => root.scrollTo(view.position.x,view.position.y);
     restore();
     root.history.scrollRestoration = view.restoration;
     root.requestAnimationFrame(()=>{
       if (readingPage) return;
+      if (trigger?.hasAttribute("data-dossier-list") &&
+          [document.body,document.getElementById("dashboard")].includes(document.activeElement)) {
+        trigger.focus({preventScroll:true});
+      }
       restore();
     });
   }
@@ -253,7 +266,11 @@
 
   function checkReadingAccess() {
     if (current?.guest && guestDay() !== current.day) expireWebFree();
-    else if (current && dialog === readingPage?.surface && !canPro(current)) expireReading(current);
+    else if (current && dialog === readingPage?.surface) {
+      const allowed = current.publicAccess ? publicFixtureIds(publicPredictions).has(current.fixture)
+        : current.fromPro ? canPro(current) : authorized();
+      if (!allowed) expireReading(current);
+    }
   }
 
   function expireWebFree() {
@@ -320,7 +337,7 @@
     return ids;
   }
 
-  function button(match, offerPublic = false) {
+  function button(match, offerPublic = false, options = {}) {
     const kickoff = timed(match.match_date);
     const fid = Number(match.fixture_id);
     if (!Number.isSafeInteger(fid) || fid < 1 || !Number.isFinite(kickoff)) return "";
@@ -328,7 +345,10 @@
     const publicAccess = !member && offerPublic && match.free === true && !match.locked
       && siteDay.format(kickoff) === siteDay.format(Date.now());
     if (!member && !publicAccess) return "";
-    return `<button type="button" class="dossier-open" data-dossier-fixture="${fid}" data-dossier-kickoff="${new Date(kickoff).toISOString()}"${publicAccess ? ' data-dossier-public="true"' : ""} aria-haspopup="dialog" aria-controls="member-dossier" aria-label="${esc(words().open + " · " + (match.home_team || "") + " – " + (match.away_team || ""))}">${words().open}</button>`;
+    const title = (match.home_team || "") + " – " + (match.away_team || "");
+    const dedicated = options.list && root.matchMedia?.("(max-width: 767px)").matches;
+    return `<button type="button" class="dossier-open${options.list ? ' match-team-label' : ''}" data-dossier-fixture="${fid}" data-dossier-kickoff="${new Date(kickoff).toISOString()}"${publicAccess ? ' data-dossier-public="true"' : ""}${options.list ? ' data-dossier-list="true"' : ''}${
+      dedicated ? '' : ' aria-haspopup="dialog" aria-controls="member-dossier"'} aria-label="${esc(words().open + " · " + title)}">${options.list ? esc(title) : words().open}</button>`;
   }
 
   const sum = values => values.reduce((total, value) => total + value, 0);
@@ -602,9 +622,26 @@
       body.append(stats);
       state.statistics = mountStatistics(stats,data,dialog.lang,"member-dossier",state.statistics);
     } else {
-      const message = text("p",c[status] || c.missing,"dossier-note");
+      const message = text("p",state.fromMatchList && status === "missing"
+        ? tt("matchlist.archiveDossierUnavailable","Dosar indisponibil în arhivă")
+        : state.fromMatchList && status === "retry"
+          ? tt("matchlist.dossierLoadError","Dosarul nu a putut fi încărcat.")
+          : c[status] || c.missing,"dossier-note");
       message.setAttribute("role","status");
       body.append(message);
+      if (state.fromMatchList && status === "retry") {
+        const retry = text("button",tt("matchlist.retryDossier","Încearcă din nou"),"edition-read-member");
+        retry.type = "button";
+        retry.setAttribute("data-dossier-retry","");
+        retry.addEventListener("click",()=>{
+          if (!stillOpen(state)) return;
+          state.status = null;
+          retry.disabled = true;
+          message.textContent = state.copy.loading;
+          void fetchDossier(state,message);
+        });
+        body.append(retry);
+      }
     }
   }
 
@@ -902,7 +939,7 @@
         : request(state, "dosar/" + state.fixture, path));
       if (!stillOpen(state)) return;
       if (state.publicAccess && (response.status === 401 || response.status === 403)) {
-        show(state,"missing");
+        show(state,state.fromMatchList ? "retry" : "missing");
         return;
       }
       if (response.status === 401 || response.status === 403) {
@@ -913,7 +950,7 @@
       const data = response.ok ? await response.json() : null;
       if (!stillOpen(state)) return;
       if (dossierMatches(data,state.fixture,state.day,state.kickoff)) state.dossier = data;
-      show(state,response.ok || response.status === 404 ? "missing" : "retry");
+      show(state,(state.fromMatchList ? state.dossier : response.ok) || response.status === 404 ? "missing" : "retry");
     } catch (_) {
       if (stillOpen(state)) show(state,"retry");
     }
@@ -949,7 +986,7 @@
     if (!nativeDialog || dossierIsOpen()) return false;
     current?.controller.abort();
     const lang = document.documentElement.lang;
-    Object.assign(state,{ lang, copy:words(lang), controller:new AbortController(), position:listPosition() });
+    Object.assign(state,{ lang, copy:words(lang), controller:new AbortController(), position:state.position || listPosition() });
     current = state;
     dialog = nativeDialog;
     if (state.fromPro) dialog.classList.remove("dossier-basic-view");
@@ -962,7 +999,7 @@
     const message = text("p",state.copy.loading);
     message.setAttribute("role","status");
     dialog.querySelector("[data-dossier-body]").replaceChildren(message);
-    if (!state.fromPro || !openMemberReading(state)) {
+    if (!(state.fromPro || state.fromMatchList) || !openMemberReading(state)) {
       dialog.showModal();
       close.focus({preventScroll:true});
     }
@@ -990,7 +1027,7 @@
   }
 
   function openMemberReading(state) {
-    const page = openReading(nativeDialog,state.position,()=>finishMember(state));
+    const page = openReading(nativeDialog,state.position,()=>finishMember(state),state.fromMatchList ? state : null);
     if (!page) return false;
     dialog = page;
     if (nativeDialog.open) nativeDialog.close();
@@ -998,7 +1035,7 @@
     return true;
   }
 
-  function open(trigger) {
+  function open(trigger, saved = null) {
     const kickoff = timed(trigger.dataset.dossierKickoff), fixture = Number(trigger.dataset.dossierFixture);
     if (!Number.isSafeInteger(fixture) || fixture < 1 || !Number.isFinite(kickoff)) return;
     const day = siteDay.format(kickoff);
@@ -1006,7 +1043,10 @@
     if (!publicAccess && (!authorized() || (guestPredictionDay && day !== guestPredictionDay))) return;
     const guest = !publicAccess && guestPredictionDay === day;
     const focusRoot = trigger.closest("#dashboard-predictions, #matches");
-    return start({ fixture,kickoff,trigger,focusRoot,day,publicAccess,guest,basicOnly:trigger.hasAttribute("data-dossier-basic") });
+    const fromMatchList = trigger.hasAttribute("data-dossier-list");
+    return start({ fixture,kickoff,trigger,focusRoot,day,publicAccess,guest,fromMatchList,
+      predictionLabel:fromMatchList ? trigger.textContent : null, basicOnly:trigger.hasAttribute("data-dossier-basic"),
+      ...(saved ? {readingEntry:root.history.state.poseidonDossierReading,position:saved.position} : {}) });
   }
 
   function openPredictionStats(trigger, match, editorialMissing) {
@@ -1151,7 +1191,8 @@
     dialog.lang = labels[lang] ? lang : "en";
     const close = dialog.querySelector("[data-dossier-close]");
     close.textContent = state.copy.close;
-    if (dialog === readingPage?.surface) readingPage.backLabel.textContent = label("backMatch");
+    if (dialog === readingPage?.surface) readingPage.backLabel.textContent = state.fromMatchList
+      ? tt("matchlist.back",label("backMatch")) : label("backMatch");
     if (state.expired || !state.status || state.status === "login") {
       const message = dialog.querySelector("[data-dossier-body] [role='status']");
       if (message) message.textContent = state.expired ? expiredCopy(state) : state.copy[state.status || "loading"];
@@ -1173,8 +1214,16 @@
     if (!nativeDialog) return;
     clearReadingEntry(); // A reload cannot reconstruct a private view from history.
     root.addEventListener("popstate",()=>{
-      if (readingPage && root.history.state?.poseidonDossierReading !== readingPage.entry) leaveReading();
-      else if (!readingPage) clearReadingEntry();
+      const entry = root.history.state?.poseidonDossierReading;
+      if (readingPage && entry !== readingPage.entry) leaveReading();
+      if (readingPage || !entry) return;
+      const saved = matchListReadings.get(entry);
+      if (saved && root.matchMedia("(max-width: 767px)").matches) {
+        const trigger = [...document.querySelectorAll('#dashboard-predictions [data-dossier-list]')]
+          .find(button => Number(button.dataset.dossierFixture) === saved.fixture && timed(button.dataset.dossierKickoff) === saved.kickoff);
+        if (trigger && open(trigger,saved)) return;
+      }
+      clearReadingEntry();
     });
     root.addEventListener("pageshow",checkReadingAccess);
     root.addEventListener("storage",checkReadingAccess);

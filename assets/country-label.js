@@ -49,7 +49,14 @@
       return country;
     }
   }
-  const api = {label};
+  function flag(country) {
+    const key = typeof country === 'string' ? country.trim().replace(/\s+/g, '-') : '';
+    const code = regions[key];
+    return typeof code === 'string' && /^[A-Z]{2}$/.test(code)
+      ? String.fromCodePoint(...[...code].map(letter => 0x1f1e6 + letter.charCodeAt(0) - 65))
+      : '🌐';
+  }
+  const api = {label, flag};
   if (typeof module === 'object' && module.exports) module.exports = api;
   else root.PoseidonCountry = api;
 })(typeof window !== 'undefined' ? window : globalThis);

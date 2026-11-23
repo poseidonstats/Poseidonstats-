@@ -278,21 +278,15 @@ test('fetch failure renders a visible unavailable state and calls only local pub
   }
 });
 
-test('navigation and date accessibility labels use attribute-only translations in all six languages', () => {
+test('navigation and date expose translated accessible names in all six languages', () => {
   const html = readFileSync(new URL('../index.html',import.meta.url),'utf8');
-  const nav = html.match(/<nav\b[^>]*>/)?.[0];
-  const date = Array.from(html.matchAll(/<select\b[^>]*>/g), m => m[0]).find(tag => /\bid="dashboard-date"/.test(tag));
-  for (const [tag,key] of [[nav,'dashboard.nav.label'],[date,'filters.day']]) {
-    assert(tag,'actual control opening tag exists');
-    const mapping = tag.match(/\bdata-i18n-attr="([^"]+)"/)?.[1];
-    assert(mapping,'control uses supported data-i18n-attr mapping');
-    const attrs = Object.fromEntries(mapping.split(',').map(pair => pair.split(':').map(s=>s.trim())));
-    assert.equal(attrs['aria-label'],key);
-    assert.doesNotMatch(tag,/\sdata-i18n=/,'translation must not replace children');
-    for (const lang of ['ro','en','es','it','fr','id']) assert(i18n[lang][key]?.trim(),`${lang}.${key}`);
+  assert.match(html,/<nav\b[^>]*aria-label="Navigare principală"[^>]*data-i18n-attr="aria-label:dashboard.nav.label"/);
+  assert.match(html,/<label for="dashboard-date" data-i18n="matchlist.date">Data meciurilor<\/label>/);
+  assert.match(html,/<select id="dashboard-date"><\/select>/);
+  for (const lang of ['ro','en','es','it','fr','id']) {
+    assert(i18n[lang]['dashboard.nav.label']?.trim(),lang);
+    assert(i18n[lang]['matchlist.date']?.trim(),lang);
   }
-  assert.match(nav,/aria-label="Navigare principală"/);
-  assert.match(date,/aria-label="Zi:"/);
 });
 
 test('analysis actions route anonymous, Basic and Pro visitors to accessible existing destinations', () => {
@@ -594,9 +588,10 @@ test('search, league choice, honest copy and activation labels are complete with
       assert.deepEqual(tags(i18n[lang][key]),tags(i18n.ro[key]),`${lang}.${key}`);
     }
   }
-  assert.match(html,/<input id="dashboard-search" type="search"[^>]*data-i18n-attr="placeholder:simplify.search.placeholder,aria-label:simplify.search.label"/);
-  assert.match(html,/<button id="dashboard-search-clear" type="button" data-i18n="simplify.search.clear"/);
-  assert.match(html,/<select id="dashboard-league-menu"[^>]*data-i18n-attr="aria-label:simplify.leagues.label"/);
+  assert.match(html,/<label for="dashboard-search" data-i18n="simplify.search.label"/);
+  assert.match(html,/<input id="dashboard-search" type="search"[^>]*data-i18n-attr="placeholder:simplify.search.placeholder"/);
+  assert.match(html,/<button type="button" id="dashboard-search-clear"[^>]*data-i18n-attr="aria-label:matchlist.clearSearch"/);
+  assert.match(html,/<div class="match-competitions" id="dashboard-predictions"/);
 });
 
 test('home reading identities are escaped on free rows even without an official selection, never on locked rows',()=>{
@@ -618,8 +613,11 @@ test('dashboard rows expose each probability and access cell with its table head
   const result=[...html.matchAll(/headers="dashboard-th-(\d)"><span[^>]+>([^<]+)<\/span>([^<]+)<\/td>/g)].map(m=>m.slice(1));
   assert.deepEqual(result,[['0','1','55%'],['1','X','23%'],['2','2','22%']]);
   assert.match(html,/class="dashboard-access-cell" role="cell" headers="dashboard-th-access"/);
-  const home=readFileSync(new URL('../index.html',import.meta.url),'utf8');
-  for (const key of ['time','match','0','1','2','access']) assert.match(home,new RegExp(`id="dashboard-th-${key}" scope="col"`));
+  const source=readFileSync(new URL('../assets/home-dashboard.js',import.meta.url),'utf8');
+  assert.match(source,/<th scope="col" role="columnheader">/);
+  const rows=dashboard.renderGroupedRows([match],tr,'en-GB',{market:'1x2',favorites:new Set(),watched:[],now:new Date(0)});
+  assert.match(rows,/<td class="match-selection" role="cell"/);
+  assert.match(rows,/Home \(1\).*55%.*Draw \(X\).*23%.*Away \(2\).*22%/);
   const css=readFileSync(new URL('../assets/home-modern.css',import.meta.url),'utf8');
   const mobile=css.slice(css.lastIndexOf('@media (max-width: 600px)'));
   assert.match(mobile,/\.dashboard-match-row \{[^}]*grid-template-columns: repeat\(3, minmax\(0, 1fr\)\);/);
@@ -659,4 +657,49 @@ test('open prediction and dossier-only rows use the localized free badge on the 
     assert.deepEqual(badges,[dictionary['dashboard.access.free'],dictionary['dashboard.access.free']]);
     assert.match(dashboard.renderRows(rows,translate,language,dossiers,true,null,'2026-11-23'),/dashboard-free">MEMBER/);
   }
+});
+
+test('grouped list presents only existing markets and keeps unavailable estimates explicit', () => {
+  const match = {fixture_id:1, match_date:'2026-11-22T13:00:00Z', home:'Gazdă', away:'Oaspete',
+    country:'England', league:'Premier League', probabilities:[0.41,0.31,0.28],
+    marketProbabilities:{btts:0.38,over_2_5:0.55,ht_over_0_5:null}, estimatedScore:[2,1], free:true};
+  const result = {...match,home_team:match.home,away_team:match.away,ft_h:1,ft_a:0,ht_h:null,ht_a:null};
+  const feed = {days:{'2026-11-22':{results:{1:result}}}};
+  const kwargs = {feed,now:new Date('2026-11-23T12:00:00Z')};
+  assert.deepEqual(dashboard.groupedOutcome(match,'btts',kwargs),{ft:[1,0],outcome:'miss'});
+  assert.deepEqual(dashboard.groupedOutcome(match,'ht_over_0_5',kwargs),{ft:[1,0],outcome:'unavailable'});
+  assert.deepEqual(dashboard.groupedOutcome(match,'1x2',kwargs),{ft:[1,0],outcome:'home'});
+  result.match_date='2026-11-22T16:00:00Z';
+  assert.deepEqual(dashboard.groupedOutcome(match,'btts',kwargs),{ft:null,outcome:'unavailable'});
+  const groups = dashboard.groupMatchRows([match,{...match,country:'Wales',fixture_id:2}]);
+  assert.equal(groups.length,2);
+  assert.notEqual(groups[0].key,groups[1].key);
+  assert.match(dashboard.renderGroupedRows([match],tr,'en-GB',{...kwargs,market:'btts',watched:[],favorites:new Set()}),/38%/);
+  const locked = {...match,locked:true,free:false};
+  const html = dashboard.renderGroupedRows([locked],tr,'en-GB',{...kwargs,market:'btts',watched:[],favorites:new Set()});
+  assert.doesNotMatch(html,/38%|2–1|data-dossier-fixture/);
+});
+
+test('grouped first-half rows show the verified HT score separately and keep the archived verdict when HT is missing', () => {
+  const match = {fixture_id:1,match_date:'2026-11-22T13:00:00Z',home:'Home',away:'Away',league:'Cup',country:'World',
+    free:true,probabilities:[0.41,0.31,0.28],marketProbabilities:{ht_over_0_5:0.72}};
+  const result = {...match,ft_h:3,ft_a:0,ht_h:1,ht_a:0};
+  const archived = {...match,time:'15:00',picks:[{market:'HT Over 0.5',outcome:'WIN'}]};
+  delete archived.match_date;
+  const context = {past:true,market:'ht_over_0_5',favorites:new Set(),watched:[],now:new Date('2026-11-23T12:00:00Z'),
+    feed:{days:{'2026-11-22':{results:{1:result}}}},history:{days:[{date:'2026-11-22',matches:[archived]}]}};
+  const translate = (key, vars = {}) => tr(key).replace('{score}',vars.score);
+  const render = () => dashboard.renderGroupedRows([match],translate,'en-GB',context);
+  assert.match(render(),/data-outcome="hit"[^<]*>Confirmed<\/span>.*Half time 1–0.*Final score.*3–0/);
+  result.ht_h = result.ht_a = null;
+  const html = render();
+  assert.match(html,/data-outcome="hit"[^<]*>Confirmed<\/span>.*Half-time score unavailable.*Final score.*3–0/);
+  assert.match(html,/Dossier unavailable in the archive/);
+  assert.doesNotMatch(html,/Predicted score/);
+  archived.time='17:00';
+  assert.match(render(),/data-outcome="unavailable"/);
+  archived.time='15:00';
+  result.match_date='2026-11-22T14:00:00Z';
+  assert.match(render(),/data-outcome="unavailable"/);
+  assert.doesNotMatch(render(),/Half time \d|Final score/);
 });
