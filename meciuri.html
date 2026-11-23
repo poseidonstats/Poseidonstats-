@@ -14,15 +14,15 @@
 <link rel="canonical" href="https://poseidonstats.com/meciuri.html">
 <meta property="og:type" content="website">
 <link rel="stylesheet" href="assets/style.css?v=20261119-native-pro-anchor">
-<link rel="stylesheet" href="assets/home-modern.css?release=20261123-visitor-feed">
-<link rel="stylesheet" href="assets/member-dossier.css?release=20261123-visitor-feed">
-<link rel="stylesheet" href="assets/home-visitor.css?release=20261123-visitor-feed">
-<script src="assets/home-visitor.js?release=20261123-visitor-feed"></script>
+<link rel="stylesheet" href="assets/home-modern.css?release=20261123-home-catalog">
+<link rel="stylesheet" href="assets/member-dossier.css?release=20261123-home-catalog">
+<link rel="stylesheet" href="assets/home-visitor.css?release=20261123-home-catalog">
+<script src="assets/home-visitor.js?release=20261123-home-catalog"></script>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#1e3a8a">
 <link rel="apple-touch-icon" href="assets/icon-192.png">
 <script>if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js");</script>
-<script src="assets/conversion.js?release=20261123-visitor-feed"></script>
+<script src="assets/conversion.js?release=20261123-home-catalog"></script>
 <script data-goatcounter="https://poseidonstats.goatcounter.com/count" data-goatcounter-settings='{"no_onload":true,"no_events":true}' async src="//gc.zgo.at/count.js"></script>
 <script type="application/ld+json">
 {
@@ -372,32 +372,6 @@ Statistici informative. Modelul poate greși. Verifică sursa. 18+.
     <!-- PRO_SAMPLE_PREVIEW_END -->
       </div>
     </section>
-  </section>
-
-  <section class="simplify-evidence">
-    <div class="dashboard-panel-heading"><h2 data-i18n="approved.audit.title">Rezultate verificabile</h2><a href="track-record.html" data-i18n="simplify.evidence.link" data-conversion="track-record" data-conversion-source="dashboard">Auditul complet</a></div>
-    <p class="simplify-evidence-note" data-i18n="simplify.evidence.note">Istoricul rezultatelor este public, inclusiv ratările. Verifică perioadele și eșantioanele din audit.</p>
-
-    <p id="approved-audit-period"></p>
-    <div id="approved-audit-metrics" class="approved-audit-grid" aria-live="polite"></div>
-    <p data-i18n="approved.audit.explanation">BSS măsoară îmbunătățirea scorului Brier față de frecvența de referință. Auditul publică limitele evaluării istorice.</p>
-    <a href="metodologie.html" data-i18n="nav.metodologie">Metodologie</a>
-    <details class="simplify-disclosure" id="dashboard-evidence-details">
-      <summary data-i18n="simplify.metrics.title">Surse, eșantioane și grafice</summary>
-      <div class="simplify-disclosure-body"><div class="dashboard-track-summary" id="dashboard-track-summary"></div><div class="dashboard-hero-evidence simplify-duplicate-metrics">
-        <div class="dashboard-kpis" data-dashboard-kpis aria-live="polite"></div>
-        <div class="dashboard-chart-panel">
-          <div class="dashboard-chart-heading"><h2 data-journal-chart-copy="title" data-i18n="dashboard.chart.title">Selecții rezolvate · jurnal recent</h2><span data-journal-chart-copy="note" data-i18n="dashboard.chart.note">Jurnal public · date parțiale marcate</span></div>
-          <div class="dashboard-chart" data-dashboard-chart></div>
-        </div>
-      </div><div class="dashboard-column dashboard-record-panel">
-      <div class="dashboard-panel-heading"><h2 data-i18n="dashboard.track.title">Track record</h2><a href="track-record.html" data-i18n="dashboard.track.all">Vezi detalii</a></div>
-      <div class="dashboard-kpis" data-dashboard-kpis aria-live="polite"></div>
-      <div class="dashboard-record-tabs"><a class="active" href="track-record.html" data-journal-chart-copy="title" data-i18n="dashboard.chart.title">Selecții rezolvate · jurnal recent</a><a href="track-record.html" data-i18n="dashboard.track.market">Piețe verificate</a></div>
-      <div class="dashboard-chart-panel"><div class="dashboard-chart-heading"><h3 data-journal-chart-copy="title" data-i18n="dashboard.chart.title">Selecții rezolvate · jurnal recent</h3></div><div class="dashboard-chart" data-dashboard-chart></div></div>
-
-    </div></div>
-    </details>
   </section>
 
 <section class="conversion-plans" id="abonament" tabindex="-1" aria-labelledby="conversion-plans-title" data-conversion-view="planstrip">
@@ -974,6 +948,10 @@ Statistici informative. Modelul poate greși. Verifică sursa. 18+.
 
 <footer>
   <div class="container">
+    <section id="dashboard-evidence-details" aria-label="Rezultate" data-i18n-attr="aria-label:redesign.nav.results">
+      <a href="track-record.html#audit-section" data-i18n="simplify.evidence.link" data-conversion="track-record" data-conversion-source="dashboard">Auditul complet</a>
+      · <a href="metodologie.html" data-i18n="nav.metodologie">Metodologie</a>
+    </section>
     <p class="footer-app-downloads">
       <a href="https://apps.apple.com/ro/app/poseidon-stats/id6824537161" class="app-store-badge">
         <img src="assets/app-store/ro.svg" width="120" height="40" alt="Descarcă din App Store · iPhone" data-i18n-attr="alt:app.download,src:app.store.badge">
@@ -982,7 +960,6 @@ Statistici informative. Modelul poate greși. Verifică sursa. 18+.
       <a href="https://play.google.com/store/apps/details?id=com.poseidonstats.app" class="google-play-badge"><img src="assets/google-play/ro.svg" alt="Descarcă de pe Google Play · Android" data-i18n-attr="alt:app.google.download,src:app.google.badge"></a>
       <!-- GOOGLE_PLAY_FOOTER_END -->
     </p>
-    <p data-i18n="footer.title"><strong>POSEIDON</strong> — model statistic propriu, ratings Bayesian și calibrare Platt pe piață.</p>
     <p data-i18n="footer.disclaimer">⚠️ <strong>Informativ.</strong> NU sfat de pariere. <strong>NU garanție.</strong> Folosește responsabil. <strong>18+</strong>.</p>
     <p class="muted"><span data-i18n="footer.contact">Contact:</span> <a href="mailto:contact@poseidonstats.com">contact@poseidonstats.com</a> · <span data-i18n="footer.problem">Joc responsabil:</span> <a href="https://www.jocresponsabil.ro" target="_blank" rel="noopener">jocresponsabil.ro</a> · <a href="terms.html" data-i18n="footer.terms">Termeni și Condiții</a> · <a href="privacy.html" data-i18n="footer.privacy">Confidențialitate</a></p>
   </div>
@@ -995,12 +972,12 @@ Statistici informative. Modelul poate greși. Verifică sursa. 18+.
   </div>
   <div class="dossier-body" data-dossier-body></div>
 </dialog>
-<script src="assets/members.js?release=20261123-visitor-feed"></script>
-<script src="assets/member-dossier.js?release=20261123-visitor-feed"></script>
-<script src="assets/country-label.js?release=20261123-visitor-feed"></script>
-<script src="assets/home-watchlist.js?release=20261123-visitor-feed"></script>
-<script src="assets/home-dashboard.js?release=20261123-visitor-feed"></script>
-<script src="assets/app.js?release=20261123-visitor-feed"></script>
+<script src="assets/members.js?release=20261123-home-catalog"></script>
+<script src="assets/member-dossier.js?release=20261123-home-catalog"></script>
+<script src="assets/country-label.js?release=20261123-home-catalog"></script>
+<script src="assets/home-watchlist.js?release=20261123-home-catalog"></script>
+<script src="assets/home-dashboard.js?release=20261123-home-catalog"></script>
+<script src="assets/app.js?release=20261123-home-catalog"></script>
 <script src="assets/citire.js?v=20261024-onestitate3"></script>
 </body>
 </html>

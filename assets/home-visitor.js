@@ -15,7 +15,7 @@
   const probability = value => typeof value === 'number' && Number.isFinite(value) && value >= 0 && value <= 1;
 
   function compactRoute(location) {
-    return location.pathname === '/' || location.pathname === '/index.html';
+    return ['/', '/index', '/index.html'].includes(location.pathname);
   }
 
   function dailyFixtures(data, today, include) {
@@ -51,7 +51,7 @@
   html.classList.add('visitor-no-sample');
   html.classList.toggle('visitor-compact',compactRoute(view.location));
   let predictions, history, readyDay = '', liveDay = '', revision = 0;
-  let predictionRequest, sampleInFlightDay = '', currentSample = null;
+  let predictionRequest, sampleInFlightDay = '', currentSample = null, sampleLanguage = '';
   const tr = (key, vars = {}) => Object.entries(vars).reduce((text,[name,value]) => text.replace(`{${name}}`, value),view.t(key));
   const locale = () => ({ro:'ro-RO',en:'en-GB',es:'es-ES',it:'it-IT',fr:'fr-FR',id:'id-ID'})[html.lang] || 'ro-RO';
   const clock = value => new Intl.DateTimeFormat(locale(),{timeZone:zone,hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(Date.parse(value));
@@ -221,30 +221,32 @@
   async function renderSample() {
     const card = doc.querySelector('[data-visitor-sample]'), dossier = view.PoseidonDossier;
     if (!card || !dossier) return;
-    const today = siteDay.format(Date.now()), run = ++revision;
+    const today = siteDay.format(Date.now()), run = ++revision, lang = html.lang;
+    const active = () => run === revision && lang === html.lang && siteDay.format(Date.now()) === today;
     sampleInFlightDay = today;
-    const keepCard = currentSample && day(currentSample.match_date) === today;
+    const keepCard = currentSample && day(currentSample.match_date) === today && sampleLanguage === lang;
     if (!keepCard) {
       card.hidden = true;
       hideLegacySample(true);
     }
     try {
       const available = selectSample(await dossier.samplePayload(today),today);
-      if (run !== revision || siteDay.format(Date.now()) !== today) return;
+      if (!active()) return;
       if (!available) throw new Error('Public analysis is unavailable');
       const action = card.querySelector('[data-visitor-sample-action]');
       const selection = await dossier.mountPublicSample(card.querySelector('[data-visitor-sample-reader]'),
-        {dataset:{sampleFixture:available.fixture_id,sampleDay:today}}, html.lang, predictions, history, action);
-      if (run !== revision || siteDay.format(Date.now()) !== today) return;
+        {dataset:{sampleFixture:available.fixture_id,sampleDay:today}}, lang, predictions, history, action);
+      if (!active()) return;
       if (!selection?.market) throw new Error('Public selection is unavailable');
       card.querySelector('[data-visitor-sample-title]').textContent = `${available.home} – ${available.away}`;
       card.querySelector('[data-visitor-sample-meta]').textContent = `${available.league} · ${clock(available.match_date)}`;
       card.querySelector('[data-visitor-sample-pick]').textContent = selection.market;
       currentSample = available;
+      sampleLanguage = lang;
       hideLegacySample(false);
       card.hidden = false;
     } catch (_) {
-      if (run !== revision) return;
+      if (!active()) return;
       card.hidden = true;
       currentSample = null;
       hideLegacySample(true);
@@ -266,7 +268,7 @@
   function refreshLanguage() {
     syncLinks();
     renderMatches();
-    if (day(currentSample?.match_date) === liveDay && sampleInFlightDay !== liveDay) void renderSample();
+    if (liveDay) void renderSample();
   }
 
   function guardCatalogSample() {
@@ -299,7 +301,7 @@
     for (const event of ['storage','pageshow']) view.addEventListener(event,syncView);
     doc.addEventListener('change',event => {
       if (!event.target.matches('.lang-select')) return;
-      view.setTimeout(refreshLanguage,0);
+      refreshLanguage();
     });
     view.addEventListener('poseidon:dictionary-ready',refreshLanguage);
     syncView();

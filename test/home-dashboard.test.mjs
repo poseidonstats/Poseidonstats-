@@ -438,7 +438,7 @@ test('new dashboard and header links avoid member-hidden intro targets', () => {
   const start=html.indexOf('<header>'), end=html.indexOf('<div class="dashboard-detail-heading">');
   assert(start >= 0 && end > start);
   const newUI=html.slice(start,end);
-  const marketAnchor=Array.from(newUI.matchAll(/<a\b[^>]*>/g),m=>m[0]).find(tag=>/data-i18n="dashboard\.track\.market"/.test(tag));
+  const marketAnchor=Array.from(newUI.matchAll(/<a\b[^>]*>/g),m=>m[0]).find(tag=>/data-i18n="redesign\.nav\.results"/.test(tag));
   assert(marketAnchor);
   assert.match(marketAnchor,/href="track-record\.html"/);
   const allowed=new Set(['dashboard','pro-analize','dashboard-analyses','abonament','abonament-detalii','matches','intrebari']);
@@ -504,14 +504,14 @@ test('explicit synthetic public fixture preserves finite probabilities when dail
   assert.deepEqual(selected.rows[0].probabilities,[.6,.25,.15]);
 });
 
-test('demonstration and honest evidence precede truthful plans and activation', () => {
+test('match demonstration precedes the plans, with public evidence linked in the footer', () => {
   const html=readFileSync(new URL('../meciuri.html',import.meta.url),'utf8');
   const hero=html.indexOf('<div class="dashboard-hero">');
   const plans=html.indexOf('<section class="conversion-plans" id="abonament"');
   const dashboardIndex=html.indexOf('id="dashboard"');
-  const evidence=html.indexOf('<section class="simplify-evidence">');
+  const analysis=html.indexOf('id="exemplu-pro"');
   const activation=html.indexOf('<section class="simplify-activation">');
-  assert(hero >= 0 && hero < dashboardIndex && dashboardIndex < evidence && evidence < plans && plans < activation);
+  assert(hero >= 0 && hero < dashboardIndex && dashboardIndex < analysis && analysis < plans && plans < activation);
   const strip=html.slice(plans,activation);
   assert.match(strip,/conversion-plan-free[\s\S]*conversion-price">\$0</);
   assert.match(strip,/conversion-plan-basic[\s\S]*conversion-price">\$5 /);
@@ -567,13 +567,12 @@ test('conversion member visibility, privacy script order and numeric display con
   assert.match(css,/body\.home-modern\.tier-basic[^{}]*\.conversion-member-proof[^{}]*\{ display: inline; \}/);
   assert.match(css,/body\.home-modern\.tier-pro #abonament-detalii[^{}]*\.support-cta[^{}]*\{ display: none; \}/);
   assert.match(css,/\.dashboard-hero-evidence \{ display: none; \}/);
-  assert.equal((html.match(/\bdata-dashboard-kpis\b/g)||[]).length,2);
-  assert.equal((html.match(/\bdata-dashboard-chart\b/g)||[]).length,2);
+  assert.doesNotMatch(html, /id="approved-audit-(?:metrics|period)"|data-dashboard-(?:kpis|chart)\b/);
   assert.match(css,/\.home-modern \.simplify-demo \.dashboard-table th:nth-child\(2\),\s*\.home-modern \.simplify-demo \.dashboard-table td\.dashboard-team \{ text-align: left; \}/);
   assert.match(css,/body\.home-modern \.salt-meciuri \{ display: none; \}/);
 });
 
-test('long original content and metric mounts remain reachable inside named closed disclosures', () => {
+test('technical evidence is linked from the footer and legacy material stays in closed disclosures', () => {
   const html=readFileSync(new URL('../meciuri.html',import.meta.url),'utf8');
   const stack=[],ranges=[];
   for (const match of html.matchAll(/<details\b[^>]*>|<\/details\s*>/g)) {
@@ -587,10 +586,9 @@ test('long original content and metric mounts remain reachable inside named clos
     assert.doesNotMatch(found[0].tag,/\sopen(?:\s|=|>)/,`${id} starts closed`);
     const body=html.slice(found[0].start,found[0].end);assert.match(body,/<summary[^>]*data-i18n="simplify\.[^"]+"/);return body;
   };
-  const metrics=disclosure('dashboard-evidence-details');
-  assert.equal((metrics.match(/\bdata-dashboard-kpis\b/g)||[]).length,2);
-  assert.equal((metrics.match(/\bdata-dashboard-chart\b/g)||[]).length,2);
-  assert(metrics.includes('id="dashboard-track-summary"'));
+  const footer=html.split('<footer>')[1];
+  assert.match(footer, /id="dashboard-evidence-details"[\s\S]*?href="track-record.html#audit-section"/);
+  assert.match(footer, /href="metodologie.html"/);
   const full=disclosure('full-predictions-details');
   for (const id of ['filter-day','filter-market','filter-league','filter-reset','match-count','matches']) assert(full.includes(`id="${id}"`),id);
   const legacy=disclosure('legacy-information-details');

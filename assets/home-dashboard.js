@@ -610,7 +610,8 @@
   }
   async function mount(doc) {
     const finishNavigation = mountAnchorNavigation(doc);
-    if (!doc.querySelector('[data-dashboard-kpis]')) return;
+    const hasMetrics = Boolean(doc.querySelector('[data-dashboard-kpis]') || doc.getElementById('approved-audit-metrics'));
+    if (!hasMetrics && !doc.getElementById('dashboard-predictions')) return;
     mountNavigation(doc);
     if (typeof i18nGata === 'function') await i18nGata();
     watchLanguageSelector(doc,translator());
@@ -697,10 +698,11 @@
       visitor?.setPublicHistory(data);
       return data;
     });
-    const required = Promise.allSettled([publicPredictions, publicHistory, localJSON('data/audit.json')]);
+    const required = Promise.allSettled([publicPredictions, publicHistory, hasMetrics ? localJSON('data/audit.json') : null]);
     const supplemental = localJSON('data/dashboard-market-history.json').catch(() => null);
     [predictions, history, audit] = (await required).map(result => result.status === 'fulfilled' ? result.value : null);
     function renderMetrics() {
+      if (!hasMetrics) return;
       const tr = translator(), loc = locale(doc), num = n => n == null ? '—' : new Intl.NumberFormat(loc).format(n);
       const auditGrid = doc.getElementById('approved-audit-metrics');
       if (auditGrid) {

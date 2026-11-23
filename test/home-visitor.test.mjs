@@ -60,7 +60,7 @@ test('a late response for the previous Bucharest day cannot replace the new day'
 
 test('the homepage layout does not depend on fragment, campaign query or account state', () => {
   const route = path => new URL(path,'https://poseidonstats.com/');
-  for (const url of ['/', '/index.html', '/?view=full', '/?lang=en&utm_source=uk', '/#dashboard', '/?members=none', '/?members_token=return']) {
+  for (const url of ['/', '/index', '/index?lang=en', '/index.html', '/?view=full', '/?lang=en&utm_source=uk', '/#dashboard', '/?members=none', '/?members_token=return']) {
     for (const state of ['guest','basic','pro','none','login']) assert(compactRoute(route(url),state),url);
   }
   assert(!compactRoute(route('/meciuri.html#dashboard')));
@@ -116,4 +116,48 @@ test('one homepage presents free fixtures, the daily Pro sample and subscriber f
     assert(words['visitor.home.lockedMore'].includes('{n}'));
     assert(words['visitor.home.lockedLess']);
   }
+});
+
+test('the Pro selection follows the last chosen language while a previous report is loading', async () => {
+  const renders = new Map(), events = {}, fields = new Map();
+  const pick = {textContent:''};
+  const card = {hidden:true,querySelector(selector) {
+    if (selector === '[data-visitor-sample-pick]') return pick;
+    if (!fields.has(selector)) fields.set(selector,{});
+    return fields.get(selector);
+  }};
+  const document = {
+    readyState:'complete',documentElement:{lang:'ro',classList:{add(){},toggle(){}}},
+    querySelector:s=>s === '[data-compact-home]' ? {} : s === '[data-visitor-sample]' ? card : null,
+    querySelectorAll:()=>[],getElementById:()=>null,addEventListener:(name,listener)=>{events[name]=listener;},
+  };
+  const now = '2026-11-23T12:00:00Z';
+  const match = {fixture_id:42,home:'Home',away:'Away',league:'League',match_date:now};
+  const window = {
+    document,location:new URL('https://poseidonstats.com/'),addEventListener(){},
+    setTimeout,clearTimeout,setInterval(){},fetch:async()=>({ok:true,json:async()=>({matches:[],generated_at:now})}),
+    PoseidonDossier:{samplePayload:async()=>({date:'2026-11-23',item:{match,provenance:{original_kickoff_utc:now}}}),
+      mountPublicSample:(_,marker,lang)=>new Promise(resolve=>renders.set(lang,resolve))},
+  };
+  class Clock extends Date { static now() {return Date.parse(now);} }
+  runInNewContext(source,{window,Date:Clock,AbortController});
+  const flush = () => new Promise(resolve=>setImmediate(resolve));
+  await flush();
+  assert(renders.has('ro'));
+  const choose = async lang => {
+    document.documentElement.lang = lang;
+    events.change({target:{matches:()=>true}});
+    await flush();
+    assert(renders.has(lang),'started report in '+lang);
+  };
+  await choose('en');
+  await choose('fr');
+  renders.get('fr')({market:'marché français'});
+  await flush();
+  assert.equal(card.hidden,false);
+  assert.equal(pick.textContent,'marché français');
+  renders.get('en')({market:'English market'});
+  renders.get('ro')({market:'selecție românească'});
+  await flush();
+  assert.equal(pick.textContent,'marché français');
 });

@@ -1,10 +1,27 @@
 /* Public responses only. Keep the homepage and its versioned assets together. */
-const CACHE = "poseidon-v127";
-const RELEASE = "20261123-visitor-feed";
-const PREVIOUS_CACHE = "poseidon-v126";
-const PREVIOUS_RELEASE = "20261123-visitor-home";
+const CACHE = "poseidon-v128";
+const RELEASE = "20261123-home-catalog";
+const PREVIOUS_CACHE = "poseidon-v127";
+const PREVIOUS_RELEASE = "20261123-visitor-feed";
 // Update with RELEASE when these static files change. The daily dictionary is validated separately.
 const RELEASE_ASSET_SHA256 = {
+  "assets/app.js": "4bed68370b1ad097316bd64e0137a3cd28f65ba02da3d1ed0620b6f14a70da68",
+  "assets/home-dashboard.js": "5da7120a7819363f656e3dab9160eb6f0f90706aeaad28b1e25fc6cebe1302f8",
+  "assets/i18n-lite.js": "c5bd8e691a9640a986df7d8186b376480452ec5cc7870eed374bce3ff9c4be76",
+  "assets/member-dossier.css": "0e4a89b6aba2e0ec1aca1f60d4c10fc7b52d6a26467899c733a4e9718fb646e2",
+  "assets/member-dossier.js": "aacbff031cf599cdef22848b7a83c802cbcfc93f8b637799405a651d9696b884",
+  "assets/pro-report.js": "59f49fe21a062c564eaa3ca0b7dea418fe88f3758e8cfa6b6e97e2e5941c9b0b",
+  "assets/pro-context.js": "85883d7956fd08c68addc2966880103308b678f902c92eb4a3c68d719c3c987c",
+  "assets/home-modern.css": "7d895e32f3dc529a75dcbe83a2075c31a92472159876811c73fa3b6c300b28eb",
+  "assets/members.js": "a25510651b61bda03af790d9f38aaa6e95027343ac57335437c305737eb029ed",
+  "assets/home-watchlist.js": "ab2473d038e3c2ac0f2d465dd35afd7ed616d38926a270c81ea9190465be35db",
+  "assets/pro-report.css": "0354032afbda4e020f84c16c62960f6bf0d42256578e32b9843b76c3721b7939",
+  "assets/conversion.js": "2e83078674dd83600fb53f70e65dc884605d5a7b07a50e3788a8ea8ed413c729",
+  "assets/country-label.js": "8d2bc3956ddfab93f81fb7341b677a12ecb8525bdb603e05ca93b4401c8d34bd",
+  "assets/home-visitor.css": "d3a6f18da617d6e730a556138004fa4a75918ed1ba7cb0b39cb009c9a0fcc57c",
+  "assets/home-visitor.js": "8fcca692b8ffc6aff3d74e5f1d9273d81872ea7a3390923ece20cee0a1652a9e",
+};
+const PREVIOUS_ASSET_SHA256 = {
   "assets/app.js": "1ce1fe174a69e3c64860ae2746ca4a1fe25e88788c07270568e9ecae4c349ad3",
   "assets/home-dashboard.js": "f91aed33b17300e1b92af00891bde976fac4793f9e64e374aced546da46645b9",
   "assets/i18n-lite.js": "c5bd8e691a9640a986df7d8186b376480452ec5cc7870eed374bce3ff9c4be76",
@@ -20,23 +37,6 @@ const RELEASE_ASSET_SHA256 = {
   "assets/country-label.js": "8d2bc3956ddfab93f81fb7341b677a12ecb8525bdb603e05ca93b4401c8d34bd",
   "assets/home-visitor.css": "d3a6f18da617d6e730a556138004fa4a75918ed1ba7cb0b39cb009c9a0fcc57c",
   "assets/home-visitor.js": "4f7777552dcb375919d881824619b58930e3ee2b84956a4eb184a23a97ddda09",
-};
-const PREVIOUS_ASSET_SHA256 = {
-  "assets/app.js": "cca7815571595bb638013d9920a0f8a1f13c6160371b2ff8feaf9af5c35a19b7",
-  "assets/home-dashboard.js": "e6219fb93845f256f35a4a668ccb755c07b7113fa98dbe60c232b89e45691d06",
-  "assets/i18n-lite.js": "f6d559fb6196d90e2d8ef8a5dbbec115d5912df42c3b15bd6c24e575bc6fc031",
-  "assets/member-dossier.css": "0e4a89b6aba2e0ec1aca1f60d4c10fc7b52d6a26467899c733a4e9718fb646e2",
-  "assets/member-dossier.js": "4d78d827d30d9ebde5d7da33d5479c055dd4156bc826ec657ee9ddac0ab0cea9",
-  "assets/pro-report.js": "59f49fe21a062c564eaa3ca0b7dea418fe88f3758e8cfa6b6e97e2e5941c9b0b",
-  "assets/pro-context.js": "85883d7956fd08c68addc2966880103308b678f902c92eb4a3c68d719c3c987c",
-  "assets/home-modern.css": "7d895e32f3dc529a75dcbe83a2075c31a92472159876811c73fa3b6c300b28eb",
-  "assets/members.js": "a25510651b61bda03af790d9f38aaa6e95027343ac57335437c305737eb029ed",
-  "assets/home-watchlist.js": "ab2473d038e3c2ac0f2d465dd35afd7ed616d38926a270c81ea9190465be35db",
-  "assets/pro-report.css": "0354032afbda4e020f84c16c62960f6bf0d42256578e32b9843b76c3721b7939",
-  "assets/conversion.js": "2e83078674dd83600fb53f70e65dc884605d5a7b07a50e3788a8ea8ed413c729",
-  "assets/country-label.js": "8d2bc3956ddfab93f81fb7341b677a12ecb8525bdb603e05ca93b4401c8d34bd",
-  "assets/home-visitor.css": "c41ee79f9e0bc2ae93163b424c907acdd36858f991dbaf39ec203ae0ba096755",
-  "assets/home-visitor.js": "08cc0a3f8da4fbaee6986cc2895d6060f2b1c7ce04490b81a22d3b38b6b9fcfb",
 };
 const HOME_PATHS = ["", "index.html", "meciuri.html"];
 const HOME_ASSETS = [
@@ -110,7 +110,7 @@ function releaseUrl(path, version) {
 }
 
 function isPublicPath(path) {
-  return path !== null && (path === "" || /^(?:assets|data|analize|predictii|en)\//.test(path)
+  return path !== null && (path === "" || path === "index" || path === "meciuri" || /^(?:assets|data|analize|predictii|en)\//.test(path)
     || /^(?:index|meciuri|simulator|istoric|track-record|metodologie|statistici-pariuri|terms|privacy)\.html$/.test(path)
     || path === "manifest.json");
 }
@@ -269,8 +269,9 @@ self.addEventListener("fetch", event => {
   if (!isPublicRequest(request)) return;
   const url = new URL(request.url);
   const path = relativePath(url);
-  if (request.mode === "navigate" && HOME_PATHS.includes(path)) {
-    event.respondWith(caches.open(CACHE).then(cache => fetchRelease(request, path, cache, new URL(path, SCOPE).href)));
+  const entry = path === "index" || path === "meciuri" ? path + ".html" : path;
+  if (request.mode === "navigate" && HOME_PATHS.includes(entry)) {
+    event.respondWith(caches.open(CACHE).then(cache => fetchRelease(request, entry, cache, new URL(entry, SCOPE).href)));
     return;
   }
   const singleVersion = url.searchParams.size === 1;
