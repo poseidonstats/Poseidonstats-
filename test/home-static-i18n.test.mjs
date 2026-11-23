@@ -10,16 +10,14 @@ const source=readFileSync(new URL('../assets/app.js',import.meta.url),'utf8');
 const dictionary=JSON.parse(readFileSync(new URL('../assets/i18n.json',import.meta.url),'utf8'));
 const languages=['ro','en','es','it','fr','id'];
 
-test('the hero shows both store badges under its actions and links to the English hub in static HTML', () => {
+test('the hero shows both store badges under its actions without a separate English language link', () => {
   const homepage = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
   const hero = homepage.slice(homepage.indexOf('<section class="dashboard-opening">'), homepage.indexOf('id="dashboard"'));
   const downloads = hero.match(/class="dashboard-hero-actions">[\s\S]*?<\/div>\s*<div class="app-store-download">([\s\S]*?)<\/div>/)?.[1];
   assert.ok(downloads, 'store badges directly follow the hero actions');
   assert.match(downloads, /href="https:\/\/apps\.apple\.com\/ro\/app\/poseidon-stats\/id6824537161"/);
   assert.match(downloads, /href="https:\/\/play\.google\.com\/store\/apps\/details\?id=com\.poseidonstats\.app"/);
-  assert.match(hero, /<p class="dashboard-language-entry">\s*<a href="\/en\/predictions\/index\.html" lang="en">Football predictions in English<\/a>/);
-  const generated = homepage.match(/<!-- LEAGUES_LINKS_START -->[\s\S]*?<!-- LEAGUES_LINKS_END -->/)?.[0];
-  assert(generated && !generated.includes('dashboard-language-entry'));
+  assert.doesNotMatch(hero, /dashboard-language-entry|href="\/en\/predictions\/index\.html"/);
 });
 
 function actual(start,end) {
