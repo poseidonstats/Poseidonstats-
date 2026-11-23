@@ -32,7 +32,7 @@ class Element {
   closest(selector) { return this.matches(selector) ? this : this.parentElement?.closest(selector) || null; }
 }
 
-async function run({canonical = 'https://poseidonstats.com/analize/index.html', pathname = '/analize/index.html', language = 'ro', saved = language, search = '', preloaded = false, fallback = false, prefix = '../', entries = [], loading = false, alternates = []} = {}) {
+async function run({canonical = 'https://poseidonstats.com/analize/index.html', pathname = '/analize/index.html', language = 'ro', saved = language, search = '', preloaded = false, fallback = false, prefix = '../', entries = [], loading = false, unavailableDictionary = false, alternates = []} = {}) {
   const head = new Element('head'), body = new Element('body'), header = body.appendChild(new Element('header'));
   const container = header.appendChild(new Element('div', {class:'container'}));
   const brand = container.appendChild(new Element('a', {class:'brand', href:'../index.html'})); brand.innerHTML = '<img>POSEIDON';
@@ -46,7 +46,7 @@ async function run({canonical = 'https://poseidonstats.com/analize/index.html', 
   const root = new Element('html'); root.lang = pathname.startsWith('/en/') ? 'en' : 'ro'; root.appendChild(head); root.appendChild(body);
   const mainQueries = [], listeners = {}, contentElements = [];
   const document = {head, body, documentElement:root, currentScript:script, baseURI:location.href, readyState: loading ? "loading" : "complete",
-    addEventListener:(name,handler) => { listeners[name] = handler; },
+    addEventListener:(name,handler) => { (listeners[name] ??= []).push(handler); },
     createElement:tag => new Element(tag), getElementById:id => root.querySelector(`[id="${id}"]`),
     querySelector(selector) { if (/main|article/.test(selector)) mainQueries.push(selector); return root.querySelector(selector); },
     querySelectorAll:selector => root.querySelectorAll(selector)};
@@ -64,12 +64,13 @@ async function run({canonical = 'https://poseidonstats.com/analize/index.html', 
         article = main.appendChild(new Element('article', {class:'pro-card-full', id:'original-match'}));
         article.appendChild(new Element('div', {class:'pro-visible'}));
       }
+      if (unavailableDictionary) throw new Error('Dictionary unavailable');
       return {json:async () => dictionary};
     }});
   vm.runInContext(countrySource, context);
   vm.runInContext(source, context);
   await new Promise(resolve => setImmediate(resolve));
-  return {document, body, head, brand, nav, tagline, script, container, requests, storage, location, context, mainQueries, article, group, english, romanian, contentElements, finishParsing() { document.readyState = "interactive"; listeners.DOMContentLoaded?.(); }};
+  return {document, body, head, brand, nav, tagline, script, container, requests, storage, location, context, mainQueries, article, group, english, romanian, contentElements, finishParsing() { document.readyState = "interactive"; (listeners.DOMContentLoaded || []).forEach(handler => handler()); }};
 }
 
 const publicPairs = [
@@ -81,6 +82,22 @@ const siteUrl = path => 'https://poseidonstats.com' + path;
 const alternatesFor = ([ro, en]) => [['ro', siteUrl(ro)], ['en', siteUrl(en)]];
 const selectLanguage = (state, value) =>
   state.nav.querySelector('.lang-switcher').querySelector('select').events.change({target:{value}});
+
+test('English leagues keep the English navigation and membership links when the dictionary is unavailable', async () => {
+  const pair = publicPairs[1], pathname = pair[1];
+  const state = await run({pathname, canonical:siteUrl(pathname), alternates:alternatesFor(pair),
+    prefix:'../../', saved:'ro', loading:true, unavailableDictionary:true,
+    entries:[{tag:'a', attrs:{href:'../../index.html#abonament'}}, {tag:'a', attrs:{href:'../../terms.html'}}]});
+  const membership = state.nav.querySelector('a[data-i18n="nav.abonamente"]');
+  assert.equal(state.document.documentElement.lang, 'en');
+  assert.equal(membership.textContent, 'Membership');
+  assert.equal(membership.getAttribute('href'), '../../index.html?lang=en#abonament');
+  assert.equal(state.nav.querySelector('summary').textContent, 'More');
+  assert.deepEqual(state.storage, []);
+  state.finishParsing();
+  assert.equal(state.contentElements[0].getAttribute('href'), '../../index.html?lang=en#abonament');
+  assert.equal(state.contentElements[1].getAttribute('href'), '../../terms.html?lang=en');
+});
 
 test('paired pages open on their native edition for all saved languages and a clean browser', async () => {
   for (const pair of publicPairs) for (const [index, pathname] of pair.entries()) {
@@ -230,16 +247,17 @@ test('original language fallback reveals English and keeps the old Romanian arch
 test('prediction, nested archive and future English helper routes use real root prefixes and current navigation', async () => {
   for (const [pathname,prefix] of [['/predictii/index.html','../'], ['/predictii/anglia-premier-league.html','../'], ['/predictii/arhiva/2026-10-22.html','../../'], ['/en/predictions/england-premier-league.html','../../'], ['/en/predictions/index.html','../../']]) {
     const state = await run({canonical:`https://poseidonstats.com${pathname}`, pathname, prefix});
+    const locale = pathname.startsWith('/en/') ? `?lang=${state.document.documentElement.lang}` : '';
     assert(state.body.classList.contains('prediction-modern'));
     assert(!state.body.classList.contains('analysis-modern'));
     assert.deepEqual(state.head.querySelectorAll('link[rel="stylesheet"]').map(link => link.getAttribute('href')), [`${prefix}assets/home-modern.css?v=20261119-functions`,`${prefix}assets/pages-modern.css?v=20261119-functions`]);
-    assert.equal(state.brand.getAttribute('href'), `${prefix}index.html`);
+    assert.equal(state.brand.getAttribute('href'), `${prefix}index.html${locale}`);
     const active = state.nav.querySelectorAll('a').filter(link => link.classList.contains('active'));
     assert.equal(active.length,1); assert.equal(active[0].getAttribute('data-i18n'),'nav.ligi');
     assert.equal(active[0].getAttribute('aria-current'), ['/predictii/index.html','/en/predictions/index.html'].includes(pathname) ? 'page' : 'location');
     assert.equal(active[0].getAttribute('href'), `${prefix}${pathname.startsWith('/en/') ? 'en/predictions/index.html' : 'predictii/index.html'}`);
     assert(state.nav.querySelector('summary').classList.contains('active'));
-    assert.equal(state.nav.querySelector('a[data-i18n="nav.analize"]').getAttribute('href'), `${prefix}analize/index.html`);
+    assert.equal(state.nav.querySelector('a[data-i18n="nav.analize"]').getAttribute('href'), `${prefix}analize/index.html${locale}`);
     assert.deepEqual(state.requests,[`${prefix}assets/i18n.json?v=20261119-functions`]);
   }
 });

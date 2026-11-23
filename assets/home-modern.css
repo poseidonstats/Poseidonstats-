@@ -776,6 +776,9 @@ body.home-modern .salt-meciuri { display: none; }
   .home-modern .dashboard-table :is(.dashboard-free, .dashboard-lock) { max-width: 100%; white-space: normal; overflow-wrap: anywhere; }
   .home-modern .dashboard-table td[colspan="6"] { white-space: normal; }
   .home-modern .dashboard-reading-row .citire { box-sizing: border-box; width: 100%; min-width: 0; max-width: 100%; }
+  .home-modern .dashboard-table .dashboard-match-row .dashboard-market-cell { display: block; grid-column: 1 / -1; grid-row: 3; }
+  .home-modern .dashboard-match-row .dashboard-access-cell { flex-wrap: wrap; gap: 6px; }
+  .home-modern .dashboard-match-row .dashboard-watch-button { margin: 0; }
 }
 
 /* 17 Nov 2026 — approved match report, shared by free and unlocked match cards. */
@@ -1266,4 +1269,72 @@ body.home-modern { font-size: 16px; }
 .home-modern.web-free-offer .dashboard-table-scroll {
   max-height: min(60vh, 36rem);
   overflow: auto;
+}
+
+.home-modern .dashboard-quick-filters,
+.home-modern :is(.dashboard-market-buttons, .dashboard-date-buttons) {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.home-modern .dashboard-quick-filters { justify-content: space-between; margin-block: 0 8px; }
+.home-modern .dashboard-quick-filters button,
+.home-modern :is(.dashboard-watch-button, .dashboard-watchlist button, .dashboard-watchlist summary) {
+  min-height: 44px;
+  padding: 6px 10px;
+  border: 1px solid var(--dash-line);
+  border-radius: 6px;
+  background: var(--dash-panel);
+  color: var(--dash-text);
+  font: inherit;
+  font-size: .875rem;
+  cursor: pointer;
+}
+.home-modern .dashboard-quick-filters button[aria-pressed="true"],
+.home-modern .dashboard-watch-button[aria-pressed="true"] { border-color: var(--dash-gold); color: var(--dash-gold); }
+.home-modern .dashboard-pro-summary .pro-card-head > strong { display: inline-block; white-space: nowrap; }
+.home-modern .dashboard-watchlist { margin-block: 0 8px; }
+.home-modern .dashboard-watchlist summary { box-sizing: border-box; padding-block: 10px; }
+.home-modern .dashboard-watchlist :is(p, ul) { margin: 8px 0; }
+.home-modern .dashboard-watchlist ul { padding: 0; list-style: none; }
+.home-modern .dashboard-watchlist li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 16px;
+  padding: 8px;
+  border-bottom: 1px solid var(--dash-line);
+}
+.home-modern .dashboard-watchlist li > div { min-width: 0; overflow-wrap: anywhere; }
+.home-modern .dashboard-watchlist li :is(strong, small) { display: block; }
+.home-modern .dashboard-watchlist small,
+.home-modern .dashboard-table .dashboard-market-history { color: var(--dash-muted); font-size: .875rem; white-space: normal; }
+.home-modern .dashboard-market-history { display: grid; gap: 3px; margin-block: 5px 0; text-align: left; font-weight: 400; }
+.home-modern .dashboard-market-history :is(dt, dd) { display: inline; margin: 0; }
+.home-modern .dashboard-market-history dt::after { content: " · "; }
+.home-modern .dashboard-market-details { font-weight: 400; }
+.home-modern .dashboard-market-details > summary {
+  box-sizing: border-box;
+  margin-top: 4px;
+  min-height: 36px;
+  width: fit-content;
+  padding: 8px 0;
+  color: var(--dash-muted);
+  font-size: .875rem;
+  text-align: left;
+  cursor: pointer;
+}
+@media (max-width: 760px) {
+  .home-modern .dashboard-market-details > summary { min-height: 44px; padding-block: 12px; }
+}
+.home-modern .dashboard-table .dashboard-match-row .dashboard-market-cell { white-space: normal; overflow-wrap: anywhere; }
+.home-modern .dashboard-match-row .dashboard-watch-button { margin: 4px 0 0 6px; }
+.home-modern .dashboard-market-result { display: block; margin-top: 5px; font-size: .875rem; }
+.home-modern .dashboard-market-result[data-outcome="hit"] { color: #a6e2b9; }
+.home-modern .dashboard-market-result[data-outcome="miss"] { color: #ffb0ac; }
+.home-modern .dashboard-prediction-panel :is(button, summary):focus-visible {
+  outline: 2px solid var(--dash-gold);
+  outline-offset: 2px;
 }

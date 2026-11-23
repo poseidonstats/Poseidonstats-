@@ -1,22 +1,26 @@
 /* Public responses only. Keep the homepage and its versioned assets together. */
-const CACHE = "poseidon-v122";
-const RELEASE = "20261123-predictions-first";
-const PREVIOUS_CACHE = "poseidon-v121";
-const PREVIOUS_RELEASE = "20261122-web-free";
+const CACHE = "poseidon-v123";
+const RELEASE = "20261123-markets-follow";
+const PREVIOUS_CACHE = "poseidon-v122";
+const PREVIOUS_RELEASE = "20261123-predictions-first";
 // Update with RELEASE when these static files change. The daily dictionary is validated separately.
 const RELEASE_ASSET_SHA256 = {
-  "assets/app.js": "6aee1b70267050fb8e1acfb214e29488353153d8614832ecba52c7475b1d9bd6",
-  "assets/home-dashboard.js": "cd52b1e1cf308bedaf7436def2c0121e0e1428197afebf6cf0c180a8ac79a53a",
-  "assets/member-dossier.css": "ad2846535906b2ac472b41f9368675d3e2dd3a5f5acd4f9ab883fe841f463881",
-  "assets/member-dossier.js": "cfb97ebaa9d43f51c3317590207523a57ae3854e2acf3d738fb52773160f83bd",
-  "assets/pro-report.js": "7aa98e931ac6974fc1f3c8791833df02a4789a2df7a80ca3417498c70826fde3",
+  "assets/app.js": "6742b987a5c8bab736e28dbed605026a367250f2c9b70ee1bb6dd1eb9a90056b",
+  "assets/home-dashboard.js": "11f5e093a5cc23c1c3ce5df6167b44ebb7cbfd9725200811b3f380e0c8d42f23",
+  "assets/i18n-lite.js": "f6d559fb6196d90e2d8ef8a5dbbec115d5912df42c3b15bd6c24e575bc6fc031",
+  "assets/member-dossier.css": "0e4a89b6aba2e0ec1aca1f60d4c10fc7b52d6a26467899c733a4e9718fb646e2",
+  "assets/member-dossier.js": "81b8a5ea98a500b443db21386a5dc30ab11f7ec47daa529fc74a44db882c6224",
+  "assets/pro-report.js": "59f49fe21a062c564eaa3ca0b7dea418fe88f3758e8cfa6b6e97e2e5941c9b0b",
   "assets/pro-context.js": "85883d7956fd08c68addc2966880103308b678f902c92eb4a3c68d719c3c987c",
-  "assets/home-modern.css": "ab8b6e83119846a87ad86a64f08d2749b62fdc3a985f93f9a4dea626f91b63a4",
+  "assets/home-modern.css": "6be292a4eab414b497d06b9c3c3f9449c96e6a2a2b7926bed3f065120b930bb7",
   "assets/members.js": "a25510651b61bda03af790d9f38aaa6e95027343ac57335437c305737eb029ed",
+  "assets/home-watchlist.js": "ab2473d038e3c2ac0f2d465dd35afd7ed616d38926a270c81ea9190465be35db",
+  "assets/pro-report.css": "0354032afbda4e020f84c16c62960f6bf0d42256578e32b9843b76c3721b7939",
+  "assets/conversion.js": "2e83078674dd83600fb53f70e65dc884605d5a7b07a50e3788a8ea8ed413c729",
 };
 const PREVIOUS_ASSET_SHA256 = {
-  "assets/app.js": "a2db295d4a01fbc8f73223aa3896c71863d2e953f64f0d24a2bace56f9c4cf4b",
-  "assets/home-dashboard.js": "8ccb326c6379a4cff1cbf9e85cdd6c387145fb219e2782ec1b2b0475f25b6daa",
+  "assets/app.js": "6aee1b70267050fb8e1acfb214e29488353153d8614832ecba52c7475b1d9bd6",
+  "assets/home-dashboard.js": "cd52b1e1cf308bedaf7436def2c0121e0e1428197afebf6cf0c180a8ac79a53a",
   "assets/member-dossier.css": "ad2846535906b2ac472b41f9368675d3e2dd3a5f5acd4f9ab883fe841f463881",
   "assets/member-dossier.js": "cfb97ebaa9d43f51c3317590207523a57ae3854e2acf3d738fb52773160f83bd",
   "assets/pro-report.js": "7aa98e931ac6974fc1f3c8791833df02a4789a2df7a80ca3417498c70826fde3",
@@ -30,6 +34,8 @@ const HOME_ASSETS = [
   "assets/app.js",
   "assets/home-modern.css",
   "assets/home-dashboard.js",
+  "assets/home-watchlist.js",
+  "assets/conversion.js",
   "assets/member-dossier.css",
   "assets/member-dossier.js",
 ];
@@ -58,6 +64,7 @@ const SHELL = [
   "./assets/citire.js",
   "./assets/conversion.js",
   "./assets/home-dashboard.js",
+  "./assets/home-watchlist.js",
   "./assets/members.js",
   "./assets/member-dossier.js",
   "./assets/member-dossier.css",
@@ -123,7 +130,8 @@ async function matchesRelease(path, response, version = RELEASE) {
     return version === PREVIOUS_RELEASE || ["ro", "en", "es", "it", "fr", "id"]
       .every(lang => Boolean(dictionary?.[lang]?.["pro.search.one"] && dictionary?.[lang]?.["webfree.banner"]
         && dictionary?.[lang]?.["webfree.dossiers"] && dictionary?.[lang]?.["webfree.pro"]
-        && dictionary?.[lang]?.["webfree.ended"]));
+        && dictionary?.[lang]?.["webfree.ended"] && dictionary?.[lang]?.["dashboard.market.btts"]
+        && dictionary?.[lang]?.["dashboard.watch.title"] && dictionary?.[lang]?.["dashboard.analysis.preview.read"]));
   }
   return hasDigest(response, RELEASE_ASSET_SHA256[path]);
 }

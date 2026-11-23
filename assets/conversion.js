@@ -14,7 +14,7 @@
     pro: 'https://www.patreon.com/checkout/PoseidonPredictions?rid=28975836'
   });
   const SOURCES = ['hero', 'header', 'planstrip', 'legacy', 'dashboard'];
-  const ACTIONS = ['plan-intent', 'plan-outbound', 'login', 'predictions', 'sample', 'track-record', 'methodology', 'analyses'];
+  const ACTIONS = ['plan-intent', 'plan-outbound', 'login', 'predictions', 'sample', 'track-record', 'methodology', 'analyses', 'market-select', 'watch-toggle', 'dossier-open'];
   const VIEWS = ['pricing', 'planstrip', 'sample', 'dashboard'];
   const CAMPAIGNS = {
     utm_source: ['instagram', 'facebook', 'tiktok', 'youtube', 'discord', 'telegram', 'newsletter', 'patreon', 'google', 'bing', 'direct'],
@@ -152,7 +152,8 @@
       let action = explicit;
       if (explicit && !ACTIONS.includes(explicit)) return null;
       if (!action) {
-        if (patreon) action = 'plan-outbound';
+        if (source === 'dashboard' && element.getAttribute('data-dossier-fixture')) action = 'dossier-open';
+        else if (patreon) action = 'plan-outbound';
         else if (href === 'https://poseidon-members.poseidonstats.workers.dev/login') action = 'login';
         else if (href === '#abonament' || href === 'index.html#abonament' || href === '#abonament-detalii') action = 'plan-intent';
         else if (href === '#dashboard' || href === '#matches' || href === '#repere-azi') action = 'predictions';

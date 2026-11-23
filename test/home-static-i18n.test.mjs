@@ -27,6 +27,24 @@ function actual(start,end) {
   assert(first>=0 && last>first,`actual source boundaries: ${start}`);
   return source.slice(first,last);
 }
+test('a language in the membership link overrides the saved preference until the user chooses another', () => {
+  const location={href:'https://poseidonstats.com/index.html?lang=en&ref=example#abonament',
+    search:'?lang=en&ref=example'};
+  const localStorage={getItem:()=> 'ro'};
+  const history={state:{example:1}, replaceState(state, _title, url) {
+    assert.equal(state,this.state);
+    location.href=String(url);
+    location.search=new URL(url).search;
+  }};
+  const ctx=createContext({location, localStorage, history, navigator:{language:'ro'}, URL, URLSearchParams});
+  runInContext(actual('const LIMBI_SITE','function t('),ctx);
+  assert.equal(runInContext('detectLang()',ctx),'en');
+  runInContext('updateRouteLanguage("fr")',ctx);
+  assert.equal(location.href,'https://poseidonstats.com/index.html?lang=fr&ref=example#abonament');
+  assert.equal(runInContext('detectLang()',ctx),'fr');
+  location.search='?lang=invalid';
+  assert.equal(runInContext('detectLang()',ctx),'ro');
+});
 // Fixed authentic public fixture copied from the 2026-10-23 export.
 // Used only to exercise static UI; no outcomes or statistical claims are inferred.
 const fixture={
@@ -144,8 +162,8 @@ test('homepage market filters use translated labels and homepage assets use thei
     assert.equal(key,`filters.market.${market}`);
     for (const language of languages) assert(dictionary[language][key]);
   }
-  const release='20261123-predictions-first';
-  for (const asset of ['app.js','member-dossier.js','member-dossier.css','home-dashboard.js','home-modern.css']) {
+  const release='20261123-markets-follow';
+  for (const asset of ['app.js','member-dossier.js','member-dossier.css','home-dashboard.js','home-watchlist.js','home-modern.css','conversion.js']) {
     assert(html.includes(`assets/${asset}?release=${release}`));
   }
   const app=readFileSync(new URL('../assets/app.js',import.meta.url),'utf8');
@@ -155,13 +173,12 @@ test('homepage market filters use translated labels and homepage assets use thei
   const worker=readFileSync(new URL('../sw.js',import.meta.url),'utf8');
   assert(worker.includes(`const RELEASE = "${release}";`));
   const releaseHashes=worker.match(/const RELEASE_ASSET_SHA256 = \{([\s\S]*?)\n\};/)?.[1] ?? '';
-  for (const asset of ['app.js','member-dossier.js','member-dossier.css','home-dashboard.js','home-modern.css','pro-report.js','pro-context.js','members.js']) {
+  for (const asset of ['app.js','member-dossier.js','member-dossier.css','home-dashboard.js','home-watchlist.js','home-modern.css','conversion.js','pro-report.js','pro-report.css','pro-context.js','members.js','home-watchlist.js','conversion.js']) {
     const bytes=readFileSync(new URL(`../assets/${asset}`,import.meta.url));
     const digest=createHash('sha256').update(bytes).digest('hex');
     assert(releaseHashes.includes(`"assets/${asset}": "${digest}"`), `Update the service worker release for ${asset}`);
   }
   assert(html.includes(`assets/members.js?release=${release}`));
-  assert(html.includes('assets/conversion.js?v=20261119-app-outbound'));
   // The per-metric TEST-N honesty contract superseded reading-frozen1. Check the current asset and cache key together.
   const readingSource=readFileSync(new URL('../assets/citire.js',import.meta.url),'utf8');
   assert(readingSource.includes('nN(t.familia)') && readingSource.includes('nN(t.interval)') && readingSource.includes('nN(t.directia)'));

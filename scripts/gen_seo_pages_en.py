@@ -5,14 +5,29 @@ plătește caută în engleză „premier league predictions”, „football pro
 titlu pe intenția de căutare, hreflang ro ↔ en. Chemat din gen_seo_pages.main() după paginile românești; întoarce URL-urile pentru sitemap."""
 from __future__ import annotations
 
+import argparse
 import re
 from collections import defaultdict
-from datetime import datetime
+from datetime import UTC, date, datetime, timedelta
+from html import unescape
+from pathlib import Path
+from zoneinfo import ZoneInfo
 
 import gen_seo_pages as G
 from gen_seo_pages import BASE, FEREASTRA_ZILE, PRAG_TIER_MIN, TZ, blocat, e, wilson_lo
 
 OUT_EN = G.SITE / "en" / "predictions"
+PREMIER_LEAGUE_EN = ("England", "Premier League")
+PREMIER_LEAGUE_RELEASE = "release=20261123-markets-follow"
+UK_TIME = ZoneInfo("Europe/London")
+MEMBERSHIP_EN = "../../index.html?lang=en#abonament"
+MEMBERSHIP_DEFAULT = "../../index.html#abonament"
+ARCHIVE_ROW = re.compile(r"<tr\b[^>]*>(.*?)</tr>", re.DOTALL)
+ARCHIVE_ENGLAND = re.compile(
+    r"<td><strong>(.*?)</strong>\s*–\s*<strong>(.*?)</strong>\s*<br>\s*"
+    r"<span\b[^>]*>England · Premier League</span></td>", re.DOTALL,
+)
+ARCHIVE_PICK = re.compile(r'<span class="pick-row(?: [^"]*)?">([✅❌⏳]) ([^<]+?) \d+%</span>')
 TARI_EN = {"anglia": "england", "spania": "spain", "italia": "italy", "germania": "germany", "franta": "france", "olanda": "netherlands",
            "portugalia": "portugal", "turcia": "turkey", "belgia": "belgium", "scotia": "scotland", "elvetia": "switzerland", "grecia": "greece",
            "polonia": "poland", "cehia": "czechia", "danemarca": "denmark", "norvegia": "norway", "suedia": "sweden", "rusia": "russia",
@@ -60,10 +75,14 @@ def hreflang(ro: str, en: str) -> str:
             f'<link rel="alternate" hreflang="x-default" href="{e(ro)}">\n')
 
 
-def shell_en(*, title: str, description: str, canonical: str, body: str, jsonld: str = "", alternate_ro: str | None = None) -> str:
+def shell_en(*, title: str, description: str, canonical: str, body: str, jsonld: str = "",
+             alternate_ro: str | None = None, premier_league: bool = False) -> str:
     up = "../../"
     alt = hreflang(alternate_ro, canonical) if alternate_ro else ""
     i18n_release = G.I18N_PAIRED_RELEASE if alternate_ro else "v=20261119-functions"
+    if premier_league:
+        i18n_release = PREMIER_LEAGUE_RELEASE
+    membership_href = MEMBERSHIP_EN if premier_league else MEMBERSHIP_DEFAULT
     return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -104,7 +123,7 @@ def shell_en(*, title: str, description: str, canonical: str, body: str, jsonld:
       <a href="{up}istoric.html">History</a>
       <a href="{up}track-record.html">Track record</a>
       <a href="{up}metodologie.html">Methodology</a>
-      <a href="{up}index.html#abonament">💎 Membership</a>
+      <a href="{membership_href}">💎 Membership</a>
     </nav>
     <script src="{up}assets/i18n-lite.js?{i18n_release}" data-sus="{up}"></script>
   </div>
@@ -126,10 +145,34 @@ def shell_en(*, title: str, description: str, canonical: str, body: str, jsonld:
 """
 
 
-def match_table_en(matches: list[dict]) -> str:
+def kickoff(match: dict) -> datetime:
+    return datetime.fromisoformat(match["match_date"].replace("Z", "+00:00"))
+
+
+def calendar_england(matches: list[dict], as_of: datetime | None) -> list[dict]:
+    boundary = as_of.astimezone(UTC) + timedelta(days=FEREASTRA_ZILE) if as_of else None
+    fixtures = []
+    for match in matches:
+        if (match.get("country"), match.get("league")) != PREMIER_LEAGUE_EN or G.echipa_exclusa(match):
+            continue
+        try:
+            dt = kickoff(match)
+        except (KeyError, ValueError):
+            continue
+        if dt.tzinfo is None or (as_of and not (as_of < dt <= boundary)):
+            continue
+        fixtures.append((dt, match))
+    fixtures.sort(key=lambda item: item[0])
+    return [match for _, match in fixtures]
+
+
+def match_table_en(matches: list[dict], *, premier_league: bool = False) -> str:
     rows = []
+    tz = UK_TIME if premier_league else TZ
+    time_label = "Times are UK local time (GMT or BST)." if premier_league else "Times are Romania time (CET+1)."
+    membership_href = MEMBERSHIP_EN if premier_league else MEMBERSHIP_DEFAULT
     for m in matches:
-        dt = datetime.fromisoformat(m["match_date"].replace("Z", "+00:00")).astimezone(TZ)
+        dt = kickoff(m).astimezone(tz)
         best = None
         if not blocat(m):
             for label, key in MARKETS_EN:
@@ -139,13 +182,15 @@ def match_table_en(matches: list[dict]) -> str:
         top = f'<span class="piata-max">{e(best[1])} · {round(best[0] * 100)}%</span>' if best else '<span class="muted">—</span>'
         uncal = "" if m.get("calibrated") else ' <span class="warn-tag">⚠️ uncalibrated</span>'
         when = f"{dt.strftime('%d.%m')} <span class=\"muted\">{dt.strftime('%H:%M')}</span>"
+        if premier_league:
+            when = f'<time datetime="{dt.astimezone(UTC).isoformat()}">{dt.strftime("%d %b")} <span class="muted">{dt:%H:%M}</span></time>'
         fixture = f"<strong>{e(m['home_team'])}</strong> – <strong>{e(m['away_team'])}</strong>{uncal}"
         if blocat(m):
             rows.append(f"""        <tr class="rand-blocat">
           <td>{when}</td>
           <td>{fixture}</td>
           <td colspan="4" class="blocat-note">🔒 this match's probabilities are for members</td>
-          <td><a href="../../index.html#abonament" class="blocat-link">membership</a></td>
+          <td><a href="{membership_href}" class="blocat-link">membership</a></td>
         </tr>""")
         else:
             rows.append(f"""        <tr class="rand-liber">
@@ -167,7 +212,7 @@ def match_table_en(matches: list[dict]) -> str:
 {chr(10).join(rows)}
         </tbody>
       </table>
-      <p class="muted" style="font-size:.82rem">Times are Romania time (CET+1). Probabilities are the empirically calibrated ones, not the raw model output. The last column only says which of the tracked markets has the highest calibrated probability — a description of the model's output, not a recommendation; a high percentage is still a probability, not a certainty. The model computes every match in the list; 5 a day are published free, the rest are for <a href="../../index.html#abonament">members</a>.</p>
+      <p class="muted" style="font-size:.82rem">{time_label} Probabilities are the empirically calibrated ones, not the raw model output. The last column only says which of the tracked markets has the highest calibrated probability — a description of the model's output, not a recommendation; a high percentage is still a probability, not a certainty. The model computes every match in the list; 5 a day are published free, the rest are for <a href="{membership_href}">members</a>.</p>
     </div>"""
 
 
@@ -193,9 +238,11 @@ def journal_en(days: list[dict], country: str, league: str) -> str:
                 continue
             for p in m.get("picks", []):
                 if p["outcome"] == "WIN":
-                    wins += 1; per[p["market"]][0] += 1
+                    wins += 1
+                    per[p["market"]][0] += 1
                 elif p["outcome"] == "LOSS":
-                    losses += 1; per[p["market"]][1] += 1
+                    losses += 1
+                    per[p["market"]][1] += 1
     n = wins + losses
     if n == 0:
         return '<p class="muted">No resolved predictions for this league yet in the forward journal (started 2 June 2026). As matches are played they appear here — hits and misses alike.</p>'
@@ -211,16 +258,83 @@ def journal_en(days: list[dict], country: str, league: str) -> str:
     return note + table
 
 
-def pagina_liga_en(country: str, league: str, slug: str, nume: str, *, meciuri: list[dict], cal: dict | None, zile: list[dict]) -> str:
-    name = nume_en(nume); canonical = url_en(slug); year = datetime.now().year
+def journal_england(archive_dir: Path, through: date) -> str:
+    """Numără selecțiile cu verdict publicat, pe zilele arhivei de predicții."""
+    per_market: dict[str, list[int]] = defaultdict(lambda: [0, 0])
+    settled_days = []
+    fixture_count = 0
+    latest_pending = None
+    limit = through.isoformat()
+    for day in G.zile_publicate(archive_dir):
+        if day > limit:
+            continue
+        page = (archive_dir / f"{day}.html").read_text(encoding="utf-8")
+        for row in ARCHIVE_ROW.findall(page):
+            match = ARCHIVE_ENGLAND.search(row)
+            if not match:
+                continue
+            picks = ARCHIVE_PICK.findall(row[match.end():])
+            settled = [(mark, market) for mark, market in picks if mark != "⏳"]
+            if settled:
+                fixture_count += 1
+                settled_days.append(day)
+                for mark, market in settled:
+                    per_market[unescape(market)][int(mark == "❌")] += 1
+            if latest_pending is None and day < limit and any(mark == "⏳" for mark, _ in picks):
+                latest_pending = (day, *map(unescape, match.groups()))
+
+    links = '<p class="muted"><a href="../../predictii/arhiva/index.html?lang=en">Public model prediction archive</a></p>'
+    if latest_pending and (not settled_days or latest_pending[0] > settled_days[0]):
+        day, home, away = latest_pending
+        links += (f'<p class="muted"><a href="../../predictii/arhiva/{day}.html?lang=en">{e(home)} – {e(away)}'
+                  f' ({date.fromisoformat(day):%d %B %Y})</a> has selections still marked pending in the model archive.</p>')
+        if (G.SITE / "analize" / f"{day}.html").is_file():
+            links += (f'<p class="muted"><a href="../../analize/{day}.html?lang=en">'
+                      "Pro editorial archive for this date</a></p>")
+    if not settled_days:
+        return '<p>No settled model selections for England’s Premier League in the available archive.</p>' + links
+
+    period = f"{date.fromisoformat(settled_days[-1]):%d %B %Y} to {date.fromisoformat(settled_days[0]):%d %B %Y}"
+    wins = sum(market[0] for market in per_market.values())
+    losses = sum(market[1] for market in per_market.values())
+    fixtures = "fixture" if fixture_count == 1 else "fixtures"
+    selections = "selection" if wins + losses == 1 else "selections"
+    note = (f"<p>{period} · <strong>{wins + losses}</strong> settled {selections} from "
+            f"<strong>{fixture_count}</strong> {fixtures} in England’s Premier League ({wins} hits, {losses} misses). "
+            "Each selection is one market on one fixture. We count the outcomes marked as settled in the archive.</p>")
+    rows = "".join(
+        f'<tr><td>{e(market)}</td><td>{hits + misses}</td><td class="num-win">{hits}</td><td class="num-loss">{misses}</td></tr>'
+        for market, (hits, misses) in sorted(per_market.items())
+    )
+    table = ('<table class="cumulat-table"><thead><tr><th>Market</th><th>Selections</th><th>Hits</th><th>Misses</th></tr></thead>'
+             f'<tbody>{rows}</tbody></table>')
+    return note + table + links
+
+
+def pagina_liga_en(country: str, league: str, slug: str, nume: str, *, meciuri: list[dict], cal: dict | None, zile: list[dict],
+                   archive_dir: Path | None = None, as_of: datetime | None = None) -> str:
+    name = nume_en(nume)
+    canonical = url_en(slug)
+    snapshot_time = as_of or G.azi()
+    year = snapshot_time.year
+    premier_league = (country, league) == PREMIER_LEAGUE_EN
+    membership_href = MEMBERSHIP_EN if premier_league else MEMBERSHIP_DEFAULT
+    journal_heading = f"What came true so far in {e(name)}"
+    if premier_league:
+        meciuri = calendar_england(meciuri, as_of)
+        journal = journal_england(archive_dir or G.ARH, snapshot_time.astimezone(TZ).date())
+        journal_heading = "Premier League model prediction results"
+    else:
+        journal = journal_en(zile, country, league)
     n = len(meciuri)
     if meciuri:
-        first = min(datetime.fromisoformat(m["match_date"].replace("Z", "+00:00")) for m in meciuri).astimezone(TZ)
+        first = min(kickoff(m) for m in meciuri).astimezone(UK_TIME if premier_league else TZ)
         summary = f"The model has analysed <strong>{n} {'match' if n == 1 else 'matches'}</strong> from {e(name)} in the next {FEREASTRA_ZILE} days, the first on {first.strftime('%d %B %Y')}."
-        content = match_table_en(meciuri)
+        content = match_table_en(meciuri, premier_league=premier_league)
         description = f"{n} {'match' if n == 1 else 'matches'} in {name}: fixtures, calibration profile and the verified prediction journal. 5 complete predictions free every day."
     else:
-        summary = f"No {e(name)} match is scheduled in the next {FEREASTRA_ZILE} days in our data — most likely a break or the off-season. The page stays: the calibration profile below holds, and fixtures reappear automatically."
+        summary = (f"The current model snapshot has no {e(name)} fixtures in the next {FEREASTRA_ZILE} days." if premier_league else
+                   f"No {e(name)} match is scheduled in the next {FEREASTRA_ZILE} days in our data — most likely a break or the off-season. The page stays: the calibration profile below holds, and fixtures reappear automatically.")
         content = ""
         description = f"{name} predictions from the POSEIDON model: the league's calibration profile and the verified prediction journal. Free access."
     title = f"{name} Predictions {year} | Match Probabilities"
@@ -248,20 +362,21 @@ def pagina_liga_en(country: str, league: str, slug: str, nume: str, *, meciuri: 
   </section>
 
   <section>
-    <h2>What came true so far in {e(name)}</h2>
-{journal_en(zile, country, league)}
+    <h2>{journal_heading}</h2>
+{journal}
   </section>
 
   <section class="plans-free" style="margin-top:26px">
     Every day we publish 5 complete predictions for free, plus the entire track record — misses included. The rest of the day's
-    predictions, the Discord delivery and the written analyses are part of the <a href="../../index.html#abonament">membership</a>.
+    predictions, the Discord delivery and the written analyses are part of the <a href="{membership_href}">membership</a>.
     Other leagues: <a href="index.html">all league pages</a>.
   </section>
 
   <p class="pro-disclaimer">Empirically calibrated probabilities · informational · not betting advice · 18+</p>
 """
     ld = G.breadcrumb([("POSEIDON", f"{BASE}/"), ("Predictions by league", f"{BASE}/en/predictions/index.html"), (f"{name} predictions", canonical)])
-    return shell_en(title=title, description=description, canonical=canonical, body=body, jsonld=ld, alternate_ro=url_ro(slug))
+    return shell_en(title=title, description=description, canonical=canonical, body=body, jsonld=ld, alternate_ro=url_ro(slug),
+                    premier_league=premier_league)
 
 
 def nume_long(nume: str) -> str:
@@ -273,7 +388,8 @@ def nume_long(nume: str) -> str:
 
 def pagina_hub_en(rows: list[dict]) -> str:
     canonical = f"{BASE}/en/predictions/index.html"
-    with_m = [r for r in rows if r["n"] > 0]; total = sum(r["n"] for r in rows)
+    with_m = [r for r in rows if r["n"] > 0]
+    total = sum(r["n"] for r in rows)
     lst = "".join(f'      <tr><td><a href="{slug_en(r["slug"])}.html">{e(nume_en(r["nume"]))} predictions</a></td><td>{r["n"] or "—"}</td>'
                   f'<td>{"<span class=\"ok-tag\">✓ calibrated</span>" if r["cal_ok"] else "<span class=\"warn-tag\">⚠️ weak calibration</span>" if r["cal_ok"] is False else "<span class=\"muted\">—</span>"}</td></tr>' for r in rows)
     body = f"""  <section class="intro">
@@ -308,12 +424,40 @@ def pagina_hub_en(rows: list[dict]) -> str:
 
 def genereaza(per_liga: dict, cal_map: dict, zile: list[dict]) -> list[tuple[str, str, str]]:
     """Scrie toate paginile EN; întoarce (loc, changefreq, priority) pentru sitemap."""
-    OUT_EN.mkdir(parents=True, exist_ok=True); pagini = []; rows = []
+    OUT_EN.mkdir(parents=True, exist_ok=True)
+    pagini = []
+    rows = []
+    as_of = G.azi()
     for country, league, slug, nume in G.LEAGUES:
-        lst = per_liga.get((country, league), []); entry = cal_map.get((country, league))
-        (OUT_EN / f"{slug_en(slug)}.html").write_text(pagina_liga_en(country, league, slug, nume, meciuri=lst, cal=entry, zile=zile), encoding="utf-8")
-        rows.append({"slug": slug, "nume": nume, "n": len(lst), "cal_ok": entry["calibrated"] if entry else None})
+        lst = per_liga.get((country, league), [])
+        entry = cal_map.get((country, league))
+        html = pagina_liga_en(country, league, slug, nume, meciuri=lst, cal=entry, zile=zile, as_of=as_of)
+        (OUT_EN / f"{slug_en(slug)}.html").write_text(html, encoding="utf-8")
+        n = len(calendar_england(lst, as_of)) if (country, league) == PREMIER_LEAGUE_EN else len(lst)
+        rows.append({"slug": slug, "nume": nume, "n": n, "cal_ok": entry["calibrated"] if entry else None})
         pagini.append((url_en(slug), "daily", "0.7"))
     (OUT_EN / "index.html").write_text(pagina_hub_en(rows), encoding="utf-8")
     pagini.append((f"{BASE}/en/predictions/index.html", "daily", "0.8"))
     return pagini
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description="Regenerează doar pagina EN a ligii Angliei, din datele publice locale.")
+    parser.add_argument("--league", required=True, choices=["england-premier-league"])
+    args = parser.parse_args()
+    predictions = G.citeste("predictions.json")
+    calibration = G.citeste("calibration.json")
+    if not predictions or not calibration:
+        return 1
+    league = next(league for league in G.LEAGUES if slug_en(league[2]) == args.league)
+    entry = next((entry for entry in calibration.get("leagues", [])
+                  if (entry["country"], entry["league"]) == PREMIER_LEAGUE_EN), None)
+    as_of = datetime.fromisoformat(predictions["generated_at"].replace("Z", "+00:00"))
+    html = pagina_liga_en(*league, meciuri=predictions["matches"], cal=entry, zile=[], as_of=as_of)
+    OUT_EN.mkdir(parents=True, exist_ok=True)
+    (OUT_EN / f"{args.league}.html").write_text(html, encoding="utf-8")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

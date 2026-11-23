@@ -1,13 +1,13 @@
 /* Homepage presentation: public exports and the already verified member prediction list. */
 (function (root, factory) {
-  if (typeof module === 'object' && module.exports) module.exports = factory(require('./country-label.js'));
+  if (typeof module === 'object' && module.exports) module.exports = factory(require('./country-label.js'), require('./home-watchlist.js'));
   else {
-    const api = factory(root.PoseidonCountry);
+    const api = factory(root.PoseidonCountry, root.PoseidonWatchlist);
     root.PoseidonDashboard = api;
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => api.mount(document));
     else api.mount(document);
   }
-})(typeof window !== 'undefined' ? window : globalThis, function (countries) {
+})(typeof window !== 'undefined' ? window : globalThis, function (countries, watchlist) {
   'use strict';
   const TIMEZONE = 'Europe/Bucharest';
   const dayFormatter = new Intl.DateTimeFormat('en-GB', { timeZone: TIMEZONE, year: 'numeric', month: '2-digit', day: '2-digit' });
@@ -80,6 +80,9 @@
         league: m.league || '', country: m.country || '', locked: !visible(m),
         ...(isPublic(m) ? {free:true} : {}),
         ...(member && m.dossier_only ? {dossierOnly:true} : {}),
+        marketProbabilities: visible(m) && !m.dossier_only ? {
+          btts:probability(m.prob_btts), over_2_5:probability(m.prob_over_2_5), ht_over_0_5:probability(m.prob_ht_over_0_5)
+        } : null,
         probabilities: visible(m) && !m.dossier_only ? [probability(m.prob_home), probability(m.prob_draw), probability(m.prob_away)] : [null, null, null]
       }))
     };
@@ -117,7 +120,57 @@
       return Object.entries(vars).reduce((s, [k, v]) => s.split(`{${k}}`).join(String(v)), translated);
     };
   }
-  function renderRows(rows, tr, loc, dossiers = null, member = false, publicDossiers = null, freeDay = null) {
+  function marketLabel(market, tr) {
+    return market === '1x2' ? '1X2' : tr('dashboard.market.' + market);
+  }
+  function publicArchive(feed, day) {
+    const matches = feed?.days?.[day]?.matches;
+    return Array.isArray(matches) ? matches.filter(match => isPublic(match) && dayOf(match.match_date) === day) : [];
+  }
+  function archiveStat(feed, row, market) {
+    const day = dayOf(row.match_date);
+    const match = publicArchive(feed, day).find(item => String(item.fixture_id) === String(row.fixture_id)
+      && item.home_team === row.home && item.away_team === row.away && item.match_date === row.match_date);
+    return match && feed.days[day].stats?.[row.fixture_id] ? {
+      home: feed.days[day].stats[row.fixture_id].home?.[market],
+      away: feed.days[day].stats[row.fixture_id].away?.[market]
+    } : {};
+  }
+  function formatDay(day, loc) {
+    return new Intl.DateTimeFormat(loc, {day:'numeric', month:'short', year:'numeric', timeZone:TIMEZONE})
+      .format(new Date(day + 'T12:00:00Z'));
+  }
+  function renderTeamHistory(stats, tr, loc, loading = false) {
+    if (loading) return `<span class="dashboard-market-history">${escapeHTML(tr('loading'))}</span>`;
+    const valid = value => value && count(value.hits) && count(value.n) && value.n > 0 && value.hits <= value.n
+      && value.from <= value.to && watchlist.shiftDay(value.from, 0) === value.from && watchlist.shiftDay(value.to, 0) === value.to;
+    const number = new Intl.NumberFormat(loc);
+    const line = (side, value) => {
+      if (!valid(value)) return '';
+      return `<div><dt>${escapeHTML(tr('dashboard.market.' + side))}</dt><dd>${escapeHTML(tr('dashboard.market.sample', {
+        hits:number.format(value.hits), n:number.format(value.n)
+      }))} <span>(${escapeHTML(formatDay(value.from, loc))} – ${escapeHTML(formatDay(value.to, loc))})</span></dd></div>`;
+    };
+    return `<dl class="dashboard-market-history" aria-label="${escapeHTML(tr('dashboard.market.history'))}">${line('home',stats.home) || lineUnavailable('home')}${line('away',stats.away) || lineUnavailable('away')}</dl>`;
+    function lineUnavailable(side) {
+      return `<div><dt>${escapeHTML(tr('dashboard.market.' + side))}</dt><dd>${escapeHTML(tr('dashboard.market.noHistory'))}</dd></div>`;
+    }
+  }
+  function renderMarketHistory(row, context, tr, loc) {
+    const id = `${row.fixture_id}|${row.match_date}|${context.market}`;
+    const history = renderTeamHistory(archiveStat(context.feed, row, context.market), tr, loc, context.marketHistoryPending);
+    return `<details class="dashboard-market-details" data-home-team-history="${escapeHTML(id)}"${context.openHistory?.has(id) ? ' open' : ''}><summary>${escapeHTML(tr('dashboard.market.history'))}</summary>${history}</details>`;
+  }
+  function renderMarketResult(entry, feed, history, tr) {
+    const result = watchlist.settle(entry, feed, history);
+    const score = [
+      result.ft && tr('dashboard.market.ft', {score:result.ft.join('–')}),
+      entry.market === 'ht_over_0_5' && result.ht && tr('dashboard.market.ht', {score:result.ht.join('–')})
+    ].filter(Boolean).join(' · ');
+    const outcome = tr('dashboard.market.result.' + result.outcome);
+    return `<span class="dashboard-market-result" data-outcome="${escapeHTML(result.outcome)}">${escapeHTML(score ? score + ' · ' + outcome : outcome)}</span>`;
+  }
+  function renderRows(rows, tr, loc, dossiers = null, member = false, publicDossiers = null, freeDay = null, context = null) {
     const pct = v => v == null ? '—' : `${new Intl.NumberFormat(loc, {maximumFractionDigits:1}).format(v * 100)}%`;
     return rows.map(row => {
       const date = new Date(row.match_date);
@@ -128,19 +181,26 @@
       const reading = !row.locked && readingAPI && typeof readingAPI.dashboardRow === 'function' ? readingAPI.dashboardRow(identity) : '';
       const readingAttributes = row.locked || row.dossierOnly ? '' : ` data-reading-fixture="${escapeHTML(row.fixture_id)}" data-reading-home="${escapeHTML(row.home)}" data-reading-away="${escapeHTML(row.away)}" data-reading-kickoff="${escapeHTML(row.match_date)}" data-reading-free="true"`;
       const title = `${escapeHTML(row.home)} <span aria-hidden="true">–</span> ${escapeHTML(row.away)}`;
-      const name = row.dossierOnly ? `<strong>${title}</strong>` : `<a href="#matches" data-dashboard-fixture="${escapeHTML(row.fixture_id)}" title="${escapeHTML(`${row.home} – ${row.away}`)}">${title}</a>`;
+      const name = row.dossierOnly || context?.past ? `<strong>${title}</strong>` : `<a href="#matches" data-dashboard-fixture="${escapeHTML(row.fixture_id)}" title="${escapeHTML(`${row.home} – ${row.away}`)}">${title}</a>`;
       const country = countries?.label(row.country, loc) || row.country;
       const competition = escapeHTML([country, row.league].filter(Boolean).join(' · '));
       const promoted = freeDay && dayOf(row.match_date) === freeDay && dossier;
       const accessLabel = dossier && member && !promoted ? dossiers.copy().member
         : tr(row.locked ? 'dashboard.access.locked' : 'dashboard.access.free');
-      const probabilityCells = row.dossierOnly
+      const entry = context && watchlist.entry(row, context.market);
+      const key = entry && watchlist.key(entry);
+      const saved = key && context.watched.some(item => watchlist.key(item) === key);
+      const follow = key ? ` <button type="button" class="dashboard-watch-button" data-home-watch="${escapeHTML(key)}" data-conversion="watch-toggle" aria-pressed="${Boolean(saved)}" aria-label="${escapeHTML(tr('dashboard.watch.follow') + ' · ' + row.home + ' – ' + row.away + ' · ' + marketLabel(entry.market,tr))}">${escapeHTML(tr('dashboard.watch.' + (saved ? 'saved' : 'follow')))}</button>` : '';
+      const result = entry && context.past ? renderMarketResult(entry, context.feed, context.history, tr) : '';
+      const market = context?.market || '1x2';
+      const marketCell = market !== '1x2' && !row.dossierOnly ? `<td class="dashboard-prob dashboard-market-cell" role="cell" colspan="3" headers="dashboard-th-market"><span class="dashboard-prob-key">${escapeHTML(tr('dashboard.market.model'))} · </span><strong>${escapeHTML(row.marketProbabilities?.[market] == null ? tr('dashboard.market.noEstimate') : pct(row.marketProbabilities[market]))}</strong>${row.locked ? '' : renderMarketHistory(row,context,tr,loc)}</td>` : '';
+      const probabilityCells = marketCell || (row.dossierOnly
         ? `<td class="dashboard-stats-only" role="cell" colspan="3">${escapeHTML(tr('dashboard.table.statsOnly'))}</td>`
         : row.probabilities.map((value,i) =>
-          `<td class="dashboard-prob" role="cell" headers="dashboard-th-${i}"><span class="dashboard-prob-key" aria-hidden="true">${['1','X','2'][i]}</span>${escapeHTML(pct(value))}</td>`).join('');
+          `<td class="dashboard-prob" role="cell" headers="dashboard-th-${i}"><span class="dashboard-prob-key" aria-hidden="true">${['1','X','2'][i]}</span>${escapeHTML(pct(value))}</td>`).join(''));
       return `<tr class="dashboard-match-row" role="row"${readingAttributes}><td class="dashboard-time-cell" role="cell" headers="dashboard-th-time"><time datetime="${escapeHTML(row.match_date)}">${escapeHTML(time)}</time><small class="dashboard-match-league" title="${competition}">${competition}</small></td>` +
-        `<td class="dashboard-team" role="cell" headers="dashboard-th-match">${name}</td>` + probabilityCells +
-        `<td class="dashboard-access-cell" role="cell" headers="dashboard-th-access"><span class="${row.locked ? 'dashboard-lock' : 'dashboard-free'}">${row.locked ? '🔒 ' : ''}${escapeHTML(accessLabel)}</span>${dossier}</td></tr>${reading}`;
+        `<td class="dashboard-team" role="cell" headers="dashboard-th-match">${name}${result}</td>` + probabilityCells +
+        `<td class="dashboard-access-cell" role="cell" headers="dashboard-th-access"><span class="${row.locked ? 'dashboard-lock' : 'dashboard-free'}">${row.locked ? '🔒 ' : ''}${escapeHTML(accessLabel)}</span>${dossier}${follow}</td></tr>${reading}`;
     }).join('');
   }
   function renderChart(points, tr, loc, id, layout = {}) {
@@ -364,24 +424,6 @@
     const attrs = specific ? ` data-pro-day="${day}" data-pro-match="${escapeHTML(title)}"` : action.sample ? ' data-dashboard-analysis' : '';
     return `<a class="dashboard-analysis-link" href="${escapeHTML(action.href)}"${attrs}>${escapeHTML(tr(action.key))} →</a>`;
   }
-  function renderProSummary(doc, tr, lang, tier) {
-    const head = doc.querySelector('#exemplu-pro-source .pro-card-head');
-    if (!head) return `<p>${escapeHTML(tr('dashboard.data.unavailable'))}</p>`;
-    const card = head.closest('.pro-card');
-    if (!card) return `<p>${escapeHTML(tr('dashboard.data.unavailable'))}</p>`;
-    const selection = chooseAnalysisLanguage(lang,Array.from(card.querySelectorAll('[data-lang]'),el => el.getAttribute('data-lang')));
-    const body = selection.language ? card.querySelector(`[data-lang="${selection.language}"]`) : null;
-    // Copy only the public sample's original source, never the member report or
-    // enhanced markup (which would duplicate tab IDs and lose click listeners).
-    const visible = body && body.querySelector('.pro-visible');
-    const source = doc.defaultView?.PoseidonProReport?.sourceMarkup?.(visible) ?? visible?.innerHTML;
-    const notice = analysisLanguageNotice(selection,tr), action = analysisAction(tier);
-    const publicReport = card.hasAttribute?.('data-public-pro-report') ? ' data-public-pro-report' : '';
-    return `<article class="dashboard-pro-summary pro-card"${publicReport}><span class="dashboard-analysis-meta">${escapeHTML(tr('dashboard.analysis.sample'))}</span><div class="pro-card-head">${escapeHTML(head.textContent)}</div>` +
-      (notice ? `<p class="dashboard-analysis-language">${escapeHTML(notice)}</p>` : '') +
-      `<div data-lang="${escapeHTML(selection.language || lang)}"><div class="pro-visible">${source ?? escapeHTML(tr('dashboard.data.unavailable'))}</div></div>` +
-      `<div class="dashboard-report-action">${analysisLink(head,action,tr)}</div></article>`;
-  }
   function membershipTier(body) {
     const classes = body && body.classList;
     if (!classes || !classes.contains('is-member')) return null;
@@ -427,7 +469,18 @@
     watchLanguageSelector(doc,translator());
     watchMemberLogin(doc,translator());
     ensureProofNotice(doc,translator());
-    let predictions = null, history = null, audit = null, archive = null;
+    let predictions = null, history = null, audit = null, archive = null, marketHistory = null;
+    let marketHistoryPending = true;
+    const view = doc.defaultView;
+    const marketButtons = [...doc.querySelectorAll('[data-home-market]')];
+    const dayButtons = [...doc.querySelectorAll('[data-home-day]')];
+    const watchEntries = doc.getElementById('dashboard-watch-entries');
+    const watchCount = doc.getElementById('dashboard-watch-count');
+    const watchStatus = doc.getElementById('dashboard-watch-status');
+    let market = '1x2', storage = null, watchError = false;
+    try { storage = view?.localStorage; } catch (_) { /* A blocked browser store is reported when saving. */ }
+    let watched = watchlist.read(storage);
+    const shown = new Map();
     const dateSelect = doc.getElementById('dashboard-date');
     const leagues = doc.getElementById('dashboard-leagues');
     const leagueMenu = doc.getElementById('dashboard-league-menu');
@@ -443,8 +496,9 @@
       if (!response.ok) throw new Error(`Public export unavailable: ${path}`);
       return response.json();
     }
-    const results = await Promise.allSettled([localJSON('data/predictions.json'), localJSON('data/history.json'), localJSON('data/audit.json')]);
-    [predictions, history, audit] = results.map(result => result.status === 'fulfilled' ? result.value : null);
+    const required = Promise.allSettled([localJSON('data/predictions.json'), localJSON('data/history.json'), localJSON('data/audit.json')]);
+    const supplemental = localJSON('data/dashboard-market-history.json').catch(() => null);
+    [predictions, history, audit] = (await required).map(result => result.status === 'fulfilled' ? result.value : null);
     function renderMetrics() {
       const tr = translator(), loc = locale(doc), num = n => n == null ? '—' : new Intl.NumberFormat(loc).format(n);
       const auditGrid = doc.getElementById('approved-audit-metrics');
@@ -493,15 +547,49 @@
         el.innerHTML = renderChart(points,tr,loc,`dashboard-chart-${i}`,{width,height});
       });
     }
+    function memberForDay(day) {
+      const guestDay = dossiers?.guestPredictionDay?.();
+      return guestDay && day !== guestDay ? null : dossiers?.predictions();
+    }
     function dashboardPredictions() {
-      const member = dossiers?.predictions();
-      if (!member) return predictions && {...predictions, matches: predictions.matches.filter(isPublic)};
-      if (!dateSelect?.value) return member;
-      const catalog = dossiers.catalog(dateSelect.value);
-      const forecastIds = new Set(member.matches.filter(memberForecast).map(m => String(m.fixture_id)));
-      const dossierOnly = catalog.filter(m => !forecastIds.has(String(m.fixture_id)));
+      const day = dateSelect?.value;
+      const member = memberForDay(day);
+      const current = member?.matches ?? predictions?.matches?.filter(isPublic);
+      const archived = day < dayOf(new Date()) ? publicArchive(marketHistory, day) : [];
+      if (current == null && !archived.length) return null;
+      const matches = [...(current || [])];
+      const identities = new Set(matches.map(item => dayOf(item.match_date) + ':' + item.fixture_id));
+      for (const item of archived) {
+        if (!identities.has(day + ':' + item.fixture_id)) matches.push(item);
+      }
+      if (!member || !day) return {...predictions, matches};
+      const forecastIds = new Set(matches.filter(m => dayOf(m.match_date) === day && memberForecast(m)).map(m => String(m.fixture_id)));
+      const dossierOnly = dossiers.catalog(day).filter(m => !forecastIds.has(String(m.fixture_id)));
       const dossierIds = new Set(dossierOnly.map(m => String(m.fixture_id)));
-      return {...member, matches: [...member.matches.filter(m => !dossierIds.has(String(m.fixture_id))), ...dossierOnly]};
+      return {...member, matches: [...matches.filter(m => dayOf(m.match_date) !== day || !dossierIds.has(String(m.fixture_id))), ...dossierOnly]};
+    }
+    function relativeDays() {
+      const today = dayOf(new Date());
+      return {today, yesterday:watchlist.shiftDay(today, -1)};
+    }
+    function renderQuickFilters() {
+      const day = dateSelect?.value;
+      const relative = relativeDays();
+      for (const button of dayButtons) button.setAttribute('aria-pressed', String(day === relative[button.dataset.homeDay]));
+      for (const button of marketButtons) button.setAttribute('aria-pressed', String(market === button.dataset.homeMarket));
+      for (let i = 0; i < 3; i++) {
+        const heading = doc.getElementById('dashboard-th-' + i);
+        if (heading) heading.hidden = market !== '1x2';
+      }
+      const heading = doc.getElementById('dashboard-th-market');
+      if (heading) heading.hidden = market === '1x2';
+    }
+    function renderWatchlist() {
+      if (!watchEntries) return;
+      const tr = translator(), loc = locale(doc);
+      if (watchCount) watchCount.textContent = '(' + new Intl.NumberFormat(loc).format(watched.length) + ')';
+      if (watchStatus) watchStatus.textContent = watchError ? tr('dashboard.watch.error') : watched.length ? '' : tr('dashboard.watch.empty');
+      watchEntries.innerHTML = watched.map(item => `<li><div><strong>${escapeHTML(item.home)} – ${escapeHTML(item.away)}</strong><small>${escapeHTML([formatDay(item.day,loc),countries?.label(item.country,loc) || item.country,item.league,marketLabel(item.market,tr)].filter(Boolean).join(' · '))}</small>${renderMarketResult(item,marketHistory,history,tr)}</div><button type="button" data-home-unwatch="${escapeHTML(watchlist.key(item))}">${escapeHTML(tr('dashboard.watch.remove'))}</button></li>`).join('');
     }
     function renderLeagues() {
       if (!leagues && !leagueMenu) return;
@@ -520,9 +608,16 @@
     function renderTable() {
       if (!table) return;
       const tr = translator();
+      renderQuickFilters();
+      const focusedKey = doc.activeElement?.dataset?.homeWatch;
+      const focusedHistory = doc.activeElement?.tagName === 'SUMMARY'
+        ? doc.activeElement.parentElement?.dataset?.homeTeamHistory : null;
+      const openHistory = new Set(Array.from(table.querySelectorAll?.('details[data-home-team-history][open]') || [],
+        details => details.dataset.homeTeamHistory));
+      shown.clear();
       try {
         const query = search ? search.value : '';
-        const member = !!dossiers?.predictions();
+        const member = !!memberForDay(dateSelect?.value);
         if (member && dateSelect?.value) dossiers.loadCatalog(dateSelect.value);
         const data = dashboardPredictions();
         const competition = competitions.find(option => option.value === selectedLeague);
@@ -532,7 +627,18 @@
         const publicDossiers = member ? null : dossiers?.publicFixtureIds?.(data);
         if (search) search.disabled = false;
         if (clearSearch) clearSearch.disabled = !normalizeSearch(query);
-        table.innerHTML = selection.rows.length ? renderRows(selection.rows,tr,locale(doc),dossiers,member,publicDossiers,freeDay) : `<tr><td colspan="6">${escapeHTML(tr(normalizeSearch(query) ? 'simplify.search.empty' : 'dashboard.table.empty'))}</td></tr>`;
+        for (const row of selection.rows) {
+          const entry = watchlist.entry(row, market);
+          if (entry) shown.set(watchlist.key(entry), entry);
+        }
+        const past = dateSelect?.value < relativeDays().today;
+        table.innerHTML = selection.rows.length ? renderRows(selection.rows,tr,locale(doc),dossiers,member,publicDossiers,freeDay,
+          {market,past,watched,feed:marketHistory,history,marketHistoryPending,openHistory}) : `<tr><td colspan="6">${escapeHTML(tr(
+            past && marketHistoryPending ? 'loading' : normalizeSearch(query) ? 'simplify.search.empty'
+              : past ? 'dashboard.market.noArchive' : 'dashboard.table.empty'))}</td></tr>`;
+        if (focusedKey) [...table.querySelectorAll('[data-home-watch]')].find(button => button.dataset.homeWatch === focusedKey)?.focus();
+        if (focusedHistory) [...table.querySelectorAll('details[data-home-team-history]')]
+          .find(details => details.dataset.homeTeamHistory === focusedHistory)?.querySelector('summary')?.focus();
         if (status) status.textContent = (member
           ? tr('match.count', {shown:selection.rows.length,total:selection.total})
           : tr('dashboard.table.count', {shown:selection.rows.length,total:selection.total,free:selection.free})) + ' · ' + tr('dashboard.table.timezone') + (member ? '' : ' · ' + tr('dashboard.table.rawnote'));
@@ -545,14 +651,16 @@
     }
     function renderDates() {
       if (!dateSelect) return;
-      try {
-        const guestDay = dossiers?.guestPredictionDay?.();
-        const days = guestDay ? [guestDay] : [...new Set([...availableDays(dossiers?.predictions() || predictions), ...(dossiers?.predictions() ? dossiers.recentDays() : [])])].sort();
-        const previous = dateSelect.value;
-        dateSelect.innerHTML = days.map(day => `<option value="${day}">${escapeHTML(new Intl.DateTimeFormat(locale(doc),{day:'numeric',month:'long',year:'numeric',timeZone:TIMEZONE}).format(new Date(day+'T12:00:00Z')))}</option>`).join('');
-        dateSelect.value = days.includes(previous) ? previous : chooseDay(days);
-        dateSelect.disabled = !days.length;
-      } catch (_) {dateSelect.disabled = true;}
+      const {today,yesterday} = relativeDays();
+      const guestDay = dossiers?.guestPredictionDay?.();
+      const data = dossiers?.predictions() || predictions;
+      const available = Array.isArray(data?.matches) ? availableDays(data) : [];
+      const days = [...new Set([today,yesterday,...(guestDay ? [guestDay] : available),
+        ...(dossiers?.predictions() && !guestDay ? dossiers.recentDays() : [])])].sort();
+      const previous = dateSelect.value;
+      dateSelect.innerHTML = days.map(day => `<option value="${day}">${escapeHTML(formatDay(day,locale(doc)))}</option>`).join('');
+      dateSelect.value = days.includes(previous) ? previous : today;
+      dateSelect.disabled = !days.length;
     }
     function renderAnalyses() {
       const target = doc.getElementById('dashboard-analyses');
@@ -561,12 +669,9 @@
       if (sampleCountry && countries) {
         sampleCountry.textContent = countries.label(sampleCountry.getAttribute('data-sample-country'), lang);
       }
-      const tier = membershipTier(doc.body);
       const source = doc.querySelector('#exemplu-pro-source [data-sample-fixture]');
       doc.querySelectorAll('[data-dashboard-pro-summary]').forEach(element => {
-        element.innerHTML = renderProSummary(doc,tr,lang,tier);
-        const memberAction = tier ? element.querySelector('.dashboard-report-action') : null;
-        dossiers?.mountPublicSample?.(element,source,lang,memberAction,predictions,history);
+        dossiers?.mountPublicSample?.(element,source,lang,predictions,history);
       });
 
       if (doc.defaultView && doc.defaultView.PoseidonProReport) doc.defaultView.PoseidonProReport.scan();
@@ -575,14 +680,9 @@
       const cards = [];
       const head = doc.querySelector('#exemplu-pro-source .pro-card-head');
       if (head) {
-        const card = head.closest('.pro-card');
-        const selection = chooseAnalysisLanguage(lang,Array.from(card.querySelectorAll('[data-lang]'),el => el.getAttribute('data-lang')));
-        const body = selection.language ? card.querySelector(`[data-lang="${selection.language}"]`) : null;
-        const notice = analysisLanguageNotice(selection,tr);
-        const excerpt = body && body.querySelector('.pro-visible p');
         const title = head.textContent.split(' · ')[0].trim();
         const metadata = head.textContent.slice(title.length).replace(/^\s*·\s*/, '').trim();
-        cards.push(`<article class="dashboard-analysis-card"><span class="dashboard-illustration dashboard-analysis-illustration">${escapeHTML(tr('dashboard.illustration'))}</span><span class="dashboard-analysis-meta">${escapeHTML(tr('dashboard.analysis.sample'))}</span><h3 class="dashboard-analysis-title">${escapeHTML(title)}</h3><p class="dashboard-analysis-meta">${escapeHTML(metadata)}</p>${notice ? `<p class="dashboard-analysis-meta dashboard-analysis-language">${escapeHTML(notice)}</p>` : ''}<p class="dashboard-analysis-excerpt">${escapeHTML(excerpt ? excerpt.textContent : tr('dashboard.data.unavailable'))}</p>${analysisLink(head,action,tr)}</article>`);
+        cards.push(`<article class="dashboard-analysis-card"><span class="dashboard-illustration dashboard-analysis-illustration">${escapeHTML(tr('dashboard.illustration'))}</span><span class="dashboard-analysis-meta">${escapeHTML(tr('dashboard.analysis.sample'))}</span><h3 class="dashboard-analysis-title">${escapeHTML(title)}</h3><p class="dashboard-analysis-meta">${escapeHTML(metadata)}</p>${analysisLink(head,action,tr)}</article>`);
       }
       if (archive) {
         const links = Array.from(archive.querySelectorAll('a[href]')).filter(a => /^\d{4}-\d{2}-\d{2}\.html$/.test(a.getAttribute('href'))).slice(0,2);
@@ -594,7 +694,7 @@
       }
       target.innerHTML = cards.join('') || `<p>${escapeHTML(tr('dashboard.data.unavailable'))}</p>`;
     }
-    function render() {decorateLanguageSelector(doc,translator());decorateMemberLogin(doc,translator());ensureProofNotice(doc,translator());renderDates();renderLeagues();renderTable();renderMetrics();renderAnalyses();}
+    function render() {decorateLanguageSelector(doc,translator());decorateMemberLogin(doc,translator());ensureProofNotice(doc,translator());renderDates();renderLeagues();renderTable();renderWatchlist();renderMetrics();renderAnalyses();}
     if (dateSelect) dateSelect.addEventListener('change', () => {selectedLeague='';renderLeagues();renderTable();});
     if (search) search.addEventListener('input',renderTable);
     if (clearSearch) clearSearch.addEventListener('click',() => {if (search) {search.value='';renderTable();search.focus && search.focus();}});
@@ -604,7 +704,42 @@
       if (!button) return;
       selectedLeague = button.getAttribute('data-dashboard-league');renderLeagues();renderTable();
     });
+    function saveFollow(entry) {
+      const next = watchlist.toggle(watchlist.read(storage), entry);
+      watchError = !watchlist.write(storage, next);
+      if (!watchError) watched = next;
+      renderWatchlist();
+      renderTable();
+      if (watchError) doc.getElementById('dashboard-watchlist').open = true;
+    }
     doc.addEventListener('click', event => {
+      const marketButton = event.target.closest('[data-home-market]');
+      if (marketButton && watchlist.markets.includes(marketButton.dataset.homeMarket)) {
+        market = marketButton.dataset.homeMarket;
+        renderTable();
+      }
+      const dayButton = event.target.closest('[data-home-day]');
+      if (dayButton && dateSelect) {
+        renderDates();
+        dateSelect.value = relativeDays()[dayButton.dataset.homeDay];
+        selectedLeague = '';
+        renderLeagues();
+        renderTable();
+      }
+      const watch = event.target.closest('[data-home-watch]');
+      if (watch && shown.has(watch.dataset.homeWatch)) {
+        const key = watch.dataset.homeWatch;
+        saveFollow(shown.get(key));
+        [...table.querySelectorAll('[data-home-watch]')].find(button => button.dataset.homeWatch === key)?.focus();
+      }
+      const unwatch = event.target.closest('[data-home-unwatch]');
+      if (unwatch) {
+        const entry = watched.find(item => watchlist.key(item) === unwatch.dataset.homeUnwatch);
+        if (entry) {
+          saveFollow(entry);
+          doc.querySelector('#dashboard-watchlist summary')?.focus();
+        }
+      }
       const fragment = event.target.closest('a[href^="#"]');
       const href = fragment?.getAttribute('href');
       const target = href ? openTargetDetails(doc,href) : null;
@@ -625,9 +760,14 @@
       if (sample && target?.id !== 'public-pro-demo') openTargetDetails(doc,'#exemplu-pro');
     });
     doc.addEventListener('change', event => {if(event.target.matches('.lang-select')) setTimeout(render,0);});
-    const view = doc.defaultView;
     if (view && view.addEventListener) {
       view.addEventListener('resize',renderCharts);
+      view.addEventListener('storage', event => {
+        if (event.storageArea !== storage) return;
+        watched = watchlist.read(storage);
+        renderWatchlist();
+        renderTable();
+      });
     }
     const evidence = doc.getElementById('dashboard-evidence-details');
     if (evidence) evidence.addEventListener('toggle',() => {if (evidence.open) renderCharts();});
@@ -635,6 +775,13 @@
     if (dossiers) view.addEventListener('poseidon:member-predictions', () => {renderDates();renderLeagues();renderTable();});
     if (dossiers) view.addEventListener('poseidon:dossier-catalog', () => {renderLeagues();renderTable();});
     render();
+    void supplemental.then(data => {
+      marketHistoryPending = false;
+      marketHistory = data;
+      if (dateSelect?.value < relativeDays().today) renderLeagues();
+      renderTable();
+      renderWatchlist();
+    });
     try {
       const response = await fetch('analize/index.html',{credentials:'omit'});
       if (response.ok) archive = new DOMParser().parseFromString(await response.text(),'text/html');
@@ -643,5 +790,5 @@
     try { await view?.PoseidonHomeLayoutReady; } catch (_) { /* Still open reachable page sections. */ }
     finishNavigation();
   }
-  return {escapeHTML,dayOf,availableDays,chooseDay,isPublic,normalizeSearch,leagueChoices,competitionChoices,selectRows,extractMetrics,cumulativeResolved,renderRows,renderChart,openTargetDetails,revealMatch,chooseAnalysisLanguage,analysisLanguageNotice,decorateLanguageSelector,watchLanguageSelector,decorateMemberLogin,watchMemberLogin,ensureProofNotice,analysisAction,renderProSummary,membershipTier,observeMembership,mount};
+  return {escapeHTML,dayOf,availableDays,chooseDay,isPublic,normalizeSearch,leagueChoices,competitionChoices,selectRows,publicArchive,archiveStat,renderMarketResult,extractMetrics,cumulativeResolved,renderRows,renderChart,openTargetDetails,revealMatch,chooseAnalysisLanguage,analysisLanguageNotice,decorateLanguageSelector,watchLanguageSelector,decorateMemberLogin,watchMemberLogin,ensureProofNotice,analysisAction,membershipTier,observeMembership,mount};
 });

@@ -188,6 +188,9 @@
     const structured=contextual?contextualPicks[0]:structuredSelection(inputs?.picks,lang);
     const selection=structured || (!contextual ? data.selection : null);
     const emptySelection=(noSelection[lang] || noSelection.en);
+    if (edition?.compact) {
+      return `<div class="sample-preview-selection"><span>${escapeText(edition.label('pick'))}</span><strong>${escapeText(selection?.market || emptySelection)}</strong></div>`;
+    }
     const dossierApi=root.PoseidonProContext;
     const fixture=Number(item.match?.fixture_id);
     const key=selection?.key || (selection?.goals ? `over_${selection.goals-1}_5` : null);
@@ -213,19 +216,22 @@
       const publicationTime=hasPublicationTime ? new Intl.DateTimeFormat(lang==='en'?'en-GB':lang,
         {hour:'2-digit',minute:'2-digit',timeZone:'Europe/Bucharest',timeZoneName:'short'}).format(receipt) : '';
       const note=[(selection || !contextual) && pickLabel,publicationTime].filter(Boolean).join(' · ');
-      const metrics=edition.metric(label('pick'),selection?.market || (contextual ? emptySelection : '—'),note)
-        + ((selection?.probability || !contextual) ? edition.metric(label('probability'),selection?.probability || '—',selection?.market || '',
-          publicSample && selection?.probability ? label('matchEstimate') : '') : '') + evidence;
+      const pick = edition.metric(label('pick'),selection?.market || (contextual ? emptySelection : '—'),note);
+      const model = (selection?.probability || !contextual)
+        ? edition.metric(label('probability'),selection?.probability || '—',selection?.market || '',
+          publicSample && selection?.probability ? label('matchEstimate') : '') : '';
       const writing=(key,blocks)=>blocks.length ? `<section class="edition-paragraph" lang="${escapeText(sourceLang)}"><h4 lang="${escapeText(lang)}">${escapeText(label(key))}</h4>${blocks.map(contentOnly).join('')}</section>` : '';
       const counts=item.provenance?.inputs?.cifre;
       const home=counts?.gazda_acasa?.n, away=counts?.oaspeti_depl?.n;
-      const limitation=[home,away].every(n=>Number.isSafeInteger(n) && n>=0)
+      const sampleSize=[home,away].every(n=>Number.isSafeInteger(n) && n>=0)
         ? [`<p lang="${escapeText(lang)}">${escapeText(label('samples').replace('{home}',home).replace('{away}',away))}</p>`] : [];
+      const watch = publicSample ? data.watch.filter(block => plain(contentOnly(block))) : [];
+      const limitation = watch.length ? watch : sampleSize;
       const verificationHeading = `<h4>${escapeText(label('verification'))}</h4>`;
       const reviewBlock=publicSample
-        ? `<section class="edition-paragraph">${edition.compact ? '' : verificationHeading}<p role="status" data-sample-result>${escapeText(Date.now() < kickoff ? awaiting : label('resultLoading'))}</p></section>`
+        ? `<section class="edition-paragraph">${verificationHeading}<p role="status" data-sample-result>${escapeText(Date.now() < kickoff ? awaiting : label('resultLoading'))}</p></section>`
         : `<section class="edition-paragraph">${verificationHeading}<details class="dossier-review"${review?' open':' data-review-lookup'}><summary>${w[2]}${reviewStatus}</summary><div data-dossier-review-content aria-live="polite">${review || `<p>${w[8]}</p>`}</div></details></section>`;
-      // The preview quotes the published reasoning. Keep the complete article in its own view.
+      // Keep the published reasoning and explicit limitations in the full article.
       const sourcePicks=contextual?contextualSelections(inputs?.picks,sourceLang,item.match):[];
       const sourcePick=sourcePicks[0];
       const argument=contextual ? contextualArgument(data.primaryText,
@@ -234,13 +240,10 @@
       const alternatives=contextualPicks.slice(1).map((pick,i)=>({
         ...pick,argument:data.alternativeText.map(line=>contextualArgument(line,[sourcePicks[i+1]?.market,sourcePicks[i+1]?.sourceMarket])).find(Boolean)
       }));
-      const excerpts = [recordedArgument,
-        ...data.evidence,...data.context].filter(Boolean).slice(0,2);
-      return `<div class="edition-metrics">${metrics}</div>` +
+      return `<div class="edition-metrics">${pick}${model}${evidence}</div>` +
         writing('verdict',data.thesis.length ? data.thesis : data.other.slice(0,1)) +
-        (edition.compact ? writing('arguments',excerpts)
-          : writing('arguments',[...(contextual && recordedArgument ? [recordedArgument] : []),...data.evidence,...data.context])
-            + alternativeMarkup(alternatives,lang) + writing('limitations',limitation)) + reviewBlock;
+        writing('arguments',[...(contextual && recordedArgument ? [recordedArgument] : []),...data.evidence,...data.context])
+        + alternativeMarkup(alternatives,lang) + writing('limitations',limitation) + reviewBlock;
     }
     const estimate=selection?.probability ? ' · '+escapeText(selection.probability) : '';
     const heading=selection ? `<span>${pickLabel}</span> · <strong>${escapeText(selection.market)}${estimate}</strong>`

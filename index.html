@@ -14,13 +14,13 @@
 <link rel="canonical" href="https://poseidonstats.com/">
 <meta property="og:type" content="website">
 <link rel="stylesheet" href="assets/style.css?v=20261119-native-pro-anchor">
-<link rel="stylesheet" href="assets/home-modern.css?release=20261123-predictions-first">
-<link rel="stylesheet" href="assets/member-dossier.css?release=20261123-predictions-first">
+<link rel="stylesheet" href="assets/home-modern.css?release=20261123-markets-follow">
+<link rel="stylesheet" href="assets/member-dossier.css?release=20261123-markets-follow">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#1e3a8a">
 <link rel="apple-touch-icon" href="assets/icon-192.png">
 <script>if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js");</script>
-<script src="assets/conversion.js?v=20261119-app-outbound"></script>
+<script src="assets/conversion.js?release=20261123-markets-follow"></script>
 <script data-goatcounter="https://poseidonstats.goatcounter.com/count" data-goatcounter-settings='{"no_onload":true,"no_events":true}' async src="//gc.zgo.at/count.js"></script>
 <script type="application/ld+json">
 {
@@ -213,6 +213,24 @@ Statistici informative. Modelul poate greși. Verifică sursa. 18+.
   <section class="dashboard-grid simplify-demo" id="dashboard" tabindex="-1" data-conversion-view="dashboard">
 <div class="dashboard-column dashboard-prediction-panel">
       <div class="dashboard-panel-heading"><h2><span class="conversion-visitor-title" data-i18n="redesign.free.title">Cele 5 predicții gratuite</span><span class="conversion-member-title" data-i18n="nav.predictii">Predicții</span></h2><label class="dashboard-date-wrap"><span data-i18n="filters.day">Zi:</span><select id="dashboard-date" aria-label="Zi:" data-i18n-attr="aria-label:filters.day"></select></label></div>
+      <div class="dashboard-quick-filters">
+        <div class="dashboard-market-buttons" role="group" aria-label="Piață" data-i18n-attr="aria-label:dashboard.market.label">
+          <button type="button" data-home-market="btts" data-conversion="market-select" aria-pressed="false" data-i18n="dashboard.market.btts">Ambele marchează</button>
+          <button type="button" data-home-market="over_2_5" data-conversion="market-select" aria-pressed="false" data-i18n="dashboard.market.over_2_5">Peste 2,5 goluri</button>
+          <button type="button" data-home-market="ht_over_0_5" data-conversion="market-select" aria-pressed="false" data-i18n="dashboard.market.ht_over_0_5">Gol în prima repriză</button>
+          <button type="button" data-home-market="1x2" data-conversion="market-select" aria-pressed="true">1X2</button>
+        </div>
+        <div class="dashboard-date-buttons" role="group" aria-label="Zi" data-i18n-attr="aria-label:filters.day">
+          <button type="button" data-home-day="today" aria-pressed="true" data-i18n="dashboard.market.today">Azi</button>
+          <button type="button" data-home-day="yesterday" aria-pressed="false" data-i18n="dashboard.market.yesterday">Ieri</button>
+        </div>
+      </div>
+      <details class="dashboard-watchlist" id="dashboard-watchlist">
+        <summary><span data-i18n="dashboard.watch.title">Meciuri urmărite</span> <span id="dashboard-watch-count">(0)</span></summary>
+        <p data-i18n="dashboard.watch.scope">Lista se păstrează în acest browser. Verdictul se referă la piața urmărită.</p>
+        <ul id="dashboard-watch-entries"></ul>
+        <p id="dashboard-watch-status" role="status"></p>
+      </details>
       <div class="dashboard-demo-controls">
         <label for="dashboard-search" data-i18n="simplify.search.label">Caută o echipă</label>
         <div class="dashboard-search-control"><input id="dashboard-search" type="search" autocomplete="off" placeholder="Numele echipei" aria-label="Caută o echipă" data-i18n-attr="placeholder:simplify.search.placeholder,aria-label:simplify.search.label"><button id="dashboard-search-clear" type="button" data-i18n="simplify.search.clear">Șterge</button></div>
@@ -229,6 +247,7 @@ Statistici informative. Modelul poate greși. Verifică sursa. 18+.
             <th id="dashboard-th-0" scope="col" role="columnheader">1</th>
             <th id="dashboard-th-1" scope="col" role="columnheader">X</th>
             <th id="dashboard-th-2" scope="col" role="columnheader">2</th>
+            <th id="dashboard-th-market" scope="col" role="columnheader" colspan="3" hidden data-i18n="dashboard.market.model">Estimarea modelului</th>
             <th id="dashboard-th-access" scope="col" role="columnheader" data-i18n="dashboard.table.access">Acces</th>
           </tr></thead>
           <tbody id="dashboard-predictions" role="rowgroup"></tbody>
@@ -239,7 +258,113 @@ Statistici informative. Modelul poate greși. Verifică sursa. 18+.
     </div>
     <section class="dashboard-column dashboard-analysis-panel simplify-pro-demo" id="exemplu-pro">
       <div class="dashboard-panel-heading" id="public-pro-demo"><h2 data-i18n="redesign.edition.title">Ce adaugă analiza Pro</h2></div>
-      <div data-dashboard-pro-summary></div>
+      <div data-dashboard-pro-summary>
+    <!-- PRO_SAMPLE_PREVIEW_START -->
+    <article class="dashboard-pro-summary pro-card" data-public-pro-report data-dashboard-pro-fallback data-sample-fixture="1554327" data-sample-day="2026-11-22">
+      <div class="pro-card-head"><h3>FK Vozdovac – OFK Bor 1919</h3></div>
+<div data-lang-grup><div data-lang="ro">
+      <div class="pro-visible">
+<div class="sample-preview-selection"><span data-i18n="redesign.edition.pick">Pronostic editorial</span><strong>Cel puțin o echipă nu marchează</strong></div>
+<details class="dossier-context"><summary data-i18n="dashboard.analysis.preview.read">Vezi analiza</summary>
+<div class="dossier-published"><span data-i18n="pro.card.publicata0">publicată înainte de meci</span> · <time datetime="2026-11-22T05:35:05.651491+00:00">2026-11-22 05:35 UTC</time></div>
+<p><strong data-i18n="redesign.edition.probability">Probabilitatea modelului</strong> 49%</p>
+<p><strong data-i18n="arhiva.sect.verdict">Verdict:</strong> Cel puțin o echipă nu marchează. Piața aleasă apare mai des în ambele profiluri decât în restul competiției.</p>
+<p>FK Vozdovac: 8 din 10 în competiție; OFK Bor 1919: 9 din 10 în competiție.</p>
+<p><strong data-i18n="arhiva.sect.context">Context:</strong> La 90 de minute, FK Vozdovac a marcat în 5/10, iar adversara a primit în 10/10; OFK Bor 1919 a marcat în 1/10, iar adversara a primit în 4/10. Scoruri recente: FK Vozdovac E 0-0, Î 0-1, E 0-0, Î 1-2, E 1-1; OFK Bor 1919 Î 0-2, Î 0-2, Î 0-1, Î 0-2, Î 0-3.</p>
+<p><strong data-i18n="arhiva.sect.model">Modelul vs realitate:</strong> Sezonul curent: 43 din 113 în restul competiției, fără meciurile celor două echipe. Procentul afișat este estimarea modelului POSEIDON.</p>
+<p><strong data-i18n="redesign.edition.limitations">Ce poate contrazice analiza</strong><br>Contraexemple în profiluri: FK Vozdovac 2 din 10; OFK Bor 1919 1 din 10. Eșantioanele rămân limitate.</p>
+<p>ℹ️ <em>xG în analizele POSEIDON = golurile așteptate de modelul nostru pentru fiecare echipă, calibrat pe meciurile trecute, nu xG din șuturi.</em></p>
+<ul><li>Alternativă · <strong>Sub 2,5 goluri</strong><p>FK Vozdovac: 9 din 10 în competiție; OFK Bor 1919: 7 din 10 în competiție. Sezonul curent: 52 din 113 în restul competiției, fără meciurile celor două echipe. FK Vozdovac marchează 0,7 goluri pe meci și adversara primește 2,2; OFK Bor 1919 marchează 0,1 și adversara primește 0,5. Confruntarea acestor medii indică 1,8 goluri pe meci, față de 2,8 în restul competiției.</p></li></ul>
+<details class="dossier-review"><summary data-i18n="arhiva.th.rezultat">Rezultat</summary><p class="pro-verificat"><span data-i18n="pro.card.rezfinal" data-i18n-vars='{"s":"1-0"}'>Rezultat final 1-0</span> · <span data-i18n="arhiva.semn.da">✅ a ieșit</span> <a href="analize/2026-11-22.html#m1554327" data-i18n="pro.card.verif.link">Verificarea completă →</a></p></details>
+</details>
+</div>
+</div><div data-lang="en" hidden>
+      <div class="pro-visible">
+<div class="sample-preview-selection"><span data-i18n="redesign.edition.pick">Editorial selection</span><strong>At least one team fails to score</strong></div>
+<details class="dossier-context"><summary data-i18n="dashboard.analysis.preview.read">View analysis</summary>
+<div class="dossier-published"><span data-i18n="pro.card.publicata0">publicată înainte de meci</span> · <time datetime="2026-11-22T05:35:05.651491+00:00">2026-11-22 05:35 UTC</time></div>
+<p><strong data-i18n="redesign.edition.probability">Probabilitatea modelului</strong> 49%</p>
+<p><strong data-i18n="arhiva.sect.verdict">Verdict:</strong> At least one team fails to score. The selected outcome occurred more often in both team profiles than across the rest of the competition.</p>
+<p>FK Vozdovac: 8 of 10 in the competition; OFK Bor 1919: 9 of 10 in the competition.</p>
+<p><strong data-i18n="arhiva.sect.context">Context:</strong> Over 90 minutes, FK Vozdovac scored in 5/10, and its opponent conceded in 10/10; OFK Bor 1919 scored in 1/10, and its opponent conceded in 4/10. Recent scores: FK Vozdovac D 0-0, L 0-1, D 0-0, L 1-2, D 1-1; OFK Bor 1919 L 0-2, L 0-2, L 0-1, L 0-2, L 0-3.</p>
+<p><strong data-i18n="arhiva.sect.model">Modelul vs realitate:</strong> Current season: 43 of 113 across the competition, excluding both teams' matches. The percentage is the POSEIDON model estimate.</p>
+<p><strong data-i18n="redesign.edition.limitations">Ce poate contrazice analiza</strong><br>Counterexamples: FK Vozdovac 2 of 10; OFK Bor 1919 1 of 10. The samples are limited.</p>
+<p>ℹ️ <em>xG in POSEIDON analyses = the goals expected by our model for each team, calibrated on past matches, not xG from shots.</em>
+<em>informational · not betting advice · 18+</em></p>
+<ul><li>Alternative · <strong>Under 2.5 goals</strong><p>FK Vozdovac: 9 of 10 in the competition; OFK Bor 1919: 7 of 10 in the competition. Current season: 52 of 113 across the competition, excluding both teams' matches. FK Vozdovac score 0.7 goals per game and their opponent concede 2.2; OFK Bor 1919 score 0.1 and their opponent concede 0.5. Matching these averages suggests 1.8 goals per game, versus 2.8 in the rest of the competition.</p></li></ul>
+<details class="dossier-review"><summary data-i18n="arhiva.th.rezultat">Rezultat</summary><p class="pro-verificat"><span data-i18n="pro.card.rezfinal" data-i18n-vars='{"s":"1-0"}'>Rezultat final 1-0</span> · <span data-i18n="arhiva.semn.da">✅ a ieșit</span> <a href="analize/2026-11-22.html#m1554327" data-i18n="pro.card.verif.link">Verificarea completă →</a></p></details>
+</details>
+</div>
+</div><div data-lang="es" hidden>
+      <div class="pro-visible">
+<div class="sample-preview-selection"><span data-i18n="redesign.edition.pick">Selección editorial</span><strong>Al menos un equipo no marca</strong></div>
+<details class="dossier-context"><summary data-i18n="dashboard.analysis.preview.read">Ver análisis</summary>
+<div class="dossier-published"><span data-i18n="pro.card.publicata0">publicată înainte de meci</span> · <time datetime="2026-11-22T05:35:05.651491+00:00">2026-11-22 05:35 UTC</time></div>
+<p><strong data-i18n="redesign.edition.probability">Probabilitatea modelului</strong> 49%</p>
+<p><strong data-i18n="arhiva.sect.verdict">Verdict:</strong> Al menos un equipo no marca. El resultado elegido apareció más en los dos perfiles que en el resto de la competición.</p>
+<p>FK Vozdovac: 8 de 10 en la competición; OFK Bor 1919: 9 de 10 en la competición.</p>
+<p><strong data-i18n="arhiva.sect.context">Context:</strong> En 90 minutos, FK Vozdovac marcó en 5/10 y su rival recibió en 10/10; OFK Bor 1919 marcó en 1/10 y su rival recibió en 4/10. Marcadores recientes: FK Vozdovac E 0-0, D 0-1, E 0-0, D 1-2, E 1-1; OFK Bor 1919 D 0-2, D 0-2, D 0-1, D 0-2, D 0-3.</p>
+<p><strong data-i18n="arhiva.sect.model">Modelul vs realitate:</strong> Temporada actual: 43 de 113 en el resto de la competición, sin partidos de estos equipos. El porcentaje es la estimación del modelo POSEIDON.</p>
+<p><strong data-i18n="redesign.edition.limitations">Ce poate contrazice analiza</strong><br>Contraejemplos: FK Vozdovac 2 de 10; OFK Bor 1919 1 de 10. Las muestras son limitadas.</p>
+<p>ℹ️ <em>xG en los análisis de POSEIDON = los goles esperados por nuestro modelo para cada equipo, calibrado con partidos pasados, no xG de tiros.</em></p>
+<ul><li>Alternativa · <strong>Menos de 2,5 goles</strong><p>FK Vozdovac: 9 de 10 en la competición; OFK Bor 1919: 7 de 10 en la competición. Temporada actual: 52 de 113 en el resto de la competición, sin partidos de estos equipos. FK Vozdovac marca 0,7 goles por partido y su rival recibe 2,2; OFK Bor 1919 marca 0,1 y su rival recibe 0,5. Al cruzar esas medias se obtienen 1,8 goles por partido, frente a 2,8 en el resto de la competición.</p></li></ul>
+<details class="dossier-review"><summary data-i18n="arhiva.th.rezultat">Rezultat</summary><p class="pro-verificat"><span data-i18n="pro.card.rezfinal" data-i18n-vars='{"s":"1-0"}'>Rezultat final 1-0</span> · <span data-i18n="arhiva.semn.da">✅ a ieșit</span> <a href="analize/2026-11-22.html#m1554327" data-i18n="pro.card.verif.link">Verificarea completă →</a></p></details>
+</details>
+</div>
+</div><div data-lang="it" hidden>
+      <div class="pro-visible">
+<div class="sample-preview-selection"><span data-i18n="redesign.edition.pick">Selezione editoriale</span><strong>Almeno una squadra non segna</strong></div>
+<details class="dossier-context"><summary data-i18n="dashboard.analysis.preview.read">Vedi analisi</summary>
+<div class="dossier-published"><span data-i18n="pro.card.publicata0">publicată înainte de meci</span> · <time datetime="2026-11-22T05:35:05.651491+00:00">2026-11-22 05:35 UTC</time></div>
+<p><strong data-i18n="redesign.edition.probability">Probabilitatea modelului</strong> 49%</p>
+<p><strong data-i18n="arhiva.sect.verdict">Verdict:</strong> Almeno una squadra non segna. L'esito scelto è stato più frequente nei due profili che nel resto della competizione.</p>
+<p>FK Vozdovac: 8 su 10 nella competizione; OFK Bor 1919: 9 su 10 nella competizione.</p>
+<p><strong data-i18n="arhiva.sect.context">Context:</strong> Nei 90 minuti, FK Vozdovac ha segnato in 5/10 gare e l'avversaria ha subito in 10/10; OFK Bor 1919 ha segnato in 1/10 e l'avversaria ha subito in 4/10. Risultati recenti: FK Vozdovac P 0-0, S 0-1, P 0-0, S 1-2, P 1-1; OFK Bor 1919 S 0-2, S 0-2, S 0-1, S 0-2, S 0-3.</p>
+<p><strong data-i18n="arhiva.sect.model">Modelul vs realitate:</strong> Stagione in corso: 43 su 113 nel resto della competizione, escluse le partite delle due squadre. La percentuale è la stima del modello POSEIDON.</p>
+<p><strong data-i18n="redesign.edition.limitations">Ce poate contrazice analiza</strong><br>Controesempi: FK Vozdovac 2 su 10; OFK Bor 1919 1 su 10. I campioni sono limitati.</p>
+<p>ℹ️ <em>xG nelle analisi POSEIDON = i gol attesi dal nostro modello per ogni squadra, calibrato sulle partite passate, non xG dai tiri.</em></p>
+<ul><li>Alternativa · <strong>Under 2,5 gol</strong><p>FK Vozdovac: 9 su 10 nella competizione; OFK Bor 1919: 7 su 10 nella competizione. Stagione in corso: 52 su 113 nel resto della competizione, escluse le partite delle due squadre. FK Vozdovac segna 0,7 gol a partita e l'avversaria ne subisce 2,2; OFK Bor 1919 segna 0,1 e l'avversaria ne subisce 0,5. L'incrocio delle medie indica 1,8 gol a partita, contro 2,8 nel resto della competizione.</p></li></ul>
+<details class="dossier-review"><summary data-i18n="arhiva.th.rezultat">Rezultat</summary><p class="pro-verificat"><span data-i18n="pro.card.rezfinal" data-i18n-vars='{"s":"1-0"}'>Rezultat final 1-0</span> · <span data-i18n="arhiva.semn.da">✅ a ieșit</span> <a href="analize/2026-11-22.html#m1554327" data-i18n="pro.card.verif.link">Verificarea completă →</a></p></details>
+</details>
+</div>
+</div><div data-lang="fr" hidden>
+      <div class="pro-visible">
+<div class="sample-preview-selection"><span data-i18n="redesign.edition.pick">Sélection éditoriale</span><strong>Au moins une équipe ne marque pas</strong></div>
+<details class="dossier-context"><summary data-i18n="dashboard.analysis.preview.read">Voir l’analyse</summary>
+<div class="dossier-published"><span data-i18n="pro.card.publicata0">publicată înainte de meci</span> · <time datetime="2026-11-22T05:35:05.651491+00:00">2026-11-22 05:35 UTC</time></div>
+<p><strong data-i18n="redesign.edition.probability">Probabilitatea modelului</strong> 49%</p>
+<p><strong data-i18n="arhiva.sect.verdict">Verdict:</strong> Au moins une équipe ne marque pas. L'issue retenue a été plus fréquente dans les deux profils que dans le reste de la compétition.</p>
+<p>FK Vozdovac : 8 sur 10 dans la compétition ; OFK Bor 1919 : 9 sur 10 dans la compétition.</p>
+<p><strong data-i18n="arhiva.sect.context">Context:</strong> Sur 90 minutes, FK Vozdovac a marqué dans 5/10 matches et son adversaire a encaissé dans 10/10 ; OFK Bor 1919 a marqué dans 1/10 et son adversaire a encaissé dans 4/10. Scores récents: FK Vozdovac N 0-0, D 0-1, N 0-0, D 1-2, N 1-1; OFK Bor 1919 D 0-2, D 0-2, D 0-1, D 0-2, D 0-3.</p>
+<p><strong data-i18n="arhiva.sect.model">Modelul vs realitate:</strong> Saison en cours : 43 sur 113 dans le reste de la compétition, hors matches des deux équipes. Le pourcentage indique l'estimation du modèle POSEIDON.</p>
+<p><strong data-i18n="redesign.edition.limitations">Ce poate contrazice analiza</strong><br>Contre-exemples : FK Vozdovac 2 sur 10 ; OFK Bor 1919 1 sur 10. Les échantillons sont limités.</p>
+<p>ℹ️ <em>xG dans les analyses POSEIDON = les buts attendus par notre modèle pour chaque équipe, calibré sur les matchs passés, pas le xG des tirs.</em>
+<em>informatif · pas un conseil de pari · 18+</em></p>
+<ul><li>Alternative · <strong>Moins de 2,5 buts</strong><p>FK Vozdovac : 9 sur 10 dans la compétition ; OFK Bor 1919 : 7 sur 10 dans la compétition. Saison en cours : 52 sur 113 dans le reste de la compétition, hors matches des deux équipes. FK Vozdovac marque 0,7 but par match et son adversaire en encaisse 2,2 ; OFK Bor 1919 en marque 0,1 et son adversaire en encaisse 0,5. Le rapprochement de ces moyennes indique 1,8 buts par match, contre 2,8 dans le reste de la compétition.</p></li></ul>
+<details class="dossier-review"><summary data-i18n="arhiva.th.rezultat">Rezultat</summary><p class="pro-verificat"><span data-i18n="pro.card.rezfinal" data-i18n-vars='{"s":"1-0"}'>Rezultat final 1-0</span> · <span data-i18n="arhiva.semn.da">✅ a ieșit</span> <a href="analize/2026-11-22.html#m1554327" data-i18n="pro.card.verif.link">Verificarea completă →</a></p></details>
+</details>
+</div>
+</div><div data-lang="id" hidden>
+      <div class="pro-visible">
+<div class="sample-preview-selection"><span data-i18n="redesign.edition.pick">Pilihan editorial</span><strong>Setidaknya satu tim tidak mencetak gol</strong></div>
+<details class="dossier-context"><summary data-i18n="dashboard.analysis.preview.read">Lihat analisis</summary>
+<div class="dossier-published"><span data-i18n="pro.card.publicata0">publicată înainte de meci</span> · <time datetime="2026-11-22T05:35:05.651491+00:00">2026-11-22 05:35 UTC</time></div>
+<p><strong data-i18n="redesign.edition.probability">Probabilitatea modelului</strong> 49%</p>
+<p><strong data-i18n="arhiva.sect.verdict">Verdict:</strong> Setidaknya satu tim tidak mencetak gol. Hasil pilihan lebih sering terjadi pada profil kedua tim daripada di laga lain dalam kompetisi.</p>
+<p>FK Vozdovac: 8 dari 10 di kompetisi; OFK Bor 1919: 9 dari 10 di kompetisi.</p>
+<p><strong data-i18n="arhiva.sect.context">Context:</strong> Selama 90 menit, FK Vozdovac mencetak gol dalam 5/10 laga dan lawannya kebobolan dalam 10/10; OFK Bor 1919 mencetak gol dalam 1/10 dan lawannya kebobolan dalam 4/10. Skor terkini: FK Vozdovac S 0-0, K 0-1, S 0-0, K 1-2, S 1-1; OFK Bor 1919 K 0-2, K 0-2, K 0-1, K 0-2, K 0-3.</p>
+<p><strong data-i18n="arhiva.sect.model">Modelul vs realitate:</strong> Musim berjalan: 43 dari 113 laga dalam kompetisi, di luar laga kedua tim. Persentase merupakan estimasi model POSEIDON.</p>
+<p><strong data-i18n="redesign.edition.limitations">Ce poate contrazice analiza</strong><br>Contoh sebaliknya: FK Vozdovac 2 dari 10; OFK Bor 1919 1 dari 10. Sampel masih terbatas.</p>
+<p>ℹ️ <em>xG dalam analisis POSEIDON = gol yang diharapkan model kami untuk tiap tim, dikalibrasi pada laga sebelumnya, bukan xG dari tembakan.</em>
+<em>informatif · bukan saran taruhan · 18+</em></p>
+<ul><li>Alternatif · <strong>Di bawah 2,5 gol</strong><p>FK Vozdovac: 9 dari 10 di kompetisi; OFK Bor 1919: 7 dari 10 di kompetisi. Musim berjalan: 52 dari 113 laga dalam kompetisi, di luar laga kedua tim. FK Vozdovac mencetak 0,7 gol per laga dan lawannya kebobolan 2,2; OFK Bor 1919 mencetak 0,1 dan lawannya kebobolan 0,5. Perbandingan rata-rata ini menunjukkan 1,8 gol per laga, dengan 2,8 pada laga lain dalam kompetisi.</p></li></ul>
+<details class="dossier-review"><summary data-i18n="arhiva.th.rezultat">Rezultat</summary><p class="pro-verificat"><span data-i18n="pro.card.rezfinal" data-i18n-vars='{"s":"1-0"}'>Rezultat final 1-0</span> · <span data-i18n="arhiva.semn.da">✅ a ieșit</span> <a href="analize/2026-11-22.html#m1554327" data-i18n="pro.card.verif.link">Verificarea completă →</a></p></details>
+</details>
+</div>
+</div></div>
+</article>
+    <!-- PRO_SAMPLE_PREVIEW_END -->
+      </div>
     </section>
   </section>
 
@@ -1200,11 +1325,12 @@ Statistici informative. Modelul poate greși. Verifică sursa. 18+.
   </div>
   <div class="dossier-body" data-dossier-body></div>
 </dialog>
-<script src="assets/members.js?release=20261123-predictions-first"></script>
-<script src="assets/member-dossier.js?release=20261123-predictions-first"></script>
+<script src="assets/members.js?release=20261123-markets-follow"></script>
+<script src="assets/member-dossier.js?release=20261123-markets-follow"></script>
 <script src="assets/country-label.js?v=20261118e"></script>
-<script src="assets/home-dashboard.js?release=20261123-predictions-first"></script>
-<script src="assets/app.js?release=20261123-predictions-first"></script>
+<script src="assets/home-watchlist.js?release=20261123-markets-follow"></script>
+<script src="assets/home-dashboard.js?release=20261123-markets-follow"></script>
+<script src="assets/app.js?release=20261123-markets-follow"></script>
 <script src="assets/citire.js?v=20261024-onestitate3"></script>
 </body>
 </html>

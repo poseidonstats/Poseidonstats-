@@ -32,6 +32,8 @@ ARHIVA = Path.home() / "football_predictor" / "data" / "pro_analyses"
 DB = "file:" + str(Path.home() / "football_predictor" / "football.db") + "?mode=ro"
 RO = ZoneInfo("Europe/Bucharest")
 START, END = "<!-- PRO_SAMPLE_CARD_START -->", "<!-- PRO_SAMPLE_CARD_END -->"
+PREVIEW_START = "<!-- PRO_SAMPLE_PREVIEW_START -->"
+PREVIEW_END = "<!-- PRO_SAMPLE_PREVIEW_END -->"
 LISTA_START, LISTA_END = "<!-- PRO_TODAY_LIST_START -->", "<!-- PRO_TODAY_LIST_END -->"
 PUBLIC_EXAMPLE = "https://poseidon-members.poseidonstats.workers.dev/api/exemplu"
 TOTAL_MARKET = {
@@ -436,17 +438,21 @@ def html_card(
     zi: str,
     scor: tuple[int, int] | None,
     principal_ok: bool | None = None,
+    *,
+    compact: bool = False,
 ) -> str:
-    """Arată pronosticul principal și textul exemplului public, cu verificarea aceluiași meci."""
+    """Arată selecția și analiza publică a aceluiași meci, inclusiv în mostra statică."""
     m = item["match"]
     p = parseaza(item["analysis"])
     principal = _principal(item, p["picks"])
     contextual = contextual_pro(item)
     published = bool(item.get("_public_site_delivery"))
+    catalogue = json.loads((SITE / "assets/i18n.json").read_text(encoding="utf-8")) if compact else {}
     liga = m.get("league", "")
     tara = m.get("country", "")
+    teams = f"{H.escape(m['home'])} – {H.escape(m['away'])}"
     head = (
-        f"{H.escape(m['home'])} – {H.escape(m['away'])} · {H.escape(liga)}"
+        f"{teams} · {H.escape(liga)}"
         + (
             f' (<span data-sample-country="{H.escape(tara)}">{H.escape(tara)}</span>)'
             if tara
@@ -462,11 +468,9 @@ def html_card(
         else '<span data-i18n="pro.card.archived">Analiză arhivată; publicarea înainte de start nu este confirmată.</span>'
     )
 
-    def _titlu_principal(sectiuni: dict, lang: str) -> str:
+    def _piata_principala(sectiuni: dict, lang: str) -> tuple[str, str]:
         if not principal:
-            if contextual:
-                return f'<div class="dossier-published">{status} · <strong>{NO_SELECTION[lang]}</strong></div>'
-            return f'<div class="dossier-published">{status}</div>'
+            return (NO_SELECTION[lang] if contextual else ""), ""
         market, probability, key = principal
         pct = (
             f"{probability:.2f}".rstrip("0").rstrip(".")
@@ -486,8 +490,7 @@ def html_card(
             market = piata_din_linie(row) or market
         if lang != "en":
             pct = pct.replace(".", ",")
-        estimate = f" · {pct}%" if pct else ""
-        return f'<div class="dossier-published">{status} · <strong>{H.escape(market)}{estimate}</strong></div>'
+        return market, pct
 
     def _corp(p: dict, lang: str) -> str:
         verdict = f'<p><strong data-i18n="arhiva.sect.verdict">Verdict:</strong> {_inline(p["verdict"], lang)}</p>'
@@ -533,26 +536,56 @@ def html_card(
                     + (f"<p>{_inline(reason, lang)}</p>" if reason else "")
                     + "</li>"
                 )
-        return "\n".join(
-            [
-                '      <div class="pro-visible">',
-                f"        {_titlu_principal(p, lang)}",
-                f"        <p>{_inline(argument, lang)}</p>"
-                if argument
-                else f"        {verdict}",
-                '        <details class="dossier-context"><summary data-i18n="dashboard.analysis.read">Citește analiza</summary>',
-                f"        {verdict}" if argument else "",
-                f'        <p><strong data-i18n="arhiva.sect.context">Context:</strong> {_inline(p["context"], lang)}</p>',
-                f'        <p><strong data-i18n="arhiva.sect.model">Modelul vs realitate:</strong> {_inline(p["model"], lang)}</p>',
-                f'        <p><strong data-i18n="arhiva.sect.urmarit">De urmărit:</strong> {_inline(p["urmarit"], lang)}</p>',
-                f'        <ul>{"".join(alternatives)}</ul>' if alternatives else "",
-                "        </details>",
-                '        <details class="dossier-review"><summary data-i18n="arhiva.th.rezultat">Rezultat</summary>',
-                f"        {verif}",
-                "        </details>",
-                "      </div>",
-            ]
+        market, pct = _piata_principala(p, lang)
+        context = f'<p><strong data-i18n="arhiva.sect.context">Context:</strong> {_inline(p["context"], lang)}</p>'
+        model = f'<p><strong data-i18n="arhiva.sect.model">Modelul vs realitate:</strong> {_inline(p["model"], lang)}</p>'
+        review = (
+            '<details class="dossier-review"><summary data-i18n="arhiva.th.rezultat">Rezultat</summary>'
+            f'{verif}</details>'
         )
+        other_picks = f'<ul>{"".join(alternatives)}</ul>' if alternatives else ""
+        if compact:
+            pick_label = H.escape(catalogue[lang]["redesign.edition.pick"])
+            action = H.escape(catalogue[lang]["dashboard.analysis.preview.read"])
+            pick = (
+                '<div class="sample-preview-selection">'
+                f'<span data-i18n="redesign.edition.pick">{pick_label}</span>'
+                f'<strong>{H.escape(market or NO_SELECTION[lang])}</strong></div>'
+            )
+            published_at = PP.stamp(item.get("_public_site_delivery")) if published else None
+            time = (
+                f' · <time datetime="{published_at.isoformat()}">{published_at:%Y-%m-%d %H:%M} UTC</time>'
+                if published_at else ""
+            )
+            publication = f'<div class="dossier-published">{status}{time}</div>'
+            estimate = (
+                '<p><strong data-i18n="redesign.edition.probability">Probabilitatea modelului</strong>'
+                f' {pct}%</p>' if pct else ""
+            )
+            watch, note_mark, note = p["urmarit"].partition("ℹ")
+            limit = (
+                '<p><strong data-i18n="redesign.edition.limitations">Ce poate contrazice analiza</strong>'
+                f'<br>{_inline(watch.strip(), lang)}</p>' if watch.strip() else ""
+            )
+            note_html = f'<p>{_inline(note_mark + note, lang)}</p>' if note_mark else ""
+            return "\n".join([
+                '      <div class="pro-visible">', pick,
+                f'<details class="dossier-context"><summary data-i18n="dashboard.analysis.preview.read">{action}</summary>',
+                publication, estimate, verdict,
+                f'<p>{_inline(argument, lang)}</p>' if argument else "",
+                context, model, limit, note_html, other_picks, review, '</details>', '</div>',
+            ])
+        estimate = f" · {pct}%" if pct else ""
+        selection = f' · <strong>{H.escape(market)}{estimate}</strong>' if market else ""
+        return "\n".join([
+            '      <div class="pro-visible">',
+            f'<div class="dossier-published">{status}{selection}</div>',
+            f'<p>{_inline(argument, lang)}</p>' if argument else verdict,
+            '<details class="dossier-context"><summary data-i18n="dashboard.analysis.read">Citește analiza</summary>',
+            verdict if argument else "", context, model,
+            f'<p><strong data-i18n="arhiva.sect.urmarit">De urmărit:</strong> {_inline(p["urmarit"], lang)}</p>',
+            other_picks, '</details>', review, '</div>',
+        ])
 
     # 7 oct 2026: analiza în limba aleasă când există traduceri (analysis_en/es/it din traduce_analize.py); app.js arată varianta [data-lang]
     variante = [f'<div data-lang="ro">\n{_corp(p, "ro")}\n</div>']
@@ -572,18 +605,20 @@ def html_card(
         if len(variante) > 1
         else _corp(p, "ro")
     )
-    return "\n".join(
-        [
-            (
-                '<div class="pro-card" data-public-pro-report'
-                f' data-sample-fixture="{int(m["fixture_id"])}"'
-                f' data-sample-day="{H.escape(zi, quote=True)}">'
-            ),
-            f'      <div class="pro-card-head">{head}</div>',
+    identity = f' data-sample-fixture="{int(m["fixture_id"])}" data-sample-day="{H.escape(zi, quote=True)}"'
+    if compact:
+        return "\n".join([
+            f'<article class="dashboard-pro-summary pro-card" data-public-pro-report data-dashboard-pro-fallback{identity}>',
+            f'      <div class="pro-card-head"><h3>{teams}</h3></div>',
             corp,
-            "    </div>",
-        ]
-    )
+            '</article>',
+        ])
+    return "\n".join([
+        f'<div class="pro-card" data-public-pro-report{identity}>',
+        f'      <div class="pro-card-head">{head}</div>',
+        corp,
+        "    </div>",
+    ])
 
 
 def html_ieri(item: dict, zi: str, scor: tuple[int, int] | None) -> str:
@@ -606,16 +641,22 @@ def html_ieri(item: dict, zi: str, scor: tuple[int, int] | None) -> str:
     )
 
 
-def injecteaza(html: str, card: str, ieri: str = "") -> str:
-    bloc = f"{START}\n    {card}" + (f"\n    {ieri}" if ieri else "") + f"\n    {END}"
-    if START in html and END in html:
-        return re.sub(
-            re.escape(START) + r".*?" + re.escape(END), lambda _: bloc, html, flags=re.S
-        )
-    # 6 oct 2026: fără fallback „între .pro-card și .pro-disclaimer” — ștergea tot ce stătea între ele (blocul „Ce primești pentru 20 $”).
+def _inlocuieste_bloc(html: str, start: str, end: str, content: str) -> str:
+    pattern = re.escape(start) + r".*?" + re.escape(end)
+    if html.count(start) == html.count(end) == 1:
+        updated, count = re.subn(pattern, lambda _: f"{start}\n    {content}\n    {end}", html, flags=re.S)
+        if count == 1:
+            return updated
     raise SystemExit(
-        f"[gen_pro_sample] markerii {START} / {END} lipsesc din index.html — abort, nimic scris"
+        f"[gen_pro_sample] markerii {start} / {end} nu delimitează un bloc în index.html — abort, nimic scris"
     )
+
+
+def injecteaza(html: str, card: str, ieri: str = "", *, preview: str | None = None) -> str:
+    if preview is not None:
+        html = _inlocuieste_bloc(html, PREVIEW_START, PREVIEW_END, preview)
+    content = f"{card}\n    {ieri}" if ieri else card
+    return _inlocuieste_bloc(html, START, END, content)
 
 
 # ----------------------------------------------------------------- lista Pro de azi (cu lacăt)
@@ -888,11 +929,10 @@ def main() -> None:
     it_ieri, _ = _incarca(ieri) if fid_card is None else (None, "")
     fids = [i["match"]["fixture_id"] for i in (it_azi, it_ieri) if i]
     rez = rezultate(fids) if fids else {}
-    card, linie = None, ""
+    sample, linie = None, ""
     if it_azi:
-        zi_card = azi
+        sample, zi_card = it_azi, azi
         fid_card = it_azi["match"]["fixture_id"]
-        card = html_card(it_azi, azi, *_verdict(it_azi, rez.get(fid_card)))
         linie = (
             html_ieri(
                 it_ieri,
@@ -906,10 +946,7 @@ def main() -> None:
             f"[gen_pro_sample] card AZI {azi}: {it_azi['match']['home']} – {it_azi['match']['away']} ({it_azi['match'].get('league')}), scrisă la {gen_azi[11:16]}"
         )
     elif it_ieri:
-        card = html_card(
-            it_ieri, ieri, *_verdict(it_ieri, rez.get(it_ieri["match"]["fixture_id"]))
-        )
-        zi_card = ieri
+        sample, zi_card = it_ieri, ieri
         fid_card = None
         linie = ""
         print(
@@ -918,24 +955,30 @@ def main() -> None:
     else:
         print(f"[gen_pro_sample] nicio confirmare publică nouă pentru exemplul din {azi}")
     rows = lista_pro_azi(azi)
-    if card is None and not rows:
+    if sample is None and not rows:
         return
     print(
         f"[gen_pro_sample] lista Pro de azi ({azi}): {len(rows)} meciuri"
         + (", fără cel publicat" if fid_card else "")
     )
+    if sample is not None:
+        settlement = _verdict(sample, rez.get(sample["match"]["fixture_id"]))
+        card = html_card(sample, zi_card, *settlement)
+        preview = html_card(sample, zi_card, *settlement, compact=True)
     if a.dry_run:
-        if card is not None:
+        if sample is not None:
+            print(preview)
             print(card)
             print(linie)
         print(html_lista_pro(rows, fid_card, stat_30_zile(azi)))
         return
     html = INDEX.read_text(encoding="utf-8")
-    if card is not None:
-        html = injecteaza(html, card, linie)
+    if sample is not None:
+        html = injecteaza(html, card, linie, preview=preview)
     html = injecteaza_lista(html, html_lista_pro(rows, fid_card, stat_30_zile(azi)))
     INDEX.write_text(html, encoding="utf-8")
-    print(f"[gen_pro_sample] scris {INDEX}" + (f" (card {zi_card})" if card else " (lista Pro)"))
+    update = f"card {zi_card}" if sample is not None else "lista Pro"
+    print(f"[gen_pro_sample] scris {INDEX} ({update})")
 
 
 if __name__ == "__main__":

@@ -61,6 +61,30 @@ def test_html_card_verifica_principalul_si_leaga_acelasi_meci():
     assert all(text not in h for text in ("1X (ESMTK nu pierde)", "Curajos:", "91%", "**", "<script"))
 
 
+def test_preview_static_keeps_one_control_and_full_sourced_details():
+    day = "2026-09-27"
+    item = {"match": {"fixture_id": 3, "home": "ESMTK", "away": "Dabas", "date": day}, "analysis": TEXT}
+    html = G.html_card(item, day, (2, 0), True, compact=True)
+    preview, full = html.split('<details class="dossier-context">', 1)
+    assert 'class="dashboard-pro-summary pro-card"' in preview
+    assert 'Peste 1.5 goluri' in preview and 'ESMTK – Dabas' in preview
+    assert all(phrase not in preview for phrase in ('<p>', '86%', 'a ieșit', 'De urmărit', 'publicarea'))
+    assert 'Vezi analiza' in full and 'Context:' in full and 'a ieșit' in full
+    assert 'Banda 85-100% a livrat 87.1%.' in full
+    assert 'Dacă Dabas înscrie prima, ESMTK se deschide.' in full
+    assert 'Probabilitatea modelului' in full and '86%' in full
+    assert 'pro.card.archived' in full
+
+
+def test_preview_and_source_markers_refresh_together():
+    html = f'{G.PREVIEW_START}prev vechi{G.PREVIEW_END} separat {G.START}card vechi{G.END}'
+    refresh = G.injecteaza(html, 'card nou', preview='prev nou')
+    assert 'prev nou' in refresh and 'card nou' in refresh and 'separat' in refresh and 'vechi' not in refresh
+    assert G.injecteaza(refresh, 'card nou', preview='prev nou') == refresh
+    with pytest.raises(SystemExit):
+        G.injecteaza(f'{G.START}vechi{G.END}', 'nou', preview='prev')
+
+
 def test_injecteaza_refuza_fara_markeri_si_e_idempotent_cu_markeri():
     # 6 oct 2026: fără markeri → abort (fallback-ul vechi ștergea blocul „Ce primești pentru 20 $” dintre .pro-card și .pro-disclaimer)
     import pytest
@@ -242,8 +266,9 @@ def test_daily_pro_list_projects_the_complete_canonical_archive(tmp_path, monkey
 def test_daily_archive_can_refresh_the_locked_list_during_sample_confirmation_outage(tmp_path, monkeypatch):
     day = "2026-11-21"
     sample = f'<div data-sample-fixture="1" data-sample-day="{day}">Exemplul confirmat</div>'
+    preview = f"{G.PREVIEW_START}Mostra generată{G.PREVIEW_END}"
     index = tmp_path / "index.html"
-    index.write_text(f"{G.START}\n{sample}\n{G.END}")
+    index.write_text(f"{preview}\n{G.START}\n{sample}\n{G.END}")
     monkeypatch.setattr(G, "INDEX", index)
     monkeypatch.setattr(G, "_incarca", lambda day: (None, ""))
     monkeypatch.setattr(G, "lista_pro_azi", lambda day: [
@@ -255,5 +280,6 @@ def test_daily_archive_can_refresh_the_locked_list_during_sample_confirmation_ou
     G.main()
     updated = index.read_text()
     assert sample in updated
+    assert preview in updated
     assert "Analiza – Membrilor" in updated
     assert "Mostra – Publică" not in updated

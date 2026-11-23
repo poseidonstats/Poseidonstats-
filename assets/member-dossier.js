@@ -1047,9 +1047,13 @@
     return sampleRequests.get(day);
   }
 
-  async function mountPublicSample(target, source, lang, memberAction, predictions, history) {
+  async function mountPublicSample(target, source, lang, predictions, history) {
     publicPredictions = predictions;
     sampleRenders.get(target)?.controller.abort();
+    // The full, generated disclosure remains usable when the public API is unavailable.
+    const fallback = target.querySelector('[data-dashboard-pro-fallback]');
+    target.querySelector('.edition-preview')?.remove();
+    if (fallback) fallback.hidden = false;
     const fixture = Number(source?.dataset.sampleFixture), day = source?.dataset.sampleDay;
     if (!Number.isSafeInteger(fixture) || fixture < 1 || !/^\d{4}-\d{2}-\d{2}$/.test(day)) return;
     const controller = new AbortController();
@@ -1074,7 +1078,7 @@
       const close = text("button",copy.close,"edition-close");
       close.type = "button";
       close.addEventListener("click",()=>full.close());
-      const show = text("button",label("read"),"edition-open");
+      const show = text("button",tt("dashboard.analysis.preview.read","Vezi analiza"),"edition-open");
       show.type = "button";
       if (!root.matchMedia("(max-width: 767px)").matches) show.setAttribute("aria-haspopup","dialog");
       show.addEventListener("click",()=>{
@@ -1095,12 +1099,12 @@
       for (const surface of [card,full]) {
         const compact = surface === card;
         const header = text("header",undefined,"edition-heading");
-        header.append(text("span",label(compact ? "badge" : "heading"),"edition-kicker"),text("h3",title),text("p",meta));
-        if (!compact) header.append(close);
+        if (compact) header.append(text("h3",title));
+        else header.append(text("span",label("heading"),"edition-kicker"),text("h3",title),text("p",meta),close);
         const editorial = text("div",undefined,"edition-content");
         editorial.innerHTML = report.dossierReport(html,item,data,day,lang,analysis.lang,true,{compact,label,metric});
         surface.append(header,editorial);
-        if (analysis.lang !== lang) {
+        if (!compact && analysis.lang !== lang) {
           const english = analysis.lang === "en";
           const language = tt(english ? "dashboard.language.english" : "dashboard.language.romanian", english ? "English" : "română");
           header.append(text("p",tt("dashboard.analysis.fallback","Textul analizei este disponibil în {language}.").replace("{language}",language)));
@@ -1132,9 +1136,10 @@
         full.append(text("p",copy.missing,"edition-unavailable"));
       }
       card.append(show,full);
-      target.replaceChildren(card);
-      if (memberAction) target.append(memberAction);
-      watchSampleResult([card,full],state,history,report);
+      if (fallback?.querySelector('details[open]') || fallback?.contains(document.activeElement)) return;
+      target.append(card);
+      if (fallback) fallback.hidden = true;
+      watchSampleResult([full],state,history,report);
     } catch (_) { /* The generator's selected public sample remains available. */ }
   }
 

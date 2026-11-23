@@ -271,7 +271,7 @@ test('fetch failure renders a visible unavailable state and calls only local pub
     assert.match(status.textContent,/Public data could not load/);
     assert(kpis.every(k => k.textContent === tr('dashboard.data.unavailable')));
     assert(charts.every(chart => /Data temporarily unavailable/.test(chart.innerHTML)));
-    assert.deepEqual(requests,['data/predictions.json','data/history.json','data/audit.json','analize/index.html']);
+    assert.deepEqual(requests,['data/predictions.json','data/history.json','data/audit.json','data/dashboard-market-history.json','analize/index.html']);
   } finally {
     globalThis.fetch = previousFetch;
     if (previousT === undefined) delete globalThis.t; else globalThis.t = previousT;
@@ -569,7 +569,14 @@ test('long original content and metric mounts remain reachable inside named clos
   }
   for (const id of ['exemplu-pro-source','dovada','repere-azi','abonament-detalii','intrebari','dashboard-analyses']) assert(legacy.includes(`id="${id}"`),id);
   assert(disclosure('discord-access-details').includes('id="acces"'));
-  assert.match(html,/<div data-dashboard-pro-summary><\/div>/);
+  assert.match(html,/<div data-dashboard-pro-summary>\s*<!-- PRO_SAMPLE_PREVIEW_START -->/);
+  const preview=html.split('<!-- PRO_SAMPLE_PREVIEW_START -->')[1].split('<!-- PRO_SAMPLE_PREVIEW_END -->')[0];
+  const source=html.split('<!-- PRO_SAMPLE_CARD_START -->')[1].split('<!-- PRO_SAMPLE_CARD_END -->')[0];
+  const identity=markup=>markup.match(/data-sample-fixture="\d+" data-sample-day="\d{4}-\d{2}-\d{2}"/)?.[0];
+  assert(identity(preview));
+  assert.equal(identity(preview),identity(source));
+  assert.match(preview,/<div class="dossier-published">/);
+  assert.match(preview,/<details class="dossier-context"><summary data-i18n="dashboard\.analysis\.preview\.read">Vezi analiza<\/summary>/);
   assert.match(html,/<a href="https:\/\/poseidon-members\.poseidonstats\.workers\.dev\/login"[^>]*class="gold-button simplify-activation-login"[^>]*data-conversion="login"/);
   const login=html.match(/<a[^>]*class="gold-button simplify-activation-login"[^>]*>/)[0];assert(!login.includes('members-login'));
 });

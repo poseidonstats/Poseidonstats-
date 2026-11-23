@@ -3,8 +3,37 @@
 (function () {
   var LANGS = ["ro", "en", "es", "it", "fr", "id"], NUME = { ro: "🇷🇴 Română", en: "🇬🇧 English", es: "🇪🇸 Español", it: "🇮🇹 Italiano", fr: "🇫🇷 Français", id: "🇮🇩 Bahasa Indonesia" };  // 14 oct 2026: + fr, + id
   var englishLeague = /^\/en\/predictions\//.test(location.pathname);
-  function lang() { try { var s = localStorage.getItem("poseidon_lang"); if (LANGS.indexOf(s) >= 0) return s; } catch (e) {} if (englishLeague) return "en"; var b = (navigator.language || "ro").slice(0, 2).toLowerCase(); return LANGS.indexOf(b) >= 0 ? b : "en"; }
+  function requestedLanguage() {
+    var code = new URL(location.href).searchParams.get("lang");
+    return LANGS.indexOf(code) >= 0 ? code : null;
+  }
+  function lang() { var explicit = requestedLanguage(); if (explicit) return explicit; try { var s = localStorage.getItem("poseidon_lang"); if (LANGS.indexOf(s) >= 0) return s; } catch (e) {} if (englishLeague) return "en"; var b = (navigator.language || "ro").slice(0, 2).toLowerCase(); return LANGS.indexOf(b) >= 0 ? b : "en"; }
   var pageLanguage = document.documentElement.lang || "ro";
+  var EN_NAV = {
+    "dashboard.nav.home": "Home", "nav.predictii": "Predictions", "nav.analize": "Analyses",
+    "nav.trackrecord": "Track record", "nav.metodologie": "Methodology", "nav.abonamente": "Membership",
+    "dashboard.nav.more": "More", "nav.ligi": "By league", "nav.simulator": "Simulator",
+    "nav.istoric": "History", "faq.h2": "Frequently asked questions", "footer.contact": "Contact:"
+  };
+
+  function languageHref(href, language) {
+    if (!englishLeague) return href;
+    var url;
+    try { url = new URL(href, document.baseURI); } catch (e) { return href; }
+    if (url.origin !== new URL(location.href).origin
+      || !/^\/(?:index\.html|simulator\.html|istoric\.html|metodologie\.html|track-record\.html|terms\.html|privacy\.html|analize\/(?:index|\d{4}-\d{2}-\d{2})\.html)$/.test(url.pathname)) return href;
+    url.searchParams.set("lang", language);
+    return href.split(/[?#]/, 1)[0] + url.search + url.hash;
+  }
+
+  function updateLanguageLinks(language) {
+    if (!englishLeague) return;
+    document.querySelectorAll("a[href]").forEach(function (link) {
+      var href = link.getAttribute("href");
+      var localized = languageHref(href, language);
+      if (localized !== href) link.setAttribute("href", localized);
+    });
+  }
 
   function metadataUrl(selector, rel) {
     var link = document.querySelector(selector);
@@ -63,7 +92,7 @@
     var header = document.querySelector("header");
     var brand = header && header.querySelector(".brand"), nav = header && header.querySelector("nav");
     if (brand) {
-      brand.setAttribute("href", sus + "index.html");
+      brand.setAttribute("href", languageHref(sus + "index.html", pageLanguage));
       brand.innerHTML = '<span class="brand-icon" aria-hidden="true"><svg viewBox="0 0 40 48" fill="none"><path d="M20 44V7M13 14l7-9 7 9M7 8v12c0 7 5 11 13 11s13-4 13-11V8M2 13l5-7 5 7M28 13l5-7 5 7M13 43h14" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="brand-name">POSEIDON<span>STATS</span></span>';
     }
     if (!nav || nav.getAttribute("data-public-modern") === "true") return;
@@ -71,9 +100,9 @@
     nav.innerHTML = "";
     function lien(parent, href, key, text, css) {
       var a = document.createElement("a");
-      a.setAttribute("href", href.indexOf("mailto:") === 0 ? href : sus + href);
+      a.setAttribute("href", languageHref(href.indexOf("mailto:") === 0 ? href : sus + href, pageLanguage));
       a.setAttribute("data-i18n", key);
-      a.textContent = text;
+      a.textContent = pageLanguage === "en" ? EN_NAV[key] : text;
       if (css) a.className = css;
       if (key === currentKey) {
         a.classList.add("active");
@@ -90,7 +119,7 @@
     var more = document.createElement("details"), summary = document.createElement("summary"), menu = document.createElement("div");
     more.className = "nav-more";
     summary.setAttribute("data-i18n", "dashboard.nav.more");
-    summary.textContent = "Mai mult";
+    summary.textContent = pageLanguage === "en" ? EN_NAV["dashboard.nav.more"] : "Mai mult";
     if (prediction) summary.className = "active";
     more.appendChild(summary);
     more.appendChild(menu);
@@ -109,6 +138,11 @@
     nav.appendChild(more);
   }
   temaPublica();
+  if (englishLeague) {
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", function () { updateLanguageLinks(pageLanguage); }, { once: true });
+    } else updateLanguageLinks(pageLanguage);
+  }
   // Older generated date spans contain unescaped HTML attribute quotes inside JSON strings.
   function normalizareVariabile() {
     document.querySelectorAll("[data-i18n-vars]").forEach(function (el) {
@@ -143,6 +177,7 @@
     for (var trecere = 0; trecere < 2; trecere++) document.querySelectorAll("[data-i18n]").forEach(function (el) { if (trecere === 1 && !(el.parentElement && el.parentElement.closest("[data-i18n]"))) return;
       var k = el.getAttribute("data-i18n");
       var translated = I[L] && I[L][k];
+      if (!translated && pageLanguage === "en" && L === "en" && EN_NAV[k]) return;
       var v = translated || (I.ro && I.ro[k]);
       if (!v) return;
       var o = {};
@@ -209,6 +244,7 @@
       var body = article.querySelector(".pro-visible");
       if (body) archiveLanguageNotice(I, body, body.firstChild, "ro");
     });
+    updateLanguageLinks(L);
   }
   function archiveLanguageNotice(I, container, before, language) {
     if (container.querySelector(".nota-ro")) return;
@@ -227,7 +263,11 @@
       if (LANGS.indexOf(selected) < 0) return;
       try { localStorage.setItem("poseidon_lang", selected); } catch (x) {}
       if (!editionPair) {
-        location.reload();
+        if (requestedLanguage()) {
+          var url = new URL(location.href);
+          url.searchParams.set("lang", selected);
+          location.replace(url.href);
+        } else location.reload();
         return;
       }
       if ((selected === "ro" || selected === "en") && selected !== pageLanguage) {

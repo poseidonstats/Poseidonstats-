@@ -5,7 +5,7 @@ const CALIB_URL = "data/calibration.json";
 const FORWARD_URL = "data/forward.json";
 const HISTORY_URL = "data/history.json";
 const SCORECARD_URL = "data/scorecard.json";
-const I18N_URL = "assets/i18n.json?release=20261123-predictions-first";
+const I18N_URL = "assets/i18n.json?release=20261123-markets-follow";
 
 // Scorecard skill per piață (din backtest OOS), folosit pentru contextul piețelor.
 let SCORECARD = {};                       // key -> card (label, tier, threshold, skill_stars, lift_pp, hit)
@@ -38,8 +38,23 @@ let I18N = null;
 let LANG = "ro";
 
 const LIMBI_SITE = ["ro", "en", "es", "it", "fr", "id"];  // 14 oct 2026: + franceza (19 % din vizitatori), + indoneziana (intrarea în Asia, decizia ei)
+function requestedLanguage() {
+  const code = new URLSearchParams(location.search).get("lang");
+  return LIMBI_SITE.includes(code) ? code : null;
+}
+
+function updateRouteLanguage(language) {
+  if (!requestedLanguage()) return;
+  const url = new URL(location.href);
+  url.searchParams.set("lang", language);
+  history.replaceState(history.state, "", url);
+}
+
 function detectLang() {
-  const saved = localStorage.getItem("poseidon_lang");
+  const explicit = requestedLanguage();
+  if (explicit) return explicit;
+  let saved;
+  try { saved = localStorage.getItem("poseidon_lang"); } catch (e) {}
   if (saved && LIMBI_SITE.includes(saved)) return saved;
   const bl = (navigator.language || "ro").slice(0,2).toLowerCase();
   if (LIMBI_SITE.includes(bl)) return bl;
@@ -49,6 +64,16 @@ function detectLang() {
 function t(key) {
   if (!I18N) return key;
   return (I18N[LANG] && I18N[LANG][key]) || (I18N.ro && I18N.ro[key]) || key;
+}
+
+function updateLegalLinks() {
+  if (!requestedLanguage()) return;
+  document.querySelectorAll('a[data-i18n="footer.terms"], a[data-i18n="footer.privacy"]').forEach(link => {
+    const url = new URL(link.href);
+    if (url.origin !== location.origin || !/^\/(?:terms|privacy)\.html$/.test(url.pathname)) return;
+    url.searchParams.set("lang", LANG);
+    link.setAttribute("href", url.pathname + url.search + url.hash);
+  });
 }
 
 function _loc() { return LANG === "en" ? "en-GB" : LANG === "es" ? "es-ES" : LANG === "it" ? "it-IT" : LANG === "fr" ? "fr-FR" : LANG === "id" ? "id-ID" : "ro-RO"; }
@@ -106,6 +131,7 @@ async function initI18n() {
   if (_i18nGataResolve) _i18nGataResolve();
   LANG = detectLang();
   applyI18n();
+  updateLegalLinks();
   puneRezumatInCaseta();
   mountLangSwitcher();
   // Cifrele vii se injectează DUPĂ i18n (applyI18n rescrie innerHTML pe [data-i18n])
@@ -124,8 +150,10 @@ function mountLangSwitcher() {
   nav.appendChild(wrap);
   wrap.querySelector("select").addEventListener("change", e => {
     LANG = e.target.value;
-    localStorage.setItem("poseidon_lang", LANG);
+    try { localStorage.setItem("poseidon_lang", LANG); } catch (error) {}
+    updateRouteLanguage(LANG);
     applyI18n();
+    updateLegalLinks();
     window.PoseidonDossier?.switchLanguage(LANG);
     puneRezumatInCaseta();
     injectLiveStats(); // re-injectare după ce applyI18n a rescris [data-i18n]
@@ -1640,11 +1668,11 @@ let PRO_REPORT_LOAD;
 function loadProReport() {
   if (window.PoseidonProReport) return Promise.resolve(window.PoseidonProReport);
   if (PRO_REPORT_LOAD) return PRO_REPORT_LOAD;
-  const css = document.createElement("link"); css.rel = "stylesheet"; css.href = "assets/pro-report.css?v=20261118e"; document.head.appendChild(css);
+  const css = document.createElement("link"); css.rel = "stylesheet"; css.href = "assets/pro-report.css?release=20261123-markets-follow"; document.head.appendChild(css);
   PRO_REPORT_LOAD = new Promise((resolve,reject) => {
-    const script = document.createElement("script"); script.id = "pro-report-script"; script.src = "assets/pro-context.js?release=20261123-predictions-first";
+    const script = document.createElement("script"); script.id = "pro-report-script"; script.src = "assets/pro-context.js?release=20261123-markets-follow";
     script.onload = script.onerror = () => {
-      const report = document.createElement("script"); report.src = "assets/pro-report.js?release=20261123-predictions-first";
+      const report = document.createElement("script"); report.src = "assets/pro-report.js?release=20261123-markets-follow";
       report.onload = () => resolve(window.PoseidonProReport);
       report.onerror = () => { PRO_REPORT_LOAD = null; css.remove(); script.remove(); report.remove(); reject(new Error("Pro report unavailable")); };
       document.head.appendChild(report);

@@ -66,11 +66,11 @@ function mountedDocument(){
     addEventListener:(type,fn)=>{listeners[type]=fn;}};
   return {doc,nodes,listeners,viewListeners};
 }
-async function withMounted(run,failed=false,prepare){
+async function withMounted(run,failed=false,prepare,supplemental){
   const env=mountedDocument(),priorFetch=globalThis.fetch,priorT=globalThis.t,requests=[];
   prepare?.(env);
   globalThis.t=translate;
-  globalThis.fetch=async path=>{requests.push(path);if(failed)throw Error('explicit export failure');return {ok:path!=='analize/index.html',json:async()=>({'data/predictions.json':predictions,'data/history.json':history,'data/audit.json':audit})[path]};};
+  globalThis.fetch=async path=>{requests.push(path);if(failed)throw Error('explicit export failure');if(supplemental && path==='data/dashboard-market-history.json')return supplemental;return {ok:path!=='analize/index.html',json:async()=>({'data/predictions.json':predictions,'data/history.json':history,'data/audit.json':audit})[path]};};
   try {await dashboard.mount(env.doc);await run({...env,requests});}
   finally {globalThis.fetch=priorFetch;if(priorT===undefined)delete globalThis.t;else globalThis.t=priorT;}
 }
@@ -92,8 +92,28 @@ test('mounted search/full league menu preserve date, league and query through la
     nodes['dashboard-search-clear'].listeners.click();assert.equal(nodes['dashboard-search'].value,'');
     assert.equal(nodes['dashboard-date'].value,day);assert.equal(nodes['dashboard-league-menu'].value,source.league);
     assert.equal(nodes['dashboard-search-clear'].disabled,true);
-    assert.deepEqual(requests,['data/predictions.json','data/history.json','data/audit.json','analize/index.html']);
+    assert.deepEqual(requests,['data/predictions.json','data/history.json','data/audit.json','data/dashboard-market-history.json','analize/index.html']);
   });
+});
+
+test('a pending or failed market archive leaves today usable without resetting the chosen market',async()=>{
+  let complete;
+  const supplemental=new Promise(resolve=>{complete=resolve;});
+  await withMounted(async({nodes,listeners})=>{
+    const table=nodes['dashboard-predictions'];
+    const forecastCount=(table.innerHTML.match(/class="dashboard-match-row"/g)||[]).length;
+    assert.equal(forecastCount,5);
+    const button={dataset:{homeMarket:'btts'}};
+    listeners.click({target:{closest:selector=>selector==='[data-home-market]'?button:null}});
+    assert.match(table.innerHTML,/dashboard-market-cell/);
+    assert.match(table.innerHTML,/Loading/);
+    complete({ok:false});
+    await new Promise(resolve=>setImmediate(resolve));
+    assert.equal(nodes['dashboard-date'].value,day);
+    assert.equal((table.innerHTML.match(/class="dashboard-match-row"/g)||[]).length,forecastCount);
+    assert.match(table.innerHTML,/dashboard-market-cell/);
+    assert.match(table.innerHTML,/History unavailable/);
+  },false,undefined,supplemental);
 });
 
 test('an export failure remains unavailable rather than becoming a no-search-results claim',async()=>{
@@ -104,42 +124,28 @@ test('an export failure remains unavailable rather than becoming a no-search-res
   },true);
 });
 
-function sampleDocument(){
+test('generated Pro fallback shows only the match, public editorial selection and one reading control before expansion',()=>{
   const html=readFileSync(new URL('../index.html',import.meta.url),'utf8');
-  const block=html.split('<!-- PRO_SAMPLE_CARD_START -->')[1].split('<!-- PRO_SAMPLE_CARD_END -->')[0];
-  const text=markup=>markup.replace(/<[^>]*>/g,'').replace(/&amp;/g,'&').replace(/\s+/g,' ').trim();
-  const heading={textContent:text(block.match(/<div class="pro-card-head">([\s\S]*?)<\/div>/)[1])};
-  const markers=[...block.matchAll(/<div data-lang="([a-z]+)"[^>]*>/g)],bodies={};
-  markers.forEach((marker,index)=>{const part=block.slice(marker.index,markers[index+1]?.index);const paragraphs=[...part.matchAll(/<p\b[^>]*>([\s\S]*?)<\/p>/g)].map(match=>({textContent:text(match[1])}));const source=part.match(/<div class="pro-visible">([\s\S]*?)<\/div>\s*<\/div>/)?.[1]||part; const visible={innerHTML:source,querySelector:()=>null};bodies[marker[1]]={querySelectorAll:()=>paragraphs,querySelector:selector=>selector==='.pro-visible'?visible:paragraphs[0]||null};});
-  const card={querySelectorAll:()=>Object.keys(bodies).map(lang=>({getAttribute:()=>lang})),querySelector:selector=>bodies[selector.match(/data-lang="([a-z]+)"/)?.[1]]||null};
-  heading.closest=()=>card;
-  return {doc:{querySelector:selector=>selector==='#exemplu-pro-source .pro-card-head'?heading:null},heading,bodies};
-}
-
-test('tabbed Pro demonstration uses only the actual generated sample, truthful language fallback and existing member routes',()=>{
-  assert.equal(typeof dashboard.renderProSummary,'function');
-  const {doc,heading,bodies}=sampleDocument();
-  for(const [tier,href] of [[null,'#exemplu-pro'],['basic','analize/index.html'],['pro','#pro-analize']]){
-    const markup=dashboard.renderProSummary(doc,translate,'en',tier);
-    assert(markup.includes(heading.textContent.split(' · ')[0]));assert(markup.includes(`href="${href}"`));
-    assert(markup.replace(/<[^>]*>/g,'').includes(bodies.en.querySelector().textContent.slice(0,70)));
-    assert.equal(markup.includes('data-dashboard-analysis'),tier===null);
-    assert.match(markup,/dashboard-pro-summary pro-card/);assert.match(markup,/class="pro-visible"/);assert(markup.includes(bodies.en.querySelector('.pro-visible').innerHTML),'full public source retained for shared renderer');
+  const preview=html.split('<!-- PRO_SAMPLE_PREVIEW_START -->')[1].split('<!-- PRO_SAMPLE_PREVIEW_END -->')[0];
+  const source=html.split('<!-- PRO_SAMPLE_CARD_START -->')[1].split('<!-- PRO_SAMPLE_CARD_END -->')[0];
+  assert.match(preview,/<article class="dashboard-pro-summary pro-card"[^>]+data-dashboard-pro-fallback/);
+  assert.match(preview,/<div class="pro-card-head"><h3>[^<]+ – [^<]+<\/h3><\/div>/);
+  const languages=markup=>[...markup.matchAll(/<div data-lang="([a-z]+)"[^>]*>/g)].map(match=>match[1]);
+  assert.deepEqual(languages(preview),languages(source));
+  for(const lang of Object.keys(dictionary)) assert(dictionary[lang]['dashboard.analysis.preview.read']);
+  const variants=preview.split('<div class="pro-visible">').slice(1);
+  const locales=languages(preview);
+  if (!locales.length) locales.push('ro');
+  assert.equal(variants.length,locales.length);
+  for(const [index,variant] of variants.entries()){
+    const t=dictionary[locales[index]];
+    const [closed,opened]=variant.split('<details class="dossier-context">');
+    assert.match(closed,/sample-preview-selection.*redesign\.edition\.pick.*<strong>[^<]+<\/strong>/);
+    assert(closed.includes(`>${t['redesign.edition.pick']}</span>`));
+    assert.doesNotMatch(closed,/%|<p|dossier-published|dossier-review/);
+    assert(opened.startsWith(`<summary data-i18n="dashboard.analysis.preview.read">${t['dashboard.analysis.preview.read']}</summary>`));
+    assert.match(opened,/dossier-published[\s\S]*arhiva\.sect\.verdict[\s\S]*dossier-review/);
   }
-  const visible=bodies.en.querySelector('.pro-visible'), sourceHTML=visible.innerHTML;
-  visible.innerHTML='<div id="pro-report-existing-tab-0">enhanced</div>';
-  doc.defaultView={PoseidonProReport:{sourceMarkup:node=>node===visible?sourceHTML:node?.innerHTML}};
-  const refreshed=dashboard.renderProSummary(doc,translate,'en',null);
-  assert(refreshed.includes(sourceHTML));assert(!refreshed.includes('pro-report-existing-tab-0'),'rerender must use original source, not duplicate tab IDs');
-  const italian=dashboard.renderProSummary(doc,translate,'it',null);
-  assert(italian.replace(/<[^>]*>/g,'').includes(bodies.it.querySelector().textContent.slice(0,70)));
-  assert(!italian.includes('class="dashboard-analysis-language"'),'an existing Italian translation needs no fallback notice');
-  delete bodies.it; // Deliberately exercise the missing-language branch, independently of changing daily data.
-  const fallback=dashboard.renderProSummary(doc,translate,'it',null);
-  assert(fallback.includes('Analysis content is available in English.'));
-  heading.textContent='<script>alert(1)</script> · original date';
-  assert.doesNotMatch(dashboard.renderProSummary(doc,translate,'en',null),/<script>/);
-  assert.match(dashboard.renderProSummary({querySelector:()=>null},translate,'en',null),/Data temporarily unavailable/);
 });
 
 test('fragment reveal opens every current ancestor, handles moved targets and leaves unrelated details closed',()=>{

@@ -194,7 +194,29 @@ body:has(.member-dossier[open]) { overflow: hidden; }
 .home-modern .edition-paragraph h4 { margin: 0 0 .35rem; color: var(--ink); font: 700 1.25rem system-ui,sans-serif; }
 .edition-original { border-top: 1px solid var(--rule); }
 .edition-selection-outcome { display: block; margin-top: 4px; }
-.edition-preview [data-sample-result] { font-weight: 650; }
+.sample-preview-selection { display: grid; gap: .25rem; }
+.sample-preview-selection > span { color: #395448; font-weight: 650; }
+.home-modern .dashboard-pro-summary[data-dashboard-pro-fallback] {
+  color: #152c26;
+  background: #fffef9;
+  border-color: #b5c4b9;
+}
+.home-modern [data-dashboard-pro-fallback] .pro-card-head {
+  background: #f4f8ee;
+  border-bottom: 1px solid #d8dfd5;
+}
+.home-modern [data-dashboard-pro-fallback] .pro-card-head h3 { margin: 0; color: #15382e; }
+.home-modern [data-dashboard-pro-fallback] .pro-visible { color: #152c26; overflow-wrap: anywhere; }
+.home-modern [data-dashboard-pro-fallback] .pro-visible strong { color: inherit; }
+.home-modern [data-dashboard-pro-fallback] .pro-visible summary {
+  box-sizing: border-box;
+  min-height: 44px;
+  padding-block: .65rem;
+  color: #15382e;
+  font-weight: 700;
+  cursor: pointer;
+}
+.home-modern [data-dashboard-pro-fallback] .pro-visible a { color: #1c5342; text-decoration: underline; }
 .home-modern .edition-result-link { color: var(--ink); }
 .edition-original summary, .edition-paragraph summary { cursor: pointer; min-height: 44px; align-content: center; }
 .home-modern .edition-preview .edition-open, .home-modern .edition-dialog .edition-close {
