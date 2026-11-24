@@ -1,21 +1,83 @@
 {
- "generated_at": "2026-11-23T03:25:26+00:00",
+ "generated_at": "2026-11-24T03:25:29+00:00",
  "days": [
   {
-   "date": "2026-11-23",
+   "date": "2026-11-24",
    "status": "in_progress",
    "matches": [
     {
-     "fixture_id": 1552536,
+     "fixture_id": 1563276,
      "time": "21:45",
-     "country": "France",
-     "league": "Ligue 2",
-     "home": "Nantes",
-     "away": "Grenoble",
+     "country": "England",
+     "league": "Championship",
+     "home": "Cardiff",
+     "away": "Preston",
      "calibrated_lg": true,
      "picks": [
       {
-       "market": "Under 3.5",
+       "market": "1X",
+       "prob": 85,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "Over 1.5",
+       "prob": 85,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "1 (Home)",
+       "prob": 68,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "Over 2.5",
+       "prob": 67,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null,
+     "snapshot": "dayof"
+    },
+    {
+     "fixture_id": 1563279,
+     "time": "21:45",
+     "country": "England",
+     "league": "Championship",
+     "home": "Norwich",
+     "away": "QPR",
+     "calibrated_lg": true,
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 80,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null,
+     "snapshot": "dayof"
+    },
+    {
+     "fixture_id": 1596050,
+     "time": "21:45",
+     "country": "England",
+     "league": "Non League Premier - Isthmian",
+     "home": "Eastbourne Borough",
+     "away": "Aveley",
+     "calibrated_lg": true,
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 88,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "Over 2.5",
        "prob": 70,
        "outcome": "PENDING"
       }
@@ -27,85 +89,22 @@
      "snapshot": "dayof"
     },
     {
-     "fixture_id": 1548566,
-     "time": "19:00",
-     "country": "Croatia",
-     "league": "HNL",
-     "home": "NK Slaven Belupo",
-     "away": "NK Osijek",
+     "fixture_id": 1596052,
+     "time": "21:45",
+     "country": "England",
+     "league": "Non League Premier - Isthmian",
+     "home": "Leatherhead",
+     "away": "Ramsgate",
      "calibrated_lg": true,
      "picks": [
       {
        "market": "Over 1.5",
-       "prob": 79,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null,
-     "snapshot": "dayof"
-    },
-    {
-     "fixture_id": 1584467,
-     "time": "19:00",
-     "country": "Turkey",
-     "league": "Süper Lig",
-     "home": "Başakşehir",
-     "away": "Yeni Çorumspor",
-     "calibrated_lg": true,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 81,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null,
-     "snapshot": "dayof"
-    },
-    {
-     "fixture_id": 1553233,
-     "time": "20:00",
-     "country": "Poland",
-     "league": "Ekstraklasa",
-     "home": "Wieczysta Kraków",
-     "away": "Motor Lublin",
-     "calibrated_lg": true,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 84,
+       "prob": 85,
        "outcome": "PENDING"
       },
       {
        "market": "Over 2.5",
-       "prob": 65,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null,
-     "snapshot": "dayof"
-    },
-    {
-     "fixture_id": 1557469,
-     "time": "22:00",
-     "country": "England",
-     "league": "Premier League",
-     "home": "Brentford",
-     "away": "Everton",
-     "calibrated_lg": true,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 76,
+       "prob": 66,
        "outcome": "PENDING"
       }
      ],
@@ -117,11 +116,11 @@
     }
    ],
    "totals": {
-    "picks": 6,
+    "picks": 9,
     "wins": 0,
     "losses": 0,
-    "pending": 6,
-    "locked_pending": 138
+    "pending": 9,
+    "locked_pending": 252
    }
   }
  ],
@@ -212,9 +211,9 @@
   }
  ],
  "integritate": {
-  "total": 64646,
+  "total": 64790,
   "pastrate": 39365,
-  "nerezolvate": 15798,
+  "nerezolvate": 15942,
   "inghetate_dupa_start": 344,
   "reprogramate_peste_prag": 3,
   "recalibrare_indisponibila": 8765,

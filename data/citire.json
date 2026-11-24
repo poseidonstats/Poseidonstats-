@@ -1,13 +1,13 @@
 {
- "generated_at": "2026-11-22T05:50:03+02:00",
+ "generated_at": "2026-11-23T05:50:01+02:00",
  "zile": [
-  "2026-11-22"
+  "2026-11-23"
  ],
  "meciuri": {
-  "1555430": {
+  "1548566": {
    "echipe": [
-    "FC Zurich",
-    "FC ST. Gallen"
+    "NK Slaven Belupo",
+    "NK Osijek"
    ],
    "familia": [
     "1-1",
@@ -15,48 +15,9 @@
    ],
    "directia": "2",
    "p1x2": [
-    37,
-    22,
-    40
-   ],
-   "goluri": {
-    "interval": [
-     2,
-     4
-    ],
-    "cel_mai_probabil": 3,
-    "p_interval": 59
-   },
-   "deschide": {
-    "echipa": null,
-    "p": 50
-   },
-   "p00_pauza": 25,
-   "n": [
-    20,
-    20
-   ],
-   "versiune": "formule_psg 24 oct 2026",
-   "ko_utc": "2026-11-22T13:00:00Z",
-   "zi_ro": "2026-11-22",
-   "liga": "Super League",
-   "tara": "Switzerland",
-   "lam": 3.45
-  },
-  "1548562": {
-   "echipe": [
-    "Dinamo Zagreb",
-    "Istra 1961"
-   ],
-   "familia": [
-    "2-1",
-    "1-1"
-   ],
-   "directia": "1",
-   "p1x2": [
-    58,
-    21,
-    21
+    38,
+    24,
+    39
    ],
    "goluri": {
     "interval": [
@@ -67,125 +28,8 @@
     "p_interval": 61
    },
    "deschide": {
-    "echipa": "gazda",
-    "p": 69
-   },
-   "p00_pauza": 21,
-   "n": [
-    20,
-    20
-   ],
-   "versiune": "formule_psg 24 oct 2026",
-   "ko_utc": "2026-11-22T14:00:00Z",
-   "zi_ro": "2026-11-22",
-   "liga": "HNL",
-   "tara": "Croatia",
-   "lam": 3.19
-  },
-  "1555426": {
-   "echipe": [
-    "Lausanne",
-    "FC Vaduz"
-   ],
-   "familia": [
-    "1-1",
-    "1-2"
-   ],
-   "directia": "2",
-   "p1x2": [
-    35,
-    22,
-    43
-   ],
-   "goluri": {
-    "interval": [
-     2,
-     4
-    ],
-    "cel_mai_probabil": 3,
-    "p_interval": 59
-   },
-   "deschide": {
     "echipa": null,
-    "p": 37
-   },
-   "p00_pauza": 25,
-   "n": [
-    20,
-    20
-   ],
-   "versiune": "formule_psg 24 oct 2026",
-   "ko_utc": "2026-11-22T15:30:00Z",
-   "zi_ro": "2026-11-22",
-   "liga": "Super League",
-   "tara": "Switzerland",
-   "lam": 3.47
-  },
-  "1557473": {
-   "echipe": [
-    "Liverpool",
-    "Manchester United"
-   ],
-   "familia": [
-    "1-1",
-    "1-0"
-   ],
-   "directia": "1",
-   "p1x2": [
-    46,
-    25,
-    29
-   ],
-   "goluri": {
-    "interval": [
-     1,
-     3
-    ],
-    "cel_mai_probabil": 2,
-    "p_interval": 63
-   },
-   "deschide": {
-    "echipa": null,
-    "p": 56
-   },
-   "p00_pauza": 31,
-   "n": [
-    20,
-    20
-   ],
-   "versiune": "formule_psg 24 oct 2026",
-   "ko_utc": "2026-11-22T16:30:00Z",
-   "zi_ro": "2026-11-22",
-   "liga": "Premier League",
-   "tara": "England",
-   "lam": 2.81
-  },
-  "1651119": {
-   "echipe": [
-    "Nashville SC",
-    "FC Cincinnati"
-   ],
-   "familia": [
-    "2-1",
-    "1-1"
-   ],
-   "directia": "1",
-   "p1x2": [
-    62,
-    19,
-    19
-   ],
-   "goluri": {
-    "interval": [
-     2,
-     4
-    ],
-    "cel_mai_probabil": 3,
-    "p_interval": 59
-   },
-   "deschide": {
-    "echipa": "gazda",
-    "p": 72
+    "p": 36
    },
    "p00_pauza": 22,
    "n": [
@@ -193,11 +37,167 @@
     20
    ],
    "versiune": "formule_psg 24 oct 2026",
-   "ko_utc": "2026-11-22T21:00:00Z",
-   "zi_ro": "2026-11-22",
-   "liga": "Major League Soccer",
-   "tara": "USA",
-   "lam": 3.48
+   "ko_utc": "2026-11-23T17:00:00Z",
+   "zi_ro": "2026-11-23",
+   "liga": "HNL",
+   "tara": "Croatia",
+   "lam": 3.16
+  },
+  "1584467": {
+   "echipe": [
+    "Başakşehir",
+    "Yeni Çorumspor"
+   ],
+   "familia": [
+    "1-1",
+    "2-1"
+   ],
+   "directia": "1",
+   "p1x2": [
+    49,
+    22,
+    29
+   ],
+   "goluri": {
+    "interval": [
+     2,
+     4
+    ],
+    "cel_mai_probabil": 3,
+    "p_interval": 60
+   },
+   "deschide": {
+    "echipa": null,
+    "p": 60
+   },
+   "p00_pauza": 20,
+   "n": [
+    20,
+    20
+   ],
+   "versiune": "formule_psg 24 oct 2026",
+   "ko_utc": "2026-11-23T17:00:00Z",
+   "zi_ro": "2026-11-23",
+   "liga": "Süper Lig",
+   "tara": "Turkey",
+   "lam": 3.41
+  },
+  "1553233": {
+   "echipe": [
+    "Wieczysta Kraków",
+    "Motor Lublin"
+   ],
+   "familia": [
+    "1-1",
+    "2-1"
+   ],
+   "directia": "1",
+   "p1x2": [
+    39,
+    23,
+    38
+   ],
+   "goluri": {
+    "interval": [
+     2,
+     4
+    ],
+    "cel_mai_probabil": 3,
+    "p_interval": 61
+   },
+   "deschide": {
+    "echipa": null,
+    "p": 54
+   },
+   "p00_pauza": 32,
+   "n": [
+    20,
+    20
+   ],
+   "versiune": "formule_psg 24 oct 2026",
+   "ko_utc": "2026-11-23T18:00:00Z",
+   "zi_ro": "2026-11-23",
+   "liga": "Ekstraklasa",
+   "tara": "Poland",
+   "lam": 3.25
+  },
+  "1552536": {
+   "echipe": [
+    "Nantes",
+    "Grenoble"
+   ],
+   "familia": [
+    "1-1",
+    "2-1"
+   ],
+   "directia": "1",
+   "p1x2": [
+    38,
+    25,
+    37
+   ],
+   "goluri": {
+    "interval": [
+     1,
+     3
+    ],
+    "cel_mai_probabil": 2,
+    "p_interval": 62
+   },
+   "deschide": {
+    "echipa": null,
+    "p": 49
+   },
+   "p00_pauza": 27,
+   "n": [
+    20,
+    20
+   ],
+   "versiune": "formule_psg 24 oct 2026",
+   "ko_utc": "2026-11-23T19:45:00Z",
+   "zi_ro": "2026-11-23",
+   "liga": "Ligue 2",
+   "tara": "France",
+   "lam": 2.85
+  },
+  "1557469": {
+   "echipe": [
+    "Brentford",
+    "Everton"
+   ],
+   "familia": [
+    "1-1",
+    "1-0"
+   ],
+   "directia": "1",
+   "p1x2": [
+    51,
+    25,
+    24
+   ],
+   "goluri": {
+    "interval": [
+     1,
+     3
+    ],
+    "cel_mai_probabil": 2,
+    "p_interval": 66
+   },
+   "deschide": {
+    "echipa": "gazda",
+    "p": 65
+   },
+   "p00_pauza": 35,
+   "n": [
+    20,
+    20
+   ],
+   "versiune": "formule_psg 24 oct 2026",
+   "ko_utc": "2026-11-23T20:00:00Z",
+   "zi_ro": "2026-11-23",
+   "liga": "Premier League",
+   "tara": "England",
+   "lam": 2.61
   }
  },
  "test": {
