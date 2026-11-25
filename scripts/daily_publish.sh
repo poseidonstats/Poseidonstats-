@@ -1,6 +1,6 @@
 #!/bin/bash
 # POSEIDON site — publicare zilnică pe GitHub Pages.
-# Cron: rulează la 07:50 (după POSEIDON 07:15 + resolve 07:45).
+# Apelat de self-heal după predicții și de publicarea de rezervă de la 06:10.
 #
 # Pași:
 #   1. Regenerează JSON-urile publice din ~/football_predictor/data/
@@ -222,6 +222,16 @@ git add data/ meciuri.html sitemap.xml predictii/ en/ track-record.html statisti
 git commit -m "data: $(date +%Y-%m-%d) refresh predicții + jurnal" >> "$LOG" 2>&1
 git push origin main >> "$LOG" 2>&1
 echo "[$(ts)] Published." >> "$LOG"
+
+# Lista obișnuită este deja publicată. Pro reutilizează exportul verificat mai sus.
+# Joburile programate pot relua arhiva originală dacă un serviciu e indisponibil.
+PRO_DAY=$(TZ=Europe/Bucharest date +%F)
+if "$PY" scripts/prepare_daily_pro.py "$PRO_DAY" >> "$LOG" 2>&1 &&
+    /bin/bash scripts/publish_pro_sample.sh "$PRO_DAY" >> "$LOG" 2>&1; then
+    echo "[$(ts)] [pro] Publicarea după export s-a încheiat pentru $PRO_DAY." >> "$LOG"
+else
+    echo "[$(ts)] [WARN] Publicarea imediată Pro a eșuat pentru $PRO_DAY; reîncercările programate rămân active." >> "$LOG"
+fi
 
 # 3. Telegram notify — plasă siguranță (nu blochează publish dacă cade)
 $PY ~/poseidon-site/scripts/notify_publish.py >> "$LOG" 2>&1 || \
