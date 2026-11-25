@@ -1,37 +1,74 @@
 {
- "generated_at": "2026-11-24T03:25:29+00:00",
+ "generated_at": "2026-11-25T03:25:34+00:00",
  "days": [
   {
-   "date": "2026-11-24",
+   "date": "2026-11-25",
    "status": "in_progress",
    "matches": [
     {
-     "fixture_id": 1563276,
+     "fixture_id": 1631821,
+     "time": "23:30",
+     "country": "Mexico",
+     "league": "Liga Premier Serie A",
+     "home": "Vaqueros Reynosa",
+     "away": "Ciervos",
+     "calibrated_lg": true,
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 84,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "X2",
+       "prob": 83,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "Over 2.5",
+       "prob": 65,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null,
+     "snapshot": "dayof"
+    },
+    {
+     "fixture_id": 1649497,
+     "time": "05:00",
+     "country": "USA",
+     "league": "Major League Soccer",
+     "home": "San Jose Earthquakes",
+     "away": "Houston Dynamo",
+     "calibrated_lg": true,
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 77,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null,
+     "snapshot": "prima"
+    },
+    {
+     "fixture_id": 1563283,
      "time": "21:45",
      "country": "England",
      "league": "Championship",
-     "home": "Cardiff",
-     "away": "Preston",
+     "home": "Bolton",
+     "away": "West Brom",
      "calibrated_lg": true,
      "picks": [
       {
-       "market": "1X",
-       "prob": 85,
-       "outcome": "PENDING"
-      },
-      {
        "market": "Over 1.5",
-       "prob": 85,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "1 (Home)",
-       "prob": 68,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "Over 2.5",
-       "prob": 67,
+       "prob": 77,
        "outcome": "PENDING"
       }
      ],
@@ -42,69 +79,17 @@
      "snapshot": "dayof"
     },
     {
-     "fixture_id": 1563279,
+     "fixture_id": 1563284,
      "time": "21:45",
      "country": "England",
      "league": "Championship",
-     "home": "Norwich",
-     "away": "QPR",
+     "home": "Burnley",
+     "away": "Birmingham",
      "calibrated_lg": true,
      "picks": [
       {
        "market": "Over 1.5",
-       "prob": 80,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null,
-     "snapshot": "dayof"
-    },
-    {
-     "fixture_id": 1596050,
-     "time": "21:45",
-     "country": "England",
-     "league": "Non League Premier - Isthmian",
-     "home": "Eastbourne Borough",
-     "away": "Aveley",
-     "calibrated_lg": true,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 88,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "Over 2.5",
-       "prob": 70,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null,
-     "snapshot": "dayof"
-    },
-    {
-     "fixture_id": 1596052,
-     "time": "21:45",
-     "country": "England",
-     "league": "Non League Premier - Isthmian",
-     "home": "Leatherhead",
-     "away": "Ramsgate",
-     "calibrated_lg": true,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 85,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "Over 2.5",
-       "prob": 66,
+       "prob": 79,
        "outcome": "PENDING"
       }
      ],
@@ -116,11 +101,11 @@
     }
    ],
    "totals": {
-    "picks": 9,
+    "picks": 6,
     "wins": 0,
     "losses": 0,
-    "pending": 9,
-    "locked_pending": 252
+    "pending": 6,
+    "locked_pending": 270
    }
   }
  ],
@@ -211,9 +196,9 @@
   }
  ],
  "integritate": {
-  "total": 64790,
+  "total": 64959,
   "pastrate": 39365,
-  "nerezolvate": 15942,
+  "nerezolvate": 16111,
   "inghetate_dupa_start": 344,
   "reprogramate_peste_prag": 3,
   "recalibrare_indisponibila": 8765,
