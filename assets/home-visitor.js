@@ -37,6 +37,19 @@
     return dailyFixtures(data,today,row => row.locked === true && row.free !== true);
   }
 
+  function validatedExportTime(data) {
+    const stamp = data?.generated_at;
+    if (typeof stamp !== 'string' || !/(Z|[+-]\d{2}:\d{2})$/i.test(stamp)) return NaN;
+    const time = Date.parse(stamp);
+    const rows = data.matches, free = data.freemium?.free, locked = data.freemium?.locked;
+    if (!Number.isFinite(time) || time > Date.now() || !Array.isArray(rows) || !rows.length ||
+        data.n_matches !== rows.length || !Number.isInteger(free) || free < 0 || free > 5 ||
+        !Number.isInteger(locked) || locked < 0 || free + locked !== rows.length) return NaN;
+    if (rows.filter(m => m?.locked === true && m.free !== true).length !== locked ||
+        selectFreeMatches(data,siteDay.format(time)).length !== free) return NaN;
+    return time;
+  }
+
   function selectSample(payload, today) {
     const item = payload?.item, match = item?.match, kickoff = Date.parse(match?.match_date);
     if (!validDay(today) || payload?.date !== today || day(match?.match_date) !== today
@@ -54,6 +67,7 @@
   let predictionRequest, sampleInFlightDay = '', currentSample = null, sampleLanguage = '';
   const tr = (key, vars = {}) => Object.entries(vars).reduce((text,[name,value]) => text.replace(`{${name}}`, value),view.t(key));
   const locale = () => ({ro:'ro-RO',en:'en-GB',es:'es-ES',it:'it-IT',fr:'fr-FR',id:'id-ID'})[html.lang] || 'ro-RO';
+  const formatDate = (value, options) => new Intl.DateTimeFormat(locale(),{timeZone:zone,...options}).format(value);
   const clock = value => new Intl.DateTimeFormat(locale(),{timeZone:zone,hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(Date.parse(value));
   const text = (tag, content, className) => {
     const el = doc.createElement(tag);
@@ -104,19 +118,20 @@
     if (more.open && rest.childElementCount === 0) rest.replaceChildren(...remainingLocked.map(lockedRow));
   }
 
-  function renderLocked(data,today) {
+  function renderLocked(data,edition,earlierDate) {
     const section = doc.querySelector('[data-visitor-locked]');
     if (!section) return;
-    const rows = selectLockedMatches(data,today);
+    const rows = selectLockedMatches(data,edition);
     section.hidden = !rows.length;
     const first = doc.querySelector('[data-visitor-locked-first]');
     first.replaceChildren(...rows.slice(0,3).map(lockedRow));
-    section.querySelector('[data-visitor-locked-count]').textContent = new Intl.NumberFormat(locale()).format(rows.length);
+    const count = new Intl.NumberFormat(locale()).format(rows.length);
+    section.querySelector('[data-visitor-locked-count]').textContent = earlierDate ? `${count} · ${earlierDate}` : count;
     remainingLocked = rows.slice(3);
     const more = doc.querySelector('[data-visitor-locked-more]');
     more.hidden = !remainingLocked.length;
-    if (more.dataset.day !== today || more.hidden) more.open = false;
-    more.dataset.day = today;
+    if (more.dataset.day !== edition || more.hidden) more.open = false;
+    more.dataset.day = edition;
     doc.querySelector('[data-visitor-locked-rest]').replaceChildren();
     updateLockedDisclosure();
   }
@@ -125,27 +140,29 @@
     const list = doc.querySelector('[data-visitor-matches]');
     if (!list) return;
     const today = siteDay.format(Date.now());
+    const edition = day(predictions?.generated_at);
+    const previous = Boolean(edition && edition < today);
+    const date = formatDate(edition ? Date.parse(predictions.generated_at) : Date.now(),
+      {weekday:'long', day:'numeric', month:'long', year:'numeric'});
     const dateEl = doc.querySelector('[data-visitor-today]');
-    dateEl.dateTime = today;
-    dateEl.textContent = new Intl.DateTimeFormat(locale(),{
-      timeZone:zone, weekday:'long', day:'numeric', month:'long', year:'numeric',
-    }).format(Date.now());
-    const current = day(predictions?.generated_at) === today ? predictions : null;
-    renderLocked(current,today);
-    const rows = selectFreeMatches(current,today), status = doc.querySelector('[data-visitor-status]');
+    dateEl.dateTime = edition || today;
+    dateEl.textContent = date;
+    renderLocked(predictions,edition,previous ? date : '');
+    const rows = selectFreeMatches(predictions,edition), status = doc.querySelector('[data-visitor-status]');
     const title = doc.querySelector('[data-visitor-free-title]');
     const titleKey = rows.length > 1 ? 'visitor.home.free' : rows.length ? 'visitor.home.freeOne' : 'visitor.home.freeTitle';
     title.dataset.i18n = titleKey;
     title.dataset.i18nVars = JSON.stringify({n:rows.length});
     title.textContent = tr(titleKey,{n:rows.length});
-    const statusKey = readyDay !== today ? 'loading'
-      : current ? 'visitor.home.empty' : 'dashboard.data.unavailable';
+    const statusKey = previous ? 'visitor.home.previousEdition' : readyDay !== today ? 'loading'
+      : edition ? 'visitor.home.empty' : 'dashboard.data.unavailable';
     status.dataset.i18n = statusKey;
-    status.textContent = tr(statusKey);
-    status.hidden = rows.length > 0;
+    status.dataset.i18nVars = JSON.stringify({date});
+    status.textContent = tr(statusKey,{date});
+    status.hidden = !previous && rows.length > 0;
     const fmt = new Intl.NumberFormat(locale(),{style:'percent',maximumFractionDigits:1});
     const dossier = view.PoseidonDossier;
-    const publicDossiers = dossier?.publicFixtureIds(current);
+    const publicDossiers = previous ? null : dossier?.publicFixtureIds(predictions);
     list.replaceChildren(...rows.map(row => {
       const li = doc.createElement('li');
       const time = text('time',clock(row.match_date),'visitor-time');
@@ -153,7 +170,7 @@
       const name = doc.createElement('div');
       name.className = 'visitor-fixture';
       name.append(text('small',row.league || ''));
-      const link = dossier?.button(row,publicDossiers?.has(row.fixture_id),{list:true});
+      const link = previous ? null : dossier?.button(row,publicDossiers?.has(row.fixture_id),{list:true});
       if (link) name.insertAdjacentHTML('beforeend',link);
       else name.append(text('strong',`${row.home_team} – ${row.away_team}`));
       const probs = doc.createElement('div');
@@ -187,14 +204,15 @@
         const response = await view.fetch('data/predictions.json',{credentials:'omit',cache:'no-cache',signal:controller.signal});
         if (!response.ok) throw new Error('Public predictions unavailable');
         const data = await response.json();
-        if (!Array.isArray(data?.matches)) throw new Error('Missing public predictions');
         if (predictionRequest !== request || siteDay.format(Date.now()) !== today) return null;
-        if (day(predictions?.generated_at) === today && day(data.generated_at) !== today) return predictions;
+        const generated = validatedExportTime(data);
+        if (!Number.isFinite(generated)) throw new Error('Invalid public edition');
+        if (predictions && generated <= Date.parse(predictions.generated_at)) return predictions;
         predictions = data;
         view.PoseidonDossier?.setPublicPredictions(data);
         return data;
       } catch (_) {
-        // Keep the last validated response, with the displayed rows restricted to the current day.
+        // Keep the last published edition on transient errors, identified by its actual date.
         return predictions ?? null;
       } finally {
         view.clearTimeout(deadline);
@@ -235,11 +253,12 @@
       if (!available) throw new Error('Public analysis is unavailable');
       const action = card.querySelector('[data-visitor-sample-action]');
       const selection = await dossier.mountPublicSample(card.querySelector('[data-visitor-sample-reader]'),
-        {dataset:{sampleFixture:available.fixture_id,sampleDay:today}}, lang, predictions, history, action);
+        {dataset:{sampleFixture:available.fixture_id,sampleDay:today}}, lang, day(predictions?.generated_at) === today ? predictions : null, history, action);
       if (!active()) return;
       if (!selection?.market) throw new Error('Public selection is unavailable');
       card.querySelector('[data-visitor-sample-title]').textContent = `${available.home} – ${available.away}`;
-      card.querySelector('[data-visitor-sample-meta]').textContent = `${available.league} · ${clock(available.match_date)}`;
+      const date = formatDate(Date.parse(available.match_date),{day:'numeric',month:'short',year:'numeric'});
+      card.querySelector('[data-visitor-sample-meta]').textContent = `${available.league} · ${date} · ${clock(available.match_date)}`;
       card.querySelector('[data-visitor-sample-pick]').textContent = selection.market;
       currentSample = available;
       sampleLanguage = lang;

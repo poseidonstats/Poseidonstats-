@@ -650,10 +650,11 @@
     }
     let favorites = grouped ? readFavorites() : new Set(), onlyFavorites = false, favoriteError = false;
     let visibleGroups = [], openByDay = new Map(), filteredClosed = new Set();
-    let preferredDate = '';
+    let manualDay = '';
     if (grouped) {
       const previous = readStored('sessionStorage',matchViewStorage);
-      if (previous?.day && watchlist.shiftDay(previous.day,0)) preferredDate = previous.day;
+      // Older sessions saved every automatically selected date, too. Only explicit choices persist now.
+      if (previous?.manualDay && watchlist.shiftDay(previous.manualDay,0)) manualDay = previous.manualDay;
       if (watchlist.markets.includes(previous?.market)) market = previous.market;
       if (search && typeof previous?.query === 'string') search.value = previous.query;
       onlyFavorites = previous?.onlyFavorites === true;
@@ -668,7 +669,7 @@
     function saveGroupedView() {
       if (!grouped || !dateSelect) return;
       try {
-        view.sessionStorage.setItem(matchViewStorage,JSON.stringify({day:dateSelect.value,query:search?.value || '',
+        view.sessionStorage.setItem(matchViewStorage,JSON.stringify({manualDay,query:search?.value || '',
           market,onlyFavorites,filteredClosed:[...filteredClosed],openGroups:[...openByDay].map(([day,groups])=>[day,[...groups]])}));
       } catch (_) { /* The list remains usable without storage. */ }
     }
@@ -843,7 +844,7 @@
         const limit = member && (grouped || (freeDay && dateSelect?.value === freeDay)) ? Infinity : 5;
         const selection = selectRows(data,dateSelect ? dateSelect.value : '',competition?.league,limit,query,member,competition?.country);
         const rows = grouped && onlyFavorites ? selection.rows.filter(row => favorites.has(favoriteKey(row))) : selection.rows;
-        const publicDossiers = member ? null : dossiers?.publicFixtureIds?.(data);
+        const publicDossiers = member ? null : dossiers?.publicFixtureIds?.(predictions);
         if (search) search.disabled = false;
         if (clearSearch) clearSearch.disabled = !normalizeSearch(query);
         for (const row of rows) {
@@ -900,17 +901,19 @@
       const data = dossiers?.predictions() || predictions;
       const available = Array.isArray(data?.matches) ? availableDays(data) : [];
       const archived = grouped ? Object.keys(marketHistory?.days || {}).filter(day => watchlist.shiftDay(day,0)) : [];
-      const resume = grouped && preferredDate && preferredDate >= watchlist.shiftDay(today,-6) && preferredDate < today ? [preferredDate] : [];
-      const days = [...new Set([today,yesterday,...(guestDay ? [guestDay] : available),...archived,...resume,
+      const published = dayOf(data?.generated_at);
+      const edition = guestDay || (published && published <= today ? published : today);
+      const resume = grouped && manualDay && manualDay >= watchlist.shiftDay(today,-6) && manualDay < today ? [manualDay] : [];
+      const days = [...new Set([today,yesterday,edition,...(guestDay ? [guestDay] : available),...archived,...resume,
         ...(dossiers?.predictions() && !guestDay ? dossiers.recentDays() : [])])].sort();
-      const previous = dateSelect.value || preferredDate;
       const format = grouped ? new Intl.DateTimeFormat(locale(doc),{day:'numeric',month:'short',timeZone:TIMEZONE}) : null;
       dateSelect.innerHTML = days.map(day => {
         const label = format ? format.format(new Date(day+'T12:00:00Z')) : formatDay(day,locale(doc));
         const relative = day === today ? 'today' : day === yesterday ? 'yesterday' : '';
         return `<option value="${day}">${escapeHTML(label + (format && relative ? ' · ' + translator()('dashboard.market.' + relative) : ''))}</option>`;
       }).join('');
-      dateSelect.value = days.includes(previous) ? previous : today;
+      if (manualDay && !days.includes(manualDay)) manualDay = '';
+      dateSelect.value = manualDay || edition;
       dateSelect.disabled = !days.length;
     }
     function renderAnalyses() {
@@ -946,7 +949,7 @@
       target.innerHTML = cards.join('') || `<p>${escapeHTML(tr('dashboard.data.unavailable'))}</p>`;
     }
     function render() {decorateLanguageSelector(doc,translator());decorateMemberLogin(doc,translator());ensureProofNotice(doc,translator());renderDates();renderLeagues();renderTable();renderWatchlist();renderMetrics();renderAnalyses();}
-    if (dateSelect) dateSelect.addEventListener('change', () => {selectedLeague='';filteredClosed.clear();renderLeagues();renderTable();});
+    if (dateSelect) dateSelect.addEventListener('change', () => {manualDay=dateSelect.value;selectedLeague='';filteredClosed.clear();renderLeagues();renderTable();});
     const renderSearch = () => {filteredClosed.clear();renderTable();};
     if (search) search.addEventListener('input',renderSearch);
     if (clearSearch) clearSearch.addEventListener('click',() => {if (search) {search.value='';renderSearch();search.focus && search.focus();}});
@@ -1008,7 +1011,8 @@
       const dayButton = event.target.closest('[data-home-day]');
       if (dayButton && dateSelect) {
         renderDates();
-        dateSelect.value = relativeDays()[dayButton.dataset.homeDay];
+        manualDay = relativeDays()[dayButton.dataset.homeDay];
+        dateSelect.value = manualDay;
         selectedLeague = '';
         renderLeagues();
         renderTable();
@@ -1056,6 +1060,38 @@
         renderWatchlist();
         renderTable();
       });
+    }
+    if (grouped && visitor && view.setInterval) {
+      let refreshing = false, lastChecked = 0;
+      async function refreshEdition() {
+        const now = Date.now(), today = dayOf(now);
+        if (doc.hidden || refreshing || now - lastChecked < 60_000) return;
+        const paid = dossiers?.predictions();
+        const publicDay = dayOf(predictions?.generated_at);
+        if (publicDay === today && (!paid || dayOf(paid.generated_at) === today)) return;
+        refreshing = true;
+        lastChecked = now;
+        try {
+          if (publicDay !== today) {
+            const latest = await visitor.loadPublicPredictions(true);
+            if (latest && latest !== predictions) {
+              predictions = latest;
+              renderDates(); renderLeagues(); renderTable();
+            }
+          }
+          // Read private rows only via the existing authorization and response-order checks.
+          const memberData = dossiers?.predictions();
+          if (memberData && dayOf(memberData.generated_at) < dayOf(predictions?.generated_at)) {
+            await view.renderIndex?.();
+          }
+        } finally {
+          refreshing = false;
+        }
+      }
+      view.addEventListener('pageshow',refreshEdition);
+      view.addEventListener('online',refreshEdition);
+      doc.addEventListener('visibilitychange',refreshEdition);
+      view.setInterval(refreshEdition,60_000);
     }
     const evidence = doc.getElementById('dashboard-evidence-details');
     if (evidence) evidence.addEventListener('toggle',() => {if (evidence.open) renderCharts();});

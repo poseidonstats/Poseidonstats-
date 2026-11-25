@@ -1,3 +1,4 @@
+import {proSample} from './fixtures/pro-sample.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
@@ -598,8 +599,7 @@ test('technical evidence is linked from the footer and legacy material stays in 
   for (const id of ['exemplu-pro-source','dovada','repere-azi','abonament-detalii','intrebari','dashboard-analyses']) assert(legacy.includes(`id="${id}"`),id);
   assert(disclosure('discord-access-details').includes('id="acces"'));
   assert.match(html,/<div data-dashboard-pro-summary>\s*<!-- PRO_SAMPLE_PREVIEW_START -->/);
-  const preview=html.split('<!-- PRO_SAMPLE_PREVIEW_START -->')[1].split('<!-- PRO_SAMPLE_PREVIEW_END -->')[0];
-  const source=html.split('<!-- PRO_SAMPLE_CARD_START -->')[1].split('<!-- PRO_SAMPLE_CARD_END -->')[0];
+  const [preview,source]=proSample(html);
   const identity=markup=>markup.match(/data-sample-fixture="\d+" data-sample-day="\d{4}-\d{2}-\d{2}"/)?.[0];
   assert(identity(preview));
   assert.equal(identity(preview),identity(source));

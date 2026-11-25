@@ -1,4 +1,5 @@
 import test from 'node:test';
+import {proSample as sampleSlots} from './fixtures/pro-sample.mjs';
 import assert from 'node:assert/strict';
 import {createRequire} from 'node:module';
 import {readFileSync} from 'node:fs';
@@ -52,7 +53,8 @@ function assertSampleFacts(sample) {
  }
 }
 test('current public sample conserves the published context and never converts a league sample into team facts',()=>{
- const sample=proSample(readFileSync(new URL('../meciuri.html',import.meta.url),'utf8'));
+ const [, source]=sampleSlots(readFileSync(new URL('../meciuri.html',import.meta.url),'utf8'));
+ const sample=proSample(source);
  if (sample.fixtureId==='1618012') {
   for (const variant of sample.variants) {
    const {context,model}=variant.paragraphs;

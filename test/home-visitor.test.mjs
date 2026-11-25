@@ -9,20 +9,41 @@ const {compactRoute, selectFreeMatches, selectLockedMatches, selectSample} = req
 const html = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
 const source = readFileSync(new URL('../assets/home-visitor.js', import.meta.url), 'utf8');
 
-function mockFeed(start) {
+function publishedFeed(generated_at) {
+  const date = generated_at.slice(0,10);
+  const base = {fixture_id:1,match_date:date+'T16:00:00Z',home_team:'Free '+date,away_team:'Opponent',league:'L'};
+  return {generated_at, n_matches:3, freemium:{free:1, locked:2},matches:[
+    {...base,free:true,prob_home:.44,prob_draw:.3,prob_away:.26},
+    {...base,fixture_id:2,home_team:'Locked '+date,locked:true},
+    {...base,fixture_id:3,home_team:'Future row in old export',match_date:date+'T23:00:00Z',locked:true},
+  ]};
+}
+
+function mockFeed(start, render = false) {
   let now = Date.parse(start);
   const requests = [], published = [];
-  const document = {documentElement:{classList:{add(){},toggle(){}}},readyState:'loading',addEventListener(){},querySelector(){return null;}};
+  const elements = new Map();
+  function node() {
+    return {dataset:{},children:[],textContent:'',querySelector:field,append(...children){this.children.push(...children);},
+      replaceChildren(...children){this.children = children;},setAttribute(){},insertAdjacentHTML(_,html){this.children.push(html);}};
+  }
+  function field(selector) {
+    if (!elements.has(selector)) elements.set(selector,node());
+    return elements.get(selector);
+  }
+  const document = {documentElement:{lang:'en',classList:{add(){},toggle(){}}},readyState:'loading',
+    addEventListener(){},querySelector:render ? field : ()=>null,createElement:node};
   const window = {
-    document,location:new URL('https://poseidonstats.com/'),setTimeout,clearTimeout,
+    document,location:new URL('https://poseidonstats.com/'),setTimeout,clearTimeout,t:key=>key,
     fetch(path,options) {
       return new Promise(resolve => requests.push({path,options,resolve}));
     },
-    PoseidonDossier:{setPublicPredictions(data){published.push(data);}},
+    PoseidonDossier:{setPublicPredictions(data){published.push(data);},
+      publicFixtureIds:()=>new Set([1]),button:()=>'<button>Open dossier</button>'},
   };
   class Clock extends Date { static now() { return now; } }
   runInNewContext(source,{window,URLSearchParams,AbortController,Date:Clock});
-  return {load:window.PoseidonVisitor.loadPublicPredictions,requests,published,advance:time=>{now=Date.parse(time);}};
+  return {load:window.PoseidonVisitor.loadPublicPredictions,requests,published,field,advance:time=>{now=Date.parse(time);}};
 }
 
 test('public feed shares the initial request, retries a failure and retains today on a stale refresh', async () => {
@@ -34,13 +55,13 @@ test('public feed shares the initial request, retries a failure and retains toda
   requests[0].resolve({ok:false});
   assert.equal(await first,null);
   const retry = load();
-  const today = {generated_at:'2026-11-23T10:00:00Z',matches:[]};
+  const today = publishedFeed('2026-11-23T10:00:00Z');
   requests[1].resolve({ok:true,json:async()=>today});
   assert.equal(await retry,today);
   assert.equal(await load(),today);
   assert.equal(requests.length,2);
   const refresh = load(true);
-  requests[2].resolve({ok:true,json:async()=>({generated_at:'2026-11-22T10:00:00Z',matches:[]})});
+  requests[2].resolve({ok:true,json:async()=>publishedFeed('2026-11-22T10:00:00Z')});
   assert.equal(await refresh,today);
   assert.deepEqual(published,[today]);
 });
@@ -50,9 +71,10 @@ test('a late response for the previous Bucharest day cannot replace the new day'
   const previous = load();
   advance('2026-11-23T22:00:01Z');
   const next = load();
-  const today = {generated_at:'2026-11-23T22:00:00Z',matches:[]};
+  const today = publishedFeed('2026-11-24T00:00:00Z');
+  today.generated_at = '2026-11-23T22:00:00Z';
   requests[1].resolve({ok:true,json:async()=>today});
-  requests[0].resolve({ok:true,json:async()=>({generated_at:'2026-11-23T10:00:00Z',matches:[]})});
+  requests[0].resolve({ok:true,json:async()=>publishedFeed('2026-11-23T10:00:00Z')});
   assert.equal(await next,today);
   assert.equal(await previous,null);
   assert.deepEqual(published,[today]);
@@ -160,4 +182,54 @@ test('the Pro selection follows the last chosen language while a previous report
   renders.get('ro')({market:'selecție românească'});
   await flush();
   assert.equal(pick.textContent,'marché français');
+});
+
+test('at Bucharest midnight a refresh serves the published edition with its date, no next-day locks and no old free dossier',async()=>{
+  const previous = publishedFeed('2026-11-23T03:25:00Z');
+  const {load,field,advance,requests} = mockFeed('2026-11-23T21:59:59Z',true);
+  async function reply(body,refresh=false) {
+    const pending = load(refresh);
+    requests.at(-1).resolve({ok:true,json:async()=>body});
+    return pending;
+  }
+  const status = field('[data-visitor-status]');
+  await reply(previous);
+  assert.equal(status.hidden,true);
+  assert.equal(field('[data-visitor-matches]').children[0].children.length,3); // Time, clickable name and arrow.
+  advance('2026-11-23T22:00:01Z');
+  await reply(previous);
+  function verifyPrevious(input) {
+    assert.equal(input('[data-visitor-today]').dateTime,'2026-11-23');
+    assert.equal(input('[data-visitor-status]').dataset.i18n,'visitor.home.previousEdition');
+    assert.equal(input('[data-visitor-status]').hidden,false);
+    const free = input('[data-visitor-matches]').children;
+    const locked = input('[data-visitor-locked-first]').children;
+    assert.equal(free.length,1);
+    assert.equal(free[0].children.length,2); // No clickable dossier for yesterday.
+    assert.equal(free[0].children[1].children[1].textContent,'Free 2026-11-23 – Opponent');
+    assert.equal(locked.length,1);
+    assert.equal(locked[0].children[1].children[1].textContent,'Locked 2026-11-23 – Opponent');
+    assert.match(input('[data-visitor-locked-count]').textContent,/23 November/);
+  }
+  verifyPrevious(field);
+  // A new tab sees the same edition when the morning export is delayed until noon.
+  const fresh = mockFeed('2026-11-24T10:00:00Z',true);
+  const first = fresh.load();
+  fresh.requests[0].resolve({ok:true,json:async()=>previous});
+  await first;
+  verifyPrevious(fresh.field);
+  advance('2026-11-24T10:00:00Z');
+  const next = publishedFeed('2026-11-24T09:30:00Z');
+  for (const invalid of [{...next, matches:[]}, {...next, generated_at:'invalid'},
+       {...next, generated_at:'2026-11-24T19:00:00Z'}, {...next, matches:previous.matches}]) {
+    assert.equal(await reply(invalid,true),previous);
+    verifyPrevious(field);
+  }
+  assert.equal(await reply(next,true),next);
+  assert.equal(status.hidden,true);
+  assert.equal(field('[data-visitor-today]').dateTime,'2026-11-24');
+  assert.equal(field('[data-visitor-matches]').children[0].children.length,3);
+  assert.equal(field('[data-visitor-locked-first]').children[0].children[1].children[1].textContent,'Locked 2026-11-24 – Opponent');
+  assert.equal(await reply(publishedFeed('2026-11-24T05:00:00Z'),true),next);
+  assert.equal(await reply(previous,true),next);
 });

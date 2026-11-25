@@ -121,7 +121,7 @@ def verifica_traduceri() -> list[str]:
     if st != 200:
         return [f"i18n.json: {cod(st, body)}"]
     chei = ("visitor.home.title", "visitor.home.free", "visitor.home.basic", "visitor.home.pro",
-            "visitor.home.lockedTitle", "visitor.home.lockedMore", "visitor.home.lockedLess",
+            "visitor.home.lockedTitle", "visitor.home.lockedMore", "visitor.home.lockedLess", "visitor.home.previousEdition",
             "dashboard.data.unavailable", "nav.predictii", "nav.abonamente", "redesign.edition.read")
     try:
         catalog = json.loads(body)

@@ -1,4 +1,5 @@
 import test from 'node:test';
+import {proSample as sampleSlots} from './fixtures/pro-sample.mjs';
 import assert from 'node:assert/strict';
 import {readFileSync,readdirSync} from 'node:fs';
 import report from '../assets/pro-report.js';
@@ -93,7 +94,8 @@ function assertSampleConserved(sample) {
  }
 }
 test('current public sample keeps one principal selection, context and the review in every language',()=>{
- const sample=proSample(readFileSync(new URL('../meciuri.html',import.meta.url),'utf8'));
+ const [, source]=sampleSlots(readFileSync(new URL('../meciuri.html',import.meta.url),'utf8'));
+ const sample=proSample(source);
  const probability=sample.variants[0].selection?.probability;
  for(const variant of sample.variants){
   assert.equal(variant.selection?.probability,probability,variant.language);
