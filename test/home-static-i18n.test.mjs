@@ -270,6 +270,7 @@ test('the interface recovers from a transient dictionary failure and applies the
 test('homepage links and previous bookmarks still point to real sections and preserve the chosen language', () => {
   const home = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
   const catalogue = readFileSync(new URL('../meciuri.html', import.meta.url), 'utf8');
+  const journal = readFileSync(new URL('../istoric.html', import.meta.url), 'utf8');
   const router = [...home.matchAll(/<script>([\s\S]*?)<\/script>/g)]
     .map(match => match[1]).find(code => code.includes('hashchange') && code.includes('meciuri.html'));
   assert.ok(router, 'existing section bookmarks are routed by the initial HTML');
@@ -283,8 +284,8 @@ test('homepage links and previous bookmarks still point to real sections and pre
     const location={hash:url.hash, search:url.search, replace:next=>{destination=new URL(next,url);}};
     runInContext(router, createContext({location, window:{addEventListener() {}}}));
     assert.equal(destination.search, '?lang=en');
-    const document=destination.pathname==='/' ? home : catalogue;
-    assert(['/', '/meciuri.html'].includes(destination.pathname));
+    const document = {'/':home, '/meciuri.html':catalogue, '/istoric.html':journal}[destination.pathname];
+    assert(document, `#${id} resolves to a supported page`);
     assert(document.includes(`id="${destination.hash.slice(1)}"`), `#${id} resolves to an existing target at ${destination.pathname}${destination.hash}`);
   }
 });

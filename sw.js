@@ -1,10 +1,27 @@
 /* Public responses only. Keep the homepage and its versioned assets together. */
-const CACHE = "poseidon-v129";
-const RELEASE = "20261125-edition-rollover";
-const PREVIOUS_CACHE = "poseidon-v128";
-const PREVIOUS_RELEASE = "20261123-home-catalog";
+const CACHE = "poseidon-v130";
+const RELEASE = "20261125-limba-rezultate";
+const PREVIOUS_CACHE = "poseidon-v129";
+const PREVIOUS_RELEASE = "20261125-edition-rollover";
 // Update with RELEASE when these static files change. The daily dictionary is validated separately.
 const RELEASE_ASSET_SHA256 = {
+  "assets/app.js": "cfc73ffee46b7f6fd395186a8343f5aec02c813b170e9f657f9e2d00bcd779cc",
+  "assets/home-dashboard.js": "d9aac92a7f8e4345e079cac069582294a5854b16007cd0746cdc84468cabf9dc",
+  "assets/i18n-lite.js": "c5bd8e691a9640a986df7d8186b376480452ec5cc7870eed374bce3ff9c4be76",
+  "assets/member-dossier.css": "0e4a89b6aba2e0ec1aca1f60d4c10fc7b52d6a26467899c733a4e9718fb646e2",
+  "assets/member-dossier.js": "aacbff031cf599cdef22848b7a83c802cbcfc93f8b637799405a651d9696b884",
+  "assets/pro-report.js": "59f49fe21a062c564eaa3ca0b7dea418fe88f3758e8cfa6b6e97e2e5941c9b0b",
+  "assets/pro-context.js": "85883d7956fd08c68addc2966880103308b678f902c92eb4a3c68d719c3c987c",
+  "assets/home-modern.css": "7d895e32f3dc529a75dcbe83a2075c31a92472159876811c73fa3b6c300b28eb",
+  "assets/members.js": "a25510651b61bda03af790d9f38aaa6e95027343ac57335437c305737eb029ed",
+  "assets/home-watchlist.js": "ab2473d038e3c2ac0f2d465dd35afd7ed616d38926a270c81ea9190465be35db",
+  "assets/pro-report.css": "0354032afbda4e020f84c16c62960f6bf0d42256578e32b9843b76c3721b7939",
+  "assets/conversion.js": "2e83078674dd83600fb53f70e65dc884605d5a7b07a50e3788a8ea8ed413c729",
+  "assets/country-label.js": "8d2bc3956ddfab93f81fb7341b677a12ecb8525bdb603e05ca93b4401c8d34bd",
+  "assets/home-visitor.css": "d3a6f18da617d6e730a556138004fa4a75918ed1ba7cb0b39cb009c9a0fcc57c",
+  "assets/home-visitor.js": "423babdefccd4199d81e12d465de4cd5276d94bd3f1ea945b806caef561d5c7b",
+};
+const PREVIOUS_ASSET_SHA256 = {
   "assets/app.js": "cb743da77d019987148abbeb09d67bf43b43d80168a27e320c35f508dade1ce4",
   "assets/home-dashboard.js": "82d8c80fa86d57fcca47dd7fbf5aec5d69d7217d0b95379dd07f4513eee3eef9",
   "assets/i18n-lite.js": "c5bd8e691a9640a986df7d8186b376480452ec5cc7870eed374bce3ff9c4be76",
@@ -20,23 +37,6 @@ const RELEASE_ASSET_SHA256 = {
   "assets/country-label.js": "8d2bc3956ddfab93f81fb7341b677a12ecb8525bdb603e05ca93b4401c8d34bd",
   "assets/home-visitor.css": "d3a6f18da617d6e730a556138004fa4a75918ed1ba7cb0b39cb009c9a0fcc57c",
   "assets/home-visitor.js": "54b8aa0c7f9c097bb44c2d31994606f720bbf22b25338ab099661ea30099b0e0",
-};
-const PREVIOUS_ASSET_SHA256 = {
-  "assets/app.js": "4bed68370b1ad097316bd64e0137a3cd28f65ba02da3d1ed0620b6f14a70da68",
-  "assets/home-dashboard.js": "5da7120a7819363f656e3dab9160eb6f0f90706aeaad28b1e25fc6cebe1302f8",
-  "assets/i18n-lite.js": "c5bd8e691a9640a986df7d8186b376480452ec5cc7870eed374bce3ff9c4be76",
-  "assets/member-dossier.css": "0e4a89b6aba2e0ec1aca1f60d4c10fc7b52d6a26467899c733a4e9718fb646e2",
-  "assets/member-dossier.js": "aacbff031cf599cdef22848b7a83c802cbcfc93f8b637799405a651d9696b884",
-  "assets/pro-report.js": "59f49fe21a062c564eaa3ca0b7dea418fe88f3758e8cfa6b6e97e2e5941c9b0b",
-  "assets/pro-context.js": "85883d7956fd08c68addc2966880103308b678f902c92eb4a3c68d719c3c987c",
-  "assets/home-modern.css": "7d895e32f3dc529a75dcbe83a2075c31a92472159876811c73fa3b6c300b28eb",
-  "assets/members.js": "a25510651b61bda03af790d9f38aaa6e95027343ac57335437c305737eb029ed",
-  "assets/home-watchlist.js": "ab2473d038e3c2ac0f2d465dd35afd7ed616d38926a270c81ea9190465be35db",
-  "assets/pro-report.css": "0354032afbda4e020f84c16c62960f6bf0d42256578e32b9843b76c3721b7939",
-  "assets/conversion.js": "2e83078674dd83600fb53f70e65dc884605d5a7b07a50e3788a8ea8ed413c729",
-  "assets/country-label.js": "8d2bc3956ddfab93f81fb7341b677a12ecb8525bdb603e05ca93b4401c8d34bd",
-  "assets/home-visitor.css": "d3a6f18da617d6e730a556138004fa4a75918ed1ba7cb0b39cb009c9a0fcc57c",
-  "assets/home-visitor.js": "8fcca692b8ffc6aff3d74e5f1d9273d81872ea7a3390923ece20cee0a1652a9e",
 };
 const HOME_PATHS = ["", "index.html", "meciuri.html"];
 const HOME_ASSETS = [
@@ -149,7 +149,8 @@ async function matchesRelease(path, response, version = RELEASE) {
         && dictionary?.[lang]?.["webfree.ended"] && dictionary?.[lang]?.["dashboard.market.btts"]
         && dictionary?.[lang]?.["dashboard.watch.title"] && dictionary?.[lang]?.["dashboard.analysis.preview.read"]
         && dictionary?.[lang]?.["matchlist.back"] && dictionary?.[lang]?.["matchlist.halfUnavailable"]
-        && (version === PREVIOUS_RELEASE || (["freeTitle", "freeNote", "freeTotal"]
+        && (version === PREVIOUS_RELEASE || (dictionary?.[lang]?.["istoric.recent"] && dictionary?.[lang]?.["istoric.recentPeriod"]
+          && ["freeTitle", "freeNote", "freeTotal"]
           .every(key => Boolean(dictionary?.[lang]?.[`dashboard.chart.${key}`]))
           && ["title", "freeTitle", "freeOne", "free", "empty", "basic", "pro", "lockedTitle", "lockedMore", "lockedLess", "previousEdition"]
             .every(key => Boolean(dictionary?.[lang]?.[`visitor.home.${key}`]))))));

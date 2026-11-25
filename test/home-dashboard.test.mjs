@@ -32,7 +32,7 @@ function preservedValue(key,value,lang) {
 const marketChoiceCopy = new Set(['index.howto', 'index.cardinfo.body', 'repere.p', 'pro.analize.h2']);
 // Audit 30 Oct: explicit provenance corrections are authorized by 'Remediază tot'.
 // Keep every unrelated legacy dictionary value protected by the original assertions.
-const provenanceCopy = new Set(['pro.intro','unlock.exemplu.h','metod.p.2b','metod.h3.3','metod.p.3','proof.metrici','proof.lead','index.intro','footer.title','ligi.tagline','tr.bt.sample','arhiva.tagline','audit.p','ds.p','ds.note','ds.col.pub_ts','ds.col.platt_versiune',
+const provenanceCopy = new Set(['pro.intro','unlock.exemplu.h','metod.p.2b','metod.h3.3','metod.p.3','proof.metrici','proof.lead','index.intro','footer.title','ligi.tagline','tr.bt.sample','arhiva.tagline','audit.p','ds.p','ds.note','ds.col.pub_ts','ds.col.platt_versiune','istoric.freemium',
   'tr.li.backtest','tr.li.source.bt','tr.li.forward','tr.li.source.fwd','tr.p.fwd',
   ...['home','draw','away','over_1_5','over_2_5','over_3_5','btts','ht_over_0_5','ht_over_1_5'].map(m=>`ds.col.cal_prob_${m}`)]);
 // Audit 19 Nov: fix localization, missing-data messages and neutral editorial copy.
@@ -104,13 +104,14 @@ test('recent chart falls back only to verified free fixtures and uses a separate
   assert.deepEqual(dashboard.cumulativeVerifiedFreeMatches(null),[]);
 });
 
-test('service worker keeps the previous dictionary and requires new chart translations for the new release', async () => {
+test('service worker keeps the previous dictionary and requires the recent journal translations for the new release', async () => {
   const context = createContext({ URL, self:{ registration:{ scope:'https://poseidonstats.com/' }, addEventListener() {} } });
   runInContext(readFileSync(new URL('../sw.js',import.meta.url), 'utf8'),context);
   const acceptsDictionary = runInContext('(response, previous) => matchesRelease(I18N_PATH, response, previous ? PREVIOUS_RELEASE : RELEASE)',context);
   const old = structuredClone(i18n);
   for (const language of Object.keys(old)) {
-    for (const name of ['freeTitle','freeNote','freeTotal']) delete old[language]['dashboard.chart.' + name];
+    delete old[language]['istoric.recent'];
+    delete old[language]['istoric.recentPeriod'];
   }
   assert.equal(await acceptsDictionary(Response.json(i18n),false),true);
   assert.equal(await acceptsDictionary(Response.json(old),false),false);
@@ -441,7 +442,7 @@ test('new dashboard and header links avoid member-hidden intro targets', () => {
   const newUI=html.slice(start,end);
   const marketAnchor=Array.from(newUI.matchAll(/<a\b[^>]*>/g),m=>m[0]).find(tag=>/data-i18n="redesign\.nav\.results"/.test(tag));
   assert(marketAnchor);
-  assert.match(marketAnchor,/href="track-record\.html"/);
+  assert.match(marketAnchor,/href="istoric\.html#rezultate-recente"/);
   const allowed=new Set(['dashboard','pro-analize','dashboard-analyses','abonament','abonament-detalii','matches','intrebari']);
   const introStart=html.indexOf('<section class="intro">');
   assert(introStart >= 0);

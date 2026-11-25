@@ -1052,6 +1052,7 @@
     });
     doc.addEventListener('change', event => {if(event.target.matches('.lang-select')) setTimeout(render,0);});
     if (view && view.addEventListener) {
+      view.addEventListener('poseidon:dictionary-ready',render);
       view.addEventListener('resize',renderCharts);
       view.addEventListener('storage', event => {
         if (event.storageArea !== storage) return;

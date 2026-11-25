@@ -89,19 +89,21 @@ Statistici informative. Modelul poate greși. Verifică sursa. 18+.
 <main class="container">
 
   <section class="intro">
-    <h2 data-i18n="istoric.h2">Istoric public — rând cu rând</h2>
+    <h1 data-i18n="istoric.h2">Istoric public — rând cu rând</h1>
     <p data-i18n="istoric.intro">Selecțiile ★ de pe pagina zilei (piețele și pragurile din scorecard, aceleași ca acolo), judecate pe probabilitatea <strong>publicată înaintea meciului</strong> și afișate <strong>WIN și LOSS</strong> deopotrivă. Cumulat per piață cu <em>Wilson lower bound 95%</em>, baza pieței și lift-ul față de ea.</p>
-    <p class="plans-free" data-i18n="istoric.freemium">🔓 <strong>Jurnalul rămâne public integral</strong>, inclusiv predicțiile care în ziua respectivă erau disponibile doar abonaților. Pe site publicăm gratuit 5 predicții pe zi, dar verificarea performanței noastre nu se plătește niciodată — altfel nu ar mai fi o verificare.</p>
     <div class="card-info">
       <strong data-i18n="istoric.cardinfo.title">De ce și LOSS-urile?</strong> <span data-i18n="istoric.cardinfo.body">Modelul greșește. La probabilitatea publicată de 80-90 % pe Over 1.5, realul a fost ~85 %, deci ~15 % LOSS-uri sunt normale. Site-urile care promit „90 % hit” pe mii de predicții nu arată niciodată N-ul și intervalul; Wilson lower bound le arată pe ale noastre.</span>
     </div>
   </section>
 
   <section id="cumulat-section">
-    <h3 data-i18n="istoric.cumulat.h3">Cumulat per piață (din jurnalul live)</h3>
+    <h2 data-i18n="istoric.cumulat.h3">Cumulat per piață (din jurnalul live)</h2>
     <div id="cumulat-stats" class="muted" data-i18n="empty.fwd.static">Jurnalul live a început pe <strong>2 iunie 2026</strong>. Tabelul se populează pe măsură ce se joacă meciurile.</div>
   </section>
 
+  <h2 id="rezultate-recente" data-i18n="istoric.recent">Rezultate recente</h2>
+  <p class="plans-free" data-i18n="istoric.freemium">Jurnalul public afișează edițiile originale pe care le avem în arhivă și rezultatele verificate disponibile. Cifrele cumulate și auditul folosesc eșantioane separate.</p>
+  <p class="muted" id="istoric-recent-period" hidden></p>
   <section id="filters" class="filters">
     <label><span data-i18n="filters.market">Piață:</span>
       <select id="filter-market">
@@ -149,7 +151,7 @@ Statistici informative. Modelul poate greși. Verifică sursa. 18+.
 </footer>
 
 <script src="assets/country-label.js?v=20261118e"></script>
-<script src="assets/app.js?v=20261119-functions"></script>
+<script src="assets/app.js?release=20261125-limba-rezultate"></script>
 <script>renderIstoric();</script>
 </body>
 </html>

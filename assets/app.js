@@ -5,7 +5,7 @@ const CALIB_URL = "data/calibration.json";
 const FORWARD_URL = "data/forward.json";
 const HISTORY_URL = "data/history.json";
 const SCORECARD_URL = "data/scorecard.json";
-const I18N_URL = "assets/i18n.json?release=20261125-edition-rollover";
+const I18N_URL = "assets/i18n.json?release=20261125-limba-rezultate";
 
 // Scorecard skill per piață (din backtest OOS), folosit pentru contextul piețelor.
 let SCORECARD = {};                       // key -> card (label, tier, threshold, skill_stars, lift_pp, hit)
@@ -61,7 +61,9 @@ function detectLang() {
 }
 
 function t(key) {
-  if (!I18N) return key;
+  if (!I18N) {
+    return (LANG === "en" && typeof window !== "undefined" && window.PoseidonVisitor?.englishText?.(key)) || key;
+  }
   return (I18N[LANG] && I18N[LANG][key]) || (I18N.ro && I18N.ro[key]) || key;
 }
 
@@ -131,8 +133,10 @@ const I18N_READY = new Promise(r => { _i18nGataResolve = r; });
 function i18nGata() { return I18N ? Promise.resolve() : Promise.race([I18N_READY, new Promise(r => setTimeout(r, 2500))]); }
 let loadingDictionary = false;
 let dictionaryStartedAt;
+let dictionaryRetry;
 async function initI18n() {
   if (I18N || loadingDictionary) return;
+  LANG = detectLang();
   loadingDictionary = true;
   dictionaryStartedAt ??= Date.now();
   try {
@@ -147,7 +151,16 @@ async function initI18n() {
   } finally {
     loadingDictionary = false;
   }
-  if (!I18N) return;
+  if (!I18N) {
+    // Keep retrying a temporary HTTP error even when the browser stays online.
+    if (LANG === "en" && window.PoseidonVisitor?.englishText && !document.hidden && !dictionaryRetry) {
+      dictionaryRetry = setTimeout(() => {
+        dictionaryRetry = null;
+        if (!document.hidden) void initI18n();
+      }, 5000);
+    }
+    return;
+  }
   if (_i18nGataResolve) _i18nGataResolve();
   LANG = detectLang();
   applyI18n();
@@ -1544,6 +1557,18 @@ function historyTierLabel(tier) {
 async function renderIstoric() {
   await i18nGata();
   const data = await fetchJSON(HISTORY_URL);
+  const period = document.getElementById("istoric-recent-period");
+  if (period) {
+    const journal = data?.recent_journal;
+    const dates = [journal?.from, journal?.to].map(day => /^\d{4}-\d{2}-\d{2}$/.test(day)
+      ? new Date(day + "T12:00:00Z") : null);
+    period.hidden = journal?.schema !== 1 || dates.some(date => !date || !Number.isFinite(+date)) || dates[0] > dates[1];
+    if (!period.hidden) {
+      const format = new Intl.DateTimeFormat(_loc(), {timeZone:"UTC", day:"numeric", month:"long", year:"numeric"});
+      period.textContent = tt("istoric.recentPeriod", "Rezultate verificate din {period}.")
+        .replace("{period}",format.formatRange(...dates));
+    }
+  }
   if (!data) {
     // history.json indisponibil — empty state onest pe AMBELE secțiuni
     // (înainte, #cumulat-stats rămânea blocat pe "Se încarcă..." pentru totdeauna).
@@ -1699,11 +1724,11 @@ let PRO_REPORT_LOAD;
 function loadProReport() {
   if (window.PoseidonProReport) return Promise.resolve(window.PoseidonProReport);
   if (PRO_REPORT_LOAD) return PRO_REPORT_LOAD;
-  const css = document.createElement("link"); css.rel = "stylesheet"; css.href = "assets/pro-report.css?release=20261125-edition-rollover"; document.head.appendChild(css);
+  const css = document.createElement("link"); css.rel = "stylesheet"; css.href = "assets/pro-report.css?release=20261125-limba-rezultate"; document.head.appendChild(css);
   PRO_REPORT_LOAD = new Promise((resolve,reject) => {
-    const script = document.createElement("script"); script.id = "pro-report-script"; script.src = "assets/pro-context.js?release=20261125-edition-rollover";
+    const script = document.createElement("script"); script.id = "pro-report-script"; script.src = "assets/pro-context.js?release=20261125-limba-rezultate";
     script.onload = script.onerror = () => {
-      const report = document.createElement("script"); report.src = "assets/pro-report.js?release=20261125-edition-rollover";
+      const report = document.createElement("script"); report.src = "assets/pro-report.js?release=20261125-limba-rezultate";
       report.onload = () => resolve(window.PoseidonProReport);
       report.onerror = () => { PRO_REPORT_LOAD = null; css.remove(); script.remove(); report.remove(); reject(new Error("Pro report unavailable")); };
       document.head.appendChild(report);

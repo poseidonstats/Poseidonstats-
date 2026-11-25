@@ -129,6 +129,10 @@ $PY ~/poseidon-site/scripts/make_public_predictions.py >> "$LOG" 2>&1
 $PY ~/poseidon-site/scripts/gen_dashboard_market_history.py >> "$LOG" 2>&1 || \
     echo "[$(ts)] [WARN] gen_dashboard_market_history failed (exportul anterior rămâne)" >> "$LOG"
 
+# Istoricul vizibil păstrează selecțiile edițiilor publice, decontate din scorurile verificate.
+# Nu publicăm zilele reconstruite inerent de build_public_json în tabelul rând cu rând.
+$PY ~/poseidon-site/scripts/restore_public_recent_history.py >> "$LOG" 2>&1
+
 # 🆕 29 sept 2026 — AUDIT public (Brier / log loss / ECE / intervale / vs piață) pe track-record.html, din jurnalul înghețat; best-effort.
 # 24 oct 2026 (audit): rulează ÎNAINTEA rezumatului static, ca cifrele de pe prima pagină să fie cele din auditul de azi (erau cu o zi în urmă).
 $PY ~/poseidon-site/scripts/gen_audit.py >> "$LOG" 2>&1 || echo "[$(ts)] [WARN] gen_audit failed (auditul de ieri rămâne)" >> "$LOG"

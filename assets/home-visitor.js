@@ -13,6 +13,183 @@
   const validDay = value => typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value);
   const markets = ['prob_home','prob_draw','prob_away'];
   const probability = value => typeof value === 'number' && Number.isFinite(value) && value >= 0 && value <= 1;
+  const locales = {ro:'ro-RO',en:'en-GB',es:'es-ES',it:'it-IT',fr:'fr-FR',id:'id-ID'};
+  // Keep the English home, match-list controls and offer usable while the full dictionary loads.
+  const earlyEnglish = {
+    'page.title.home':'POSEIDON — Football predictions today, pre-match probabilities and a verifiable track record',
+    'visitor.home.freeTitle':'Free matches',
+    'visitor.home.free':'{n} free matches',
+    'visitor.home.freeOne':'One free match',
+    'visitor.home.previousEdition':'Latest published edition. The list updates when the new predictions are published.',
+    'visitor.home.empty':'No free predictions have been published for today yet.',
+    'visitor.home.lockedTitle':'Subscriber matches',
+    'visitor.home.lockedLess':'Show fewer matches',
+    'visitor.home.lockedMore':'Show {n} more',
+    'dashboard.table.timezone':'Bucharest time',
+    'dashboard.data.unavailable':'Data temporarily unavailable.',
+    'dashboard.nav.label':'Main navigation',
+    'dashboard.predictions.all':'View all predictions',
+    'loading':'Loading...',
+    'redesign.edition.badge':'Public sample · Pro',
+    'redesign.edition.read':'Read the full analysis',
+    'pro.analize.h2':'Your Pro match reports',
+    'nav.abonamente':'Membership',
+    'approved.nav.menu':'Menu',
+    'nav.simulator':'Simulator',
+    'nav.trackrecord':'Track record',
+    'nav.metodologie':'Methodology',
+    'faq.h2':'Frequently asked questions',
+    'simplify.activation.login':'Sign in with Patreon',
+    'footer.terms':'Terms & Conditions',
+    'footer.privacy':'Privacy',
+    'istoric.recent':'Recent results',
+    'app.download':'Download on the App Store · iPhone',
+    'app.store.badge':'assets/app-store/en.svg',
+    'app.google.download':'Get it on Google Play · Android',
+    'app.google.badge':'assets/google-play/en.svg',
+    'banner.legal':'Statistical information only. The model can be wrong. Verify the source. 18+.',
+    'redesign.hero.title':"Analyse today's matches with probabilities and verifiable results.",
+    'redesign.hero.subtitle':'See 5 complete predictions free each day. Basic gives you access to all predictions, and Pro adds editorial analysis.',
+    'redesign.hero.free':'See the 5 free predictions',
+    'redesign.hero.pro':'See the Pro example',
+    "approved.access.apps":"App access",
+    "approved.access.appsText":"App subscriptions are managed separately. The store shows the price and billing period before confirmation.",
+    "approved.access.billing":"Monthly billing",
+    "approved.access.billingText":"Patreon charges at sign-up and renews monthly. You can cancel in your account. Access continues until the end of the period you paid for.",
+    "approved.access.site":"Website access",
+    "approved.access.title":"Access and payment",
+    "approved.plan.basic.1":"All available predictions",
+    "approved.plan.basic.2":"Statistics reports with sample sizes",
+    "approved.plan.basic.3":"Home and away comparisons",
+    "approved.plan.basic.4":"Goals, halves and corners where data is available",
+    "approved.plan.basic.5":"Simulator with member data",
+    "approved.plan.free.1":"5 complete predictions per day",
+    "approved.plan.free.2":"Eligible free reports",
+    "approved.plan.free.3":"Access to public results",
+    "approved.plan.pro.1":"Everything in Basic",
+    "approved.plan.pro.2":"Editorial analysis for selected matches",
+    "approved.plan.pro.3":"Editorial selection and model probability",
+    "approved.plan.pro.4":"League frequency for the same market",
+    "approved.plan.pro.5":"Pro selection record",
+    "approved.plan.pro.6":"Editorial verdict and result verification",
+    "approved.plans.scope":"These prices are for the website. App subscriptions are purchased separately.",
+    "conversion.basic.body":"All predictions and the simulator. For those who want the numbers.",
+    "conversion.basic.cta":"Choose Basic",
+    "conversion.details":"Compare all benefits",
+    "conversion.free.body":"5 full predictions daily and the entire public track record. No account.",
+    "conversion.free.cta":"View free",
+    "conversion.free.name":"Free",
+    "conversion.note":"Prices in USD · Payment via Patreon · cancel anytime.",
+    "conversion.paypal":"Card declined by your bank? On the Patreon page you can also pay with PayPal.",
+    "conversion.plans.membertitle":"More context with Pro",
+    "conversion.pro.body":"Everything in Basic + written analysis: form, absences, context and pitfalls.",
+    "conversion.pro.cta":"Choose Pro",
+    "conversion.sample":"Read a complete analysis",
+    "conversion.sample.member":"View reviewed analyses",
+    "dashboard.access.free":"FREE",
+    "dashboard.access.locked":"Members",
+    "dashboard.analysis.readarchive":"Read archived analyses",
+    "dashboard.leagues.all":"All leagues",
+    "dashboard.market.away":"Away team away",
+    "dashboard.market.btts":"Both teams to score",
+    "dashboard.market.ft":"Full time {score}",
+    "dashboard.market.history":"Market history",
+    "dashboard.market.home":"Home team at home",
+    "dashboard.market.ht":"Half time {score}",
+    "dashboard.market.ht_over_0_5":"First-half goal",
+    "dashboard.market.label":"Market",
+    "dashboard.market.model":"Model estimate",
+    "dashboard.market.noArchive":"Archived predictions for this day are unavailable.",
+    "dashboard.market.noEstimate":"Estimate unavailable",
+    "dashboard.market.noHistory":"History unavailable",
+    "dashboard.market.over_2_5":"Over 2.5 goals",
+    "dashboard.market.result.away":"Result 2 · Away",
+    "dashboard.market.result.draw":"Result X · Draw",
+    "dashboard.market.result.hit":"Market hit",
+    "dashboard.market.result.home":"Result 1 · Home",
+    "dashboard.market.result.miss":"Market missed",
+    "dashboard.market.result.unavailable":"Result unconfirmed or unavailable",
+    "dashboard.market.sample":"{hits} of {n} matches",
+    "dashboard.market.today":"Today",
+    "dashboard.market.yesterday":"Yesterday",
+    "dashboard.nav.analysis":"Analysis",
+    "dashboard.nav.home":"Home",
+    "dashboard.table.access":"Access",
+    "dashboard.table.count":"{shown} of {total} matches · {free} free",
+    "dashboard.table.empty":"No matches for these filters.",
+    "dashboard.table.error":"Public data could not load. Reload the page.",
+    "dashboard.table.match":"Match",
+    "dashboard.table.rawnote":"1/X/2: raw model probabilities, without empirical remapping.",
+    "dashboard.table.statsOnly":"Match stats only",
+    "dashboard.table.time":"Time",
+    "dashboard.watch.empty":"You aren’t following any matches yet.",
+    "dashboard.watch.error":"This browser could not save the list.",
+    "dashboard.watch.follow":"Follow",
+    "dashboard.watch.remove":"Remove",
+    "dashboard.watch.saved":"Following",
+    "dashboard.watch.scope":"This list is saved in this browser. The result is for the followed market.",
+    "dashboard.watch.title":"Followed matches",
+    "footer.contact":"Contact:",
+    "matchlist.archiveDossierUnavailable":"Dossier unavailable in the archive",
+    "matchlist.back":"Back to matches",
+    "matchlist.basicOffer":"Basic: all available matches, USD 5/month",
+    "matchlist.basicPro":"Basic / Pro",
+    "matchlist.bttsShort":"BTTS",
+    "matchlist.bttsYes":"BTTS: Yes",
+    "matchlist.clearSearch":"Clear search",
+    "matchlist.collapse":"Collapse all",
+    "matchlist.competitionCount":"{n} competitions",
+    "matchlist.competitions":"Competitions",
+    "matchlist.confirmed":"Confirmed",
+    "matchlist.date":"Match date",
+    "matchlist.dossierLoadError":"The dossier could not be loaded.",
+    "matchlist.dossierUnavailable":"The match dossier is unavailable.",
+    "matchlist.estimated":"Predicted score",
+    "matchlist.expand":"Expand all",
+    "matchlist.favorite":"Add or remove from favorites: {match}",
+    "matchlist.favoriteStore":"This browser could not save your favorites.",
+    "matchlist.favorites":"Favorites",
+    "matchlist.final":"Final score",
+    "matchlist.followMarket":"Follow market",
+    "matchlist.followedMarketScope":"Follow a market here to see its outcome. The star saves the match to Favorites. Both lists are saved in this browser.",
+    "matchlist.followedMarkets":"Followed markets",
+    "matchlist.free":"Free",
+    "matchlist.freeDaily":"5 free matches per day",
+    "matchlist.halfShort":"1st-half goal",
+    "matchlist.halfUnavailable":"Half-time score unavailable",
+    "matchlist.listCount":"{shown} matches · {leagues} competitions",
+    "matchlist.marketAway":"Away (2)",
+    "matchlist.marketDraw":"Draw (X)",
+    "matchlist.marketFollowed":"Market followed",
+    "matchlist.marketHome":"Home (1)",
+    "matchlist.marketTracking":"Market tracking",
+    "matchlist.matchCount":"{n} matches",
+    "matchlist.missed":"Missed",
+    "matchlist.models":"Model probabilities",
+    "matchlist.noFavorites":"No favorite matches for this date.",
+    "matchlist.noSelection":"Selection unavailable",
+    "matchlist.oneCompetition":"1 competition",
+    "matchlist.oneMatch":"1 match",
+    "matchlist.overShort":"Over 2.5",
+    "matchlist.preview":"Test version · Unpublished",
+    "matchlist.retryDossier":"Try again",
+    "matchlist.scheduled":"Scheduled",
+    "matchlist.score":"Score",
+    "matchlist.selection":"Selection",
+    "matchlist.subtitle":"Predictions and model probabilities",
+    "matchlist.title":"Match list",
+    "matchlist.unavailable":"Unconfirmed result",
+    "nav.istoric":"History",
+    "nav.ligi":"By league",
+    "nav.predictii":"Predictions",
+    "plans.per":"/ month",
+    "redesign.nav.results":"Results",
+    "simplify.activation.body":"After choosing a subscription, return to the site and sign in with the same Patreon account. Discord is optional.",
+    "simplify.search.empty":"No matches for this search.",
+    "simplify.search.label":"Search for a team",
+    "simplify.search.placeholder":"Team name",
+    "tagline":"Probabilities published before kick-off · <strong>verifiable track record</strong> · public dataset",
+  };
 
   function compactRoute(location) {
     return ['/', '/index', '/index.html'].includes(location.pathname);
@@ -65,8 +242,13 @@
   html.classList.toggle('visitor-compact',compactRoute(view.location));
   let predictions, history, readyDay = '', liveDay = '', revision = 0;
   let predictionRequest, sampleInFlightDay = '', currentSample = null, sampleLanguage = '';
-  const tr = (key, vars = {}) => Object.entries(vars).reduce((text,[name,value]) => text.replace(`{${name}}`, value),view.t(key));
-  const locale = () => ({ro:'ro-RO',en:'en-GB',es:'es-ES',it:'it-IT',fr:'fr-FR',id:'id-ID'})[html.lang] || 'ro-RO';
+  const tr = (key, vars = {}) => {
+    const translated = view.t?.(key);
+    const fallback = html.lang === 'en' ? englishText(key) : null;
+    return Object.entries(vars).reduce((text,[name,value]) => text.replace(`{${name}}`, value),
+      translated && translated !== key ? translated : fallback ?? key);
+  };
+  const locale = () => locales[html.lang] || locales.ro;
   const formatDate = (value, options) => new Intl.DateTimeFormat(locale(),{timeZone:zone,...options}).format(value);
   const clock = value => new Intl.DateTimeFormat(locale(),{timeZone:zone,hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(Date.parse(value));
   const text = (tag, content, className) => {
@@ -87,12 +269,49 @@
     html.classList.toggle('visitor-catalog-access',hasCatalogAccess());
   }
 
-  function syncLinks() {
-    for (const link of doc.querySelectorAll('[data-visitor-language]')) {
+  function explicitLanguage() {
+    const search = view.location.search;
+    const lang = search ? new URLSearchParams(search).get('lang') : null;
+    return Object.hasOwn(locales,lang) ? lang : null;
+  }
+
+  function syncLinks(lang = explicitLanguage() ?? (html.lang || 'ro'), selector = '[data-visitor-language]') {
+    for (const link of doc.querySelectorAll(selector)) {
       const url = new URL(link.href,view.location.href);
-      url.searchParams.set('lang',html.lang || 'ro');
-      link.href = url;
+      if (url.origin !== view.location.origin) continue;
+      url.searchParams.set('lang',lang);
+      link.href = url.href;
     }
+  }
+
+  function englishText(key) {
+    return Object.hasOwn(earlyEnglish,key) ? earlyEnglish[key] : null;
+  }
+
+  function bootstrapLanguage() {
+    const lang = explicitLanguage();
+    const catalog = doc.querySelector('[data-match-catalog]');
+    if (!lang || !(catalog || doc.querySelector('[data-compact-home]'))) return;
+    syncLinks(lang, catalog
+      ? '#home-nav a[href]:not([href^="#"]):not([hreflang]), footer a[href]:not([href^="#"]):not([hreflang])'
+      : undefined);
+    if (lang !== 'en') return;
+    html.lang = lang;
+    for (const element of doc.querySelectorAll('[data-i18n]')) {
+      const value = englishText(element.getAttribute('data-i18n'));
+      if (value?.includes('<')) element.innerHTML = value; // Trusted copy bundled with this release.
+      else if (value) element.textContent = value;
+    }
+    for (const element of doc.querySelectorAll('[data-i18n-attr]')) {
+      for (const pair of element.getAttribute('data-i18n-attr').split(',')) {
+        const [attr,key] = pair.split(':');
+        const value = englishText(key);
+        if (value) element.setAttribute(attr,value);
+      }
+    }
+    const title = doc.querySelector('title[data-page-title]');
+    const value = englishText(title?.getAttribute('data-page-title'));
+    if (value) title.textContent = value;
   }
 
   let remainingLocked = [];
@@ -333,7 +552,7 @@
 
   if (doc.readyState === 'loading') doc.addEventListener('DOMContentLoaded',mount);
   else mount();
-  return {compactRoute, selectFreeMatches, selectLockedMatches, selectSample, loadPublicPredictions, setPublicHistory(journal) {
+  return {compactRoute, selectFreeMatches, selectLockedMatches, selectSample, bootstrapLanguage, englishText, loadPublicPredictions, setPublicHistory(journal) {
     history = journal;
   }};
 });

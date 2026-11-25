@@ -6,58 +6,6 @@
    "status": "in_progress",
    "matches": [
     {
-     "fixture_id": 1631821,
-     "time": "23:30",
-     "country": "Mexico",
-     "league": "Liga Premier Serie A",
-     "home": "Vaqueros Reynosa",
-     "away": "Ciervos",
-     "calibrated_lg": true,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 84,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "X2",
-       "prob": 83,
-       "outcome": "PENDING"
-      },
-      {
-       "market": "Over 2.5",
-       "prob": 65,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null,
-     "snapshot": "dayof"
-    },
-    {
-     "fixture_id": 1649497,
-     "time": "05:00",
-     "country": "USA",
-     "league": "Major League Soccer",
-     "home": "San Jose Earthquakes",
-     "away": "Houston Dynamo",
-     "calibrated_lg": true,
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 77,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null,
-     "snapshot": "prima"
-    },
-    {
      "fixture_id": 1563283,
      "time": "21:45",
      "country": "England",
@@ -65,6 +13,7 @@
      "home": "Bolton",
      "away": "West Brom",
      "calibrated_lg": true,
+     "snapshot": "dayof",
      "picks": [
       {
        "market": "Over 1.5",
@@ -75,8 +24,7 @@
      "ft_h": null,
      "ft_a": null,
      "ht_h": null,
-     "ht_a": null,
-     "snapshot": "dayof"
+     "ht_a": null
     },
     {
      "fixture_id": 1563284,
@@ -86,6 +34,7 @@
      "home": "Burnley",
      "away": "Birmingham",
      "calibrated_lg": true,
+     "snapshot": "dayof",
      "picks": [
       {
        "market": "Over 1.5",
@@ -96,16 +45,937 @@
      "ft_h": null,
      "ft_a": null,
      "ht_h": null,
-     "ht_a": null,
-     "snapshot": "dayof"
+     "ht_a": null
+    }
+   ],
+   "totals": {
+    "picks": 2,
+    "wins": 0,
+    "losses": 0,
+    "pending": 2,
+    "locked_pending": 270
+   }
+  },
+  {
+   "date": "2026-11-24",
+   "status": "resolved",
+   "matches": [
+    {
+     "fixture_id": 1563276,
+     "time": "21:45",
+     "country": "England",
+     "league": "Championship",
+     "home": "Cardiff",
+     "away": "Preston",
+     "calibrated_lg": true,
+     "snapshot": "dayof",
+     "picks": [
+      {
+       "market": "1X",
+       "prob": 85,
+       "outcome": "LOSS"
+      },
+      {
+       "market": "Over 1.5",
+       "prob": 85,
+       "outcome": "WIN"
+      },
+      {
+       "market": "1 (Home)",
+       "prob": 68,
+       "outcome": "LOSS"
+      },
+      {
+       "market": "Over 2.5",
+       "prob": 67,
+       "outcome": "WIN"
+      }
+     ],
+     "ft_h": 0,
+     "ft_a": 4,
+     "ht_h": 0,
+     "ht_a": 2,
+     "publication": {
+      "commit": "69028c6ac2e9f0dfc25f52c52cd806fc61c5ff2c",
+      "generated_at": "2026-11-24T03:25:29+00:00",
+      "edition_time": "2026-11-24T05:26:46+02:00",
+      "match_date": "2026-11-24T19:45:00Z"
+     }
+    },
+    {
+     "fixture_id": 1563279,
+     "time": "21:45",
+     "country": "England",
+     "league": "Championship",
+     "home": "Norwich",
+     "away": "QPR",
+     "calibrated_lg": true,
+     "snapshot": "dayof",
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 80,
+       "outcome": "WIN"
+      }
+     ],
+     "ft_h": 1,
+     "ft_a": 1,
+     "ht_h": 0,
+     "ht_a": 1,
+     "publication": {
+      "commit": "69028c6ac2e9f0dfc25f52c52cd806fc61c5ff2c",
+      "generated_at": "2026-11-24T03:25:29+00:00",
+      "edition_time": "2026-11-24T05:26:46+02:00",
+      "match_date": "2026-11-24T19:45:00Z"
+     }
+    },
+    {
+     "fixture_id": 1596050,
+     "time": "21:45",
+     "country": "England",
+     "league": "Non League Premier - Isthmian",
+     "home": "Eastbourne Borough",
+     "away": "Aveley",
+     "calibrated_lg": true,
+     "snapshot": "dayof",
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 88,
+       "outcome": "WIN"
+      },
+      {
+       "market": "Over 2.5",
+       "prob": 70,
+       "outcome": "WIN"
+      }
+     ],
+     "ft_h": 3,
+     "ft_a": 1,
+     "ht_h": 2,
+     "ht_a": 1,
+     "publication": {
+      "commit": "69028c6ac2e9f0dfc25f52c52cd806fc61c5ff2c",
+      "generated_at": "2026-11-24T03:25:29+00:00",
+      "edition_time": "2026-11-24T05:26:46+02:00",
+      "match_date": "2026-11-24T19:45:00Z"
+     }
+    },
+    {
+     "fixture_id": 1596052,
+     "time": "21:45",
+     "country": "England",
+     "league": "Non League Premier - Isthmian",
+     "home": "Leatherhead",
+     "away": "Ramsgate",
+     "calibrated_lg": true,
+     "snapshot": "dayof",
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 85,
+       "outcome": "LOSS"
+      },
+      {
+       "market": "Over 2.5",
+       "prob": 66,
+       "outcome": "LOSS"
+      }
+     ],
+     "ft_h": 1,
+     "ft_a": 0,
+     "ht_h": 0,
+     "ht_a": 0,
+     "publication": {
+      "commit": "69028c6ac2e9f0dfc25f52c52cd806fc61c5ff2c",
+      "generated_at": "2026-11-24T03:25:29+00:00",
+      "edition_time": "2026-11-24T05:26:46+02:00",
+      "match_date": "2026-11-24T19:45:00Z"
+     }
+    }
+   ],
+   "totals": {
+    "picks": 9,
+    "wins": 5,
+    "losses": 4,
+    "pending": 0,
+    "locked_pending": 0
+   }
+  },
+  {
+   "date": "2026-11-23",
+   "status": "resolved",
+   "matches": [
+    {
+     "fixture_id": 1552536,
+     "time": "21:45",
+     "country": "France",
+     "league": "Ligue 2",
+     "home": "Nantes",
+     "away": "Grenoble",
+     "calibrated_lg": true,
+     "snapshot": "dayof",
+     "picks": [
+      {
+       "market": "Under 3.5",
+       "prob": 70,
+       "outcome": "WIN"
+      }
+     ],
+     "ft_h": 1,
+     "ft_a": 0,
+     "ht_h": 0,
+     "ht_a": 0,
+     "publication": {
+      "commit": "286e13592fa0f0ad92a88b12c414763af9032ef7",
+      "generated_at": "2026-11-23T03:25:26+00:00",
+      "edition_time": "2026-11-23T05:34:54+02:00",
+      "match_date": "2026-11-23T19:45:00Z"
+     }
+    },
+    {
+     "fixture_id": 1548566,
+     "time": "19:00",
+     "country": "Croatia",
+     "league": "HNL",
+     "home": "NK Slaven Belupo",
+     "away": "NK Osijek",
+     "calibrated_lg": true,
+     "snapshot": "dayof",
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 79,
+       "outcome": "LOSS"
+      }
+     ],
+     "ft_h": 1,
+     "ft_a": 0,
+     "ht_h": 1,
+     "ht_a": 0,
+     "publication": {
+      "commit": "286e13592fa0f0ad92a88b12c414763af9032ef7",
+      "generated_at": "2026-11-23T03:25:26+00:00",
+      "edition_time": "2026-11-23T05:34:54+02:00",
+      "match_date": "2026-11-23T17:00:00Z"
+     }
+    },
+    {
+     "fixture_id": 1584467,
+     "time": "19:00",
+     "country": "Turkey",
+     "league": "Süper Lig",
+     "home": "Başakşehir",
+     "away": "Yeni Çorumspor",
+     "calibrated_lg": true,
+     "snapshot": "dayof",
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 81,
+       "outcome": "WIN"
+      }
+     ],
+     "ft_h": 4,
+     "ft_a": 2,
+     "ht_h": 0,
+     "ht_a": 1,
+     "publication": {
+      "commit": "286e13592fa0f0ad92a88b12c414763af9032ef7",
+      "generated_at": "2026-11-23T03:25:26+00:00",
+      "edition_time": "2026-11-23T05:34:54+02:00",
+      "match_date": "2026-11-23T17:00:00Z"
+     }
+    },
+    {
+     "fixture_id": 1553233,
+     "time": "20:00",
+     "country": "Poland",
+     "league": "Ekstraklasa",
+     "home": "Wieczysta Kraków",
+     "away": "Motor Lublin",
+     "calibrated_lg": true,
+     "snapshot": "dayof",
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 84,
+       "outcome": "WIN"
+      },
+      {
+       "market": "Over 2.5",
+       "prob": 65,
+       "outcome": "WIN"
+      }
+     ],
+     "ft_h": 2,
+     "ft_a": 1,
+     "ht_h": 1,
+     "ht_a": 1,
+     "publication": {
+      "commit": "286e13592fa0f0ad92a88b12c414763af9032ef7",
+      "generated_at": "2026-11-23T03:25:26+00:00",
+      "edition_time": "2026-11-23T05:34:54+02:00",
+      "match_date": "2026-11-23T18:00:00Z"
+     }
+    },
+    {
+     "fixture_id": 1557469,
+     "time": "22:00",
+     "country": "England",
+     "league": "Premier League",
+     "home": "Brentford",
+     "away": "Everton",
+     "calibrated_lg": true,
+     "snapshot": "dayof",
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 76,
+       "outcome": "WIN"
+      }
+     ],
+     "ft_h": 4,
+     "ft_a": 0,
+     "ht_h": 2,
+     "ht_a": 0,
+     "publication": {
+      "commit": "286e13592fa0f0ad92a88b12c414763af9032ef7",
+      "generated_at": "2026-11-23T03:25:26+00:00",
+      "edition_time": "2026-11-23T05:34:54+02:00",
+      "match_date": "2026-11-23T20:00:00Z"
+     }
     }
    ],
    "totals": {
     "picks": 6,
-    "wins": 0,
+    "wins": 5,
+    "losses": 1,
+    "pending": 0,
+    "locked_pending": 0
+   }
+  },
+  {
+   "date": "2026-11-22",
+   "status": "resolved",
+   "matches": [
+    {
+     "fixture_id": 1555430,
+     "time": "15:00",
+     "country": "Switzerland",
+     "league": "Super League",
+     "home": "FC Zurich",
+     "away": "FC ST. Gallen",
+     "calibrated_lg": true,
+     "snapshot": "dayof",
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 87,
+       "outcome": "WIN"
+      },
+      {
+       "market": "Over 2.5",
+       "prob": 69,
+       "outcome": "WIN"
+      }
+     ],
+     "ft_h": 2,
+     "ft_a": 2,
+     "ht_h": 1,
+     "ht_a": 0,
+     "publication": {
+      "commit": "25eb0a9e90000588f71744ebd792dbc9c1776d3a",
+      "generated_at": "2026-11-22T03:25:33+00:00",
+      "edition_time": "2026-11-22T05:26:54+02:00",
+      "match_date": "2026-11-22T13:00:00Z"
+     }
+    },
+    {
+     "fixture_id": 1548562,
+     "time": "16:00",
+     "country": "Croatia",
+     "league": "HNL",
+     "home": "Dinamo Zagreb",
+     "away": "Istra 1961",
+     "calibrated_lg": true,
+     "snapshot": "dayof",
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 84,
+       "outcome": "WIN"
+      },
+      {
+       "market": "1X",
+       "prob": 82,
+       "outcome": "WIN"
+      },
+      {
+       "market": "Over 2.5",
+       "prob": 65,
+       "outcome": "WIN"
+      }
+     ],
+     "ft_h": 3,
+     "ft_a": 2,
+     "ht_h": 2,
+     "ht_a": 0,
+     "publication": {
+      "commit": "25eb0a9e90000588f71744ebd792dbc9c1776d3a",
+      "generated_at": "2026-11-22T03:25:33+00:00",
+      "edition_time": "2026-11-22T05:26:54+02:00",
+      "match_date": "2026-11-22T14:00:00Z"
+     }
+    },
+    {
+     "fixture_id": 1555426,
+     "time": "17:30",
+     "country": "Switzerland",
+     "league": "Super League",
+     "home": "Lausanne",
+     "away": "FC Vaduz",
+     "calibrated_lg": true,
+     "snapshot": "dayof",
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 88,
+       "outcome": "WIN"
+      },
+      {
+       "market": "Over 2.5",
+       "prob": 71,
+       "outcome": "WIN"
+      }
+     ],
+     "ft_h": 2,
+     "ft_a": 2,
+     "ht_h": 0,
+     "ht_a": 0,
+     "publication": {
+      "commit": "25eb0a9e90000588f71744ebd792dbc9c1776d3a",
+      "generated_at": "2026-11-22T03:25:33+00:00",
+      "edition_time": "2026-11-22T05:26:54+02:00",
+      "match_date": "2026-11-22T15:30:00Z"
+     }
+    },
+    {
+     "fixture_id": 1557473,
+     "time": "18:30",
+     "country": "England",
+     "league": "Premier League",
+     "home": "Liverpool",
+     "away": "Manchester United",
+     "calibrated_lg": true,
+     "snapshot": "dayof",
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 85,
+       "outcome": "WIN"
+      },
+      {
+       "market": "Over 2.5",
+       "prob": 66,
+       "outcome": "WIN"
+      }
+     ],
+     "ft_h": 4,
+     "ft_a": 0,
+     "ht_h": 2,
+     "ht_a": 0,
+     "publication": {
+      "commit": "25eb0a9e90000588f71744ebd792dbc9c1776d3a",
+      "generated_at": "2026-11-22T03:25:33+00:00",
+      "edition_time": "2026-11-22T05:26:54+02:00",
+      "match_date": "2026-11-22T16:30:00Z"
+     }
+    },
+    {
+     "fixture_id": 1651119,
+     "time": "23:00",
+     "country": "USA",
+     "league": "Major League Soccer",
+     "home": "Nashville SC",
+     "away": "FC Cincinnati",
+     "calibrated_lg": true,
+     "snapshot": "dayof",
+     "picks": [
+      {
+       "market": "1X",
+       "prob": 84,
+       "outcome": "LOSS"
+      },
+      {
+       "market": "Over 1.5",
+       "prob": 84,
+       "outcome": "LOSS"
+      },
+      {
+       "market": "1 (Home)",
+       "prob": 65,
+       "outcome": "LOSS"
+      }
+     ],
+     "ft_h": 0,
+     "ft_a": 1,
+     "ht_h": 0,
+     "ht_a": 1,
+     "publication": {
+      "commit": "25eb0a9e90000588f71744ebd792dbc9c1776d3a",
+      "generated_at": "2026-11-22T03:25:33+00:00",
+      "edition_time": "2026-11-22T05:26:54+02:00",
+      "match_date": "2026-11-22T21:00:00Z"
+     }
+    }
+   ],
+   "totals": {
+    "picks": 12,
+    "wins": 9,
+    "losses": 3,
+    "pending": 0,
+    "locked_pending": 0
+   }
+  },
+  {
+   "date": "2026-11-21",
+   "status": "resolved",
+   "matches": [
+    {
+     "fixture_id": 1563268,
+     "time": "14:30",
+     "country": "England",
+     "league": "Championship",
+     "home": "Norwich",
+     "away": "Cardiff",
+     "calibrated_lg": true,
+     "snapshot": "dayof",
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 85,
+       "outcome": "WIN"
+      },
+      {
+       "market": "Over 2.5",
+       "prob": 66,
+       "outcome": "WIN"
+      }
+     ],
+     "ft_h": 2,
+     "ft_a": 1,
+     "ht_h": 0,
+     "ht_a": 0,
+     "publication": {
+      "commit": "a74eebd8471ea8a7eb53ba0a48b95fa89fe2258d",
+      "generated_at": "2026-11-21T03:26:04+00:00",
+      "edition_time": "2026-11-21T05:27:17+02:00",
+      "match_date": "2026-11-21T12:30:00Z"
+     }
+    },
+    {
+     "fixture_id": 1584469,
+     "time": "15:00",
+     "country": "Turkey",
+     "league": "Süper Lig",
+     "home": "Galatasaray",
+     "away": "Samsunspor",
+     "calibrated_lg": true,
+     "snapshot": "dayof",
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 85,
+       "outcome": "WIN"
+      },
+      {
+       "market": "1X",
+       "prob": 83,
+       "outcome": "WIN"
+      },
+      {
+       "market": "Over 2.5",
+       "prob": 67,
+       "outcome": "WIN"
+      }
+     ],
+     "ft_h": 2,
+     "ft_a": 1,
+     "ht_h": 1,
+     "ht_a": 0,
+     "publication": {
+      "commit": "a74eebd8471ea8a7eb53ba0a48b95fa89fe2258d",
+      "generated_at": "2026-11-21T03:26:04+00:00",
+      "edition_time": "2026-11-21T05:27:17+02:00",
+      "match_date": "2026-11-21T13:00:00Z"
+     }
+    },
+    {
+     "fixture_id": 1575225,
+     "time": "16:30",
+     "country": "Germany",
+     "league": "Bundesliga",
+     "home": "Union Berlin",
+     "away": "RB Leipzig",
+     "calibrated_lg": true,
+     "snapshot": "dayof",
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 87,
+       "outcome": "WIN"
+      },
+      {
+       "market": "Over 2.5",
+       "prob": 69,
+       "outcome": "WIN"
+      }
+     ],
+     "ft_h": 1,
+     "ft_a": 5,
+     "ht_h": 1,
+     "ht_a": 1,
+     "publication": {
+      "commit": "a74eebd8471ea8a7eb53ba0a48b95fa89fe2258d",
+      "generated_at": "2026-11-21T03:26:04+00:00",
+      "edition_time": "2026-11-21T05:27:17+02:00",
+      "match_date": "2026-11-21T14:30:00Z"
+     }
+    },
+    {
+     "fixture_id": 1575229,
+     "time": "16:30",
+     "country": "Germany",
+     "league": "Bundesliga",
+     "home": "SV Elversberg",
+     "away": "SC Freiburg",
+     "calibrated_lg": true,
+     "snapshot": "dayof",
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 86,
+       "outcome": "LOSS"
+      },
+      {
+       "market": "Over 2.5",
+       "prob": 67,
+       "outcome": "LOSS"
+      }
+     ],
+     "ft_h": 0,
+     "ft_a": 1,
+     "ht_h": 0,
+     "ht_a": 0,
+     "publication": {
+      "commit": "a74eebd8471ea8a7eb53ba0a48b95fa89fe2258d",
+      "generated_at": "2026-11-21T03:26:04+00:00",
+      "edition_time": "2026-11-21T05:27:17+02:00",
+      "match_date": "2026-11-21T14:30:00Z"
+     }
+    },
+    {
+     "fixture_id": 1649494,
+     "time": "23:00",
+     "country": "USA",
+     "league": "Major League Soccer",
+     "home": "FC Dallas",
+     "away": "Portland Timbers",
+     "calibrated_lg": true,
+     "snapshot": "dayof",
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 85,
+       "outcome": "WIN"
+      },
+      {
+       "market": "Over 2.5",
+       "prob": 66,
+       "outcome": "WIN"
+      }
+     ],
+     "ft_h": 3,
+     "ft_a": 0,
+     "ht_h": 0,
+     "ht_a": 0,
+     "publication": {
+      "commit": "a74eebd8471ea8a7eb53ba0a48b95fa89fe2258d",
+      "generated_at": "2026-11-21T03:26:04+00:00",
+      "edition_time": "2026-11-21T05:27:17+02:00",
+      "match_date": "2026-11-21T21:00:00Z"
+     }
+    }
+   ],
+   "totals": {
+    "picks": 11,
+    "wins": 9,
+    "losses": 2,
+    "pending": 0,
+    "locked_pending": 0
+   }
+  },
+  {
+   "date": "2026-11-20",
+   "status": "resolved",
+   "matches": [
+    {
+     "fixture_id": 1576233,
+     "time": "19:30",
+     "country": "Germany",
+     "league": "2. Bundesliga",
+     "home": "Arminia Bielefeld",
+     "away": "FC Magdeburg",
+     "calibrated_lg": true,
+     "snapshot": "dayof",
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 86,
+       "outcome": "WIN"
+      },
+      {
+       "market": "Over 2.5",
+       "prob": 68,
+       "outcome": "WIN"
+      }
+     ],
+     "ft_h": 1,
+     "ft_a": 2,
+     "ht_h": 0,
+     "ht_a": 2,
+     "publication": {
+      "commit": "447649ab6a2e3854082fb86660a2dc1af1436843",
+      "generated_at": "2026-11-20T03:26:14+00:00",
+      "edition_time": "2026-11-20T05:27:36+02:00",
+      "match_date": "2026-11-20T17:30:00Z"
+     }
+    },
+    {
+     "fixture_id": 1576235,
+     "time": "19:30",
+     "country": "Germany",
+     "league": "2. Bundesliga",
+     "home": "SV Darmstadt 98",
+     "away": "FC Heidenheim",
+     "calibrated_lg": true,
+     "snapshot": "dayof",
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 84,
+       "outcome": "WIN"
+      },
+      {
+       "market": "Over 2.5",
+       "prob": 65,
+       "outcome": "WIN"
+      }
+     ],
+     "ft_h": 3,
+     "ft_a": 1,
+     "ht_h": 2,
+     "ht_a": 1,
+     "publication": {
+      "commit": "447649ab6a2e3854082fb86660a2dc1af1436843",
+      "generated_at": "2026-11-20T03:26:14+00:00",
+      "edition_time": "2026-11-20T05:27:36+02:00",
+      "match_date": "2026-11-20T17:30:00Z"
+     }
+    },
+    {
+     "fixture_id": 1553230,
+     "time": "21:30",
+     "country": "Poland",
+     "league": "Ekstraklasa",
+     "home": "Pogon Szczecin",
+     "away": "Slask Wroclaw",
+     "calibrated_lg": true,
+     "snapshot": "dayof",
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 80,
+       "outcome": "WIN"
+      }
+     ],
+     "ft_h": 1,
+     "ft_a": 2,
+     "ht_h": 0,
+     "ht_a": 0,
+     "publication": {
+      "commit": "447649ab6a2e3854082fb86660a2dc1af1436843",
+      "generated_at": "2026-11-20T03:26:14+00:00",
+      "edition_time": "2026-11-20T05:27:36+02:00",
+      "match_date": "2026-11-20T19:30:00Z"
+     }
+    }
+   ],
+   "totals": {
+    "picks": 5,
+    "wins": 5,
     "losses": 0,
-    "pending": 6,
-    "locked_pending": 270
+    "pending": 0,
+    "locked_pending": 0
+   }
+  },
+  {
+   "date": "2026-11-19",
+   "status": "resolved",
+   "matches": [
+    {
+     "fixture_id": 1648286,
+     "time": "12:00",
+     "country": "World",
+     "league": "Friendlies",
+     "home": "Switzerland U17",
+     "away": "Czech Republic U17",
+     "calibrated_lg": true,
+     "snapshot": "dayof",
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 82,
+       "outcome": "WIN"
+      }
+     ],
+     "ft_h": 4,
+     "ft_a": 0,
+     "ht_h": 1,
+     "ht_a": 0,
+     "publication": {
+      "commit": "fb7f367850c7f5589e0baafc18b287dae89f37af",
+      "generated_at": "2026-11-19T03:48:27+00:00",
+      "edition_time": "2026-11-19T05:51:18+02:00",
+      "match_date": "2026-11-19T10:00:00Z"
+     }
+    },
+    {
+     "fixture_id": 1635326,
+     "time": "15:00",
+     "country": "Uganda",
+     "league": "Premier League",
+     "home": "Entebbe UPPC",
+     "away": "Kataka",
+     "calibrated_lg": true,
+     "snapshot": "dayof",
+     "picks": [
+      {
+       "market": "1X",
+       "prob": 89,
+       "outcome": "WIN"
+      },
+      {
+       "market": "Over 1.5",
+       "prob": 77,
+       "outcome": "WIN"
+      },
+      {
+       "market": "1 (Home)",
+       "prob": 71,
+       "outcome": "LOSS"
+      }
+     ],
+     "ft_h": 2,
+     "ft_a": 2,
+     "ht_h": 2,
+     "ht_a": 1,
+     "publication": {
+      "commit": "fb7f367850c7f5589e0baafc18b287dae89f37af",
+      "generated_at": "2026-11-19T03:48:27+00:00",
+      "edition_time": "2026-11-19T05:51:18+02:00",
+      "match_date": "2026-11-19T13:00:00Z"
+     }
+    },
+    {
+     "fixture_id": 1551379,
+     "time": "20:00",
+     "country": "Denmark",
+     "league": "1. Division",
+     "home": "FC Fredericia",
+     "away": "Hillerød",
+     "calibrated_lg": true,
+     "snapshot": "dayof",
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 78,
+       "outcome": "WIN"
+      }
+     ],
+     "ft_h": 4,
+     "ft_a": 1,
+     "ht_h": 3,
+     "ht_a": 1,
+     "publication": {
+      "commit": "fb7f367850c7f5589e0baafc18b287dae89f37af",
+      "generated_at": "2026-11-19T03:48:27+00:00",
+      "edition_time": "2026-11-19T05:51:18+02:00",
+      "match_date": "2026-11-19T18:00:00Z"
+     }
+    },
+    {
+     "fixture_id": 1609970,
+     "time": "14:00",
+     "country": "Bosnia",
+     "league": "1st League - RS",
+     "home": "Velež Nevesinje",
+     "away": "Rudar Prijedor",
+     "calibrated_lg": true,
+     "snapshot": "dayof",
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 83,
+       "outcome": "WIN"
+      }
+     ],
+     "ft_h": 1,
+     "ft_a": 4,
+     "ht_h": 1,
+     "ht_a": 2,
+     "publication": {
+      "commit": "fb7f367850c7f5589e0baafc18b287dae89f37af",
+      "generated_at": "2026-11-19T03:48:27+00:00",
+      "edition_time": "2026-11-19T05:51:18+02:00",
+      "match_date": "2026-11-19T12:00:00Z"
+     }
+    },
+    {
+     "fixture_id": 1650488,
+     "time": "18:00",
+     "country": "Liberia",
+     "league": "LFA First Division",
+     "home": "Downtown",
+     "away": "Shaita",
+     "calibrated_lg": true,
+     "snapshot": "dayof",
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 84,
+       "outcome": "WIN"
+      }
+     ],
+     "ft_h": 3,
+     "ft_a": 0,
+     "ht_h": 1,
+     "ht_a": 0,
+     "publication": {
+      "commit": "fb7f367850c7f5589e0baafc18b287dae89f37af",
+      "generated_at": "2026-11-19T03:48:27+00:00",
+      "edition_time": "2026-11-19T05:51:18+02:00",
+      "match_date": "2026-11-19T16:00:00Z"
+     }
+    }
+   ],
+   "totals": {
+    "picks": 7,
+    "wins": 6,
+    "losses": 1,
+    "pending": 0,
+    "locked_pending": 0
    }
   }
  ],
@@ -205,5 +1075,10 @@
   "tinta90_neeligibila": 371,
   "ht_eligibile": 38592
  },
- "note": "Cohortă calibrată eligibilă N=34291. Probabilitatea este reconstruită din snapshot-ul brut înghețat și versiunea Platt arhivată disponibilă la acel moment; cazurile cu disponibilitate necunoscută sunt excluse. Aceasta nu certifică blobul efectiv servit sau toate intrările istorice. Regulile de selecție sunt cele din scorecard; FT folosește ținta90 verificată; HT are eligibilitate și N separate. Baza este frecvența evenimentului în cohorta evaluată, iar lift = hit − bază."
+ "note": "Cohortă calibrată eligibilă N=34291. Probabilitatea este reconstruită din snapshot-ul brut înghețat și versiunea Platt arhivată disponibilă la acel moment; cazurile cu disponibilitate necunoscută sunt excluse. Aceasta nu certifică blobul efectiv servit sau toate intrările istorice. Regulile de selecție sunt cele din scorecard; FT folosește ținta90 verificată; HT are eligibilitate și N separate. Baza este frecvența evenimentului în cohorta evaluată, iar lift = hit − bază.",
+ "recent_journal": {
+  "schema": 1,
+  "from": "2026-11-19",
+  "to": "2026-11-24"
+ }
 }
