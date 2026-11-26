@@ -1,9 +1,121 @@
 {
- "generated_at": "2026-11-25T03:25:34+00:00",
+ "generated_at": "2026-11-26T03:25:42+00:00",
  "days": [
   {
-   "date": "2026-11-25",
+   "date": "2026-11-26",
    "status": "in_progress",
+   "matches": [
+    {
+     "fixture_id": 1603103,
+     "time": "19:00",
+     "country": "Saudi-Arabia",
+     "league": "Pro League",
+     "home": "Al Kholood",
+     "away": "Al-Hilal Saudi FC",
+     "calibrated_lg": true,
+     "snapshot": "dayof",
+     "picks": [
+      {
+       "market": "X2",
+       "prob": 87,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "Over 1.5",
+       "prob": 86,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "Over 2.5",
+       "prob": 68,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null
+    },
+    {
+     "fixture_id": 1603104,
+     "time": "19:00",
+     "country": "Saudi-Arabia",
+     "league": "Pro League",
+     "home": "Al-Nassr",
+     "away": "Al Shabab",
+     "calibrated_lg": true,
+     "snapshot": "dayof",
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 87,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "Over 2.5",
+       "prob": 69,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null
+    },
+    {
+     "fixture_id": 1636315,
+     "time": "19:45",
+     "country": "World",
+     "league": "UEFA Europa League",
+     "home": "Plzen",
+     "away": "Benfica",
+     "calibrated_lg": true,
+     "snapshot": "dayof",
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 84,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null
+    },
+    {
+     "fixture_id": 1636301,
+     "time": "22:00",
+     "country": "World",
+     "league": "UEFA Europa League",
+     "home": "NEC Nijmegen",
+     "away": "Rennes",
+     "calibrated_lg": true,
+     "snapshot": "dayof",
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 83,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null
+    }
+   ],
+   "totals": {
+    "picks": 7,
+    "wins": 0,
+    "losses": 0,
+    "pending": 7,
+    "locked_pending": 174
+   }
+  },
+  {
+   "date": "2026-11-25",
+   "status": "resolved",
    "matches": [
     {
      "fixture_id": 1563283,
@@ -18,13 +130,19 @@
       {
        "market": "Over 1.5",
        "prob": 77,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 1,
+     "ft_a": 3,
+     "ht_h": 0,
+     "ht_a": 1,
+     "publication": {
+      "commit": "b975d98da5b373012261161ceedf824046181e35",
+      "generated_at": "2026-11-25T03:25:34+00:00",
+      "edition_time": "2026-11-25T05:26:47+02:00",
+      "match_date": "2026-11-25T19:45:00Z"
+     }
     },
     {
      "fixture_id": 1563284,
@@ -39,21 +157,27 @@
       {
        "market": "Over 1.5",
        "prob": 79,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 0,
+     "ft_a": 2,
+     "ht_h": 0,
+     "ht_a": 1,
+     "publication": {
+      "commit": "b975d98da5b373012261161ceedf824046181e35",
+      "generated_at": "2026-11-25T03:25:34+00:00",
+      "edition_time": "2026-11-25T05:26:47+02:00",
+      "match_date": "2026-11-25T19:45:00Z"
+     }
     }
    ],
    "totals": {
     "picks": 2,
-    "wins": 0,
+    "wins": 2,
     "losses": 0,
-    "pending": 2,
-    "locked_pending": 270
+    "pending": 0,
+    "locked_pending": 0
    }
   },
   {
@@ -1066,9 +1190,9 @@
   }
  ],
  "integritate": {
-  "total": 64959,
+  "total": 65204,
   "pastrate": 39365,
-  "nerezolvate": 16111,
+  "nerezolvate": 16356,
   "inghetate_dupa_start": 344,
   "reprogramate_peste_prag": 3,
   "recalibrare_indisponibila": 8765,
@@ -1079,6 +1203,6 @@
  "recent_journal": {
   "schema": 1,
   "from": "2026-11-19",
-  "to": "2026-11-24"
+  "to": "2026-11-25"
  }
 }
