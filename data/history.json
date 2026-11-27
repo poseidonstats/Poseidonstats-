@@ -1,28 +1,54 @@
 {
- "generated_at": "2026-11-26T03:25:42+00:00",
+ "generated_at": "2026-11-27T03:25:38+00:00",
  "days": [
   {
-   "date": "2026-11-26",
+   "date": "2026-11-27",
    "status": "in_progress",
    "matches": [
     {
-     "fixture_id": 1603103,
-     "time": "19:00",
+     "fixture_id": 1603087,
+     "time": "14:15",
      "country": "Saudi-Arabia",
      "league": "Pro League",
      "home": "Al Kholood",
-     "away": "Al-Hilal Saudi FC",
+     "away": "Al Khaleej Saihat",
      "calibrated_lg": true,
      "snapshot": "dayof",
      "picks": [
       {
-       "market": "X2",
-       "prob": 87,
+       "market": "Over 1.5",
+       "prob": 83,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null
+    },
+    {
+     "fixture_id": 1603088,
+     "time": "16:20",
+     "country": "Saudi-Arabia",
+     "league": "Pro League",
+     "home": "Al-Qadisiyah FC",
+     "away": "Al-Fayha",
+     "calibrated_lg": true,
+     "snapshot": "dayof",
+     "picks": [
+      {
+       "market": "1X",
+       "prob": 91,
        "outcome": "PENDING"
       },
       {
        "market": "Over 1.5",
        "prob": 86,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "1 (Home)",
+       "prob": 77,
        "outcome": "PENDING"
       },
       {
@@ -37,23 +63,23 @@
      "ht_a": null
     },
     {
-     "fixture_id": 1603104,
-     "time": "19:00",
-     "country": "Saudi-Arabia",
-     "league": "Pro League",
-     "home": "Al-Nassr",
-     "away": "Al Shabab",
+     "fixture_id": 1576245,
+     "time": "19:30",
+     "country": "Germany",
+     "league": "2. Bundesliga",
+     "home": "FC Heidenheim",
+     "away": "FC Nurnberg",
      "calibrated_lg": true,
      "snapshot": "dayof",
      "picks": [
       {
        "market": "Over 1.5",
-       "prob": 87,
+       "prob": 86,
        "outcome": "PENDING"
       },
       {
        "market": "Over 2.5",
-       "prob": 69,
+       "prob": 67,
        "outcome": "PENDING"
       }
      ],
@@ -63,33 +89,12 @@
      "ht_a": null
     },
     {
-     "fixture_id": 1636315,
-     "time": "19:45",
-     "country": "World",
-     "league": "UEFA Europa League",
-     "home": "Plzen",
-     "away": "Benfica",
-     "calibrated_lg": true,
-     "snapshot": "dayof",
-     "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 84,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
-    },
-    {
-     "fixture_id": 1636301,
-     "time": "22:00",
-     "country": "World",
-     "league": "UEFA Europa League",
-     "home": "NEC Nijmegen",
-     "away": "Rennes",
+     "fixture_id": 1575237,
+     "time": "21:30",
+     "country": "Germany",
+     "league": "Bundesliga",
+     "home": "Werder Bremen",
+     "away": "Borussia Monchengladbach",
      "calibrated_lg": true,
      "snapshot": "dayof",
      "picks": [
@@ -106,11 +111,78 @@
     }
    ],
    "totals": {
-    "picks": 7,
+    "picks": 8,
     "wins": 0,
     "losses": 0,
-    "pending": 7,
-    "locked_pending": 174
+    "pending": 8,
+    "locked_pending": 409
+   }
+  },
+  {
+   "date": "2026-11-26",
+   "status": "resolved",
+   "matches": [
+    {
+     "fixture_id": 1636315,
+     "time": "19:45",
+     "country": "World",
+     "league": "UEFA Europa League",
+     "home": "Plzen",
+     "away": "Benfica",
+     "calibrated_lg": true,
+     "snapshot": "dayof",
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 84,
+       "outcome": "WIN"
+      }
+     ],
+     "ft_h": 4,
+     "ft_a": 0,
+     "ht_h": 3,
+     "ht_a": 0,
+     "publication": {
+      "commit": "f3075ad95fa25d472d0b4f7d1dbd80963911f888",
+      "generated_at": "2026-11-26T03:25:42+00:00",
+      "edition_time": "2026-11-26T05:27:04+02:00",
+      "match_date": "2026-11-26T17:45:00Z"
+     }
+    },
+    {
+     "fixture_id": 1636301,
+     "time": "22:00",
+     "country": "World",
+     "league": "UEFA Europa League",
+     "home": "NEC Nijmegen",
+     "away": "Rennes",
+     "calibrated_lg": true,
+     "snapshot": "dayof",
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 83,
+       "outcome": "WIN"
+      }
+     ],
+     "ft_h": 3,
+     "ft_a": 1,
+     "ht_h": 1,
+     "ht_a": 1,
+     "publication": {
+      "commit": "f3075ad95fa25d472d0b4f7d1dbd80963911f888",
+      "generated_at": "2026-11-26T03:25:42+00:00",
+      "edition_time": "2026-11-26T05:27:04+02:00",
+      "match_date": "2026-11-26T20:00:00Z"
+     }
+    }
+   ],
+   "totals": {
+    "picks": 2,
+    "wins": 2,
+    "losses": 0,
+    "pending": 0,
+    "locked_pending": 0
    }
   },
   {
@@ -1190,9 +1262,9 @@
   }
  ],
  "integritate": {
-  "total": 65204,
+  "total": 65306,
   "pastrate": 39365,
-  "nerezolvate": 16356,
+  "nerezolvate": 16458,
   "inghetate_dupa_start": 344,
   "reprogramate_peste_prag": 3,
   "recalibrare_indisponibila": 8765,
@@ -1203,6 +1275,6 @@
  "recent_journal": {
   "schema": 1,
   "from": "2026-11-19",
-  "to": "2026-11-25"
+  "to": "2026-11-26"
  }
 }

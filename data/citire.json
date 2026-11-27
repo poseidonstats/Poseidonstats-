@@ -1,23 +1,101 @@
 {
- "generated_at": "2026-11-25T05:50:06+02:00",
+ "generated_at": "2026-11-26T05:50:02+02:00",
  "zile": [
-  "2026-11-25"
+  "2026-11-26"
  ],
  "meciuri": {
-  "1563283": {
+  "1603103": {
    "echipe": [
-    "Bolton",
-    "West Brom"
+    "Al Kholood",
+    "Al-Hilal Saudi FC"
    ],
    "familia": [
-    "1-1",
-    "1-2"
+    "0-2",
+    "0-3"
    ],
    "directia": "2",
    "p1x2": [
-    35,
-    23,
-    42
+    10,
+    14,
+    76
+   ],
+   "goluri": {
+    "interval": [
+     2,
+     4
+    ],
+    "cel_mai_probabil": 3,
+    "p_interval": 57
+   },
+   "deschide": {
+    "echipa": "oaspetele",
+    "p": 77
+   },
+   "p00_pauza": 9,
+   "n": [
+    20,
+    20
+   ],
+   "versiune": "formule_psg 24 oct 2026",
+   "ko_utc": "2026-11-26T17:00:00Z",
+   "zi_ro": "2026-11-26",
+   "liga": "Pro League",
+   "tara": "Saudi-Arabia",
+   "lam": 3.71
+  },
+  "1603104": {
+   "echipe": [
+    "Al-Nassr",
+    "Al Shabab"
+   ],
+   "familia": [
+    "1-1",
+    "2-1"
+   ],
+   "directia": "1",
+   "p1x2": [
+    57,
+    22,
+    21
+   ],
+   "goluri": {
+    "interval": [
+     1,
+     3
+    ],
+    "cel_mai_probabil": 2,
+    "p_interval": 60
+   },
+   "deschide": {
+    "echipa": null,
+    "p": 58
+   },
+   "p00_pauza": 23,
+   "n": [
+    20,
+    20
+   ],
+   "versiune": "formule_psg 24 oct 2026",
+   "ko_utc": "2026-11-26T17:00:00Z",
+   "zi_ro": "2026-11-26",
+   "liga": "Pro League",
+   "tara": "Saudi-Arabia",
+   "lam": 2.97
+  },
+  "1636315": {
+   "echipe": [
+    "Plzen",
+    "Benfica"
+   ],
+   "familia": [
+    "1-2",
+    "1-1"
+   ],
+   "directia": "2",
+   "p1x2": [
+    22,
+    21,
+    57
    ],
    "goluri": {
     "interval": [
@@ -29,58 +107,58 @@
    },
    "deschide": {
     "echipa": null,
-    "p": 54
+    "p": 48
    },
-   "p00_pauza": 21,
+   "p00_pauza": 25,
    "n": [
     20,
     20
    ],
    "versiune": "formule_psg 24 oct 2026",
-   "ko_utc": "2026-11-25T19:45:00Z",
-   "zi_ro": "2026-11-25",
-   "liga": "Championship",
-   "tara": "England",
-   "lam": 3.18
+   "ko_utc": "2026-11-26T17:45:00Z",
+   "zi_ro": "2026-11-26",
+   "liga": "UEFA Europa League",
+   "tara": "World",
+   "lam": 3.27
   },
-  "1563284": {
+  "1636301": {
    "echipe": [
-    "Burnley",
-    "Birmingham"
+    "NEC Nijmegen",
+    "Rennes"
    ],
    "familia": [
-    "1-1",
-    "0-1"
+    "1-2",
+    "1-1"
    ],
    "directia": "2",
    "p1x2": [
-    28,
-    25,
+    32,
+    21,
     47
    ],
    "goluri": {
     "interval": [
-     1,
-     3
+     2,
+     4
     ],
-    "cel_mai_probabil": 2,
-    "p_interval": 65
+    "cel_mai_probabil": 3,
+    "p_interval": 57
    },
    "deschide": {
     "echipa": null,
-    "p": 58
+    "p": 40
    },
-   "p00_pauza": 24,
+   "p00_pauza": 19,
    "n": [
     20,
     20
    ],
    "versiune": "formule_psg 24 oct 2026",
-   "ko_utc": "2026-11-25T19:45:00Z",
-   "zi_ro": "2026-11-25",
-   "liga": "Championship",
-   "tara": "England",
-   "lam": 2.68
+   "ko_utc": "2026-11-26T20:00:00Z",
+   "zi_ro": "2026-11-26",
+   "liga": "UEFA Europa League",
+   "tara": "World",
+   "lam": 3.69
   }
  },
  "test": {
