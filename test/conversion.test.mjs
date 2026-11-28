@@ -47,6 +47,50 @@ test('late GoatCounter receives queued pageview and intent once, after a privacy
   assert(!JSON.stringify(env.calls).includes('secret-token'));assert(!JSON.stringify(env.calls).includes('@'));
 });
 
+test('catalogue pageviews keep a distinct public path without copying URLs from the browser', () => {
+  for (const [path, expected] of [['/', '/'], ['/index.html', '/'], ['/meciuri', '/meciuri.html'], ['/meciuri.html', '/meciuri.html'], ['/unlisted/private-id', '/']]) {
+    const env = environment('?members_token=private-id');
+    env.root.location.pathname = path;
+    const funnel = tracker(env);
+    env.ready();
+    funnel.mount();
+    assert.equal(env.calls[0].p, expected);
+    assert(!JSON.stringify(env.calls).includes('private-id'));
+  }
+});
+
+test('an eligible locked-match offer is counted once when visible, and its checkout click stays anonymous', () => {
+  const env = environment();
+  const funnel = tracker(env);
+  env.ready();
+  funnel.mount();
+  const button = link({href:'https://www.patreon.com/checkout/PoseidonPredictions?rid=28975826',
+    'data-conversion':'plan-outbound','data-conversion-source':'locked-match','data-conversion-tier':'basic'});
+  let observed = [];
+  env.root.IntersectionObserver = class {
+    constructor(callback) { this.callback = callback; env.observers.push(this); }
+    observe(target) { observed.push(target); }
+    disconnect() { observed = []; }
+  };
+  funnel.observeLockedOffers({querySelectorAll:() => []});
+  funnel.observeLockedOffers({querySelectorAll:() => [button]});
+  const observer = env.observers.at(-1);
+  assert.deepEqual(observed,[button]);
+  observer.callback([{target:button,isIntersecting:false,intersectionRatio:0}]);
+  assert.equal(env.calls.length,1);
+  observer.callback([{target:button,isIntersecting:true,intersectionRatio:0.7}]);
+  observer.callback([{target:button,isIntersecting:true,intersectionRatio:0.7}]);
+  env.listeners.click[0]({target:button,defaultPrevented:true});
+  env.listeners.auxclick[0]({type:'auxclick',button:2,target:button});
+  env.listeners.auxclick[0]({type:'auxclick',button:1,target:button});
+  const viewPath = 'funnel/view/locked-offer/locked-match';
+  assert.deepEqual(env.calls.map(call=>call.p),['/',viewPath,viewPath,'funnel/plan-outbound/locked-match/basic']);
+  assert(env.calls.every(call=>!call.ns),'GoatCounter applies the same session deduplication to views and checkouts');
+  funnel.observeLockedOffers({querySelectorAll:() => [button]},'next edition');
+  observer.callback([{target:button,isIntersecting:true,intersectionRatio:0.7}]);
+  assert.equal(env.calls.at(-1).p,viewPath);
+});
+
 test('blocked or incompatible GoatCounter stops retrying and bounds pending events',()=>{
   const env=environment();const funnel=tracker(env);funnel.mount();
   for(let i=0;i<100;i++)funnel.track('plan-intent','hero','basic');

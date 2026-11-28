@@ -13,7 +13,7 @@
     basic: 'https://www.patreon.com/checkout/PoseidonPredictions?rid=28975826',
     pro: 'https://www.patreon.com/checkout/PoseidonPredictions?rid=28975836'
   });
-  const SOURCES = ['hero', 'header', 'planstrip', 'legacy', 'dashboard'];
+  const SOURCES = ['hero', 'header', 'planstrip', 'legacy', 'dashboard', 'locked-match'];
   const ACTIONS = ['plan-intent', 'plan-outbound', 'login', 'predictions', 'sample', 'track-record', 'methodology', 'analyses', 'market-select', 'watch-toggle', 'dossier-open'];
   const VIEWS = ['pricing', 'planstrip', 'sample', 'dashboard'];
   const CAMPAIGNS = {
@@ -55,6 +55,7 @@
   function create(root) {
     const doc = root.document, queue = [], seen = new Set();
     const query = campaignQuery(root.location && root.location.search);
+    const page = ['/meciuri', '/meciuri.html'].includes(root.location?.pathname) ? '/meciuri.html' : '/';
     const referrer = referralOrigin(doc.referrer);
     const goat = root.goatcounter = root.goatcounter || {};
     // Must run before async count.js. Its automatic calls would otherwise include raw location.search.
@@ -72,7 +73,7 @@
           const data = original.call(gc, vars);
           const event = vars && vars.event === true;
           return Object.assign({}, data, {
-            p: event ? vars.path : '/', t: event ? vars.path : 'PoseidonStats', r: referrer, q: query
+            p: event ? vars.path : page, t: event ? vars.path : 'PoseidonStats', r: referrer, q: query
           });
         };
         gc.get_data = adapted;
@@ -174,6 +175,25 @@
         if (once('access-failure-' + status)) event('funnel/access-failure/' + status);
       }
     }
+    const offerView = 'funnel/view/locked-offer/locked-match';
+    let offerObserver, offerEdition, offerSeen = false;
+    function observeLockedOffers(section, edition) {
+      if (offerEdition !== edition) {
+        offerEdition = edition;
+        offerSeen = false;
+      }
+      if (!section || typeof root.IntersectionObserver !== 'function' || offerSeen) return;
+      if (!offerObserver) {
+        offerObserver = new root.IntersectionObserver(entries => {
+          if (offerSeen || !entries.some(entry => entry.isIntersecting && entry.intersectionRatio >= 0.3)) return;
+          offerSeen = true;
+          event(offerView);
+          offerObserver.disconnect();
+        }, {threshold: 0.3});
+      }
+      offerObserver.disconnect();
+      section.querySelectorAll('a.visitor-unlock').forEach(link => offerObserver.observe(link));
+    }
     function mount() {
       if (mounted) { flush(); return; }
       mounted = true;
@@ -189,10 +209,18 @@
           if (!ev.defaultPrevented) event('funnel/app-outbound/' + store, true);
           return;
         }
-        if (middle) return;
         decoratePlan(element);
         const target = classify(element);
-        if (target) track(target.action, target.source, target.tier);
+        if (!target || (middle && target.action !== 'plan-outbound')) return;
+        if (target.action === 'plan-outbound' && ev.defaultPrevented) return;
+        if (target.source === 'locked-match' && target.action === 'plan-outbound') {
+          // A checkout also proves exposure, including in a long-open tab or before the observer fires.
+          // GoatCounter deduplicates both paths independently within the same visitor session.
+          event(offerView);
+          offerSeen = true;
+          offerObserver?.disconnect();
+        }
+        track(target.action, target.source, target.tier);
       }
       doc.addEventListener('click', onClick, {passive: true});
       doc.addEventListener('auxclick', onClick, {passive: true});
@@ -216,9 +244,9 @@
         }, {threshold: 0.3});
         sections.forEach((_, element) => observer.observe(element));
       }
-      send({path: '/', title: 'PoseidonStats', referrer, event: false});
+      send({path: page, title: 'PoseidonStats', referrer, event: false});
     }
-    return {mount, track, flush, access};
+    return {mount, track, flush, access, observeLockedOffers};
   }
   return {create, campaignQuery};
 });

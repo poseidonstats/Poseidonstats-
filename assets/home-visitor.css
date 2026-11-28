@@ -37,6 +37,8 @@ html.visitor-compact body.home-modern { margin: 0; background: #081522; color: #
 .visitor-home .visitor-fixture .dossier-open { padding: 0; min-height: 0; margin: 0; border: 0; background: transparent; color: inherit; text-align: start; font-family: inherit; white-space: normal; overflow-wrap: anywhere; }
 .visitor-fixture .dossier-open::after { content: ""; position: absolute; inset: 0; }
 .visitor-fixtures li:focus-within { outline: 2px solid #ecc974; outline-offset: -2px; }
+.visitor-home .visitor-unlock { display: inline-block; margin-top: 4px; color: #ecc974; font-size: 14px; font-weight: 650; text-decoration: underline; text-underline-offset: 3px; }
+.visitor-unlock::after { content: ""; position: absolute; inset: 0; }
 .visitor-arrow { color: #b5c6d0; font-size: 20px; }
 .visitor-time, .visitor-home :is(.visitor-link, nav a, .visitor-plans a, [data-visitor-locked-count]) { color: #ecc974; }
 .visitor-time { font-variant-numeric: tabular-nums; font-size: 14px; }

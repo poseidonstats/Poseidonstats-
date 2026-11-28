@@ -23,6 +23,7 @@
     'visitor.home.previousEdition':'Latest published edition. The list updates when the new predictions are published.',
     'visitor.home.empty':'No free predictions have been published for today yet.',
     'visitor.home.lockedTitle':'Subscriber matches',
+    'visitor.home.unlockBasic':'Unlock prediction · Basic, US$5/month on Patreon',
     'visitor.home.lockedLess':'Show fewer matches',
     'visitor.home.lockedMore':'Show {n} more',
     'dashboard.table.timezone':'Bucharest time',
@@ -242,11 +243,11 @@
   html.classList.toggle('visitor-compact',compactRoute(view.location));
   let predictions, history, readyDay = '', liveDay = '', revision = 0;
   let predictionRequest, sampleInFlightDay = '', currentSample = null, sampleLanguage = '';
-  const tr = (key, vars = {}) => {
+  const tr = (key, vars = {}, fallbackText = key) => {
     const translated = view.t?.(key);
     const fallback = html.lang === 'en' ? englishText(key) : null;
     return Object.entries(vars).reduce((text,[name,value]) => text.replace(`{${name}}`, value),
-      translated && translated !== key ? translated : fallback ?? key);
+      translated && translated !== key ? translated : fallback ?? fallbackText);
   };
   const locale = () => locales[html.lang] || locales.ro;
   const formatDate = (value, options) => new Intl.DateTimeFormat(locale(),{timeZone:zone,...options}).format(value);
@@ -266,7 +267,9 @@
   function syncView() {
     const link = doc.querySelector('[data-visitor-member-pro]');
     if (link) link.hidden = !(view.PoseidonMembers?.tier?.() === 'pro' || view.PoseidonMembers?.webFreeDay?.());
-    html.classList.toggle('visitor-catalog-access',hasCatalogAccess());
+    const access = hasCatalogAccess();
+    if (predictions && html.classList.contains('visitor-catalog-access') !== access) renderMatches();
+    html.classList.toggle('visitor-catalog-access',access);
   }
 
   function explicitLanguage() {
@@ -315,18 +318,67 @@
   }
 
   let remainingLocked = [];
+  const basicMatchKey = 'poseidon.basic.match';
 
-  function lockedRow(row) {
+  function rememberBasicMatch(event) {
+    const link = event.target.closest?.('a.visitor-unlock');
+    if (!link || event.defaultPrevented || (event.type === 'auxclick' && event.button !== 1)) return;
+    const edition = day(predictions?.generated_at), fixture = Number(link.dataset.fixture);
+    if (edition !== siteDay.format(Date.now()) || !Number.isSafeInteger(fixture) || fixture < 1) return;
+    try { view.localStorage.setItem(basicMatchKey,JSON.stringify({edition,fixture})); } catch (_) {}
+  }
+
+  // Called after the catalog's access check and first render; only the login callback sets this tab's return target.
+  function resumeBasicMatch(memberPredictions) {
+    if (view.location.hash !== '#meci-ales') return;
+    let selection;
+    try {
+      const raw = view.sessionStorage.getItem(basicMatchKey);
+      view.sessionStorage.removeItem(basicMatchKey);
+      view.history.replaceState(view.history.state,'',view.location.pathname + view.location.search);
+      selection = JSON.parse(raw);
+    } catch (_) { return; }
+    if (!selection || selection.edition !== siteDay.format(Date.now()) ||
+        !Number.isSafeInteger(selection.fixture) || selection.fixture < 1) return;
+    const row = memberPredictions?.matches?.find(match => match.fixture_id === selection.fixture &&
+      match.locked !== true && day(match.match_date) === selection.edition);
+    if (!row) return;
+    view.PoseidonDashboard.revealMatch(doc,row);
+    const heading = doc.querySelector(`#matches .match-report[data-fid="${row.fixture_id}"] .match-header`);
+    heading?.focus({preventScroll:true});
+    heading?.scrollIntoView({block:'center'});
+  }
+
+  function lockedRow(row,offerBasic) {
     const li = doc.createElement('li');
     const time = text('time',clock(row.match_date),'visitor-time');
     time.dateTime = row.match_date;
     const name = doc.createElement('div');
     name.className = 'visitor-fixture';
-    name.append(text('small',row.league || ''),text('strong',`${row.home_team} – ${row.away_team}`));
+    const teams = `${row.home_team} – ${row.away_team}`;
+    name.append(text('small',row.league || ''),text('strong',teams));
+    if (offerBasic) {
+      const label = tr('visitor.home.unlockBasic',{},'Deblochează predicția · Basic, 5 USD/lună pe Patreon');
+      const link = text('a',label,'visitor-unlock');
+      link.href = 'https://www.patreon.com/checkout/PoseidonPredictions?rid=28975826';
+      link.target = '_blank';
+      link.rel = 'noopener';
+      link.setAttribute('aria-label',label + ' · ' + teams);
+      link.dataset.conversion = 'plan-outbound';
+      link.dataset.conversionSource = 'locked-match';
+      link.dataset.conversionTier = 'basic';
+      link.dataset.fixture = String(row.fixture_id);
+      name.append(link);
+    }
     const lock = text('span','🔒','visitor-lock');
     lock.setAttribute('aria-hidden','true');
     li.append(time,name,lock);
     return li;
+  }
+
+  function lockedRows(rows,edition) {
+    const offerBasic = edition === siteDay.format(Date.now()) && !hasCatalogAccess();
+    return rows.map(row => lockedRow(row,offerBasic));
   }
 
   function updateLockedDisclosure() {
@@ -334,7 +386,8 @@
     const rest = doc.querySelector('[data-visitor-locked-rest]');
     const toggle = doc.querySelector('[data-visitor-locked-toggle]');
     toggle.textContent = more.open ? tr('visitor.home.lockedLess') : tr('visitor.home.lockedMore',{n:remainingLocked.length});
-    if (more.open && rest.childElementCount === 0) rest.replaceChildren(...remainingLocked.map(lockedRow));
+    if (more.open && rest.childElementCount === 0) rest.replaceChildren(...lockedRows(remainingLocked,more.dataset.day));
+    view.PoseidonConversion?.observeLockedOffers?.(doc.querySelector('[data-visitor-locked]'), more.dataset.day);
   }
 
   function renderLocked(data,edition,earlierDate) {
@@ -343,7 +396,7 @@
     const rows = selectLockedMatches(data,edition);
     section.hidden = !rows.length;
     const first = doc.querySelector('[data-visitor-locked-first]');
-    first.replaceChildren(...rows.slice(0,3).map(lockedRow));
+    first.replaceChildren(...lockedRows(rows.slice(0,3),edition));
     const count = new Intl.NumberFormat(locale()).format(rows.length);
     section.querySelector('[data-visitor-locked-count]').textContent = earlierDate ? `${count} · ${earlierDate}` : count;
     remainingLocked = rows.slice(3);
@@ -534,6 +587,8 @@
       return;
     }
     doc.querySelector('[data-visitor-locked-more]')?.addEventListener('toggle',updateLockedDisclosure);
+    doc.addEventListener('click',rememberBasicMatch);
+    doc.addEventListener('auxclick',rememberBasicMatch);
     const memberBar = doc.getElementById('members-bar');
     if (memberBar) new MutationObserver(syncView).observe(memberBar,{attributes:true,attributeFilter:['data-account-state']});
     for (const event of ['storage','pageshow']) view.addEventListener(event,syncView);
@@ -552,7 +607,7 @@
 
   if (doc.readyState === 'loading') doc.addEventListener('DOMContentLoaded',mount);
   else mount();
-  return {compactRoute, selectFreeMatches, selectLockedMatches, selectSample, bootstrapLanguage, englishText, loadPublicPredictions, setPublicHistory(journal) {
+  return {compactRoute, selectFreeMatches, selectLockedMatches, selectSample, bootstrapLanguage, englishText, loadPublicPredictions, resumeBasicMatch, setPublicHistory(journal) {
     history = journal;
   }};
 });

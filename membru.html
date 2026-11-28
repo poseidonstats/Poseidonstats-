@@ -30,10 +30,25 @@
   document.documentElement.lang = locale;
   document.title = "POSEIDON — " + messages[locale][1];
   document.querySelector('[role="status"]').textContent = "🔱 " + messages[locale][0];
-  try { var t = new URLSearchParams(location.search).get("members_token"); if (t) localStorage.setItem("poseidon_members_token", t); } catch (e) {}
+  var returnToMatch = false;
+  try {
+    var t = new URLSearchParams(location.search).get("members_token");
+    if (t) {
+      localStorage.setItem("poseidon_members_token", t);
+      var matchKey = "poseidon.basic.match";
+      var pending = localStorage.getItem(matchKey);
+      localStorage.removeItem(matchKey);
+      var match = JSON.parse(pending);
+      var today = new Intl.DateTimeFormat("sv-SE", {timeZone:"Europe/Bucharest"}).format(Date.now());
+      if (match && match.edition === today && Number.isSafeInteger(match.fixture) && match.fixture > 0) {
+        sessionStorage.setItem(matchKey, JSON.stringify({edition:today, fixture:match.fixture}));
+        returnToMatch = true;
+      }
+    }
+  } catch (e) {}
   try { if ("serviceWorker" in navigator) { var regs = await navigator.serviceWorker.getRegistrations(); await Promise.all(regs.map(function (r) { return r.unregister(); })); } } catch (e) {}
   try { if (window.caches) { var ks = await caches.keys(); await Promise.all(ks.map(function (k) { return caches.delete(k); })); } } catch (e) {}
-  location.replace("/?v=" + Date.now());
+  location.replace(returnToMatch ? "/meciuri.html?v=" + Date.now() + "#meci-ales" : "/?v=" + Date.now());
 })();
 </script>
 <noscript><p>Activează JavaScript, apoi deschide <a href="/" style="color:#fff">poseidonstats.com</a>.</p></noscript>

@@ -19,22 +19,23 @@ function publishedFeed(generated_at) {
   ]};
 }
 
-function mockFeed(start, render = false) {
+function mockFeed(start, render = false, members, lang = 'en') {
   let now = Date.parse(start);
   const requests = [], published = [];
   const elements = new Map();
-  function node() {
-    return {dataset:{},children:[],textContent:'',querySelector:field,append(...children){this.children.push(...children);},
-      replaceChildren(...children){this.children = children;},setAttribute(){},insertAdjacentHTML(_,html){this.children.push(html);}};
+  function node(tag) {
+    return {tag,dataset:{},children:[],attributes:{},textContent:'',querySelector:field,append(...children){this.children.push(...children);},
+      get childElementCount(){return this.children.length;},replaceChildren(...children){this.children = children;},
+      setAttribute(key,value){this.attributes[key]=value;},insertAdjacentHTML(_,html){this.children.push(html);}};
   }
   function field(selector) {
     if (!elements.has(selector)) elements.set(selector,node());
     return elements.get(selector);
   }
-  const document = {documentElement:{lang:'en',classList:{add(){},toggle(){}}},readyState:'loading',
+  const document = {documentElement:{lang,classList:{add(){},toggle(){}}},readyState:'loading',
     addEventListener(){},querySelector:render ? field : ()=>null,createElement:node};
   const window = {
-    document,location:new URL('https://poseidonstats.com/'),setTimeout,clearTimeout,t:key=>key,
+    document,location:new URL('https://poseidonstats.com/'),setTimeout,clearTimeout,t:key=>key,PoseidonMembers:members,
     fetch(path,options) {
       return new Promise(resolve => requests.push({path,options,resolve}));
     },
@@ -97,6 +98,86 @@ test('subscriber rows require an explicitly locked current local fixture and are
   assert.deepEqual(selectLockedMatches(null,'2026-11-23'),[]);
 });
 
+test('a guest can choose the Basic checkout on each locked fixture, including the expanded list', async () => {
+  const today = '2026-11-23', feed = publishedFeed(today+'T03:25:00Z');
+  for (const fixture_id of [4,5,6]) feed.matches.push({...feed.matches[1],fixture_id,home_team:'Club '+fixture_id});
+  feed.n_matches += 3;
+  feed.freemium.locked += 3;
+  function links(node) {
+    return node.tag === 'a' ? [node] : (node.children || []).flatMap(links);
+  }
+  async function fixtureLinks(inBrowserAt, members, lang) {
+    const {load,field,requests} = mockFeed(inBrowserAt,true,members,lang);
+    const more = field('[data-visitor-locked-more]');
+    more.dataset.day = today;
+    more.open = true;
+    const pending = load();
+    requests[0].resolve({ok:true,json:async()=>feed});
+    await pending;
+    return ['[data-visitor-locked-first]','[data-visitor-locked-rest]'].flatMap(selector=>links(field(selector)));
+  }
+  const now = today+'T08:00:00Z';
+  assert.match((await fixtureLinks(now,undefined,'ro'))[0].textContent,/Basic.+5 USD\/lună/,'price is readable before the dictionary loads');
+  const offers = await fixtureLinks(now);
+  assert.equal(offers.length,4,'each current locked match has a subscription link');
+  const teams = ['Locked '+today,'Club 4','Club 5','Club 6'];
+  for (const [index,link] of offers.entries()) {
+    assert.equal(link.href,'https://www.patreon.com/checkout/PoseidonPredictions?rid=28975826');
+    assert.equal(link.target,'_blank');
+    assert.match(link.rel,/\bnoopener\b/);
+    assert.equal(link.dataset.conversion,'plan-outbound');
+    assert.equal(link.dataset.conversionSource,'locked-match');
+    assert.equal(link.dataset.conversionTier,'basic');
+    assert.match(link.textContent,/Basic.+5/);
+    assert(link.attributes['aria-label'].includes(teams[index]));
+  }
+  for (const members of [{tier:()=>'basic'}, {tier:()=>'pro'}, {webFreeDay:()=>today}]) {
+    assert.equal((await fixtureLinks(now,members)).length,0,'existing access does not ask for another subscription');
+  }
+  assert.equal((await fixtureLinks('2026-11-24T10:00:00Z')).length,0,'yesterday’s edition is not sold as a current prediction');
+});
+
+test('login returns to the selected member prediction once, only for a current paid fixture', async () => {
+  const key = 'poseidon.basic.match', today = '2026-11-28';
+  const landing = readFileSync(new URL('../membru.html',import.meta.url),'utf8').match(/<script>([\s\S]*?)<\/script>/)[1];
+  const match = {fixture_id:12,match_date:today+'T09:00:00Z',home_team:'A',away_team:'B'};
+  const storage = () => {const values=new Map();return {getItem:k=>values.get(k)??null,setItem:(k,v)=>values.set(k,v),removeItem:k=>values.delete(k)};};
+  class Clock extends Date { static now(){return Date.parse(today+'T08:00:00Z');} }
+  async function login(pending,token='test') {
+    const localStorage=storage(),sessionStorage=storage();
+    localStorage.setItem(key,JSON.stringify(pending));
+    const location={search:token?'?members_token='+token:'',replace(url){this.url=url;}};
+    await runInNewContext(landing,{localStorage,sessionStorage,navigator:{language:'ro'},window:{},location,URLSearchParams,Date:Clock,
+      document:{documentElement:{},querySelector:()=>({})}});
+    return {location,localStorage,sessionStorage};
+  }
+  const selected={edition:today,fixture:12};
+  assert(!(await login(selected,'')).location.url.includes('meciuri.html'));
+  assert(!(await login({...selected,edition:'2026-11-27'})).location.url.includes('meciuri.html'));
+  assert(!(await login({...selected,fixture:'bad'})).location.url.includes('meciuri.html'));
+  async function resume(selectedMatch,memberRows) {
+    const {location,localStorage,sessionStorage}=await login(selectedMatch);
+    assert.match(location.url,/^\/meciuri\.html\?v=\d+#meci-ales$/);
+    assert.equal(localStorage.getItem(key),null);
+    const opened=[],focused=[];
+    const document={readyState:'loading',documentElement:{classList:{add(){},toggle(){}}},addEventListener(){},
+      querySelector:()=>({focus(){focused.push(true);},scrollIntoView(){}})};
+    const window={document,location:new URL(location.url,'https://poseidonstats.com'),sessionStorage,
+      history:{replaceState(){}},PoseidonDashboard:{revealMatch:(_,row)=>opened.push(row.fixture_id)}};
+    runInNewContext(source,{window,Date:Clock,URLSearchParams});
+    const data=memberRows ? {matches:memberRows} : null;
+    window.PoseidonVisitor.resumeBasicMatch(data);
+    window.PoseidonVisitor.resumeBasicMatch(data);
+    assert.equal(sessionStorage.getItem(key),null);
+    return [opened,focused.length];
+  }
+  assert.deepEqual(await resume(selected,[match]),[[12],1]);
+  assert.deepEqual(await resume(selected,null),[[],0]);
+  assert.deepEqual(await resume(selected,[{...match,fixture_id:13}]),[[],0]);
+  assert.deepEqual(await resume(selected,[{...match,match_date:'2026-11-27T09:00:00Z'}]),[[],0]);
+  assert.deepEqual(await resume(selected,[{...match,locked:true}]),[[],0]);
+});
+
 test('compact list takes at most five unlocked current Bucharest fixtures with all three probabilities', () => {
   const row = (fixture_id, time) => ({fixture_id,match_date:`2026-11-23T${time}Z`,home_team:'A',away_team:'B',free:true,prob_home:.42,prob_draw:.27,prob_away:.31});
   const matches = [row(6,'18:00:00'), row(5,'16:00:00'), row(4,'15:00:00'), row(3,'14:00:00'),row(2,'13:00:00'),row(1,'12:00:00'),
@@ -137,6 +218,7 @@ test('one homepage presents free fixtures, the daily Pro sample and subscriber f
     for (const key of markup.matchAll(/data-i18n="([^"]+)"/g)) assert(words[key[1]],lang+':'+key[1]);
     assert(words['visitor.home.lockedMore'].includes('{n}'));
     assert(words['visitor.home.lockedLess']);
+    assert.match(words['visitor.home.unlockBasic'],/Basic.*5.*Patreon/);
   }
 });
 
