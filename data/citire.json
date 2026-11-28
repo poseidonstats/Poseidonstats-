@@ -1,101 +1,23 @@
 {
- "generated_at": "2026-11-26T05:50:02+02:00",
+ "generated_at": "2026-11-27T05:50:00+02:00",
  "zile": [
-  "2026-11-26"
+  "2026-11-27"
  ],
  "meciuri": {
-  "1603103": {
+  "1603087": {
    "echipe": [
     "Al Kholood",
-    "Al-Hilal Saudi FC"
-   ],
-   "familia": [
-    "0-2",
-    "0-3"
-   ],
-   "directia": "2",
-   "p1x2": [
-    10,
-    14,
-    76
-   ],
-   "goluri": {
-    "interval": [
-     2,
-     4
-    ],
-    "cel_mai_probabil": 3,
-    "p_interval": 57
-   },
-   "deschide": {
-    "echipa": "oaspetele",
-    "p": 77
-   },
-   "p00_pauza": 9,
-   "n": [
-    20,
-    20
-   ],
-   "versiune": "formule_psg 24 oct 2026",
-   "ko_utc": "2026-11-26T17:00:00Z",
-   "zi_ro": "2026-11-26",
-   "liga": "Pro League",
-   "tara": "Saudi-Arabia",
-   "lam": 3.71
-  },
-  "1603104": {
-   "echipe": [
-    "Al-Nassr",
-    "Al Shabab"
+    "Al Khaleej Saihat"
    ],
    "familia": [
     "1-1",
-    "2-1"
-   ],
-   "directia": "1",
-   "p1x2": [
-    57,
-    22,
-    21
-   ],
-   "goluri": {
-    "interval": [
-     1,
-     3
-    ],
-    "cel_mai_probabil": 2,
-    "p_interval": 60
-   },
-   "deschide": {
-    "echipa": null,
-    "p": 58
-   },
-   "p00_pauza": 23,
-   "n": [
-    20,
-    20
-   ],
-   "versiune": "formule_psg 24 oct 2026",
-   "ko_utc": "2026-11-26T17:00:00Z",
-   "zi_ro": "2026-11-26",
-   "liga": "Pro League",
-   "tara": "Saudi-Arabia",
-   "lam": 2.97
-  },
-  "1636315": {
-   "echipe": [
-    "Plzen",
-    "Benfica"
-   ],
-   "familia": [
-    "1-2",
-    "1-1"
+    "1-2"
    ],
    "directia": "2",
    "p1x2": [
-    22,
-    21,
-    57
+    36,
+    23,
+    41
    ],
    "goluri": {
     "interval": [
@@ -107,34 +29,34 @@
    },
    "deschide": {
     "echipa": null,
-    "p": 48
+    "p": 45
    },
-   "p00_pauza": 25,
+   "p00_pauza": 17,
    "n": [
     20,
     20
    ],
    "versiune": "formule_psg 24 oct 2026",
-   "ko_utc": "2026-11-26T17:45:00Z",
-   "zi_ro": "2026-11-26",
-   "liga": "UEFA Europa League",
-   "tara": "World",
-   "lam": 3.27
+   "ko_utc": "2026-11-27T12:15:00Z",
+   "zi_ro": "2026-11-27",
+   "liga": "Pro League",
+   "tara": "Saudi-Arabia",
+   "lam": 3.19
   },
-  "1636301": {
+  "1603088": {
    "echipe": [
-    "NEC Nijmegen",
-    "Rennes"
+    "Al-Qadisiyah FC",
+    "Al-Fayha"
    ],
    "familia": [
-    "1-2",
+    "2-1",
     "1-1"
    ],
-   "directia": "2",
+   "directia": "1",
    "p1x2": [
-    32,
+    60,
     21,
-    47
+    19
    ],
    "goluri": {
     "interval": [
@@ -142,23 +64,101 @@
      4
     ],
     "cel_mai_probabil": 3,
-    "p_interval": 57
+    "p_interval": 61
    },
    "deschide": {
-    "echipa": null,
-    "p": 40
+    "echipa": "gazda",
+    "p": 66
    },
-   "p00_pauza": 19,
+   "p00_pauza": 21,
    "n": [
     20,
     20
    ],
    "versiune": "formule_psg 24 oct 2026",
-   "ko_utc": "2026-11-26T20:00:00Z",
-   "zi_ro": "2026-11-26",
-   "liga": "UEFA Europa League",
-   "tara": "World",
-   "lam": 3.69
+   "ko_utc": "2026-11-27T14:20:00Z",
+   "zi_ro": "2026-11-27",
+   "liga": "Pro League",
+   "tara": "Saudi-Arabia",
+   "lam": 3.14
+  },
+  "1576245": {
+   "echipe": [
+    "FC Heidenheim",
+    "FC Nurnberg"
+   ],
+   "familia": [
+    "1-1",
+    "1-2"
+   ],
+   "directia": "2",
+   "p1x2": [
+    38,
+    23,
+    40
+   ],
+   "goluri": {
+    "interval": [
+     2,
+     4
+    ],
+    "cel_mai_probabil": 3,
+    "p_interval": 60
+   },
+   "deschide": {
+    "echipa": null,
+    "p": 45
+   },
+   "p00_pauza": 18,
+   "n": [
+    20,
+    20
+   ],
+   "versiune": "formule_psg 24 oct 2026",
+   "ko_utc": "2026-11-27T17:30:00Z",
+   "zi_ro": "2026-11-27",
+   "liga": "2. Bundesliga",
+   "tara": "Germany",
+   "lam": 3.34
+  },
+  "1575237": {
+   "echipe": [
+    "Werder Bremen",
+    "Borussia Monchengladbach"
+   ],
+   "familia": [
+    "2-1",
+    "1-1"
+   ],
+   "directia": "1",
+   "p1x2": [
+    61,
+    20,
+    19
+   ],
+   "goluri": {
+    "interval": [
+     2,
+     4
+    ],
+    "cel_mai_probabil": 3,
+    "p_interval": 59
+   },
+   "deschide": {
+    "echipa": null,
+    "p": 53
+   },
+   "p00_pauza": 28,
+   "n": [
+    20,
+    20
+   ],
+   "versiune": "formule_psg 24 oct 2026",
+   "ko_utc": "2026-11-27T19:30:00Z",
+   "zi_ro": "2026-11-27",
+   "liga": "Bundesliga",
+   "tara": "Germany",
+   "lam": 3.47
   }
  },
  "test": {

@@ -1,59 +1,33 @@
 {
- "generated_at": "2026-11-27T03:25:38+00:00",
+ "generated_at": "2026-11-28T03:25:36+00:00",
  "days": [
   {
-   "date": "2026-11-27",
+   "date": "2026-11-28",
    "status": "in_progress",
    "matches": [
     {
-     "fixture_id": 1603087,
+     "fixture_id": 1603085,
      "time": "14:15",
      "country": "Saudi-Arabia",
      "league": "Pro League",
-     "home": "Al Kholood",
-     "away": "Al Khaleej Saihat",
+     "home": "Al-Hazm",
+     "away": "Al-Nassr",
      "calibrated_lg": true,
      "snapshot": "dayof",
      "picks": [
-      {
-       "market": "Over 1.5",
-       "prob": 83,
-       "outcome": "PENDING"
-      }
-     ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
-    },
-    {
-     "fixture_id": 1603088,
-     "time": "16:20",
-     "country": "Saudi-Arabia",
-     "league": "Pro League",
-     "home": "Al-Qadisiyah FC",
-     "away": "Al-Fayha",
-     "calibrated_lg": true,
-     "snapshot": "dayof",
-     "picks": [
-      {
-       "market": "1X",
-       "prob": 91,
-       "outcome": "PENDING"
-      },
       {
        "market": "Over 1.5",
        "prob": 86,
        "outcome": "PENDING"
       },
       {
-       "market": "1 (Home)",
-       "prob": 77,
+       "market": "X2",
+       "prob": 83,
        "outcome": "PENDING"
       },
       {
        "market": "Over 2.5",
-       "prob": 68,
+       "prob": 67,
        "outcome": "PENDING"
       }
      ],
@@ -63,12 +37,105 @@
      "ht_a": null
     },
     {
-     "fixture_id": 1576245,
-     "time": "19:30",
+     "fixture_id": 1575234,
+     "time": "16:30",
      "country": "Germany",
-     "league": "2. Bundesliga",
-     "home": "FC Heidenheim",
-     "away": "FC Nurnberg",
+     "league": "Bundesliga",
+     "home": "FSV Mainz 05",
+     "away": "Union Berlin",
+     "calibrated_lg": true,
+     "snapshot": "dayof",
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 87,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "1X",
+       "prob": 84,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "Over 2.5",
+       "prob": 70,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "1 (Home)",
+       "prob": 67,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null
+    },
+    {
+     "fixture_id": 1575235,
+     "time": "16:30",
+     "country": "Germany",
+     "league": "Bundesliga",
+     "home": "Hamburger SV",
+     "away": "Bayern Munich",
+     "calibrated_lg": true,
+     "snapshot": "dayof",
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 87,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "X2",
+       "prob": 84,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "Over 2.5",
+       "prob": 70,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null
+    },
+    {
+     "fixture_id": 1555431,
+     "time": "19:00",
+     "country": "Switzerland",
+     "league": "Super League",
+     "home": "Grasshoppers",
+     "away": "FC Basel 1893",
+     "calibrated_lg": true,
+     "snapshot": "dayof",
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 87,
+       "outcome": "PENDING"
+      },
+      {
+       "market": "Over 2.5",
+       "prob": 69,
+       "outcome": "PENDING"
+      }
+     ],
+     "ft_h": null,
+     "ft_a": null,
+     "ht_h": null,
+     "ht_a": null
+    },
+    {
+     "fixture_id": 1649499,
+     "time": "19:30",
+     "country": "USA",
+     "league": "Major League Soccer",
+     "home": "Charlotte",
+     "away": "Chicago Fire",
      "calibrated_lg": true,
      "snapshot": "dayof",
      "picks": [
@@ -87,6 +154,120 @@
      "ft_a": null,
      "ht_h": null,
      "ht_a": null
+    }
+   ],
+   "totals": {
+    "picks": 14,
+    "wins": 0,
+    "losses": 0,
+    "pending": 14,
+    "locked_pending": 1489
+   }
+  },
+  {
+   "date": "2026-11-27",
+   "status": "resolved",
+   "matches": [
+    {
+     "fixture_id": 1603087,
+     "time": "14:15",
+     "country": "Saudi-Arabia",
+     "league": "Pro League",
+     "home": "Al Kholood",
+     "away": "Al Khaleej Saihat",
+     "calibrated_lg": true,
+     "snapshot": "dayof",
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 83,
+       "outcome": "WIN"
+      }
+     ],
+     "ft_h": 2,
+     "ft_a": 1,
+     "ht_h": 1,
+     "ht_a": 1,
+     "publication": {
+      "commit": "9b0237f61507abab67f4a87b1c59327707acdd8f",
+      "generated_at": "2026-11-27T03:25:38+00:00",
+      "edition_time": "2026-11-27T05:26:59+02:00",
+      "match_date": "2026-11-27T12:15:00Z"
+     }
+    },
+    {
+     "fixture_id": 1603088,
+     "time": "16:20",
+     "country": "Saudi-Arabia",
+     "league": "Pro League",
+     "home": "Al-Qadisiyah FC",
+     "away": "Al-Fayha",
+     "calibrated_lg": true,
+     "snapshot": "dayof",
+     "picks": [
+      {
+       "market": "1X",
+       "prob": 91,
+       "outcome": "WIN"
+      },
+      {
+       "market": "Over 1.5",
+       "prob": 86,
+       "outcome": "WIN"
+      },
+      {
+       "market": "1 (Home)",
+       "prob": 77,
+       "outcome": "WIN"
+      },
+      {
+       "market": "Over 2.5",
+       "prob": 68,
+       "outcome": "LOSS"
+      }
+     ],
+     "ft_h": 2,
+     "ft_a": 0,
+     "ht_h": 0,
+     "ht_a": 0,
+     "publication": {
+      "commit": "9b0237f61507abab67f4a87b1c59327707acdd8f",
+      "generated_at": "2026-11-27T03:25:38+00:00",
+      "edition_time": "2026-11-27T05:26:59+02:00",
+      "match_date": "2026-11-27T14:20:00Z"
+     }
+    },
+    {
+     "fixture_id": 1576245,
+     "time": "19:30",
+     "country": "Germany",
+     "league": "2. Bundesliga",
+     "home": "FC Heidenheim",
+     "away": "FC Nurnberg",
+     "calibrated_lg": true,
+     "snapshot": "dayof",
+     "picks": [
+      {
+       "market": "Over 1.5",
+       "prob": 86,
+       "outcome": "WIN"
+      },
+      {
+       "market": "Over 2.5",
+       "prob": 67,
+       "outcome": "WIN"
+      }
+     ],
+     "ft_h": 3,
+     "ft_a": 1,
+     "ht_h": 1,
+     "ht_a": 1,
+     "publication": {
+      "commit": "9b0237f61507abab67f4a87b1c59327707acdd8f",
+      "generated_at": "2026-11-27T03:25:38+00:00",
+      "edition_time": "2026-11-27T05:26:59+02:00",
+      "match_date": "2026-11-27T17:30:00Z"
+     }
     },
     {
      "fixture_id": 1575237,
@@ -101,21 +282,27 @@
       {
        "market": "Over 1.5",
        "prob": 83,
-       "outcome": "PENDING"
+       "outcome": "WIN"
       }
      ],
-     "ft_h": null,
-     "ft_a": null,
-     "ht_h": null,
-     "ht_a": null
+     "ft_h": 3,
+     "ft_a": 3,
+     "ht_h": 1,
+     "ht_a": 1,
+     "publication": {
+      "commit": "9b0237f61507abab67f4a87b1c59327707acdd8f",
+      "generated_at": "2026-11-27T03:25:38+00:00",
+      "edition_time": "2026-11-27T05:26:59+02:00",
+      "match_date": "2026-11-27T19:30:00Z"
+     }
     }
    ],
    "totals": {
     "picks": 8,
-    "wins": 0,
-    "losses": 0,
-    "pending": 8,
-    "locked_pending": 409
+    "wins": 7,
+    "losses": 1,
+    "pending": 0,
+    "locked_pending": 0
    }
   },
   {
@@ -1262,9 +1449,9 @@
   }
  ],
  "integritate": {
-  "total": 65306,
+  "total": 65589,
   "pastrate": 39365,
-  "nerezolvate": 16458,
+  "nerezolvate": 16741,
   "inghetate_dupa_start": 344,
   "reprogramate_peste_prag": 3,
   "recalibrare_indisponibila": 8765,
@@ -1275,6 +1462,6 @@
  "recent_journal": {
   "schema": 1,
   "from": "2026-11-19",
-  "to": "2026-11-26"
+  "to": "2026-11-27"
  }
 }
