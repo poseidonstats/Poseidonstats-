@@ -51,6 +51,22 @@ html.visitor-compact body.home-modern { margin: 0; background: #081522; color: #
 .visitor-sample > p { color: #426157; font-size: 13px; margin: 2px 0 13px; }
 .visitor-pick { display: block; font-size: 19px; }
 .visitor-sample-action { display: inline-flex; align-items: center; min-height: 44px; gap: 5px; padding: 0; border: 0; background: none; color: inherit; font: inherit; font-weight: 650; text-decoration: underline; text-underline-offset: 4px; cursor: pointer; }
+.visitor-comparison { border: 1px solid #354957; border-radius: 12px; overflow: hidden; background: #0e2030; }
+.visitor-comparison-heading, .visitor-comparison-foot { padding: 14px 16px; }
+.visitor-comparison-heading > p { margin: 0 0 4px; color: #ecc974; font-size: 14px; font-weight: 650; }
+.visitor-comparison-heading > small { display: block; margin-top: 4px; }
+.visitor-comparison-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-block: 1px solid #354957; }
+.visitor-comparison-grid article { min-width: 0; padding: 14px 16px; overflow-wrap: anywhere; }
+.visitor-comparison-grid article + article { background: #142b38; border-inline-start: 1px solid #354957; }
+.visitor-comparison .visitor-comparison-grid h3 { font-size: 17px; color: #fff; }
+.visitor-comparison-grid p { margin: 8px 0 0; font-size: 15px; line-height: 1.5; }
+.visitor-comparison-foot p { margin: 0; font-weight: 650; }
+.visitor-comparison-actions { display: flex; flex-wrap: wrap; gap: 0 18px; }
+.visitor-comparison-actions a { text-underline-offset: 3px; }
+@media (max-width: 359px) {
+  .visitor-comparison-grid { grid-template-columns: 1fr; }
+  .visitor-comparison-grid article + article { border-inline-start: 0; border-block-start: 1px solid #354957; }
+}
 .visitor-home [data-visitor-locked-count] { font-size: 15px; font-weight: 500; margin-inline-start: 4px; }
 .visitor-home [data-visitor-locked-more] { background: none; padding: 0; border: 0; margin: 0; }
 .visitor-home [data-visitor-locked-toggle] { width: fit-content; padding: 0; background: none; border: 0; color: #ecc974; font-weight: 650; cursor: pointer; text-decoration: underline; text-underline-offset: 4px; list-style: none; }

@@ -16,6 +16,14 @@
   const locales = {ro:'ro-RO',en:'en-GB',es:'es-ES',it:'it-IT',fr:'fr-FR',id:'id-ID'};
   // Keep the English home, match-list controls and offer usable while the full dictionary loads.
   const earlyEnglish = {
+    "comparison.title": "Basic and Pro on the same match",
+    "comparison.basic": "What you see in Basic",
+    "comparison.pro": "What Pro adds",
+    "comparison.basicText": "The model expected 3.06 goals for Bayern and 0.99 for Köln. Its most likely scoreline was 3–0.",
+    "comparison.proText": "The report flagged the absence of Manuel Neuer and Luis Díaz. Its main selection was Bayern to win or draw (1X). The alternative was at least three goals in the match.",
+    "comparison.result": "Final score 1–1. The draw confirmed the 1X selection. The alternative needed at least three goals and only two were scored.",
+    "comparison.archive": "Read the archived analysis",
+    "comparison.timing": "Analysis published at 07:34 · Kick-off at 21:30 (Bucharest time)",
     'page.title.home':'POSEIDON — Football predictions today, pre-match probabilities and a verifiable track record',
     'visitor.home.freeTitle':'Free matches',
     'visitor.home.free':'{n} free matches',

@@ -198,11 +198,11 @@ test('public sample rejects a stale day, a moved kickoff or an incomplete identi
   assert.equal(selectSample({date:today},today),null);
 });
 
-test('one homepage presents free fixtures, the daily Pro sample and subscriber fixtures before any offer', () => {
+test('the homepage keeps the daily Pro sample, archived plan comparison and subscriber fixtures distinct', () => {
   const markup = html.match(/<main[^>]*data-compact-home[^>]*>[\s\S]*?<\/main>/)?.[0];
   assert(markup);
   const sections = [...markup.matchAll(/<section[^>]* id="([^"]+)"/g)].map(m=>m[1]);
-  assert.deepEqual(sections,['dashboard','public-pro-demo','meciuri-cu-abonament']);
+  assert.deepEqual(sections,['dashboard','public-pro-demo','comparatie-basic-pro','meciuri-cu-abonament']);
   for (const part of ['data-visitor-locked-first','data-visitor-locked-rest','data-visitor-locked-more','data-visitor-member-pro']) assert(markup.includes(part));
   assert(!html.includes('visitor-expanded'));
   const catalog = readFileSync(new URL('../meciuri.html',import.meta.url),'utf8');
@@ -220,6 +220,21 @@ test('one homepage presents free fixtures, the daily Pro sample and subscriber f
     assert(words['visitor.home.lockedLess']);
     assert.match(words['visitor.home.unlockBasic'],/Basic.*5.*Patreon/);
   }
+});
+
+test('the public Basic and Pro comparison works without the daily sample and links to the archived fixture', () => {
+  const section = html.match(/<section id="comparatie-basic-pro"([^>]*)>([\s\S]*?)<\/section>/);
+  assert(section, 'the comparison is present in the initial HTML');
+  assert.doesNotMatch(section[1], /\bhidden\b|data-visitor-sample/);
+  const content = section[2];
+  for (const key of ['basic','basicText','pro','proText','result','archive']) {
+    assert.match(content,new RegExp('data-i18n="comparison\\.' + key + '"[^>]*>[^<]+<'));
+  }
+  const archiveLink = content.match(/href="(analize\/(\d{4}-\d{2}-\d{2})\.html)#(m\d+)"/);
+  assert(archiveLink,'the reader can jump directly to the match in its original edition');
+  assert(content.includes('datetime="' + archiveLink[2] + '"'));
+  const archive = readFileSync(new URL('../' + archiveLink[1],import.meta.url),'utf8');
+  assert(archive.includes('id="' + archiveLink[3] + '"'),'the fixture is in the linked archive');
 });
 
 test('the Pro selection follows the last chosen language while a previous report is loading', async () => {

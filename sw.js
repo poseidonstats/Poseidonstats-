@@ -1,10 +1,27 @@
 /* Public responses only. Keep the homepage and its versioned assets together. */
-const CACHE = "poseidon-v131";
-const RELEASE = "20261128-abonament-meci";
-const PREVIOUS_CACHE = "poseidon-v130";
-const PREVIOUS_RELEASE = "20261125-limba-rezultate";
+const CACHE = "poseidon-v132";
+const RELEASE = "20261128-comparatie-planuri";
+const PREVIOUS_CACHE = "poseidon-v131";
+const PREVIOUS_RELEASE = "20261128-abonament-meci";
 // Update with RELEASE when these static files change. The daily dictionary is validated separately.
 const RELEASE_ASSET_SHA256 = {
+  "assets/app.js": "9e4993415f853d99572abda7d2ff91d8b1f9a5f7d1ac84388598b64a1634f79f",
+  "assets/home-dashboard.js": "d9aac92a7f8e4345e079cac069582294a5854b16007cd0746cdc84468cabf9dc",
+  "assets/i18n-lite.js": "c5bd8e691a9640a986df7d8186b376480452ec5cc7870eed374bce3ff9c4be76",
+  "assets/member-dossier.css": "0e4a89b6aba2e0ec1aca1f60d4c10fc7b52d6a26467899c733a4e9718fb646e2",
+  "assets/member-dossier.js": "aacbff031cf599cdef22848b7a83c802cbcfc93f8b637799405a651d9696b884",
+  "assets/pro-report.js": "59f49fe21a062c564eaa3ca0b7dea418fe88f3758e8cfa6b6e97e2e5941c9b0b",
+  "assets/pro-context.js": "85883d7956fd08c68addc2966880103308b678f902c92eb4a3c68d719c3c987c",
+  "assets/home-modern.css": "7d895e32f3dc529a75dcbe83a2075c31a92472159876811c73fa3b6c300b28eb",
+  "assets/members.js": "a25510651b61bda03af790d9f38aaa6e95027343ac57335437c305737eb029ed",
+  "assets/home-watchlist.js": "ab2473d038e3c2ac0f2d465dd35afd7ed616d38926a270c81ea9190465be35db",
+  "assets/pro-report.css": "0354032afbda4e020f84c16c62960f6bf0d42256578e32b9843b76c3721b7939",
+  "assets/conversion.js": "6dfc42e1547eea76ef67f1912fb307b8c5e456cc3a977648b879244bed50c334",
+  "assets/country-label.js": "8d2bc3956ddfab93f81fb7341b677a12ecb8525bdb603e05ca93b4401c8d34bd",
+  "assets/home-visitor.css": "22c6ba052a1062a0514bf0d4902c910d469dc6b9ab949920af3ca726f9d56fe4",
+  "assets/home-visitor.js": "dd066bc2db229712b831ba03f4d070975025307885189eff60d6885f07b2f3e0",
+};
+const PREVIOUS_ASSET_SHA256 = {
   "assets/app.js": "044cd5e965d95bf335347862d39bf47e20b92146c36628567906f3e76b87e284",
   "assets/home-dashboard.js": "d9aac92a7f8e4345e079cac069582294a5854b16007cd0746cdc84468cabf9dc",
   "assets/i18n-lite.js": "c5bd8e691a9640a986df7d8186b376480452ec5cc7870eed374bce3ff9c4be76",
@@ -20,23 +37,6 @@ const RELEASE_ASSET_SHA256 = {
   "assets/country-label.js": "8d2bc3956ddfab93f81fb7341b677a12ecb8525bdb603e05ca93b4401c8d34bd",
   "assets/home-visitor.css": "2caff01be11e0a38a8ee78734c90606623dc07a0bfe3dc395f1f5a919c2c0a4d",
   "assets/home-visitor.js": "d80b0967f0949c7a12e4caec9b6b8a072562471aefa51f0eeea639318cbc7154",
-};
-const PREVIOUS_ASSET_SHA256 = {
-  "assets/app.js": "cfc73ffee46b7f6fd395186a8343f5aec02c813b170e9f657f9e2d00bcd779cc",
-  "assets/home-dashboard.js": "d9aac92a7f8e4345e079cac069582294a5854b16007cd0746cdc84468cabf9dc",
-  "assets/i18n-lite.js": "c5bd8e691a9640a986df7d8186b376480452ec5cc7870eed374bce3ff9c4be76",
-  "assets/member-dossier.css": "0e4a89b6aba2e0ec1aca1f60d4c10fc7b52d6a26467899c733a4e9718fb646e2",
-  "assets/member-dossier.js": "aacbff031cf599cdef22848b7a83c802cbcfc93f8b637799405a651d9696b884",
-  "assets/pro-report.js": "59f49fe21a062c564eaa3ca0b7dea418fe88f3758e8cfa6b6e97e2e5941c9b0b",
-  "assets/pro-context.js": "85883d7956fd08c68addc2966880103308b678f902c92eb4a3c68d719c3c987c",
-  "assets/home-modern.css": "7d895e32f3dc529a75dcbe83a2075c31a92472159876811c73fa3b6c300b28eb",
-  "assets/members.js": "a25510651b61bda03af790d9f38aaa6e95027343ac57335437c305737eb029ed",
-  "assets/home-watchlist.js": "ab2473d038e3c2ac0f2d465dd35afd7ed616d38926a270c81ea9190465be35db",
-  "assets/pro-report.css": "0354032afbda4e020f84c16c62960f6bf0d42256578e32b9843b76c3721b7939",
-  "assets/conversion.js": "2e83078674dd83600fb53f70e65dc884605d5a7b07a50e3788a8ea8ed413c729",
-  "assets/country-label.js": "8d2bc3956ddfab93f81fb7341b677a12ecb8525bdb603e05ca93b4401c8d34bd",
-  "assets/home-visitor.css": "d3a6f18da617d6e730a556138004fa4a75918ed1ba7cb0b39cb009c9a0fcc57c",
-  "assets/home-visitor.js": "423babdefccd4199d81e12d465de4cd5276d94bd3f1ea945b806caef561d5c7b",
 };
 const HOME_PATHS = ["", "index.html", "meciuri.html"];
 const HOME_ASSETS = [
@@ -149,7 +149,8 @@ async function matchesRelease(path, response, version = RELEASE) {
         && dictionary?.[lang]?.["webfree.ended"] && dictionary?.[lang]?.["dashboard.market.btts"]
         && dictionary?.[lang]?.["dashboard.watch.title"] && dictionary?.[lang]?.["dashboard.analysis.preview.read"]
         && dictionary?.[lang]?.["matchlist.back"] && dictionary?.[lang]?.["matchlist.halfUnavailable"]
-        && (version === PREVIOUS_RELEASE || (dictionary?.[lang]?.["istoric.recent"] && dictionary?.[lang]?.["istoric.recentPeriod"]
+        && (version === PREVIOUS_RELEASE || (["title", "basic", "pro", "basicText", "proText", "result", "archive", "timing"]
+          .every(key => Boolean(dictionary?.[lang]?.[`comparison.${key}`])) && dictionary?.[lang]?.["istoric.recent"] && dictionary?.[lang]?.["istoric.recentPeriod"]
           && ["freeTitle", "freeNote", "freeTotal"]
           .every(key => Boolean(dictionary?.[lang]?.[`dashboard.chart.${key}`]))
           && ["title", "freeTitle", "freeOne", "free", "empty", "basic", "pro", "lockedTitle", "lockedMore", "lockedLess", "previousEdition", "unlockBasic"]
