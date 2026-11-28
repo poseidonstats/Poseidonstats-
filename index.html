@@ -94,6 +94,26 @@
   window.addEventListener("hashchange", followBookmark);
 })();
 </script>
+<style>
+.visitor-home .home-download-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin: 8px 0 14px;
+}
+.home-modern .home-download-row a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
+.home-modern .home-download-row a img {
+  display: block;
+  height: 40px;
+  width: auto;
+  max-width: 100%;
+}
+</style>
 </head>
 <body class="home-modern">
 <header>
@@ -117,6 +137,14 @@
       <h1 id="visitor-free-title" data-visitor-free-title data-i18n="visitor.home.freeTitle">Meciuri gratuite</h1>
       <small><time data-visitor-today></time> · <span data-i18n="dashboard.table.timezone">Ora Bucureștiului</span></small>
     </div>
+    <p class="home-download-row">
+      <a href="https://apps.apple.com/ro/app/poseidon-stats/id6824537161" class="app-store-badge">
+        <img src="assets/app-store/ro.svg" width="120" height="40" alt="Descarcă din App Store · iPhone" data-i18n-attr="alt:app.download,src:app.store.badge">
+      </a>
+      <!-- GOOGLE_PLAY_FOOTER_START -->
+      <a href="https://play.google.com/store/apps/details?id=com.poseidonstats.app" class="google-play-badge"><img src="assets/google-play/ro.svg" alt="Descarcă de pe Google Play · Android" data-i18n-attr="alt:app.google.download,src:app.google.badge"></a>
+      <!-- GOOGLE_PLAY_FOOTER_END -->
+    </p>
     <p data-visitor-status role="status" data-i18n="loading">Se încarcă…</p>
     <ul class="visitor-fixtures" data-visitor-matches></ul>
   </section>
@@ -149,14 +177,6 @@
       <a href="https://poseidon-members.poseidonstats.workers.dev/login" data-conversion="login" data-conversion-source="planstrip" data-i18n="simplify.activation.login">Intră cu Patreon</a>
       <a href="terms.html" data-visitor-language data-i18n="footer.terms">Termeni și Condiții</a>
       <a href="privacy.html" data-visitor-language data-i18n="footer.privacy">Confidențialitate</a>
-<p class="footer-app-downloads">
-      <a href="https://apps.apple.com/ro/app/poseidon-stats/id6824537161" class="app-store-badge">
-        <img src="assets/app-store/ro.svg" width="120" height="40" alt="Descarcă din App Store · iPhone" data-i18n-attr="alt:app.download,src:app.store.badge">
-      </a>
-      <!-- GOOGLE_PLAY_FOOTER_START -->
-      <a href="https://play.google.com/store/apps/details?id=com.poseidonstats.app" class="google-play-badge"><img src="assets/google-play/ro.svg" alt="Descarcă de pe Google Play · Android" data-i18n-attr="alt:app.google.download,src:app.google.badge"></a>
-      <!-- GOOGLE_PLAY_FOOTER_END -->
-    </p>
     </details>
   </nav>
   <small class="visitor-legal" data-i18n="banner.legal">Statistici informative. Modelul poate greși. Verifică sursa. 18+.</small>
